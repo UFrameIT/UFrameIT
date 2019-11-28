@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class DisplayFacts : MonoBehaviour
 {
-    public InventoryObject inventory;
+    public Inventory inventory;
 
     public GameObject prefab;
 
@@ -27,12 +27,13 @@ public class DisplayFacts : MonoBehaviour
     }
 
     public void UpdateDisplay()
-    {
+    {          
          for( int i = 0; i< inventory.Facts.Count; i++){
             if(! inventory.Facts[i].isDisplayed){
                 var obj = Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
                 obj.GetComponent<RectTransform>().localPosition = GetPosition(i);
-                obj.GetComponentInChildren<Text>().text = inventory.Facts[i].item.Description;
+                //obj.transform.FindChild("PointOne").text = "X";
+                //obj.transform.FindChild("PointTwo").text = "Y";
                 inventory.Facts[i].isDisplayed = true;
             }
             

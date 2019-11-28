@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class DisplayScrolls : MonoBehaviour
 {
-    public InventoryObject inventory;
+    public Inventory inventory;
 
     public GameObject prefab;
 
@@ -28,9 +28,6 @@ public class DisplayScrolls : MonoBehaviour
 
     public void UpdateDisplay()
     {
-        Debug.Log("1 "+ inventory);
-        Debug.Log("2 "+ inventory.Scrolls );
-        Debug.Log("3 "+ inventory.Scrolls.Count);
          for( int i = 0; i< inventory.Scrolls.Count; i++){
             if(! inventory.Scrolls[i].isDisplayed){
                 var obj = Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
