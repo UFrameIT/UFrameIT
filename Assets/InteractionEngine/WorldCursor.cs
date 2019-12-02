@@ -1,19 +1,20 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class WorldCursor : MonoBehaviour
 {
-
-
     private RaycastHit Hit;
     private Camera Cam;
+    private ToolMode ActiveToolMode{get; set;}
 
     void Start()
     {
         Cam = Camera.main;
- 
+        //Set MarkPointMode as the default ActiveToolMode
+        this.ActiveToolMode = ToolMode.MarkPointMode;
     }
 
     // Update is called once per frame
@@ -39,7 +40,8 @@ public class WorldCursor : MonoBehaviour
             transform.up = -Cam.transform.forward;
         }
 
-
+        //Check if the ToolMode was switched
+        CheckToolModeSelection();
         
     }
 
@@ -50,6 +52,22 @@ public class WorldCursor : MonoBehaviour
              CommunicationEvents.TriggerEvent.Invoke(Hit);
         }
 
+    }
+
+    void CheckToolModeSelection() {
+        if (Input.GetButtonDown("ToolMode")) {
+            //Change the ActiveToolMode dependent on which Mode was selected
+            if ((int)this.ActiveToolMode == Enum.GetNames(typeof(ToolMode)).Length - 1)
+            {
+                this.ActiveToolMode = 0;
+            }
+            else {
+                this.ActiveToolMode++;
+            }
+
+            //Invoke the Handler for the Facts
+            CommunicationEvents.ToolModeChangedEvent.Invoke(this.ActiveToolMode);
+        }
     }
 
  
