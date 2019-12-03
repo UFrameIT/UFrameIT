@@ -10,6 +10,9 @@ public class WorldCursor : MonoBehaviour
     private Camera Cam;
     private ToolMode ActiveToolMode{get; set;}
 
+    private string selectableTag = "Selectable";
+    private Transform lastFactSelection;
+
     void Start()
     {
         Cam = Camera.main;
@@ -30,6 +33,27 @@ public class WorldCursor : MonoBehaviour
             transform.position = Hit.point;
             transform.up = Hit.normal;
             transform.position += .01f * Hit.normal;
+
+            //SELECTION-HIGHLIGHTING-PART
+            //Check if a Fact was Hit
+            Transform selection = Hit.transform;
+
+            //Set the last Fact unselected
+            if (this.lastFactSelection != null)
+            {
+                //Invoke the EndHighlightEvent that will be handled in FactSpawner
+                CommunicationEvents.EndHighlightEvent.Invoke(this.lastFactSelection);
+                this.lastFactSelection = null;
+            }
+
+            //Set the Fact that was Hit as selected
+            if (selection.CompareTag(selectableTag))
+            {
+                //Invoke the HighlightEvent that will be handled in FactSpawner
+                this.lastFactSelection = selection;
+                CommunicationEvents.HighlightEvent.Invoke(selection);
+            }
+            //SELECTION-HIGHLIGHTING-PART-END
 
             CheckMouseButtons();
 

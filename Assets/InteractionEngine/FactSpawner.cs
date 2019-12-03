@@ -10,8 +10,14 @@ public class FactSpawner : MonoBehaviour
     public string[] Facts = new String[100];
     public GameObject[] GameObjectFacts = new GameObject[100];
 
+    //Variables for highlighting Facts where the cursor moves over
+    public Material defaultMaterial;
+    public Material highlightMaterial;
+
     void Start()
     {
+        CommunicationEvents.HighlightEvent.AddListener(OnMouseOverFact);
+        CommunicationEvents.EndHighlightEvent.AddListener(OnMouseOverFactEnd);
         CommunicationEvents.TriggerEvent.AddListener(OnHit);
         CommunicationEvents.ToolModeChangedEvent.AddListener(OnToolModeChanged);
         CommunicationEvents.AddEvent.AddListener(SpawnFact);
@@ -44,6 +50,8 @@ public class FactSpawner : MonoBehaviour
         string letter = ((Char)(64+id+1)).ToString();
         point.GetComponentInChildren<TextMeshPro>().text = letter;
         //If a new Point was spawned -> We are in MarkPointMode -> Then we want the collider to be disabled
+        //Hint: Thats why by now, if we mark a Point in an other mode than MarkPointMode, the 
+        //Collider will be set disabled
         point.GetComponentInChildren<SphereCollider>().enabled = false;
         Facts[id] = letter;
         GameObjectFacts[id] = point;
@@ -55,6 +63,32 @@ public class FactSpawner : MonoBehaviour
         GameObject point = hit.transform.gameObject;
         GameObject.Destroy(point);
         Facts[id] = "";
+    }
+
+    public void OnMouseOverFactEnd(Transform selection)
+    {
+        Renderer selectionRenderer;
+        
+        if (selection != null)
+        {
+            selectionRenderer = selection.GetComponent<Renderer>();
+            if (selectionRenderer != null)
+            {
+                //Set the Material of the fact back to default
+                selectionRenderer.material = defaultMaterial;
+            }
+        }
+    }
+
+    public void OnMouseOverFact(Transform selection)
+    {
+        Renderer selectionRenderer;
+        
+        selectionRenderer = selection.GetComponent<Renderer>();
+        if (selectionRenderer != null) {
+            //Set the Material of the Fact, where the mouse is over, to a special one
+            selectionRenderer.material = highlightMaterial;
+        }
     }
 
     public void OnHit(RaycastHit hit)
@@ -88,11 +122,11 @@ public class FactSpawner : MonoBehaviour
             //but we don't want to have the ability to select Lines or Angles
                 foreach (GameObject GameObjectFact in this.GameObjectFacts)
                 {
-                    if (GameObjectFact.tag == "Line" || GameObjectFact.tag == "Angle")
+                    if (GameObjectFact.layer == LayerMask.NameToLayer("Line") || GameObjectFact.layer == LayerMask.NameToLayer("Angle"))
                     {
                         GameObjectFact.GetComponentInChildren<Collider>().enabled = false;
                     }
-                    else if (GameObjectFact.tag == "Point") {
+                    else if (GameObjectFact.layer == LayerMask.NameToLayer("Point")) {
                         GameObjectFact.GetComponentInChildren<Collider>().enabled = true;
                     }
                 }
@@ -102,11 +136,11 @@ public class FactSpawner : MonoBehaviour
             //but we don't want to have the ability to select Points or Angles
                 foreach (GameObject GameObjectFact in this.GameObjectFacts)
                 {
-                    if (GameObjectFact.tag == "Point" || GameObjectFact.tag == "Angle")
+                    if (GameObjectFact.layer == LayerMask.NameToLayer("Point") || GameObjectFact.layer == LayerMask.NameToLayer("Angle"))
                     {
                         GameObjectFact.GetComponentInChildren<Collider>().enabled = false;
                     }
-                    else if (GameObjectFact.tag == "Line")
+                    else if (GameObjectFact.layer == LayerMask.NameToLayer("Line"))
                     {
                         GameObjectFact.GetComponentInChildren<Collider>().enabled = true;
                     }

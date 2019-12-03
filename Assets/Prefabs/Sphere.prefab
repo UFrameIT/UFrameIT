@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 8087426936968725520}
   m_Layer: 10
   m_Name: Sphere
-  m_TagString: Point
+  m_TagString: Selectable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

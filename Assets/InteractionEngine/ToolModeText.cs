@@ -12,6 +12,7 @@ public class ToolModeText : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //Show the Text that the MarkPointMode is active on startup
         gameObject.GetComponentInChildren<UnityEngine.UI.Text>().CrossFadeAlpha(0.0f, 0.0f, false);
         gameObject.GetComponentInChildren<UnityEngine.UI.Text>().CrossFadeAlpha(1.0f, 0.9f, false);
         this.timerActive = true;

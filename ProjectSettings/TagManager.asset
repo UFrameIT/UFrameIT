@@ -5,7 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - ToolModeDisplay
-  - Point
+  - Selectable
   layers:
   - Default
   - TransparentFX
