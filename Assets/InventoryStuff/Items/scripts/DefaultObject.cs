@@ -8,4 +8,10 @@ public class DefaultObject : ItemObject
   {
       type = ItemType.Default;
   }
+
+  //prefab should be "DefaultObjectDisplay"
+    public override  GameObject CreateDisplay(Transform transform, GameObject prefab){
+         var obj = Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
+         return obj;
+    }
 }

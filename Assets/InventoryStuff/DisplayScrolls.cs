@@ -7,7 +7,6 @@ public class DisplayScrolls : MonoBehaviour
 {
     public Inventory inventory;
 
-    public GameObject prefab;
 
     public int x_Start;
     public int y_Start;
@@ -30,7 +29,8 @@ public class DisplayScrolls : MonoBehaviour
     {
          for( int i = 0; i< inventory.Scrolls.Count; i++){
             if(! inventory.Scrolls[i].isDisplayed){
-                var obj = Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
+                var item = inventory.Scrolls[i].item;
+                var obj = Instantiate(item.IconPrefab, Vector3.zero, Quaternion.identity, transform);
                 obj.GetComponent<RectTransform>().localPosition = GetPosition(i);
                 obj.GetComponentInChildren<Text>().text = inventory.Scrolls[i].item.Description;
                 inventory.Scrolls[i].isDisplayed = true;

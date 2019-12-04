@@ -5,25 +5,25 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Inventory", menuName= "Inventory System/Inventory" )]
 public class Inventory : ScriptableObject
 {
-   public List<InventorySlot> Facts = new List<InventorySlot>();
-   public List<InventorySlot> Scrolls = new List<InventorySlot>();
+   public List<InventorySlot<ItemObject>> Facts = new List<InventorySlot<ItemObject>>();
+   public List<InventorySlot<DefaultScroll>> Scrolls = new List<InventorySlot<DefaultScroll>>();
 
    public void AddFact(ItemObject fact){
-     Facts.Add(new InventorySlot(fact));
+     Facts.Add(new InventorySlot<ItemObject>(fact));
    }
 
-   public void AddScroll(ItemObject scroll){
-      Scrolls.Add(new InventorySlot(scroll));
+   public void AddScroll(DefaultScroll scroll){
+      Scrolls.Add(new InventorySlot<DefaultScroll>(scroll));
    }
 }
 
    [System.Serializable]
-public class InventorySlot
+public class InventorySlot<T>
 {
-   public ItemObject item;
+   public T  item;
    public bool isDisplayed;
 
-   public InventorySlot( ItemObject _item){
+   public InventorySlot( T _item){
       item = _item;
       isDisplayed = false;
    }

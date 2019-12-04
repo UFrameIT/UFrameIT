@@ -20,10 +20,27 @@ public class PlayerScript : MonoBehaviour
     public void AddLenghtFact()
     {
         LengthObject fact =  ScriptableObject.CreateInstance<LengthObject>();
-        fact.PointA = "A";
-        fact.PointB = "B";
+        fact.pointA = "A";
+        fact.pointB = "B";
         fact.Lenght = 1.0;
         fact.Description = "LengthFact";
+        inventory.AddFact(fact);
+    }
+
+
+    public void AddAngleFact(){
+        AngleObject fact = ScriptableObject.CreateInstance<AngleObject>();
+        fact.pointA = "X";
+        fact.pointB = "Y";
+        fact.pointC = "Z";
+        fact.angle = 90.0;
+        fact.Description = "AngleFact";
+        inventory.AddFact(fact);
+    }
+
+    public void AddPointFact(){
+        PointObject fact = ScriptableObject.CreateInstance<PointObject>();
+        fact.point = "P";
         inventory.AddFact(fact);
     }
 

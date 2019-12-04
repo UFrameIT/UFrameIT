@@ -2,16 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum ItemType{
-    LengthFact,
-    AngleFact,
-    DefaultScroll,
-    Default
-}
-public class ItemObject : ScriptableObject
+
+public abstract class ItemObject : ScriptableObject
 {
-    //public GameObject prefab;
+    public enum ItemType{
+        LengthFact,
+        AngleFact,
+        DefaultScroll,
+        Point,
+        Default
+    };
     public ItemType type;
     [TextArea(15,20)]
     public string Description;
+
+    public abstract GameObject CreateDisplay(Transform transform, GameObject prefab);
 }

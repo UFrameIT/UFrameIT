@@ -2,12 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class DisplayFacts : MonoBehaviour
 {
     public Inventory inventory;
 
-    public GameObject prefab;
+    public GameObject prefab_Point;
+    public GameObject prefab_Distance;
+    public GameObject prefab_Angle;
+    public GameObject prefab_Default;
 
     public int x_Start;
     public int y_Start;
@@ -30,10 +34,9 @@ public class DisplayFacts : MonoBehaviour
     {          
          for( int i = 0; i< inventory.Facts.Count; i++){
             if(! inventory.Facts[i].isDisplayed){
-                var obj = Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
+                var item = inventory.Facts[i].item;
+                var obj = item.CreateDisplay(transform, getPrefab( item));
                 obj.GetComponent<RectTransform>().localPosition = GetPosition(i);
-                //obj.transform.FindChild("PointOne").text = "X";
-                //obj.transform.FindChild("PointTwo").text = "Y";
                 inventory.Facts[i].isDisplayed = true;
             }
             
@@ -43,5 +46,14 @@ public class DisplayFacts : MonoBehaviour
     public Vector3 GetPosition(int i)
     {
         return new Vector3(x_Start+ (X_Pacece_Between_Items * (i % number_of_Column)), y_Start + (-y_Pacece_Between_Items * (i / number_of_Column)), 0f);
+    }
+
+    public GameObject getPrefab(ItemObject item){
+        switch( item.type){
+            case ItemObject.ItemType.LengthFact:return prefab_Distance; 
+            case ItemObject.ItemType.AngleFact: return prefab_Angle;
+            case ItemObject.ItemType.Point:     return prefab_Point;
+            default:                            return prefab_Default;
+        }
     }
 }
