@@ -14,6 +14,8 @@ public class FactSpawner : MonoBehaviour
     public Material defaultMaterial;
     public Material highlightMaterial;
 
+    public GameObject SmartMenu;
+
     void Start()
     {
         CommunicationEvents.HighlightEvent.AddListener(OnMouseOverFact);
@@ -22,6 +24,9 @@ public class FactSpawner : MonoBehaviour
         CommunicationEvents.ToolModeChangedEvent.AddListener(OnToolModeChanged);
         CommunicationEvents.AddEvent.AddListener(SpawnFact);
         CommunicationEvents.RemoveEvent.AddListener(DeletePoint);
+
+
+
     }
 
     public int GetFirstEmptyID()
@@ -49,18 +54,20 @@ public class FactSpawner : MonoBehaviour
         point.transform.up = hit.normal;
         string letter = ((Char)(64+id+1)).ToString();
         point.GetComponentInChildren<TextMeshPro>().text = letter;
+        point.GetComponent<FactObject>().Id = id;
         //If a new Point was spawned -> We are in MarkPointMode -> Then we want the collider to be disabled
         //Hint: Thats why by now, if we mark a Point in an other mode than MarkPointMode, the 
         //Collider will be set disabled
-        point.GetComponentInChildren<SphereCollider>().enabled = false;
+        if(CommunicationEvents.ActiveToolMode != ToolMode.ExtraMode)
+            point.GetComponentInChildren<SphereCollider>().enabled = false;
         Facts[id] = letter;
         GameObjectFacts[id] = point;
 
     }
 
-    public void DeletePoint(RaycastHit hit, int id)
+    public void DeletePoint(int id)
     {
-        GameObject point = hit.transform.gameObject;
+        GameObject point = GameObjectFacts[id];
         GameObject.Destroy(point);
         Facts[id] = "";
     }
@@ -93,13 +100,24 @@ public class FactSpawner : MonoBehaviour
 
     public void OnHit(RaycastHit hit)
     {
-
+        Debug.Log(CommunicationEvents.ActiveToolMode);
         if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
             //hit existing point, so delete it
-            char letter = hit.transform.gameObject.GetComponentInChildren<TextMeshPro>().text.ToCharArray()[0];
-            int id = letter - 65;
-            CommunicationEvents.RemoveEvent.Invoke(hit, id);
+            if(CommunicationEvents.ActiveToolMode == ToolMode.ExtraMode)
+            {
+                var menu =GameObject.Instantiate(SmartMenu);
+                menu.GetComponent<Canvas>().worldCamera = Camera.main;
+                menu.transform.SetParent(hit.transform);
+                menu.transform.localPosition = Vector3.up- Camera.main.transform.forward;
+            }
+            else
+            {
+                char letter = hit.transform.gameObject.GetComponentInChildren<TextMeshPro>().text.ToCharArray()[0];
+                int id = letter - 65;
+                CommunicationEvents.RemoveEvent.Invoke(id);
+            }
+
         }
         else
         {
@@ -154,6 +172,15 @@ public class FactSpawner : MonoBehaviour
                     GameObjectFact.GetComponentInChildren<Collider>().enabled = true;
                 }
                 break;
+                case ToolMode.ExtraMode:
+                foreach (GameObject GameObjectFact in this.GameObjectFacts)
+                {
+                   
+                }
+                break;
+
+            
+
         }
     }
 

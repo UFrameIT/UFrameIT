@@ -13,6 +13,11 @@ public static class CommunicationEvents
     {
 
     }
+    public class FactEvent : UnityEvent<int>
+    {
+
+    }
+
     public class MouseOverFactEvent : UnityEvent<Transform>
     {
 
@@ -26,6 +31,6 @@ public static class CommunicationEvents
     public static MouseOverFactEvent EndHighlightEvent = new MouseOverFactEvent();
     public static ToolModeEvent ToolModeChangedEvent = new ToolModeEvent();
     public static PointEvent AddEvent = new PointEvent();
-    public static PointEvent RemoveEvent = new PointEvent();
-
+    public static FactEvent RemoveEvent = new FactEvent();
+    public static ToolMode ActiveToolMode { get; set; }
 }

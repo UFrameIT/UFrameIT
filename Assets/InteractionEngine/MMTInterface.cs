@@ -39,7 +39,7 @@ public class MMTInterface : MonoBehaviour
         UnityEngine.Debug.Log("add fact"+ id);
     }
 
-    void RemoveFactFromMMT(RaycastHit hit, int id)
+    void RemoveFactFromMMT( int id)
     {
         UnityEngine.Debug.Log("remove fact"+ id);
     }

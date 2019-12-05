@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 public class WorldCursor : MonoBehaviour
 {
@@ -13,11 +14,17 @@ public class WorldCursor : MonoBehaviour
     private string selectableTag = "Selectable";
     private Transform lastFactSelection;
 
+
     void Start()
     {
+
         Cam = Camera.main;
         //Set MarkPointMode as the default ActiveToolMode
-        this.ActiveToolMode = ToolMode.MarkPointMode;
+        this.ActiveToolMode = ToolMode.ExtraMode;//ToolMode.MarkPointMode;
+        CommunicationEvents.ToolModeChangedEvent.Invoke(this.ActiveToolMode);
+        //TODO: we probably can configure these things to automatically trigger when the variable is changed...
+        CommunicationEvents.ActiveToolMode = this.ActiveToolMode;
+        //redundant for now, but we probably want to have the activetool mode available globally
     }
 
     // Update is called once per frame
@@ -28,6 +35,8 @@ public class WorldCursor : MonoBehaviour
        
         int layerMask = 1 << LayerMask.NameToLayer("Player"); //only hit player
         layerMask = ~layerMask; //ignore Player
+
+   
 
         if(Physics.Raycast(ray, out Hit, 30f, layerMask)){
             transform.position = Hit.point;
@@ -60,7 +69,7 @@ public class WorldCursor : MonoBehaviour
         }
         else
         {
-            transform.position = Cam.transform.position + Cam.transform.forward * 10;
+            transform.position = Cam.ScreenToWorldPoint(Input.mousePosition);
             transform.up = -Cam.transform.forward;
         }
 
@@ -71,9 +80,11 @@ public class WorldCursor : MonoBehaviour
 
     void CheckMouseButtons()
     {
+       
         //send HitEvent
         if (Input.GetMouseButtonDown(0)){
-             CommunicationEvents.TriggerEvent.Invoke(Hit);
+            if (EventSystem.current.IsPointerOverGameObject()) return;
+            CommunicationEvents.TriggerEvent.Invoke(Hit);
         }
 
     }
@@ -88,7 +99,7 @@ public class WorldCursor : MonoBehaviour
             else {
                 this.ActiveToolMode++;
             }
-
+            CommunicationEvents.ActiveToolMode = this.ActiveToolMode;
             //Invoke the Handler for the Facts
             CommunicationEvents.ToolModeChangedEvent.Invoke(this.ActiveToolMode);
         }

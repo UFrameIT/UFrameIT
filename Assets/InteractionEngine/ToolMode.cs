@@ -7,5 +7,6 @@ public enum ToolMode
     MarkPointMode,
     CreateLineMode,
     CreateAngleMode,
-    DeleteMode
+    DeleteMode,
+    ExtraMode
 }
