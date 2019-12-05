@@ -32,7 +32,6 @@ public class DisplayScrolls : MonoBehaviour
                 var item = inventory.Scrolls[i].item;
                 var obj = Instantiate(item.IconPrefab, Vector3.zero, Quaternion.identity, transform);
                 obj.GetComponent<RectTransform>().localPosition = GetPosition(i);
-                obj.GetComponentInChildren<Text>().text = inventory.Scrolls[i].item.Description;
                 inventory.Scrolls[i].isDisplayed = true;
             }
             

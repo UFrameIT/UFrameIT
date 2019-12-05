@@ -12,3 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 14aa6bfc325535540999d9ee4927d556, type: 3}
   m_Name: THE_INVENTORY
   m_EditorClassIdentifier: 
+  Facts: []
+  Scrolls:
+  - item: {fileID: 11400000, guid: b8e04ce999b77dc48a7f225e635bc2ce, type: 2}
+    isDisplayed: 0

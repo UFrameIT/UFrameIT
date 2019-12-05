@@ -44,16 +44,12 @@ public class PlayerScript : MonoBehaviour
         inventory.AddFact(fact);
     }
 
-    public void AddDemoScroll(){
-        DefaultScroll scroll =  ScriptableObject.CreateInstance<DefaultScroll>();
-        scroll.Description = "Dis is Scroll";
-        inventory.AddScroll(scroll);
-    }
-
-    
-
     private void OnApplicationQuit()
     {
         inventory.Facts.Clear();
+        for(int i = 0; i < inventory.Scrolls.Count; i++){
+            inventory.Scrolls[i].isDisplayed = false;
+        }
+
     }
 }
