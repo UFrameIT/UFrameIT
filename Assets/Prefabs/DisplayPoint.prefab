@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 858001163752551617}
   - component: {fileID: 114132791164475416}
   - component: {fileID: 225408562469983378}
+  - component: {fileID: 114984628052382182}
   m_Layer: 5
   m_Name: DisplayPoint
   m_TagString: Untagged
@@ -99,6 +100,19 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &114984628052382182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 858001163752551619}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed0bcd3d8d9996d4f86c0a2b8b71c6bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fact: {fileID: 0}
 --- !u!1 &858001164857725565
 GameObject:
   m_ObjectHideFlags: 0

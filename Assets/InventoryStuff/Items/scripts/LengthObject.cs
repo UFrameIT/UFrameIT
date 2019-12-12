@@ -20,6 +20,7 @@ public class LengthObject : ItemObject
         var obj = Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
         obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = pointA;
         obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = pointB;
+        obj.GetComponent<FactWrapper>().fact = this;
         return obj;
     }
 }

@@ -20,6 +20,7 @@ public class AngleObject : ItemObject
         obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = pointA;
         obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = pointB;
         obj.transform.GetChild(2).gameObject.GetComponent<TextMeshProUGUI>().text = pointC;
+        obj.GetComponent<FactWrapper>().fact = this;
         return obj;
     }
 }

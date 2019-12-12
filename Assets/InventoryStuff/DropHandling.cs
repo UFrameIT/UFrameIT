@@ -11,6 +11,10 @@ public class DropHandling : MonoBehaviour, IDropHandler
         Destroy(current);
         current = Instantiate(eventData.pointerDrag,Vector3.zero, Quaternion.identity);
         current.transform.SetParent(gameObject.transform, false);
+        GameObject scrollShow = gameObject.transform.parent.gameObject;
+        PythagorasScript pythagorasScript = scrollShow.GetComponent<PythagorasScript>();
+        var fact = ((FactWrapper)current.GetComponent<FactWrapper>()).fact;
+        pythagorasScript.putItem(gameObject.name, fact);
     }
 
 }

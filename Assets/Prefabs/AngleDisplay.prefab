@@ -478,6 +478,7 @@ GameObject:
   - component: {fileID: 6643637775379894486}
   - component: {fileID: 225831940989964384}
   - component: {fileID: 114522817932931646}
+  - component: {fileID: 3011926265969909947}
   m_Layer: 5
   m_Name: AngleDisplay
   m_TagString: Untagged
@@ -566,3 +567,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a091cb23127eb7347955cb7f747af431, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3011926265969909947
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6643637775379894484}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ed0bcd3d8d9996d4f86c0a2b8b71c6bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fact: {fileID: 0}

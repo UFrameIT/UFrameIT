@@ -112,6 +112,24 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &84407291 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4362180880950796636, guid: 170ab14de1eba214fb78abe18aaf388c,
+    type: 3}
+  m_PrefabInstance: {fileID: 1784564330}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &84407294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 84407291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 413dcae9856bd794ab03d29210561c57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &189930219
 GameObject:
   m_ObjectHideFlags: 0
@@ -1801,6 +1819,76 @@ PrefabInstance:
         type: 3}
       propertyPath: m_textInfo.pageCount
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4362180880026436509, guid: 170ab14de1eba214fb78abe18aaf388c,
+        type: 3}
+      propertyPath: m_Name
+      value: EckeC
+      objectReference: {fileID: 0}
+    - target: {fileID: 4362180880123462339, guid: 170ab14de1eba214fb78abe18aaf388c,
+        type: 3}
+      propertyPath: m_Name
+      value: EckeB
+      objectReference: {fileID: 0}
+    - target: {fileID: 4362180880440508805, guid: 170ab14de1eba214fb78abe18aaf388c,
+        type: 3}
+      propertyPath: m_Name
+      value: DistBc
+      objectReference: {fileID: 0}
+    - target: {fileID: 4362180880452624253, guid: 170ab14de1eba214fb78abe18aaf388c,
+        type: 3}
+      propertyPath: m_Name
+      value: Angle
+      objectReference: {fileID: 0}
+    - target: {fileID: 4362180880945641279, guid: 170ab14de1eba214fb78abe18aaf388c,
+        type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 200
+      objectReference: {fileID: 0}
+    - target: {fileID: 4362180880945641279, guid: 170ab14de1eba214fb78abe18aaf388c,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 4362180881465634439, guid: 170ab14de1eba214fb78abe18aaf388c,
+        type: 3}
+      propertyPath: m_Name
+      value: EckeA
+      objectReference: {fileID: 0}
+    - target: {fileID: 4362180881807297815, guid: 170ab14de1eba214fb78abe18aaf388c,
+        type: 3}
+      propertyPath: m_Name
+      value: DistAc
+      objectReference: {fileID: 0}
+    - target: {fileID: 4362180881535347500, guid: 170ab14de1eba214fb78abe18aaf388c,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4362180881535347500, guid: 170ab14de1eba214fb78abe18aaf388c,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4362180881535347500, guid: 170ab14de1eba214fb78abe18aaf388c,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4362180881535347500, guid: 170ab14de1eba214fb78abe18aaf388c,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 84407294}
+    - target: {fileID: 4362180881535347500, guid: 170ab14de1eba214fb78abe18aaf388c,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: doMagic
+      objectReference: {fileID: 0}
+    - target: {fileID: 4362180881535347500, guid: 170ab14de1eba214fb78abe18aaf388c,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 170ab14de1eba214fb78abe18aaf388c, type: 3}
