@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class FactSpawner : MonoBehaviour
 {
-    public GameObject FactRepresentation;
+    private GameObject FactRepresentation;
     public string[] Facts = new String[100];
     public GameObject[] GameObjectFacts = new GameObject[100];
 
@@ -22,10 +22,12 @@ public class FactSpawner : MonoBehaviour
         CommunicationEvents.EndHighlightEvent.AddListener(OnMouseOverFactEnd);
         CommunicationEvents.TriggerEvent.AddListener(OnHit);
         CommunicationEvents.ToolModeChangedEvent.AddListener(OnToolModeChanged);
-        CommunicationEvents.AddEvent.AddListener(SpawnFact);
+        CommunicationEvents.AddPointEvent.AddListener(SpawnPoint);
+        CommunicationEvents.AddLineEvent.AddListener(SpawnLine);
         CommunicationEvents.RemoveEvent.AddListener(DeletePoint);
 
-
+        //Default FactRepresenation = Sphere-Prefab for Points
+        this.FactRepresentation = (GameObject) Resources.Load("Prefabs/Sphere", typeof(GameObject));
 
     }
 
@@ -41,13 +43,9 @@ public class FactSpawner : MonoBehaviour
    
     }
 
-    public void SpawnFact(RaycastHit hit, int id) {
-        SpawnPoint(hit, id);
-    }
-
-
     public void SpawnPoint(RaycastHit hit, int id)
     {
+        this.FactRepresentation = (GameObject)Resources.Load("Prefabs/Sphere", typeof(GameObject));
         Debug.Log(id);
         GameObject point = GameObject.Instantiate(FactRepresentation);
         point.transform.position = hit.point;
@@ -70,6 +68,33 @@ public class FactSpawner : MonoBehaviour
         GameObject point = GameObjectFacts[id];
         GameObject.Destroy(point);
         Facts[id] = "";
+    }
+
+    public void SpawnLine(Vector3 point1, Vector3 point2) {
+        int id = GetFirstEmptyID();
+        Debug.Log(id);
+        //Change FactRepresentation to Line
+        this.FactRepresentation = (GameObject)Resources.Load("Prefabs/Line2", typeof(GameObject));
+        GameObject line = GameObject.Instantiate(FactRepresentation);
+        //Place the Line in the centre of the two points
+        //and change scale and rotation, so that the two points are connected by the line
+        line.transform.position = Vector3.Lerp(point1, point2, 0.5f);
+        var v3T = line.transform.localScale;
+        v3T.y = (point2 - point1).magnitude;
+        //x and z of the line/Cube-GameObject here hard coded = ratio of sphere-prefab
+        v3T.x = 0.1f;
+        v3T.z = 0.1f;
+        line.transform.localScale = v3T;
+        line.transform.rotation = Quaternion.FromToRotation(Vector3.up, point2 - point1);
+
+        string letter = ((Char)(64 + id + 1)).ToString();
+        line.GetComponentInChildren<TextMeshPro>().text = letter;
+        line.GetComponent<FactObject>().Id = id;
+        //If a new Line was spawned -> We are in CreateLineMode -> Then we want the collider to be disabled
+        if (CommunicationEvents.ActiveToolMode != ToolMode.ExtraMode)
+            line.GetComponentInChildren<BoxCollider>().enabled = false;
+        Facts[id] = letter;
+        GameObjectFacts[id] = line;
     }
 
     public void OnMouseOverFactEnd(Transform selection)
@@ -122,7 +147,7 @@ public class FactSpawner : MonoBehaviour
         else
         {
 
-            CommunicationEvents.AddEvent.Invoke(hit, GetFirstEmptyID());
+            CommunicationEvents.AddPointEvent.Invoke(hit, GetFirstEmptyID());
         }
     }
 

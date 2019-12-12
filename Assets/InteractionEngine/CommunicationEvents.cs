@@ -9,6 +9,11 @@ public static class CommunicationEvents
     {
 
     }
+
+    public class LineEvent : UnityEvent<Vector3, Vector3> {
+
+    }
+
     public class HitEvent : UnityEvent<RaycastHit>
     {
 
@@ -30,7 +35,8 @@ public static class CommunicationEvents
     public static MouseOverFactEvent HighlightEvent = new MouseOverFactEvent();
     public static MouseOverFactEvent EndHighlightEvent = new MouseOverFactEvent();
     public static ToolModeEvent ToolModeChangedEvent = new ToolModeEvent();
-    public static PointEvent AddEvent = new PointEvent();
+    public static PointEvent AddPointEvent = new PointEvent();
+    public static LineEvent AddLineEvent = new LineEvent();
     public static FactEvent RemoveEvent = new FactEvent();
     public static ToolMode ActiveToolMode { get; set; }
 }

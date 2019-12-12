@@ -27,7 +27,7 @@ public class MMTInterface : MonoBehaviour
         mmtServerProcess = Process.Start(mmtServerProcessInfo);
         */
 
-        CommunicationEvents.AddEvent.AddListener(AddFactToMMT);
+        CommunicationEvents.AddPointEvent.AddListener(AddFactToMMT);
         CommunicationEvents.RemoveEvent.AddListener(RemoveFactFromMMT);   
         
 

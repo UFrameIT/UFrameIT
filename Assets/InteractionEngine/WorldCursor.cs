@@ -11,9 +11,14 @@ public class WorldCursor : MonoBehaviour
     private Camera Cam;
     private ToolMode ActiveToolMode{get; set;}
 
+    //Attributes for Highlighting of Facts when Mouse-Over
     private string selectableTag = "Selectable";
     private Transform lastFactSelection;
 
+    //Attributes for simulating the drawing of a line
+    public LineRenderer lineRenderer;
+    private List<Vector3> linePositions = new List<Vector3>();
+    private bool lineRendererActivated;
 
     void Start()
     {
@@ -64,7 +69,9 @@ public class WorldCursor : MonoBehaviour
             }
             //SELECTION-HIGHLIGHTING-PART-END
 
-            CheckMouseButtons();
+            CheckMouseButtons(ray);
+
+            UpdateLineRenderer(transform.position);
 
         }
         else
@@ -78,15 +85,112 @@ public class WorldCursor : MonoBehaviour
         
     }
 
-    void CheckMouseButtons()
+    //Deactivate LineRenderer so that no Line gets drawn when Cursor changes
+    void DeactivateLineRenderer()
     {
-       
-        //send HitEvent
-        if (Input.GetMouseButtonDown(0)){
-            if (EventSystem.current.IsPointerOverGameObject()) return;
-            CommunicationEvents.TriggerEvent.Invoke(Hit);
-        }
+        //Reset the first points
+        this.lineRenderer.SetPosition(0, Vector3.zero);
+        this.lineRenderer.SetPosition(1, Vector3.zero);
+        if (linePositions.Count > 0)
+            this.linePositions.Clear();
+        this.lineRendererActivated = false;
+    }
 
+    //Check if left Mouse-Button was pressed and handle it
+    void CheckMouseButtons(Ray ray)
+    {
+        if (Input.GetMouseButtonDown(0))
+        {
+            switch (this.ActiveToolMode)
+            {
+                case ToolMode.MarkPointMode:
+                    //send HitEvent
+                    CommunicationEvents.TriggerEvent.Invoke(Hit);
+                    break;
+                case ToolMode.ExtraMode:
+                    //send HitEvent
+                    CommunicationEvents.TriggerEvent.Invoke(Hit);
+                    break;
+                case ToolMode.DeleteMode:
+                    //send HitEvent
+                    CommunicationEvents.TriggerEvent.Invoke(Hit);
+                    break;
+                case ToolMode.CreateLineMode:
+                    //Je nachdem ob erster oder der zweite Punkt angeklickt wurde behandeln
+
+                    //Wenn erster Punkt einen Point-Collider erwischt hat:
+                    //Linie aktivieren und Cursor folgen
+                    //Wenn erster Punkt keinen Point-Collider erwischt hat:
+                    //Nichts tun -> Evtl Hint einblenden
+
+                    //Wenn zweiter Punkt einen Point-Collider erwischt hat:
+                    //Event senden um GameObject-Line zu erzeugen
+                    //Wenn zweiter Punkt keinen Point-Collider erwischt hat:
+                    //Linie deaktivieren -> Evtl Hint einblenden
+
+                    //LayerMask for Points
+                    int layerMask = 1 << LayerMask.NameToLayer("Point"); //only hit Point
+
+                    //Wenn bereits der erste Punkt markiert wurde
+                    if (this.lineRendererActivated)
+                    {
+                        //If a second Point was Hit
+                        if (Physics.Raycast(ray, out Hit, 30f, layerMask))
+                        {
+                            //Event for Creating the Line
+                            Vector3 point1 = this.linePositions[0];
+                            Vector3 point2 = Hit.transform.gameObject.transform.position;
+                            this.DeactivateLineRenderer();
+                            CommunicationEvents.AddLineEvent.Invoke(point1, point2);
+                            break;
+                        }
+                        //If no Point was hit
+                        else
+                        {
+                            //TODO: Hint that only a line can be drawn between already existing points
+                            this.DeactivateLineRenderer();
+                        }
+                    }
+                    //Wenn der erste Punkt noch nicht markiert wurde
+                    else
+                    {
+                        //Check if a Point was hit
+                        if (Physics.Raycast(ray, out Hit, 30f, layerMask))
+                        {
+                            //Set LineRenderer activated
+                            this.lineRendererActivated = true;
+                            //Add the position of the hit Point for the start of the Line
+                            Vector3 temp = Hit.transform.gameObject.transform.position;
+                            //temp += Vector3.up;
+
+                            linePositions.Add(temp);
+                            //The second point is the same point at the moment
+                            linePositions.Add(temp);
+                            this.lineRenderer.SetPosition(0, linePositions[0]);
+                            this.lineRenderer.SetPosition(1, linePositions[1]);
+                        }
+                        else
+                        {
+                            //TODO: Hint that only a line can be drawn between already existing points
+                        }
+                    }
+
+                    break;
+            }
+        }
+    }
+
+    //Updates the second-point of the Line when First Point was selected in LineMode
+    void UpdateLineRenderer(Vector3 currentPosition)
+    {
+        if (this.ActiveToolMode == ToolMode.CreateLineMode)
+        {
+            if (this.lineRendererActivated)
+            {
+                this.linePositions[1] = currentPosition;
+                this.lineRenderer.SetPosition(1, this.linePositions[1]);
+            }
+        }
     }
 
     void CheckToolModeSelection() {
