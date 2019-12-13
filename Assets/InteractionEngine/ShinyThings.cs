@@ -9,6 +9,9 @@ public class ShinyThings : MonoBehaviour
     //Attributes for Highlighting of Facts when Mouse-Over
     private string selectableTag = "Selectable";
     private Transform lastFactSelection;
+    public Material defaultMaterial;
+    public Material highlightMaterial;
+
 
     //Attributes for simulating the drawing of a line
     public LineRenderer lineRenderer;
@@ -20,6 +23,8 @@ public class ShinyThings : MonoBehaviour
     void Start()
     {
         if(Cursor == null)Cursor = GetComponent<WorldCursor>();
+       // CommunicationEvents.HighlightEvent.AddListener(OnMouseOverFact);
+       // CommunicationEvents.EndHighlightEvent.AddListener(OnMouseOverFactEnd);
     }
 
     // Update is called once per frame
@@ -28,28 +33,36 @@ public class ShinyThings : MonoBehaviour
         //SELECTION-HIGHLIGHTING-PART
         //Check if a Fact was Hit
 
-        RaycastHit Hit = Cursor.Hit;  
+        RaycastHit Hit = Cursor.Hit;
 
-        Transform selection = Hit.transform;
-
-        //Set the last Fact unselected
-        if (this.lastFactSelection != null)
+        if (Hit.transform != null)
         {
-            //Invoke the EndHighlightEvent that will be handled in FactSpawner
-            CommunicationEvents.EndHighlightEvent.Invoke(this.lastFactSelection);
-            this.lastFactSelection = null;
+            Transform selection = Hit.transform;
+
+            //Set the last Fact unselected
+            if (this.lastFactSelection != null)
+            {
+                //Invoke the EndHighlightEvent that will be handled in FactSpawner
+                // CommunicationEvents.EndHighlightEvent.Invoke(this.lastFactSelection);
+                OnMouseOverFactEnd(lastFactSelection);
+                this.lastFactSelection = null;
+            }
+
+            //Set the Fact that was Hit as selected
+            if (selection.CompareTag(selectableTag))
+            {
+                //Invoke the HighlightEvent that will be handled in FactSpawner
+                this.lastFactSelection = selection;
+                //CommunicationEvents.HighlightEvent.Invoke(selection);
+                OnMouseOverFact(lastFactSelection);
+            }
+            //SELECTION-HIGHLIGHTING-PART-END
         }
 
-        //Set the Fact that was Hit as selected
-        if (selection.CompareTag(selectableTag))
-        {
-            //Invoke the HighlightEvent that will be handled in FactSpawner
-            this.lastFactSelection = selection;
-            CommunicationEvents.HighlightEvent.Invoke(selection);
-        }
-        //SELECTION-HIGHLIGHTING-PART-END
+
     }
 
+    
     public void OnMouseOverFactEnd(Transform selection)
     {
         Renderer selectionRenderer;
@@ -90,7 +103,7 @@ public class ShinyThings : MonoBehaviour
     //Updates the second-point of the Line when First Point was selected in LineMode
     void UpdateLineRenderer(Vector3 currentPosition)
     {
-        if (this.ActiveToolMode == ToolMode.CreateLineMode)
+       // if (this.ActiveToolMode == ToolMode.CreateLineMode)
         {
             if (this.lineRendererActivated)
             {

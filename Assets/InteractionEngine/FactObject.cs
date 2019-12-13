@@ -4,16 +4,8 @@ using UnityEngine;
 
 public class FactObject : MonoBehaviour
 {
+    //object that can represent arbitrary facts
+    //used to access entry in global Fact Collection 
     public int Id;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+  
 }

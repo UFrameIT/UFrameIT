@@ -1,18 +1,76 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using static CommunicationEvents;
 public class FactManager : MonoBehaviour
 {
+
+
+
+    public GameObject SmartMenu;
+    private Stack<int> NextEmptyStack = new Stack<int>();
+
     // Start is called before the first frame update
     void Start()
     {
         CommunicationEvents.ToolModeChangedEvent.AddListener(OnToolModeChanged);
+        CommunicationEvents.TriggerEvent.AddListener(OnHit);
+
+        CommunicationEvents.RemoveFactEvent.AddListener(DeleteFact);//we also need the listener here at the moment so we can react to UI delete events
+
+        NextEmptyStack.Push(0);
+  
     }
+
+
+    void AddLineFact(int pid1, int pid2, int id)
+    {
+       Facts.Insert(id, new LineFact
+        {
+            Id = id,
+            Pid1 = pid1,
+            Pid2 = pid2
+        });
+    }
+
+    void AddAngleFact(int pid1, int pid2, int pid3, int id)
+    {
+        Facts.Insert(id, new AngleFact
+        {
+            Id = id,
+            Pid1 = pid1,
+            Pid2 = pid2,
+            Pid3 = pid3
+        });
+    }
+
+
+    PointFact AddPointFact(RaycastHit hit, int id)
+    {
+       
+        Facts.Insert(id, new PointFact
+        {
+            Id = id,
+            Point = hit.point
+        });
+
+        return Facts[id] as PointFact;
+    }
+
+    void DeleteFact(Fact fact)
+    {
+       
+        NextEmptyStack.Push(fact.Id);
+        Facts.RemoveAt(fact.Id);
+    }
+
 
     // Update is called once per frame
     void Update()
     {
+
+
         //Je nachdem ob erster oder der zweite Punkt angeklickt wurde behandeln
 
         //Wenn erster Punkt einen Point-Collider erwischt hat:
@@ -27,12 +85,12 @@ public class FactManager : MonoBehaviour
 
         //LayerMask for Points
         int layerMask = 1 << LayerMask.NameToLayer("Point"); //only hit Point
-
+        /*
         //Wenn bereits der erste Punkt markiert wurde
         if (this.lineRendererActivated) //instead: bool variable....
         {
             //If a second Point was Hit
-            if (Physics.Raycast(ray, out Hit, 30f, layerMask))
+            if (Physics.Raycast(ray, out Hit, 30f, layerMask)) //instead: another hitevent, refer to OnHit
             {
                 //Event for Creating the Line
                 Vector3 point1 = this.linePositions[0];
@@ -72,7 +130,7 @@ public class FactManager : MonoBehaviour
             }
         }
 
-
+        */
 
     }
 
@@ -80,12 +138,20 @@ public class FactManager : MonoBehaviour
     public int GetFirstEmptyID()
     {
 
-        for (int i = 0; i < Facts.Length; ++i)
-        {
-            if (Facts[i] == "")
-                return i;
-        }
-        return Facts.Length - 1;
+        /* for (int i = 0; i < Facts.Length; ++i)
+         {
+             if (Facts[i] == "")
+                 return i;
+         }
+         return Facts.Length - 1;*/
+
+        int id = NextEmptyStack.Pop();
+        if (NextEmptyStack.Count == 0)
+            NextEmptyStack.Push(id + 1);
+
+     
+        return id;
+
 
     }
 
@@ -96,51 +162,55 @@ public class FactManager : MonoBehaviour
             case ToolMode.MarkPointMode:
                 //If MarkPointMode is activated we want to have the ability to mark the point
                 //everywhere, independent of already existing facts
-                foreach (GameObject GameObjectFact in GameObjectFacts)
+                foreach (Fact fact in Facts)
                 {
-                    GameObjectFact.GetComponentInChildren<Collider>().enabled = false;
+                   GameObject gO = fact.Representation;
+                   gO.GetComponentInChildren<Collider>().enabled = false;
                 }
                 break;
             case ToolMode.CreateLineMode:
                 //If CreateLineMode is activated we want to have the ability to select points for the Line
                 //but we don't want to have the ability to select Lines or Angles
-                foreach (GameObject GameObjectFact in GameObjectFacts)
+                foreach (Fact fact in Facts)
                 {
-                    if (GameObjectFact.layer == LayerMask.NameToLayer("Line") || GameObjectFact.layer == LayerMask.NameToLayer("Angle"))
+                    GameObject gO = fact.Representation;
+                    if (gO.layer == LayerMask.NameToLayer("Line") || gO.layer == LayerMask.NameToLayer("Angle"))
                     {
-                        GameObjectFact.GetComponentInChildren<Collider>().enabled = false;
+                        gO.GetComponentInChildren<Collider>().enabled = false;
                     }
-                    else if (GameObjectFact.layer == LayerMask.NameToLayer("Point"))
+                    else if (gO.layer == LayerMask.NameToLayer("Point"))
                     {
-                        GameObjectFact.GetComponentInChildren<Collider>().enabled = true;
+                        gO.GetComponentInChildren<Collider>().enabled = true;
                     }
                 }
                 break;
             case ToolMode.CreateAngleMode:
                 //If CreateAngleMode is activated we want to have the ability to select Lines for the Angle
                 //but we don't want to have the ability to select Points or Angles
-                foreach (GameObject GameObjectFact in GameObjectFacts)
+                foreach (Fact fact in Facts)
                 {
-                    if (GameObjectFact.layer == LayerMask.NameToLayer("Point") || GameObjectFact.layer == LayerMask.NameToLayer("Angle"))
+                    GameObject gO = fact.Representation;
+                    if (gO.layer == LayerMask.NameToLayer("Point") || gO.layer == LayerMask.NameToLayer("Angle"))
                     {
-                        GameObjectFact.GetComponentInChildren<Collider>().enabled = false;
+                        gO.GetComponentInChildren<Collider>().enabled = false;
                     }
-                    else if (GameObjectFact.layer == LayerMask.NameToLayer("Line"))
+                    else if (gO.layer == LayerMask.NameToLayer("Line"))
                     {
-                        GameObjectFact.GetComponentInChildren<Collider>().enabled = true;
+                        gO.GetComponentInChildren<Collider>().enabled = true;
                     }
                 }
                 break;
             case ToolMode.DeleteMode:
                 //If DeleteMode is activated we want to have the ability to delete every Fact
                 //independent of the concrete type of fact
-                foreach (GameObject GameObjectFact in GameObjectFacts)
+                foreach (Fact fact in Facts)
                 {
-                    GameObjectFact.GetComponentInChildren<Collider>().enabled = true;
+                    GameObject gO = fact.Representation;
+                    gO.GetComponentInChildren<Collider>().enabled = true;
                 }
                 break;
             case ToolMode.ExtraMode:
-                foreach (GameObject GameObjectFact in GameObjectFacts)
+                foreach (Fact fact in Facts)
                 {
 
                 }
@@ -168,14 +238,14 @@ public class FactManager : MonoBehaviour
             {
                 char letter = hit.transform.gameObject.GetComponentInChildren<TextMeshPro>().text.ToCharArray()[0];
                 int id = letter - 65;
-                CommunicationEvents.RemoveEvent.Invoke(id);
+                CommunicationEvents.RemoveFactEvent.Invoke(Facts[id]);
             }
 
         }
         else
         {
-
-            CommunicationEvents.AddPointEvent.Invoke(hit, GetFirstEmptyID());
+            PointFact fact = AddPointFact(hit, GetFirstEmptyID());
+            CommunicationEvents.AddFactEvent.Invoke(fact);
         }
     }
 

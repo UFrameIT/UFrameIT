@@ -27,12 +27,12 @@ public class MMTInterface : MonoBehaviour
         mmtServerProcess = Process.Start(mmtServerProcessInfo);
         */
 
-        CommunicationEvents.AddPointEvent.AddListener(AddFactToMMT);
-        CommunicationEvents.RemoveEvent.AddListener(RemoveFactFromMMT);   
+     //   CommunicationEvents.AddPointEvent.AddListener(AddFactToMMT);
+      //  CommunicationEvents.RemoveEvent.AddListener(RemoveFactFromMMT);   
         
 
     }
-
+    /*
     void AddFactToMMT(RaycastHit hit, int id )
     {
         //send new fact to MMT
@@ -43,6 +43,6 @@ public class MMTInterface : MonoBehaviour
     {
         UnityEngine.Debug.Log("remove fact"+ id);
     }
-
+    */
  
 }

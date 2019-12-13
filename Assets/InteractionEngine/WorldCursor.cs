@@ -61,10 +61,12 @@ public class WorldCursor : MonoBehaviour
     //Check if left Mouse-Button was pressed and handle it
     void CheckMouseButtons(Ray ray)
     {
+       
         if (Input.GetMouseButtonDown(0))
         {
-          
-           CommunicationEvents.TriggerEvent.Invoke(Hit);
+            if (EventSystem.current.IsPointerOverGameObject()) return; //this prevents rays from shooting through ui
+       
+            CommunicationEvents.TriggerEvent.Invoke(Hit);
               
         }
     }

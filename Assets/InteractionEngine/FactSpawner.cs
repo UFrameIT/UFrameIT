@@ -9,40 +9,48 @@ public class FactSpawner : MonoBehaviour
 {
     private GameObject FactRepresentation;
 
-
-    //Variables for highlighting Facts where the cursor moves over
-    public Material defaultMaterial;
-    public Material highlightMaterial;
-
-    public GameObject SmartMenu;
-
     void Start()
     {
-        CommunicationEvents.HighlightEvent.AddListener(OnMouseOverFact);
-        CommunicationEvents.EndHighlightEvent.AddListener(OnMouseOverFactEnd);
-        CommunicationEvents.TriggerEvent.AddListener(OnHit);
- 
-        CommunicationEvents.AddPointEvent.AddListener(SpawnPoint);
-        CommunicationEvents.AddLineEvent.AddListener(SpawnLine);
-        CommunicationEvents.RemoveEvent.AddListener(DeletePoint);
+       
+        AddFactEvent.AddListener(FactAction);
+        RemoveFactEvent.AddListener(DeleteObject);
 
         //Default FactRepresenation = Sphere-Prefab for Points
         this.FactRepresentation = (GameObject) Resources.Load("Prefabs/Sphere", typeof(GameObject));
 
     }
 
+    public void FactAction(Fact fact)
+    {
+     
+        switch  (fact)
+        {
+            case PointFact pointFact:
+                SpawnPoint(pointFact);
+                break;
+            case LineFact lineFact:
+                SpawnLine(lineFact);
+                break;
+
+        }
+    }
   
 
-    public void SpawnPoint(RaycastHit hit, int id)
+    public void SpawnPoint(PointFact fact)
     {
+       
+
+        PointFact pointFact = fact;
         this.FactRepresentation = (GameObject)Resources.Load("Prefabs/Sphere", typeof(GameObject));
-        Debug.Log(id);
+     
         GameObject point = GameObject.Instantiate(FactRepresentation);
-        point.transform.position = hit.point;
-        point.transform.up = hit.normal;
-        string letter = ((Char)(64+id+1)).ToString();
+        point.transform.position = pointFact.Point;
+        point.transform.up = pointFact.Normal;
+        string letter = ((Char)(64+fact.Id+1)).ToString();
         point.GetComponentInChildren<TextMeshPro>().text = letter;
-        point.GetComponent<FactObject>().Id = id;
+        point.GetComponent<FactObject>().Id = fact.Id;
+        pointFact.Representation = point;
+
         //If a new Point was spawned -> We are in MarkPointMode -> Then we want the collider to be disabled
         //Hint: Thats why by now, if we mark a Point in an other mode than MarkPointMode, the 
         //Collider will be set disabled
@@ -52,16 +60,19 @@ public class FactSpawner : MonoBehaviour
 
     }
 
-    public void DeletePoint(int id)
+    public void DeleteObject(Fact fact)
     {
-        GameObject point = Facts[id].Representation;
+        Debug.Log("delete obj");
+        GameObject point = fact.Representation;
         GameObject.Destroy(point);
    
     }
 
-    public void SpawnLine(int pid1, int pid2, int id) {
+    public void SpawnLine(LineFact lineFact) {
 
-        Vector3 point1 = (Facts[pid1] as PointFact).Point;
+
+        Vector3 point1 = (Facts[lineFact.Pid1] as PointFact).Point;
+        Vector3 point2 = (Facts[lineFact.Pid2] as PointFact).Point;
         //Change FactRepresentation to Line
         this.FactRepresentation = (GameObject)Resources.Load("Prefabs/Line2", typeof(GameObject));
         GameObject line = GameObject.Instantiate(FactRepresentation);
@@ -76,14 +87,14 @@ public class FactSpawner : MonoBehaviour
         line.transform.localScale = v3T;
         line.transform.rotation = Quaternion.FromToRotation(Vector3.up, point2 - point1);
 
-        string letter = ((Char)(64 + id + 1)).ToString();
+        string letter = ((Char)(64 + lineFact.Id + 1)).ToString();
         line.GetComponentInChildren<TextMeshPro>().text = letter;
-        line.GetComponent<FactObject>().Id = id;
+        line.GetComponent<FactObject>().Id = lineFact.Id;
         //If a new Line was spawned -> We are in CreateLineMode -> Then we want the collider to be disabled
         if (CommunicationEvents.ActiveToolMode != ToolMode.ExtraMode)
             line.GetComponentInChildren<BoxCollider>().enabled = false;
-        Facts[id] = letter;
-        GameObjectFacts[id] = line;
+        lineFact.Representation = line;
+     
     }
 
 

@@ -1133,10 +1133,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c41d44ed1851e14089a3b6e37cba740, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultMaterial: {fileID: 2100000, guid: 8ae9adf4dc782964387385c1e8c0eb72, type: 2}
-  highlightMaterial: {fileID: 2100000, guid: c7daa82e15f0cf04d92d0f41ce84f9df, type: 2}
-  SmartMenu: {fileID: 5601740127768851631, guid: e693bf633c633d243b0254d117ec3893,
-    type: 3}
 --- !u!120 &1661088668
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -1244,6 +1240,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ed2627334ef0e44ebe98f8b9ce4bc25, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Cursor: {fileID: 1661088666}
+  defaultMaterial: {fileID: 2100000, guid: 8ae9adf4dc782964387385c1e8c0eb72, type: 2}
+  highlightMaterial: {fileID: 2100000, guid: c7daa82e15f0cf04d92d0f41ce84f9df, type: 2}
+  lineRenderer: {fileID: 1661088668}
 --- !u!114 &1661088670
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1256,6 +1256,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c75823b1712c4914b987f0e1ba8a5cba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SmartMenu: {fileID: 5601740127768851631, guid: e693bf633c633d243b0254d117ec3893,
+    type: 3}
 --- !u!1 &1675643434
 GameObject:
   m_ObjectHideFlags: 0
