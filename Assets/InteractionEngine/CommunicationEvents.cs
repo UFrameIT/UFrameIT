@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using System;
 
 public static class CommunicationEvents
 {
@@ -10,7 +11,7 @@ public static class CommunicationEvents
 
     }
 
-    public class LineEvent : UnityEvent<Vector3, Vector3> {
+    public class LineEvent : UnityEvent<int, int, int> {
 
     }
 
@@ -39,4 +40,9 @@ public static class CommunicationEvents
     public static LineEvent AddLineEvent = new LineEvent();
     public static FactEvent RemoveEvent = new FactEvent();
     public static ToolMode ActiveToolMode { get; set; }
+
+    public static List<Fact> Facts = new List<Fact>();
+  
+
+
 }
