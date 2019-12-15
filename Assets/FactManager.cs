@@ -5,11 +5,12 @@ using UnityEngine;
 using static CommunicationEvents;
 public class FactManager : MonoBehaviour
 {
-
-
-
     public GameObject SmartMenu;
     private Stack<int> NextEmptyStack = new Stack<int>();
+
+    //Variable for LineMode distinction
+    public bool lineModeFirstPointSelected = false;
+    public Fact firstPointSelected = null;
 
     // Start is called before the first frame update
     void Start()
@@ -17,14 +18,33 @@ public class FactManager : MonoBehaviour
         CommunicationEvents.ToolModeChangedEvent.AddListener(OnToolModeChanged);
         CommunicationEvents.TriggerEvent.AddListener(OnHit);
 
-        CommunicationEvents.RemoveFactEvent.AddListener(DeleteFact);//we also need the listener here at the moment so we can react to UI delete events
+        //We also need the listener here at the moment so we can react to UI delete events in ExtraMode -> Delete-Button
+        CommunicationEvents.RemoveFactEvent.AddListener(DeleteFact);
 
         NextEmptyStack.Push(0);
   
     }
 
+    // Update is called once per frame
+    void Update()
+    {
 
-    void AddLineFact(int pid1, int pid2, int id)
+    }
+
+    PointFact AddPointFact(RaycastHit hit, int id)
+    {
+
+        Facts.Insert(id, new PointFact
+        {
+            Id = id,
+            Point = hit.point,
+            Normal = hit.normal
+        });
+
+        return Facts[id] as PointFact;
+    }
+
+    LineFact AddLineFact(int pid1, int pid2, int id)
     {
        Facts.Insert(id, new LineFact
         {
@@ -32,9 +52,11 @@ public class FactManager : MonoBehaviour
             Pid1 = pid1,
             Pid2 = pid2
         });
+
+        return Facts[id] as LineFact;
     }
 
-    void AddAngleFact(int pid1, int pid2, int pid3, int id)
+    AngleFact AddAngleFact(int pid1, int pid2, int pid3, int id)
     {
         Facts.Insert(id, new AngleFact
         {
@@ -43,19 +65,8 @@ public class FactManager : MonoBehaviour
             Pid2 = pid2,
             Pid3 = pid3
         });
-    }
 
-
-    PointFact AddPointFact(RaycastHit hit, int id)
-    {
-       
-        Facts.Insert(id, new PointFact
-        {
-            Id = id,
-            Point = hit.point
-        });
-
-        return Facts[id] as PointFact;
+        return Facts[id] as AngleFact;
     }
 
     void DeleteFact(Fact fact)
@@ -63,77 +74,8 @@ public class FactManager : MonoBehaviour
        
         NextEmptyStack.Push(fact.Id);
         Facts.RemoveAt(fact.Id);
+        CommunicationEvents.RemoveFactEvent.Invoke(fact);
     }
-
-
-    // Update is called once per frame
-    void Update()
-    {
-
-
-        //Je nachdem ob erster oder der zweite Punkt angeklickt wurde behandeln
-
-        //Wenn erster Punkt einen Point-Collider erwischt hat:
-        //Linie aktivieren und Cursor folgen
-        //Wenn erster Punkt keinen Point-Collider erwischt hat:
-        //Nichts tun -> Evtl Hint einblenden
-
-        //Wenn zweiter Punkt einen Point-Collider erwischt hat:
-        //Event senden um GameObject-Line zu erzeugen
-        //Wenn zweiter Punkt keinen Point-Collider erwischt hat:
-        //Linie deaktivieren -> Evtl Hint einblenden
-
-        //LayerMask for Points
-        int layerMask = 1 << LayerMask.NameToLayer("Point"); //only hit Point
-        /*
-        //Wenn bereits der erste Punkt markiert wurde
-        if (this.lineRendererActivated) //instead: bool variable....
-        {
-            //If a second Point was Hit
-            if (Physics.Raycast(ray, out Hit, 30f, layerMask)) //instead: another hitevent, refer to OnHit
-            {
-                //Event for Creating the Line
-                Vector3 point1 = this.linePositions[0];
-                Vector3 point2 = Hit.transform.gameObject.transform.position;
-                this.DeactivateLineRenderer();
-                CommunicationEvents.AddLineEvent.Invoke(point1, point2);
-                break;
-            }
-            //If no Point was hit
-            else
-            {
-                //TODO: Hint that only a line can be drawn between already existing points
-                this.DeactivateLineRenderer();
-            }
-        }
-        //Wenn der erste Punkt noch nicht markiert wurde
-        else
-        {
-            //Check if a Point was hit
-            if (Physics.Raycast(ray, out Hit, 30f, layerMask))
-            {
-                //Set LineRenderer activated
-                this.lineRendererActivated = true;
-                //Add the position of the hit Point for the start of the Line
-                Vector3 temp = Hit.transform.gameObject.transform.position;
-                //temp += Vector3.up;
-
-                linePositions.Add(temp);
-                //The second point is the same point at the moment
-                linePositions.Add(temp);
-                this.lineRenderer.SetPosition(0, linePositions[0]);
-                this.lineRenderer.SetPosition(1, linePositions[1]);
-            }
-            else
-            {
-                //TODO: Hint that only a line can be drawn between already existing points
-            }
-        }
-
-        */
-
-    }
-
 
     public int GetFirstEmptyID()
     {
@@ -157,6 +99,7 @@ public class FactManager : MonoBehaviour
 
     public void OnToolModeChanged(ToolMode ActiveToolMode)
     {
+
         switch (ActiveToolMode)
         {
             case ToolMode.MarkPointMode:
@@ -210,45 +153,89 @@ public class FactManager : MonoBehaviour
                 }
                 break;
             case ToolMode.ExtraMode:
-                foreach (Fact fact in Facts)
+                /*foreach (Fact fact in Facts)
                 {
 
                 }
+                */
                 break;
-
-
-
         }
     }
 
     public void OnHit(RaycastHit hit)
     {
-        Debug.Log(CommunicationEvents.ActiveToolMode);
-        if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
-        {
-            //hit existing point, so delete it
-            if (CommunicationEvents.ActiveToolMode == ToolMode.ExtraMode)
-            {
-                var menu = GameObject.Instantiate(SmartMenu);
-                menu.GetComponent<Canvas>().worldCamera = Camera.main;
-                menu.transform.SetParent(hit.transform);
-                menu.transform.localPosition = Vector3.up - Camera.main.transform.forward;
-            }
-            else
-            {
-                char letter = hit.transform.gameObject.GetComponentInChildren<TextMeshPro>().text.ToCharArray()[0];
-                int id = letter - 65;
-                CommunicationEvents.RemoveFactEvent.Invoke(Facts[id]);
-            }
 
-        }
-        else
+        switch (ActiveToolMode)
         {
-            PointFact fact = AddPointFact(hit, GetFirstEmptyID());
-            CommunicationEvents.AddFactEvent.Invoke(fact);
+            //If Left-Mouse-Button was pressed in MarkPointMode
+            case ToolMode.MarkPointMode:
+                CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(hit, this.GetFirstEmptyID()));
+                break;
+            //If Left-Mouse-Button was pressed in CreateLineMode
+            case ToolMode.CreateLineMode:
+                //Check if an existing Point was hit
+                if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
+                {
+                    Fact tempFact = Facts[hit.transform.GetComponent<FactObject>().Id];
+
+                    if (this.lineModeFirstPointSelected)
+                    {
+                        //Event for end of line-rendering in "ShinyThings"
+                        CommunicationEvents.StopLineRendererEvent.Invoke(null);
+                        //Create LineFact
+                        CommunicationEvents.AddFactEvent.Invoke(this.AddLineFact(this.firstPointSelected.Id, tempFact.Id, this.GetFirstEmptyID()));
+                        this.lineModeFirstPointSelected = false;
+                        this.firstPointSelected = null;
+                    }
+                    else {
+                        //Activate LineRenderer for preview
+                        this.lineModeFirstPointSelected = true;
+                        this.firstPointSelected = tempFact;
+                        //Event for start line-rendering in "ShinyThings"
+                        CommunicationEvents.StartLineRendererEvent.Invoke(this.firstPointSelected);
+                    }
+                }
+                //If no Point was hit
+                else {
+                    if (this.lineModeFirstPointSelected)
+                    {
+                        //Deactivate LineRendering and first point selection
+                        this.lineModeFirstPointSelected = false;
+                        this.firstPointSelected = null;
+                        //Event for end of line-rendering in "ShinyThings"
+                        CommunicationEvents.StopLineRendererEvent.Invoke(null);
+                    }
+
+                    //TODO: Hint that only a line can be drawn between already existing points
+                }
+                break;
+            //If Left-Mouse-Button was pressed in CreateAngleMode
+            case ToolMode.CreateAngleMode:
+                break;
+            //If Left-Mouse-Button was pressed in DeleteMode
+            case ToolMode.DeleteMode:
+                //Search for the Fact that was hit
+                //If the hit GameObject was a Point/Line/Angle
+                if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point") || hit.transform.gameObject.layer == LayerMask.NameToLayer("Line") || hit.transform.gameObject.layer == LayerMask.NameToLayer("Angle")){
+                    //Search for the suitable fact from the List
+                    this.DeleteFact(Facts[hit.transform.GetComponent<FactObject>().Id]);
+                }
+                break;
+            //If Left-Mouse-Button was pressed in ExtraMode
+            case ToolMode.ExtraMode:
+                if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point")) {
+                    var menu = GameObject.Instantiate(SmartMenu);
+                    menu.GetComponent<Canvas>().worldCamera = Camera.main;
+                    menu.transform.SetParent(hit.transform);
+                    menu.transform.localPosition = Vector3.up - Camera.main.transform.forward;
+                }
+                else
+                {
+                    PointFact fact = AddPointFact(hit, GetFirstEmptyID());
+                    CommunicationEvents.AddFactEvent.Invoke(fact);
+                }
+                break;
+
         }
     }
-
-
-
 }

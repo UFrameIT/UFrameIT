@@ -29,9 +29,6 @@ public static class CommunicationEvents
     {
 
     }
-  
-
-
 
     public class MouseOverFactEvent : UnityEvent<Transform>
     {
@@ -40,6 +37,13 @@ public static class CommunicationEvents
     public class ToolModeEvent : UnityEvent<ToolMode> {
 
     }
+
+    public class ShinyEvent : UnityEvent<Fact> {
+
+    }
+
+
+
 
     public static HitEvent TriggerEvent = new HitEvent();
 
@@ -52,11 +56,21 @@ public static class CommunicationEvents
     public static FactEvent AddFactEvent = new FactEvent();
     public static FactEvent RemoveFactEvent = new FactEvent();
 
+    //public static MouseOverFactEvent HighlightEvent = new MouseOverFactEvent();
+    //public static MouseOverFactEvent EndHighlightEvent = new MouseOverFactEvent();
+
+    public static ShinyEvent StartLineRendererEvent = new ShinyEvent();
+    public static ShinyEvent StopLineRendererEvent = new ShinyEvent();
+
+
+
+
+    //------------------------------------------------------------------------------------
+    //-------------------------------Global Variables-------------------------------------
+    //Global ActiveToolMode
     public static ToolMode ActiveToolMode { get; set; }
 
+    //Global List of Facts
     public static List<Fact> Facts = new List<Fact>();
-
-    // public static MouseOverFactEvent HighlightEvent = new MouseOverFactEvent();
-    //public static MouseOverFactEvent EndHighlightEvent = new MouseOverFactEvent();
 
 }

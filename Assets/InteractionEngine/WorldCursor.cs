@@ -4,25 +4,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using static CommunicationEvents;
 
 public class WorldCursor : MonoBehaviour
 {
     public RaycastHit Hit;
     private Camera Cam;
-    private ToolMode ActiveToolMode{get; set;}
-
-
 
     void Start()
     {
 
         Cam = Camera.main;
         //Set MarkPointMode as the default ActiveToolMode
-        this.ActiveToolMode = ToolMode.ExtraMode;//ToolMode.MarkPointMode;
-        CommunicationEvents.ToolModeChangedEvent.Invoke(this.ActiveToolMode);
-        //TODO: we probably can configure these things to automatically trigger when the variable is changed...
-        CommunicationEvents.ActiveToolMode = this.ActiveToolMode;
-        //redundant for now, but we probably want to have the activetool mode available globally
+        ActiveToolMode = ToolMode.ExtraMode;//ToolMode.MarkPointMode;
+        CommunicationEvents.ToolModeChangedEvent.Invoke(ActiveToolMode);
     }
 
     // Update is called once per frame
@@ -55,9 +50,6 @@ public class WorldCursor : MonoBehaviour
         
     }
 
-    //Deactivate LineRenderer so that no Line gets drawn when Cursor changes
-
-
     //Check if left Mouse-Button was pressed and handle it
     void CheckMouseButtons(Ray ray)
     {
@@ -71,20 +63,19 @@ public class WorldCursor : MonoBehaviour
         }
     }
 
-
+    //Checks if the ToolMode was switched by User, and handle it
     void CheckToolModeSelection() {
         if (Input.GetButtonDown("ToolMode")) {
             //Change the ActiveToolMode dependent on which Mode was selected
-            if ((int)this.ActiveToolMode == Enum.GetNames(typeof(ToolMode)).Length - 1)
+            if ((int)ActiveToolMode == Enum.GetNames(typeof(ToolMode)).Length - 1)
             {
-                this.ActiveToolMode = 0;
+                ActiveToolMode = 0;
             }
             else {
-                this.ActiveToolMode++;
+                ActiveToolMode++;
             }
-            CommunicationEvents.ActiveToolMode = this.ActiveToolMode;
             //Invoke the Handler for the Facts
-            CommunicationEvents.ToolModeChangedEvent.Invoke(this.ActiveToolMode);
+            CommunicationEvents.ToolModeChangedEvent.Invoke(ActiveToolMode);
         }
     }
 

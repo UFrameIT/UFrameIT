@@ -38,18 +38,16 @@ public class FactSpawner : MonoBehaviour
 
     public void SpawnPoint(PointFact fact)
     {
-       
 
-        PointFact pointFact = fact;
         this.FactRepresentation = (GameObject)Resources.Load("Prefabs/Sphere", typeof(GameObject));
      
         GameObject point = GameObject.Instantiate(FactRepresentation);
-        point.transform.position = pointFact.Point;
-        point.transform.up = pointFact.Normal;
+        point.transform.position = fact.Point;
+        point.transform.up = fact.Normal;
         string letter = ((Char)(64+fact.Id+1)).ToString();
         point.GetComponentInChildren<TextMeshPro>().text = letter;
         point.GetComponent<FactObject>().Id = fact.Id;
-        pointFact.Representation = point;
+        fact.Representation = point;
 
         //If a new Point was spawned -> We are in MarkPointMode -> Then we want the collider to be disabled
         //Hint: Thats why by now, if we mark a Point in an other mode than MarkPointMode, the 
@@ -63,13 +61,12 @@ public class FactSpawner : MonoBehaviour
     public void DeleteObject(Fact fact)
     {
         Debug.Log("delete obj");
-        GameObject point = fact.Representation;
-        GameObject.Destroy(point);
+        GameObject factRepresentation = fact.Representation;
+        GameObject.Destroy(factRepresentation);
    
     }
 
     public void SpawnLine(LineFact lineFact) {
-
 
         Vector3 point1 = (Facts[lineFact.Pid1] as PointFact).Point;
         Vector3 point2 = (Facts[lineFact.Pid2] as PointFact).Point;

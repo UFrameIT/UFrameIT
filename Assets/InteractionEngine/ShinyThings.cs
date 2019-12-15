@@ -17,18 +17,17 @@ public class ShinyThings : MonoBehaviour
     public LineRenderer lineRenderer;
     private List<Vector3> linePositions = new List<Vector3>();
     private bool lineRendererActivated;
-    //Visual helpers
 
     // Start is called before the first frame update
-    void Start()
+    public void Start()
     {
         if(Cursor == null)Cursor = GetComponent<WorldCursor>();
-       // CommunicationEvents.HighlightEvent.AddListener(OnMouseOverFact);
-       // CommunicationEvents.EndHighlightEvent.AddListener(OnMouseOverFactEnd);
+       CommunicationEvents.StartLineRendererEvent.AddListener(ActivateLineRenderer);
+       CommunicationEvents.StopLineRendererEvent.AddListener(DeactivateLineRenderer);
     }
 
     // Update is called once per frame
-    void Update()
+    public void Update()
     {
         //SELECTION-HIGHLIGHTING-PART
         //Check if a Fact was Hit
@@ -57,12 +56,27 @@ public class ShinyThings : MonoBehaviour
                 OnMouseOverFact(lastFactSelection);
             }
             //SELECTION-HIGHLIGHTING-PART-END
+
+            //LineRendering-Part
+            if (this.lineRendererActivated)
+                UpdateLineRenderer(Hit.point);
         }
 
 
     }
 
-    
+    public void OnMouseOverFact(Transform selection)
+    {
+        Renderer selectionRenderer;
+
+        selectionRenderer = selection.GetComponent<Renderer>();
+        if (selectionRenderer != null)
+        {
+            //Set the Material of the Fact, where the mouse is over, to a special one
+            selectionRenderer.material = highlightMaterial;
+        }
+    }
+
     public void OnMouseOverFactEnd(Transform selection)
     {
         Renderer selectionRenderer;
@@ -78,20 +92,28 @@ public class ShinyThings : MonoBehaviour
         }
     }
 
-    public void OnMouseOverFact(Transform selection)
-    {
-        Renderer selectionRenderer;
+    public void ActivateLineRenderer(Fact startFact) {
+        //Set LineRenderer activated
+        this.lineRendererActivated = true;
+        //Add the position of the Fact for the start of the Line
+        linePositions.Add(startFact.Representation.transform.position);
+        //The second point is the same point at the moment
+        linePositions.Add(startFact.Representation.transform.position);
 
-        selectionRenderer = selection.GetComponent<Renderer>();
-        if (selectionRenderer != null)
-        {
-            //Set the Material of the Fact, where the mouse is over, to a special one
-            selectionRenderer.material = highlightMaterial;
-        }
+        this.lineRenderer.SetPosition(0, linePositions[0]);
+        this.lineRenderer.SetPosition(1, linePositions[1]);
+
     }
 
+    //Updates the second-point of the Line when First Point was selected in LineMode
+    public void UpdateLineRenderer(Vector3 currentPosition)
+    {
+        this.linePositions[1] = currentPosition;
+        this.lineRenderer.SetPosition(1, this.linePositions[1]);
+    }
 
-    void DeactivateLineRenderer()
+    //Deactivate LineRenderer so that no Line gets drawn when Cursor changes
+    public void DeactivateLineRenderer(Fact startFact)
     {
         //Reset the first points
         this.lineRenderer.SetPosition(0, Vector3.zero);
@@ -100,17 +122,4 @@ public class ShinyThings : MonoBehaviour
             this.linePositions.Clear();
         this.lineRendererActivated = false;
     }
-    //Updates the second-point of the Line when First Point was selected in LineMode
-    void UpdateLineRenderer(Vector3 currentPosition)
-    {
-       // if (this.ActiveToolMode == ToolMode.CreateLineMode)
-        {
-            if (this.lineRendererActivated)
-            {
-                this.linePositions[1] = currentPosition;
-                this.lineRenderer.SetPosition(1, this.linePositions[1]);
-            }
-        }
-    }
-
 }
