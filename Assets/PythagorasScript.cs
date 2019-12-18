@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class PythagorasScript : MonoBehaviour
 {
-    private Dictionary<string, ItemObject> items = new Dictionary<string, ItemObject>();
+    private Dictionary<string, Fact> items = new Dictionary<string, Fact>();
 
-    public void putItem(string name, ItemObject obj) {
+    public void putFact(string name, Fact obj) {
         if (this.items.ContainsKey(name)) {
             this.items.Remove(name);
         }
@@ -14,7 +14,7 @@ public class PythagorasScript : MonoBehaviour
     }
 
     public void doMagic() {
-        Dictionary<string, ItemObject>.Enumerator enumerator = this.items.GetEnumerator();
+        Dictionary<string, Fact>.Enumerator enumerator = this.items.GetEnumerator();
         while (enumerator.MoveNext()){
             Debug.Log(enumerator.Current.Key + " is mapped to " + enumerator.Current.Value);
         }

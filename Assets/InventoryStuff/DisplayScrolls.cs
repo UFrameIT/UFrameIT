@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class DisplayScrolls : MonoBehaviour
 {
-    public Inventory inventory;
+    //public Inventory inventory;
 
 
     public int x_Start;
@@ -22,12 +22,12 @@ public class DisplayScrolls : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       UpdateDisplay();
+      // UpdateDisplay();
     }
 
     public void UpdateDisplay()
     {
-         for( int i = 0; i< inventory.Scrolls.Count; i++){
+       /*  for( int i = 0; i< inventory.Scrolls.Count; i++){
             if(! inventory.Scrolls[i].isDisplayed){
                 var item = inventory.Scrolls[i].item;
                 var obj = Instantiate(item.IconPrefab, Vector3.zero, Quaternion.identity, transform);
@@ -36,6 +36,7 @@ public class DisplayScrolls : MonoBehaviour
             }
             
         }
+        */
     }
 
     public Vector3 GetPosition(int i)

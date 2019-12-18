@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
 
 public class DisplayFacts : MonoBehaviour
 {
-    public Inventory inventory;
+    public HashSet<int> displayedFacts = new HashSet<int>();
 
     public GameObject prefab_Point;
     public GameObject prefab_Distance;
@@ -27,33 +28,67 @@ public class DisplayFacts : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-       UpdateDisplay();
+        UpdateDisplay2();
     }
 
-    public void UpdateDisplay()
-    {          
-         for( int i = 0; i< inventory.Facts.Count; i++){
-            if(! inventory.Facts[i].isDisplayed){
-                var item = inventory.Facts[i].item;
-                var obj = item.CreateDisplay(transform, getPrefab( item));
-                obj.GetComponent<RectTransform>().localPosition = GetPosition(i);
-                inventory.Facts[i].isDisplayed = true;
+    public void UpdateDisplay2()
+    {
+        List<Fact>.Enumerator enumerator = CommunicationEvents.Facts.GetEnumerator();
+        while (enumerator.MoveNext())
+        {
+            int fid = enumerator.Current.Id;
+            if (displayedFacts.Contains(fid))
+            {
+                continue;
             }
-            
+            var obj = CreateDisplay(transform, enumerator.Current);
+            obj.GetComponent<RectTransform>().localPosition = GetPosition(fid);
+            displayedFacts.Add(fid);
+        }
+
+    }
+
+    private GameObject CreateDisplay(Transform transform, Fact fact)
+    {
+        switch (fact)
+        {
+            case LineFact f:
+                {
+                    var obj = Instantiate(prefab_Distance, Vector3.zero, Quaternion.identity, transform);
+                    obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + CommunicationEvents.Facts[f.Pid1].Id;
+                    obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + CommunicationEvents.Facts[f.Pid2].Id;
+                    obj.GetComponent<FactWrapper>().fact = f;
+                    return obj;
+                }
+
+            case AngleFact f:
+                {
+                    var obj = Instantiate(prefab_Angle, Vector3.zero, Quaternion.identity, transform);
+                    obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + CommunicationEvents.Facts[f.Pid1].Id;
+                    obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + CommunicationEvents.Facts[f.Pid2].Id;
+                    obj.transform.GetChild(2).gameObject.GetComponent<TextMeshProUGUI>().text = "" + CommunicationEvents.Facts[f.Pid3].Id;
+                    obj.GetComponent<FactWrapper>().fact = f;
+                    return obj;
+                }
+
+            case PointFact f:
+                {
+                    var obj = Instantiate(prefab_Point, Vector3.zero, Quaternion.identity, transform);
+                    obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + f.Id;
+                    obj.GetComponent<FactWrapper>().fact = f;
+                    return obj;
+                }
+            default:
+                {
+                    var obj = Instantiate(prefab_Default, Vector3.zero, Quaternion.identity, transform);
+                    return obj;
+                }
         }
     }
 
     public Vector3 GetPosition(int i)
     {
-        return new Vector3(x_Start+ (X_Pacece_Between_Items * (i % number_of_Column)), y_Start + (-y_Pacece_Between_Items * (i / number_of_Column)), 0f);
+        return new Vector3(x_Start + (X_Pacece_Between_Items * (i % number_of_Column)), y_Start + (-y_Pacece_Between_Items * (i / number_of_Column)), 0f);
     }
 
-    public GameObject getPrefab(ItemObject item){
-        switch( item.type){
-            case ItemObject.ItemType.LengthFact:return prefab_Distance; 
-            case ItemObject.ItemType.AngleFact: return prefab_Angle;
-            case ItemObject.ItemType.Point:     return prefab_Point;
-            default:                            return prefab_Default;
-        }
-    }
 }

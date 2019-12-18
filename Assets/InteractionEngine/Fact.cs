@@ -16,6 +16,7 @@ public class LineFact : Fact
 {
     //Id's of the 2 Point-Facts that are connected
     public int Pid1, Pid2;
+    
 }
 public class AngleFact : Fact
 {

@@ -14,7 +14,7 @@ public class DropHandling : MonoBehaviour, IDropHandler
         GameObject scrollShow = gameObject.transform.parent.gameObject;
         PythagorasScript pythagorasScript = scrollShow.GetComponent<PythagorasScript>();
         var fact = ((FactWrapper)current.GetComponent<FactWrapper>()).fact;
-        pythagorasScript.putItem(gameObject.name, fact);
+        pythagorasScript.putFact(gameObject.name, fact);
     }
 
 }

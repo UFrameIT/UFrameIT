@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class PointWrapper : MonoBehaviour
 {
-    public PointObject point;
+    public Fact point;
 }

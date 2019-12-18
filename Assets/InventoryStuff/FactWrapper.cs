@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class FactWrapper : MonoBehaviour
 {
-    public ItemObject fact;
+    public Fact fact;
 }
