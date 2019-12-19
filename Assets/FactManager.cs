@@ -71,10 +71,12 @@ public class FactManager : MonoBehaviour
 
     void DeleteFact(Fact fact)
     {
-       
-        NextEmptyStack.Push(fact.Id);
-        Facts.RemoveAt(fact.Id);
-        CommunicationEvents.RemoveFactEvent.Invoke(fact);
+        if (Facts.Contains(fact)) {
+            NextEmptyStack.Push(fact.Id);
+            //Facts.RemoveAt(fact.Id);
+            Facts.Remove(Facts.Find(x => x.Id == fact.Id));
+            CommunicationEvents.RemoveFactEvent.Invoke(fact);
+        }
     }
 
     public int GetFirstEmptyID()
@@ -218,7 +220,7 @@ public class FactManager : MonoBehaviour
                 //If the hit GameObject was a Point/Line/Angle
                 if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point") || hit.transform.gameObject.layer == LayerMask.NameToLayer("Line") || hit.transform.gameObject.layer == LayerMask.NameToLayer("Angle")){
                     //Search for the suitable fact from the List
-                    this.DeleteFact(Facts[hit.transform.GetComponent<FactObject>().Id]);
+                    this.DeleteFact(Facts.Find(x => x.Id == hit.transform.GetComponent<FactObject>().Id));
                 }
                 break;
             //If Left-Mouse-Button was pressed in ExtraMode

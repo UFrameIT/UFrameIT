@@ -22,8 +22,8 @@ public class ShinyThings : MonoBehaviour
     public void Start()
     {
         if(Cursor == null)Cursor = GetComponent<WorldCursor>();
-       CommunicationEvents.StartLineRendererEvent.AddListener(ActivateLineRenderer);
-       CommunicationEvents.StopLineRendererEvent.AddListener(DeactivateLineRenderer);
+       CommunicationEvents.StartLineRendererEvent.AddListener(ActivateLineDrawing);
+       CommunicationEvents.StopLineRendererEvent.AddListener(DeactivateLineDrawing);
     }
 
     // Update is called once per frame
@@ -59,7 +59,7 @@ public class ShinyThings : MonoBehaviour
 
             //LineRendering-Part
             if (this.lineRendererActivated)
-                UpdateLineRenderer(Hit.point);
+                UpdateLineDrawing(Hit.point);
         }
 
 
@@ -92,7 +92,7 @@ public class ShinyThings : MonoBehaviour
         }
     }
 
-    public void ActivateLineRenderer(Fact startFact) {
+    public void ActivateLineDrawing(Fact startFact) {
         //Set LineRenderer activated
         this.lineRendererActivated = true;
         //Add the position of the Fact for the start of the Line
@@ -106,14 +106,14 @@ public class ShinyThings : MonoBehaviour
     }
 
     //Updates the second-point of the Line when First Point was selected in LineMode
-    public void UpdateLineRenderer(Vector3 currentPosition)
+    public void UpdateLineDrawing(Vector3 currentPosition)
     {
         this.linePositions[1] = currentPosition;
         this.lineRenderer.SetPosition(1, this.linePositions[1]);
     }
 
     //Deactivate LineRenderer so that no Line gets drawn when Cursor changes
-    public void DeactivateLineRenderer(Fact startFact)
+    public void DeactivateLineDrawing(Fact startFact)
     {
         //Reset the first points
         this.lineRenderer.SetPosition(0, Vector3.zero);
@@ -121,5 +121,17 @@ public class ShinyThings : MonoBehaviour
         if (linePositions.Count > 0)
             this.linePositions.Clear();
         this.lineRendererActivated = false;
+    }
+
+    public void ActivateCurveDrawing(Fact startFact) {
+
+    }
+
+    public void UpdateCurveDrawing(Vector3 currentPosition) {
+
+    }
+
+    public void DeactivateCurveDrawing(Fact startFact) {
+
     }
 }

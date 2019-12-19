@@ -6,7 +6,7 @@ public class AlignText : MonoBehaviour
 {
     // Start is called before the first frame update
 
-    Camera Cam;
+    public Camera Cam;
 
     void Start()
     {
@@ -16,8 +16,9 @@ public class AlignText : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         transform.forward = Cam.transform.forward;
-
+        //Not yet the perfect solution
+        //Problem is the relative rotation of the TextMesh to the Line-Parent
+        //transform.rotation = Quaternion.Lerp(transform.parent.transform.rotation, Cam.transform.rotation, 0);
     }
 }
