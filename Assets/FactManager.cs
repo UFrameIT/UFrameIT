@@ -69,7 +69,7 @@ public class FactManager : MonoBehaviour
         return Facts[id] as AngleFact;
     }
 
-    void DeleteFact(Fact fact)
+    public void DeleteFact(Fact fact)
     {
         if (Facts.Contains(fact)) {
             NextEmptyStack.Push(fact.Id);
@@ -166,7 +166,7 @@ public class FactManager : MonoBehaviour
 
     public void OnHit(RaycastHit hit)
     {
-
+        
         switch (ActiveToolMode)
         {
             //If Left-Mouse-Button was pressed in MarkPointMode
@@ -227,6 +227,7 @@ public class FactManager : MonoBehaviour
             case ToolMode.ExtraMode:
                 if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point")) {
                     var menu = GameObject.Instantiate(SmartMenu);
+                    menu.GetComponent<SmartMenu>().FactManager = this;
                     menu.GetComponent<Canvas>().worldCamera = Camera.main;
                     menu.transform.SetParent(hit.transform);
                     menu.transform.localPosition = Vector3.up - Camera.main.transform.forward;

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public abstract class Fact
+public abstract class Fact : ScriptableObject
 {
     public int Id;
     public GameObject Representation;

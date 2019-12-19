@@ -70,6 +70,7 @@ public static class CommunicationEvents
     //Global ActiveToolMode
     public static ToolMode ActiveToolMode { get; set; }
 
+
     //Global List of Facts
     public static List<Fact> Facts = new List<Fact>();
 

@@ -95,7 +95,7 @@ public class FactSpawner : MonoBehaviour
 
     public void DeleteObject(Fact fact)
     {
-        Debug.Log("delete obj");
+        Debug.Log("delete obj of "+ fact.Id);
         GameObject factRepresentation = fact.Representation;
         GameObject.Destroy(factRepresentation);
    
