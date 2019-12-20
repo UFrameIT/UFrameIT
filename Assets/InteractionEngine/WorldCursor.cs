@@ -69,16 +69,18 @@ public class WorldCursor : MonoBehaviour
     //Checks if the ToolMode was switched by User, and handle it
     void CheckToolModeSelection() {
         if (Input.GetButtonDown("ToolMode")) {
+            ToolMode tempActiveToolMode = CommunicationEvents.ActiveToolMode;
             //Change the ActiveToolMode dependent on which Mode was selected
-            if ((int)ActiveToolMode == Enum.GetNames(typeof(ToolMode)).Length - 1)
+            if ((int)tempActiveToolMode == Enum.GetNames(typeof(ToolMode)).Length - 1)
             {
-                ActiveToolMode = 0;
+                tempActiveToolMode = 0;
             }
-            else {
-                ActiveToolMode++;
+            else
+            {
+                tempActiveToolMode++;
             }
             //Invoke the Handler for the Facts
-            CommunicationEvents.ToolModeChangedEvent.Invoke(ActiveToolMode);
+            CommunicationEvents.ToolModeChangedEvent.Invoke(tempActiveToolMode);
         }
     }
 

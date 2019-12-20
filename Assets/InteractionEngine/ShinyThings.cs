@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static CommunicationEvents;
 
 public class ShinyThings : MonoBehaviour
 {
-
     public WorldCursor Cursor;
     //Attributes for Highlighting of Facts when Mouse-Over
     private string selectableTag = "Selectable";
@@ -13,17 +13,25 @@ public class ShinyThings : MonoBehaviour
     public Material highlightMaterial;
 
 
-    //Attributes for simulating the drawing of a line
+    //Attributes for simulating the drawing of a line/curve
     public LineRenderer lineRenderer;
     private List<Vector3> linePositions = new List<Vector3>();
-    private bool lineRendererActivated;
+
+    private bool lineDrawingActivated;
+    private bool curveDrawingActivated;
+    private int curveDrawingVertexCount = 12;
+    private LineFact curveDrawingStartLine;
+    private Vector3 curveEndPoint;
+    private Vector3 angleMiddlePoint;
 
     // Start is called before the first frame update
     public void Start()
     {
-        if(Cursor == null)Cursor = GetComponent<WorldCursor>();
-       CommunicationEvents.StartLineRendererEvent.AddListener(ActivateLineDrawing);
-       CommunicationEvents.StopLineRendererEvent.AddListener(DeactivateLineDrawing);
+        if (Cursor == null) Cursor = GetComponent<WorldCursor>();
+        CommunicationEvents.StartLineDrawingEvent.AddListener(ActivateLineDrawing);
+        CommunicationEvents.StopLineDrawingEvent.AddListener(DeactivateLineDrawing);
+        CommunicationEvents.StartCurveDrawingEvent.AddListener(ActivateCurveDrawing);
+        CommunicationEvents.StopCurveDrawingEvent.AddListener(DeactivateCurveDrawing);
     }
 
     // Update is called once per frame
@@ -58,8 +66,10 @@ public class ShinyThings : MonoBehaviour
             //SELECTION-HIGHLIGHTING-PART-END
 
             //LineRendering-Part
-            if (this.lineRendererActivated)
+            if (this.lineDrawingActivated)
                 UpdateLineDrawing(Hit.point);
+            else if (this.curveDrawingActivated)
+                UpdateCurveDrawing(Hit.point);
         }
 
 
@@ -92,9 +102,12 @@ public class ShinyThings : MonoBehaviour
         }
     }
 
-    public void ActivateLineDrawing(Fact startFact) {
-        //Set LineRenderer activated
-        this.lineRendererActivated = true;
+    public void ActivateLineDrawing(Fact startFact)
+    {
+        lineRenderer.startWidth = 0.095f;
+        lineRenderer.endWidth = 0.095f;
+        //Set LineDrawing activated
+        this.lineDrawingActivated = true;
         //Add the position of the Fact for the start of the Line
         linePositions.Add(startFact.Representation.transform.position);
         //The second point is the same point at the moment
@@ -112,7 +125,7 @@ public class ShinyThings : MonoBehaviour
         this.lineRenderer.SetPosition(1, this.linePositions[1]);
     }
 
-    //Deactivate LineRenderer so that no Line gets drawn when Cursor changes
+    //Deactivate LineDrawing so that no Line gets drawn when Cursor changes
     public void DeactivateLineDrawing(Fact startFact)
     {
         //Reset the first points
@@ -120,18 +133,63 @@ public class ShinyThings : MonoBehaviour
         this.lineRenderer.SetPosition(1, Vector3.zero);
         if (linePositions.Count > 0)
             this.linePositions.Clear();
-        this.lineRendererActivated = false;
+        this.lineDrawingActivated = false;
     }
 
-    public void ActivateCurveDrawing(Fact startFact) {
+    //Expect a LineFact here, so that it's possible to change between two possible StartPoints
+    public void ActivateCurveDrawing(Fact startFact)
+    {
+        lineRenderer.startWidth = 0.05f;
+        lineRenderer.endWidth = 0.05f;
+
+        //Set CurveDrawing activated
+        this.curveDrawingActivated = true;
+
+        curveDrawingStartLine = (LineFact)startFact;
+
+        curveEndPoint = Cursor.transform.position;
+
+        //Determine which point of the line is closer to the cursor and initialize angleMiddlePoint
+        //angleMiddlePoint is needed for the Angle  Preview
+        float Distance1 = (Facts.Find(x => x.Id == curveDrawingStartLine.Pid1).Representation.transform.position - curveEndPoint).magnitude;
+        float Distance2 = (Facts.Find(x => x.Id == curveDrawingStartLine.Pid2).Representation.transform.position - curveEndPoint).magnitude;
+
+        if (Distance1 >= Distance2)
+            angleMiddlePoint = Facts.Find(x => x.Id == curveDrawingStartLine.Pid2).Representation.transform.position;
+        else
+            angleMiddlePoint = Facts.Find(x => x.Id == curveDrawingStartLine.Pid1).Representation.transform.position;
 
     }
 
-    public void UpdateCurveDrawing(Vector3 currentPosition) {
+    public void UpdateCurveDrawing(Vector3 currentPosition)
+    {
+        //Determine the Center of Start-Point and End-Point 
+        Vector3 tempCenterPoint = Vector3.Lerp(currentPosition, curveEndPoint, 0.5f);
+        Vector3 curveMiddlePoint = angleMiddlePoint + 2 * (tempCenterPoint - angleMiddlePoint);
+        
+        linePositions = new List<Vector3>();
 
+        for (float ratio = 0; ratio <= 1; ratio += 1.0f / this.curveDrawingVertexCount)
+        {
+            var tangentLineVertex1 = Vector3.Lerp(currentPosition, curveMiddlePoint, ratio);
+            var tangentLineVertex2 = Vector3.Lerp(curveMiddlePoint, curveEndPoint, ratio);
+            var bezierPoint = Vector3.Lerp(tangentLineVertex1, tangentLineVertex2, ratio);
+            linePositions.Add(bezierPoint);
+        }
+
+        lineRenderer.positionCount = linePositions.Count;
+        lineRenderer.SetPositions(linePositions.ToArray());
     }
 
-    public void DeactivateCurveDrawing(Fact startFact) {
+    public void DeactivateCurveDrawing(Fact startFact)
+    {
 
+        for (int i = 0; i < linePositions.Count; i++)
+        {
+            this.lineRenderer.SetPosition(i, Vector3.zero);
+        }
+        if (linePositions.Count > 0)
+            this.linePositions.Clear();
+        this.curveDrawingActivated = false;
     }
 }

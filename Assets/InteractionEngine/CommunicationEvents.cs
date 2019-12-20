@@ -59,8 +59,10 @@ public static class CommunicationEvents
     //public static MouseOverFactEvent HighlightEvent = new MouseOverFactEvent();
     //public static MouseOverFactEvent EndHighlightEvent = new MouseOverFactEvent();
 
-    public static ShinyEvent StartLineRendererEvent = new ShinyEvent();
-    public static ShinyEvent StopLineRendererEvent = new ShinyEvent();
+    public static ShinyEvent StartLineDrawingEvent = new ShinyEvent();
+    public static ShinyEvent StopLineDrawingEvent = new ShinyEvent();
+    public static ShinyEvent StartCurveDrawingEvent = new ShinyEvent();
+    public static ShinyEvent StopCurveDrawingEvent = new ShinyEvent();
 
 
 

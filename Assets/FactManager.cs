@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -8,9 +9,13 @@ public class FactManager : MonoBehaviour
     public GameObject SmartMenu;
     private Stack<int> NextEmptyStack = new Stack<int>();
 
-    //Variable for LineMode distinction
-    public bool lineModeFirstPointSelected = false;
-    public Fact firstPointSelected = null;
+    //Variables for LineMode distinction
+    public bool lineModeIsFirstPointSelected = false;
+    public Fact lineModeFirstPointSelected = null;
+
+    //Variables for AngleMode distinction
+    public bool angleModeIsFirstLineSelected = false;
+    public Fact angleModeFirstLineSelected = null;
 
     // Start is called before the first frame update
     void Start()
@@ -41,7 +46,7 @@ public class FactManager : MonoBehaviour
             Normal = hit.normal
         });
 
-        return Facts[id] as PointFact;
+        return Facts.Find(x => x.Id == id) as PointFact;
     }
 
     LineFact AddLineFact(int pid1, int pid2, int id)
@@ -53,7 +58,7 @@ public class FactManager : MonoBehaviour
             Pid2 = pid2
         });
 
-        return Facts[id] as LineFact;
+        return Facts.Find(x => x.Id == id) as LineFact;
     }
 
     AngleFact AddAngleFact(int pid1, int pid2, int pid3, int id)
@@ -66,7 +71,7 @@ public class FactManager : MonoBehaviour
             Pid3 = pid3
         });
 
-        return Facts[id] as AngleFact;
+        return Facts.Find(x => x.Id == id) as AngleFact;
     }
 
     public void DeleteFact(Fact fact)
@@ -103,6 +108,7 @@ public class FactManager : MonoBehaviour
     {
         //We need to do this somehwere...
         CommunicationEvents.ActiveToolMode = ActiveToolMode;
+
         switch (ActiveToolMode)
         {
             case ToolMode.MarkPointMode:
@@ -181,32 +187,34 @@ public class FactManager : MonoBehaviour
                 {
                     Fact tempFact = Facts[hit.transform.GetComponent<FactObject>().Id];
 
-                    if (this.lineModeFirstPointSelected)
+                    if (this.lineModeIsFirstPointSelected)
                     {
-                        //Event for end of line-rendering in "ShinyThings"
-                        CommunicationEvents.StopLineRendererEvent.Invoke(null);
+                        //Event for end of line-drawing in "ShinyThings"
+                        CommunicationEvents.StopLineDrawingEvent.Invoke(null);
                         //Create LineFact
-                        CommunicationEvents.AddFactEvent.Invoke(this.AddLineFact(this.firstPointSelected.Id, tempFact.Id, this.GetFirstEmptyID()));
-                        this.lineModeFirstPointSelected = false;
-                        this.firstPointSelected = null;
+                        CommunicationEvents.AddFactEvent.Invoke(this.AddLineFact(this.lineModeFirstPointSelected.Id, tempFact.Id, this.GetFirstEmptyID()));
+                        this.lineModeIsFirstPointSelected = false;
+                        this.lineModeFirstPointSelected = null;
                     }
-                    else {
-                        //Activate LineRenderer for preview
-                        this.lineModeFirstPointSelected = true;
-                        this.firstPointSelected = tempFact;
-                        //Event for start line-rendering in "ShinyThings"
-                        CommunicationEvents.StartLineRendererEvent.Invoke(this.firstPointSelected);
+                    else
+                    {
+                        //Activate LineDrawing for preview
+                        this.lineModeIsFirstPointSelected = true;
+                        this.lineModeFirstPointSelected = tempFact;
+                        //Event for start line-drawing in "ShinyThings"
+                        CommunicationEvents.StartLineDrawingEvent.Invoke(this.lineModeFirstPointSelected);
                     }
                 }
                 //If no Point was hit
-                else {
-                    if (this.lineModeFirstPointSelected)
+                else
+                {
+                    if (this.lineModeIsFirstPointSelected)
                     {
-                        //Deactivate LineRendering and first point selection
-                        this.lineModeFirstPointSelected = false;
-                        this.firstPointSelected = null;
-                        //Event for end of line-rendering in "ShinyThings"
-                        CommunicationEvents.StopLineRendererEvent.Invoke(null);
+                        //Deactivate LineDrawing and first point selection
+                        this.lineModeIsFirstPointSelected = false;
+                        this.lineModeFirstPointSelected = null;
+                        //Event for end of line-drawing in "ShinyThings"
+                        CommunicationEvents.StopLineDrawingEvent.Invoke(null);
                     }
 
                     //TODO: Hint that only a line can be drawn between already existing points
@@ -214,12 +222,49 @@ public class FactManager : MonoBehaviour
                 break;
             //If Left-Mouse-Button was pressed in CreateAngleMode
             case ToolMode.CreateAngleMode:
+                //Check if an existing Line was hit
+                if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Line"))
+                {
+                    Fact tempFact = Facts[hit.transform.GetComponent<FactObject>().Id];
+
+                    if (this.angleModeIsFirstLineSelected)
+                    {
+                        //Event for end of line-rendering in "ShinyThings"
+                        CommunicationEvents.StopCurveDrawingEvent.Invoke(null);
+                        //Create AngleFact
+                        //TODO: CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact());
+                        this.angleModeIsFirstLineSelected = false;
+                        this.angleModeFirstLineSelected = null;
+                    }
+                    else
+                    {
+                        //Activate CurveDrawing for preview
+                        this.angleModeIsFirstLineSelected = true;
+                        this.angleModeFirstLineSelected = tempFact;
+                        //Event for start line-rendering in "ShinyThings"
+                        CommunicationEvents.StartCurveDrawingEvent.Invoke(this.angleModeFirstLineSelected);
+                    }
+                }
+                else
+                {
+                    if (this.angleModeIsFirstLineSelected)
+                    {
+                        //Deactivate CurveDrawing and first line selection
+                        this.angleModeIsFirstLineSelected = false;
+                        this.angleModeFirstLineSelected = null;
+                        //Event for end of line-drawing in "ShinyThings"
+                        CommunicationEvents.StopCurveDrawingEvent.Invoke(null);
+                    }
+
+                    //TODO: Hint that only a curve can be drawn between already existing lines
+                }
                 break;
             //If Left-Mouse-Button was pressed in DeleteMode
             case ToolMode.DeleteMode:
                 //Search for the Fact that was hit
                 //If the hit GameObject was a Point/Line/Angle
-                if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point") || hit.transform.gameObject.layer == LayerMask.NameToLayer("Line") || hit.transform.gameObject.layer == LayerMask.NameToLayer("Angle")){
+                if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point") || hit.transform.gameObject.layer == LayerMask.NameToLayer("Line") || hit.transform.gameObject.layer == LayerMask.NameToLayer("Angle"))
+                {
                     //Search for the suitable fact from the List
                     this.DeleteFact(Facts.Find(x => x.Id == hit.transform.GetComponent<FactObject>().Id));
                 }

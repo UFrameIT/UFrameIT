@@ -1181,7 +1181,7 @@ LineRenderer:
       m_Curve:
       - serializedVersion: 3
         time: 0.0102005005
-        value: 0.16666985
+        value: 0.1541729
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -1258,7 +1258,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SmartMenu: {fileID: 5601740127768851631, guid: e693bf633c633d243b0254d117ec3893,
     type: 3}
-  lineModeFirstPointSelected: 0
+  lineModeIsFirstPointSelected: 0
+  angleModeIsFirstLineSelected: 0
 --- !u!1 &1675643434
 GameObject:
   m_ObjectHideFlags: 0
