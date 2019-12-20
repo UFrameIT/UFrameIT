@@ -101,7 +101,8 @@ public class FactManager : MonoBehaviour
 
     public void OnToolModeChanged(ToolMode ActiveToolMode)
     {
-
+        //We need to do this somehwere...
+        CommunicationEvents.ActiveToolMode = ActiveToolMode;
         switch (ActiveToolMode)
         {
             case ToolMode.MarkPointMode:

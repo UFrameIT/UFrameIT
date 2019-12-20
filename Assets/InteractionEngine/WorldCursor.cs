@@ -18,6 +18,7 @@ public class WorldCursor : MonoBehaviour
         //Set MarkPointMode as the default ActiveToolMode
         ActiveToolMode = ToolMode.ExtraMode;//ToolMode.MarkPointMode;
         CommunicationEvents.ToolModeChangedEvent.Invoke(ActiveToolMode);
+
     }
 
     // Update is called once per frame
@@ -62,6 +63,8 @@ public class WorldCursor : MonoBehaviour
               
         }
     }
+
+   
 
     //Checks if the ToolMode was switched by User, and handle it
     void CheckToolModeSelection() {

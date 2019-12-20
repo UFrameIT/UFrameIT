@@ -38,7 +38,7 @@ public class ToolModeText : MonoBehaviour
     }
 
     void OnToolModeChanged(ToolMode ActiveToolMode) {
-        CommunicationEvents.ActiveToolMode = ActiveToolMode;
+
         //When ToolMode changes: Start a new Timer for showing up the Text for it
         gameObject.GetComponentInChildren<UnityEngine.UI.Text>().text = "ToolMode = " + ActiveToolMode;
         //gameObject.SetActive(true);
