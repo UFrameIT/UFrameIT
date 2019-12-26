@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 using static CommunicationEvents;
 
 public class ShinyThings : MonoBehaviour
@@ -19,10 +20,11 @@ public class ShinyThings : MonoBehaviour
 
     private bool lineDrawingActivated;
     private bool curveDrawingActivated;
-    private int curveDrawingVertexCount = 12;
+    private int curveDrawingVertexCount = 36;
     private LineFact curveDrawingStartLine;
     private Vector3 curveEndPoint;
     private Vector3 angleMiddlePoint;
+    private float curveRadius;
 
     // Start is called before the first frame update
     public void Start()
@@ -155,23 +157,31 @@ public class ShinyThings : MonoBehaviour
         float Distance2 = (Facts.Find(x => x.Id == curveDrawingStartLine.Pid2).Representation.transform.position - curveEndPoint).magnitude;
 
         if (Distance1 >= Distance2)
+        {
             angleMiddlePoint = Facts.Find(x => x.Id == curveDrawingStartLine.Pid2).Representation.transform.position;
+            curveRadius = Distance2;
+        }
         else
+        {
             angleMiddlePoint = Facts.Find(x => x.Id == curveDrawingStartLine.Pid1).Representation.transform.position;
-
+            curveRadius = Distance1;
+        }
     }
 
     public void UpdateCurveDrawing(Vector3 currentPosition)
     {
+        
+        //Determine the Start-Point
+        Vector3 startPoint = angleMiddlePoint + curveRadius * (currentPosition - angleMiddlePoint).normalized;
         //Determine the Center of Start-Point and End-Point 
-        Vector3 tempCenterPoint = Vector3.Lerp(currentPosition, curveEndPoint, 0.5f);
-        Vector3 curveMiddlePoint = angleMiddlePoint + 2 * (tempCenterPoint - angleMiddlePoint);
+        Vector3 tempCenterPoint = Vector3.Lerp(startPoint, curveEndPoint, 0.5f);
+        Vector3 curveMiddlePoint = angleMiddlePoint + curveRadius * (tempCenterPoint - angleMiddlePoint).normalized;
         
         linePositions = new List<Vector3>();
 
         for (float ratio = 0; ratio <= 1; ratio += 1.0f / this.curveDrawingVertexCount)
         {
-            var tangentLineVertex1 = Vector3.Lerp(currentPosition, curveMiddlePoint, ratio);
+            var tangentLineVertex1 = Vector3.Lerp(startPoint, curveMiddlePoint, ratio);
             var tangentLineVertex2 = Vector3.Lerp(curveMiddlePoint, curveEndPoint, ratio);
             var bezierPoint = Vector3.Lerp(tangentLineVertex1, tangentLineVertex2, ratio);
             linePositions.Add(bezierPoint);
@@ -179,6 +189,7 @@ public class ShinyThings : MonoBehaviour
 
         lineRenderer.positionCount = linePositions.Count;
         lineRenderer.SetPositions(linePositions.ToArray());
+        
     }
 
     public void DeactivateCurveDrawing(Fact startFact)
