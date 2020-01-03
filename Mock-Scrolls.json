@@ -1,7 +1,8 @@
-[
+{
+  "scrolls": [
     {
       "problemTheory": "bla",
-      "solutioTheory": "blubb",
+      "solutionTheory": "blubb",
       "label": "Pythagoras",
       "description": "a quadrat  plus b quadrat ist c quadrat",
       "declarations": [
@@ -14,26 +15,22 @@
           "name": "PointB",
           "type": "Point",
           "identifier": "URI"
-        }
-        ,
+        },
         {
           "name": "PointC",
           "type": "Point",
           "identifier": "URI"
-        }
-        ,
+        },
         {
           "name": "Distance AC",
           "type": "Distance",
           "identifier": "URI"
-        }
-        ,
+        },
         {
           "name": "Distance BC",
           "type": "Point",
           "identifier": "URI"
-        }
-        ,
+        },
         {
           "name": "Angle ACB",
           "type": "Angle",
@@ -43,11 +40,11 @@
     },
     {
       "problemTheory": "bla",
-      "solutioTheory": "blubb",
+      "solutionTheory": "blubb",
       "label": "Tangens",
       "description": "Das standart Beispiel für FRAMEIT",
       "declarations": [
-       {
+        {
           "name": "PointA",
           "type": "Point",
           "identifier": "URI"
@@ -56,8 +53,7 @@
           "name": "PointB",
           "type": "Point",
           "identifier": "URI"
-        }
-        ,
+        },
         {
           "name": "PointC",
           "type": "Point",
@@ -67,20 +63,18 @@
           "name": "Distance AC",
           "type": "Distance",
           "identifier": "URI"
-        }
-        ,
+        },
         {
           "name": "Angle CAB",
           "type": "Angle",
           "identifier": "URI"
-        }
-        ,
+        },
         {
           "name": "Angle ACB",
           "type": "Angle",
           "identifier": "URI"
         }
-        
       ]
     }
   ]
+}
