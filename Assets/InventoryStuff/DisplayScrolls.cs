@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class DisplayScrolls : MonoBehaviour
 {
-    public List<Scroll> scrolls = new List<Scroll>();
+    public Scroll[] scrolls;
+    public GameObject ScrollPrefab;
 
 
 
@@ -42,15 +44,31 @@ public class DisplayScrolls : MonoBehaviour
         return new Vector3(x_Start+ (X_Pacece_Between_Items * (i % number_of_Column)), y_Start + (-y_Pacece_Between_Items * (i / number_of_Column)), 0f);
     }
 
+    [System.Serializable]
+    class ScrollArrayWrapper{
+        public Scroll[] scrolls;
+    };
+
     // Start is called before the first frame update
     void Start()
     {
+        //get Scrolls from Backend;
+        //TODO REST-Call instead of Json-File
         string path = "Mock-Scrolls.json";
         string jsonString = File.ReadAllText(path);
         jsonString = jsonString.Replace(System.Environment.NewLine, "");
-        jsonString = jsonString.Replace("\t", "");
-        Debug.Log(jsonString);
-        Scroll[] scrollsRead = JsonUtility.FromJson<Scroll[]>(jsonString);
-        //this.scrolls = scrollsRead;
+        jsonString = jsonString.Replace("\t", ""); 
+
+        ScrollArrayWrapper scrollsRead = new ScrollArrayWrapper();
+        scrollsRead = (ScrollArrayWrapper)JsonUtility.FromJson(jsonString, scrollsRead.GetType());
+        this.scrolls = scrollsRead.scrolls;
+
+        //Build Selection-GUI of Scrolls
+        for (int i = 0; i < this.scrolls.Length; i++) {
+            var obj = Instantiate(ScrollPrefab, Vector3.zero, Quaternion.identity, transform);
+            obj.GetComponent<RectTransform>().localPosition = GetPosition(i);
+            obj.GetComponent<ScrollClickedScript>().scroll = this.scrolls[i];
+            obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = this.scrolls[i].label;
+        }
     }
 }
