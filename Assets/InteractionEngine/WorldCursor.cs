@@ -16,7 +16,7 @@ public class WorldCursor : MonoBehaviour
 
         Cam = Camera.main;
         //Set MarkPointMode as the default ActiveToolMode
-        ActiveToolMode = ToolMode.ExtraMode;//ToolMode.MarkPointMode;
+       // ActiveToolMode = ToolMode.ExtraMode;//ToolMode.MarkPointMode;
         CommunicationEvents.ToolModeChangedEvent.Invoke(ActiveToolMode);
 
     }
@@ -46,8 +46,7 @@ public class WorldCursor : MonoBehaviour
             transform.up = -Cam.transform.forward;
         }
 
-        //Check if the ToolMode was switched
-        CheckToolModeSelection();
+
         
     }
 
@@ -66,23 +65,7 @@ public class WorldCursor : MonoBehaviour
 
    
 
-    //Checks if the ToolMode was switched by User, and handle it
-    void CheckToolModeSelection() {
-        if (Input.GetButtonDown("ToolMode")) {
-            ToolMode tempActiveToolMode = CommunicationEvents.ActiveToolMode;
-            //Change the ActiveToolMode dependent on which Mode was selected
-            if ((int)tempActiveToolMode == Enum.GetNames(typeof(ToolMode)).Length - 1)
-            {
-                tempActiveToolMode = 0;
-            }
-            else
-            {
-                tempActiveToolMode++;
-            }
-            //Invoke the Handler for the Facts
-            CommunicationEvents.ToolModeChangedEvent.Invoke(tempActiveToolMode);
-        }
-    }
+
 
  
 
