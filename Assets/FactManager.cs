@@ -23,8 +23,8 @@ public class FactManager : MonoBehaviour
         CommunicationEvents.ToolModeChangedEvent.AddListener(OnToolModeChanged);
         CommunicationEvents.TriggerEvent.AddListener(OnHit);
 
-        //We also need the listener here at the moment so we can react to UI delete events in ExtraMode -> Delete-Button
-        CommunicationEvents.RemoveFactEvent.AddListener(DeleteFact);
+        //We dont want to have this here anymore...
+        //CommunicationEvents.RemoveFactEvent.AddListener(DeleteFact);
 
         NextEmptyStack.Push(0);
   
@@ -98,6 +98,7 @@ public class FactManager : MonoBehaviour
         if (NextEmptyStack.Count == 0)
             NextEmptyStack.Push(id + 1);
 
+        Debug.Log("place fact at " + id);
      
         return id;
 
