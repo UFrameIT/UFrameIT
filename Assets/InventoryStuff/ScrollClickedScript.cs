@@ -5,8 +5,9 @@ using UnityEngine;
 public class ScrollClickedScript: MonoBehaviour
 {
     public Scroll scroll;
+    public GameObject DetailScreen;
 
     public void onClick() {
-        Debug.Log("clicked");
+        this.DetailScreen.GetComponent<ScrollDetails>().setScroll(this.scroll);
     }
 }

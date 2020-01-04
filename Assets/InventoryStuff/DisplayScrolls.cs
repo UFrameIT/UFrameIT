@@ -9,6 +9,7 @@ public class DisplayScrolls : MonoBehaviour
 {
     public Scroll[] scrolls;
     public GameObject ScrollPrefab;
+    public GameObject DetailScreen;
 
 
 
@@ -68,7 +69,10 @@ public class DisplayScrolls : MonoBehaviour
             var obj = Instantiate(ScrollPrefab, Vector3.zero, Quaternion.identity, transform);
             obj.GetComponent<RectTransform>().localPosition = GetPosition(i);
             obj.GetComponent<ScrollClickedScript>().scroll = this.scrolls[i];
+            obj.GetComponent<ScrollClickedScript>().DetailScreen = this.DetailScreen;
             obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = this.scrolls[i].label;
+
+            
         }
     }
 }

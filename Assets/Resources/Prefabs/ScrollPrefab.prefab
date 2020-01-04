@@ -357,7 +357,6 @@ GameObject:
   - component: {fileID: 1410316395273548762}
   - component: {fileID: 1410316395273548756}
   - component: {fileID: 1410316395273548763}
-  - component: {fileID: 6773615017864739433}
   m_Layer: 5
   m_Name: ScrollPrefab
   m_TagString: Untagged
@@ -422,18 +421,6 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
---- !u!114 &6773615017864739433
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1410316395273548761}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 413dcae9856bd794ab03d29210561c57, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1410316396323731887
 GameObject:
   m_ObjectHideFlags: 0
@@ -548,7 +535,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6773615017864739433}
+      - m_Target: {fileID: 0}
         m_MethodName: doMagic
         m_Mode: 1
         m_Arguments:
