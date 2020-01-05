@@ -233,7 +233,32 @@ public class FactManager : MonoBehaviour
                         //Event for end of line-rendering in "ShinyThings"
                         CommunicationEvents.StopCurveDrawingEvent.Invoke(null);
                         //Create AngleFact
-                        //TODO: CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact());
+                        //Check if selected Lines are the same -> if true -> cancel
+                        if (!(angleModeFirstLineSelected.Id == tempFact.Id))
+                        {
+                            //Check if selected Lines have a common Point = id2 for AngleFact
+                            if (((LineFact)angleModeFirstLineSelected).Pid1 == ((LineFact)tempFact).Pid1)
+                            {
+                                CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact(((LineFact)angleModeFirstLineSelected).Pid2, ((LineFact)tempFact).Pid1, ((LineFact)tempFact).Pid2, GetFirstEmptyID()));
+                            }
+                            else if (((LineFact)angleModeFirstLineSelected).Pid1 == ((LineFact)tempFact).Pid2)
+                            {
+                                CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact(((LineFact)angleModeFirstLineSelected).Pid2, ((LineFact)tempFact).Pid2, ((LineFact)tempFact).Pid1, GetFirstEmptyID()));
+                            }
+                            else if (((LineFact)angleModeFirstLineSelected).Pid2 == ((LineFact)tempFact).Pid1)
+                            {
+                                CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact(((LineFact)angleModeFirstLineSelected).Pid1, ((LineFact)tempFact).Pid1, ((LineFact)tempFact).Pid2, GetFirstEmptyID()));
+                            }
+                            else if (((LineFact)angleModeFirstLineSelected).Pid2 == ((LineFact)tempFact).Pid2)
+                            {
+                                CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact(((LineFact)angleModeFirstLineSelected).Pid1, ((LineFact)tempFact).Pid2, ((LineFact)tempFact).Pid1, GetFirstEmptyID()));
+                            }
+                            else
+                            {
+                                //TODO: Hint that the selected Lines have no common point
+                            }
+                        }
+
                         this.angleModeIsFirstLineSelected = false;
                         this.angleModeFirstLineSelected = null;
                     }
@@ -248,6 +273,7 @@ public class FactManager : MonoBehaviour
                 }
                 else
                 {
+                    //TODO: If Point was hit: Angle Drawing with Selecting 3 Points
                     if (this.angleModeIsFirstLineSelected)
                     {
                         //Deactivate CurveDrawing and first line selection

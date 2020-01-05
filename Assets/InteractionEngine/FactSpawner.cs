@@ -31,6 +31,9 @@ public class FactSpawner : MonoBehaviour
             case LineFact lineFact:
                 SpawnLine(lineFact);
                 break;
+            case AngleFact angleFact:
+                SpawnAngle(angleFact);
+                break;
 
         }
     }
@@ -90,6 +93,82 @@ public class FactSpawner : MonoBehaviour
             //Deactivate the Collider of the Line itself
             line.transform.GetComponentInChildren<BoxCollider>().enabled = false;
         lineFact.Representation = line;
+
+    }
+
+    public void SpawnAngle(AngleFact angleFact)
+    {
+
+        Vector3 point1 = (Facts[angleFact.Pid1] as PointFact).Point;
+        Vector3 point2 = (Facts[angleFact.Pid2] as PointFact).Point;
+        Vector3 point3 = (Facts[angleFact.Pid3] as PointFact).Point;
+
+        Vector3 tempPoint1;
+        Vector3 tempPoint3;
+
+        //Length of the Angle relative to the Length of the shortest of the two lines (point2->point1) and (point2->point3)
+        float lengthFactor = 0.3f;
+        //AngleGO: Triangle-Length: 3/4, Circle-Length: 1/4
+        float angleGoFactorTriangleToCircle = 1.25f;
+
+        //Make 2 TempPoints positioned on length% from Point2 to Point3 and on length% from Point2 to Point1
+        //Will be used for z-Coordinate of the Angle
+        float length = 0;
+        if ((point1 - point2).magnitude >= (point3 - point2).magnitude)
+        {
+            length = lengthFactor * (point3 - point2).magnitude;
+            tempPoint1 = point2 + length * (point1 - point2).normalized;
+            tempPoint3 = point2 + length * (point3 - point2).normalized;
+        }
+        else
+        {
+            length = lengthFactor * (point1 - point2).magnitude;
+            tempPoint1 = point2 + length * (point1 - point2).normalized;
+            tempPoint3 = point2 + length * (point3 - point2).normalized;
+        }
+
+        //Change FactRepresentation to Angle
+        this.FactRepresentation = (GameObject)Resources.Load("Prefabs/Angle", typeof(GameObject));
+        GameObject angle = GameObject.Instantiate(FactRepresentation);
+
+        //Place the Angle at position of point2
+        angle.transform.position = point2;
+
+        //Change scale and rotation, so that the angle is in between the two lines
+        var v3T = angle.transform.localScale;
+        //Calculate the Vector from point 2 to a POINT, where (point2->POINT) is orthogonal to (POINT->tempPoint3)
+        Vector3 tempProjection = Vector3.Project((tempPoint3 - point2), (Vector3.Lerp((tempPoint1 - point2).normalized, (tempPoint3 - point2).normalized, 0.5f)));
+
+        //Make the Angle as long as length + length of the half-circle
+        v3T.x = (tempProjection).magnitude * angleGoFactorTriangleToCircle;
+
+        //For every Coordinate x,y,z we have to devide it by the LocalScale of the Child,
+        //because actually the Child should be of this length and not the parent, which is only the Collider
+        v3T.x = v3T.x / angle.transform.GetChild(0).GetChild(0).localScale.x;
+
+        //y of the angle-GameObject here hard coded = ratio of sphere-prefab
+        v3T.y = 0.05f / angle.transform.GetChild(0).GetChild(0).localScale.y;
+
+        //z should be as long as the distance between tempPoint1 and tempPoint3
+        v3T.z = (tempPoint3 - tempPoint1).magnitude / angle.transform.GetChild(0).GetChild(0).localScale.z;
+
+        //Change Scale/Rotation of the Line-GameObject without affecting Scale of the Text
+        angle.transform.GetChild(0).localScale = v3T;
+
+        //Rotate so that the rotation points from point2 to the middle of point3 and point1
+        angle.transform.GetChild(0).rotation = Quaternion.FromToRotation(Vector3.right, (Vector3.Lerp((tempPoint1 - point2).normalized, (tempPoint3 - point2).normalized, 0.5f)));
+        //Now the rotation around that direction must also be adjusted
+        angle.transform.GetChild(0).RotateAround(point2, (Vector3.Lerp((tempPoint1 - point2).normalized, (tempPoint3 - point2).normalized, 0.5f)), Vector3.Angle(angle.transform.GetChild(0).forward.normalized, (tempPoint3 - tempPoint1).normalized));
+
+        string letter = ((Char)(64 + angleFact.Id + 1)).ToString();
+        angle.GetComponentInChildren<TextMeshPro>().transform.localPosition = new Vector3((0.5f * tempProjection).x, angle.GetComponentInChildren<TextMeshPro>().transform.localPosition.y, (0.5f * tempProjection).z);
+        angle.GetComponentInChildren<TextMeshPro>().text = letter;
+        angle.GetComponentInChildren<FactObject>().Id = angleFact.Id;
+        //If a new Angle was spawned -> We are in CreateAngleMode -> Then we want the collider to be disabled
+        if (CommunicationEvents.ActiveToolMode != ToolMode.ExtraMode)
+            //Deactivate the Collider of the Angle itself
+            angle.transform.GetComponentInChildren<MeshCollider>().enabled = false;
+        angleFact.Representation = angle;
 
     }
 
