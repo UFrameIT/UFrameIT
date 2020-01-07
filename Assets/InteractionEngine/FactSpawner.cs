@@ -158,7 +158,14 @@ public class FactSpawner : MonoBehaviour
         //Rotate so that the rotation points from point2 to the middle of point3 and point1
         angle.transform.GetChild(0).rotation = Quaternion.FromToRotation(Vector3.right, (Vector3.Lerp((tempPoint1 - point2).normalized, (tempPoint3 - point2).normalized, 0.5f)));
         //Now the rotation around that direction must also be adjusted
-        angle.transform.GetChild(0).RotateAround(point2, (Vector3.Lerp((tempPoint1 - point2).normalized, (tempPoint3 - point2).normalized, 0.5f)), Vector3.Angle(angle.transform.GetChild(0).forward.normalized, (tempPoint1 - tempPoint3).normalized));
+        //We calculate the Angle not with Vector3.Angle() because it only returns absolute angle-values
+        float signedAngle = Mathf.Atan2(Vector3.Dot((Vector3.Lerp((tempPoint1 - point2).normalized, (tempPoint3 - point2).normalized, 0.5f)), Vector3.Cross(angle.transform.GetChild(0).forward.normalized, (tempPoint1 - tempPoint3).normalized)), Vector3.Dot(angle.transform.GetChild(0).forward.normalized, (tempPoint1 - tempPoint3).normalized)) * Mathf.Rad2Deg;
+        if (signedAngle < 0)
+        {
+            angle.transform.GetChild(0).RotateAround(point2, (Vector3.Lerp((tempPoint1 - point2).normalized, (tempPoint3 - point2).normalized, 0.5f)), Vector3.Angle(angle.transform.GetChild(0).forward.normalized, (tempPoint3 - tempPoint1).normalized));
+        }
+        else
+            angle.transform.GetChild(0).RotateAround(point2, (Vector3.Lerp((tempPoint1 - point2).normalized, (tempPoint3 - point2).normalized, 0.5f)), Vector3.Angle(angle.transform.GetChild(0).forward.normalized, (tempPoint1 - tempPoint3).normalized));
 
         string letter = ((Char)(64 + angleFact.Id + 1)).ToString();
         angle.GetComponentInChildren<TextMeshPro>().transform.localPosition = new Vector3((0.5f * tempProjection).x, angle.GetComponentInChildren<TextMeshPro>().transform.localPosition.y, (0.5f * tempProjection).z);
