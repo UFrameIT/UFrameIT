@@ -106,6 +106,8 @@ public class ShinyThings : MonoBehaviour
 
     public void ActivateLineDrawing(Fact startFact)
     {
+        this.lineRenderer.positionCount = 2;
+
         lineRenderer.startWidth = 0.095f;
         lineRenderer.endWidth = 0.095f;
         //Set LineDrawing activated
@@ -130,17 +132,16 @@ public class ShinyThings : MonoBehaviour
     //Deactivate LineDrawing so that no Line gets drawn when Cursor changes
     public void DeactivateLineDrawing(Fact startFact)
     {
-        //Reset the first points
-        this.lineRenderer.SetPosition(0, Vector3.zero);
-        this.lineRenderer.SetPosition(1, Vector3.zero);
-        if (linePositions.Count > 0)
-            this.linePositions.Clear();
+        this.lineRenderer.positionCount = 0;
+        this.linePositions = new List<Vector3>();
         this.lineDrawingActivated = false;
     }
 
     //Expect a LineFact here, so that it's possible to change between two possible StartPoints
     public void ActivateCurveDrawing(Fact startFact)
     {
+        this.lineRenderer.positionCount = curveDrawingVertexCount;
+
         lineRenderer.startWidth = 0.05f;
         lineRenderer.endWidth = 0.05f;
 
@@ -194,13 +195,9 @@ public class ShinyThings : MonoBehaviour
 
     public void DeactivateCurveDrawing(Fact startFact)
     {
-
-        for (int i = 0; i < linePositions.Count; i++)
-        {
-            this.lineRenderer.SetPosition(i, Vector3.zero);
-        }
-        if (linePositions.Count > 0)
-            this.linePositions.Clear();
+        
+        this.lineRenderer.positionCount = 0;
+        this.linePositions = new List<Vector3>();
         this.curveDrawingActivated = false;
     }
 }
