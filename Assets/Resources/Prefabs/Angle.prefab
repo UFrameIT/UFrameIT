@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4650993678488610231}
   m_Layer: 12
   m_Name: AngleOuter
-  m_TagString: Untagged
+  m_TagString: Selectable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -333,7 +333,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4650993679089994826}
   m_Layer: 12
-  m_Name: Angle_1
+  m_Name: Angle
   m_TagString: Selectable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

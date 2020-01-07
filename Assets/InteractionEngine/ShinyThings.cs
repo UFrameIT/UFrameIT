@@ -80,7 +80,6 @@ public class ShinyThings : MonoBehaviour
     public void OnMouseOverFact(Transform selection)
     {
         Renderer selectionRenderer;
-
         selectionRenderer = selection.GetComponent<Renderer>();
         if (selectionRenderer != null)
         {
