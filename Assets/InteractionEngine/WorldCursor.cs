@@ -79,7 +79,8 @@ public class WorldCursor : MonoBehaviour
             }
             else {
                 Hit.collider.enabled = false;
-                CommunicationEvents.SnapEvent.Invoke(Hit);
+                CommunicationEvents.TriggerEvent.Invoke(Hit);
+            //    CommunicationEvents.SnapEvent.Invoke(Hit);
             }
                 
 
