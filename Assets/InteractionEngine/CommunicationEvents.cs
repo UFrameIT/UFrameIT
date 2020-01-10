@@ -44,7 +44,7 @@ public static class CommunicationEvents
 
 
 
-
+    public static HitEvent SnapEvent = new HitEvent();
     public static HitEvent TriggerEvent = new HitEvent();
 
     public static ToolModeEvent ToolModeChangedEvent = new ToolModeEvent();

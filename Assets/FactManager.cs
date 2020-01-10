@@ -22,6 +22,7 @@ public class FactManager : MonoBehaviour
     {
         CommunicationEvents.ToolModeChangedEvent.AddListener(OnToolModeChanged);
         CommunicationEvents.TriggerEvent.AddListener(OnHit);
+        CommunicationEvents.SnapEvent.AddListener(Rocket);
 
         //We dont want to have this here anymore...
         //CommunicationEvents.RemoveFactEvent.AddListener(DeleteFact);
@@ -175,6 +176,42 @@ public class FactManager : MonoBehaviour
         }
     }
 
+    //automatic 90 degree angle construction
+    public void Rocket(RaycastHit hit)
+    {
+
+        int idA, idB, idC;
+
+        //usual point
+        idA = this.GetFirstEmptyID();
+        CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(hit, idA));
+
+        //second point
+        idB = this.GetFirstEmptyID();
+        var shiftedHit = hit;
+        var playerPos = Camera.main.transform.position;
+        playerPos.y = hit.point.y;
+        shiftedHit.point = playerPos;
+        CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(shiftedHit, idB));
+
+        //third point with unknown height
+        idC = this.GetFirstEmptyID();
+        var skyHit = hit;
+        skyHit.point += Vector3.up * 20;
+        CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(skyHit, idC));
+
+        //lines
+        CommunicationEvents.AddFactEvent.Invoke(this.AddLineFact(idA, idB, this.GetFirstEmptyID()));
+        //lines
+        CommunicationEvents.AddFactEvent.Invoke(this.AddLineFact(idA, idC, this.GetFirstEmptyID()));
+
+        //90degree angle
+        CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact(idB,idA,idC, GetFirstEmptyID()));
+
+
+
+
+    }
     public void OnHit(RaycastHit hit)
     {
         
@@ -210,6 +247,22 @@ public class FactManager : MonoBehaviour
                     }
                 }
                 //If no Point was hit
+                else if(Input.GetKey(KeyCode.LeftShift))
+                {
+                    if (this.lineModeIsFirstPointSelected)
+                    {
+                        //Event for end of line-drawing in "ShinyThings"
+                        int id = this.GetFirstEmptyID();
+                        CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(hit,id ));
+
+                        CommunicationEvents.StopLineDrawingEvent.Invoke(null);
+                        //Create LineFact
+                        CommunicationEvents.AddFactEvent.Invoke(this.AddLineFact(this.lineModeFirstPointSelected.Id,id, this.GetFirstEmptyID()));
+                        this.lineModeIsFirstPointSelected = false;
+                        this.lineModeFirstPointSelected = null;
+                    }
+                }
+
                 else
                 {
                     if (this.lineModeIsFirstPointSelected)

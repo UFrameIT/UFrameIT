@@ -72,9 +72,18 @@ public class WorldCursor : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {
             if (EventSystem.current.IsPointerOverGameObject()) return; //this prevents rays from shooting through ui
-       
-            CommunicationEvents.TriggerEvent.Invoke(Hit);
-           if(OnSnap) Hit.collider.enabled = false;
+
+            if (!OnSnap)
+            {
+                CommunicationEvents.TriggerEvent.Invoke(Hit);
+            }
+            else {
+                Hit.collider.enabled = false;
+                CommunicationEvents.SnapEvent.Invoke(Hit);
+            }
+                
+
+          
 
         }
     }
