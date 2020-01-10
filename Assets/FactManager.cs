@@ -7,7 +7,7 @@ using static CommunicationEvents;
 public class FactManager : MonoBehaviour
 {
     public GameObject SmartMenu;
-    private Stack<int> NextEmptyStack = new Stack<int>();
+    private List<int> NextEmpties= new List<int>();
 
     //Variables for LineMode distinction
     public bool lineModeIsFirstPointSelected = false;
@@ -26,7 +26,7 @@ public class FactManager : MonoBehaviour
         //We dont want to have this here anymore...
         //CommunicationEvents.RemoveFactEvent.AddListener(DeleteFact);
 
-        NextEmptyStack.Push(0);
+        NextEmpties.Add(0);
   
     }
 
@@ -38,7 +38,7 @@ public class FactManager : MonoBehaviour
 
     PointFact AddPointFact(RaycastHit hit, int id)
     {
-
+       
         Facts.Insert(id, new PointFact
         {
             Id = id,
@@ -77,7 +77,7 @@ public class FactManager : MonoBehaviour
     public void DeleteFact(Fact fact)
     {
         if (Facts.Contains(fact)) {
-            NextEmptyStack.Push(fact.Id);
+            NextEmpties.Add(fact.Id);
             //Facts.RemoveAt(fact.Id);
             Facts.Remove(Facts.Find(x => x.Id == fact.Id));
             CommunicationEvents.RemoveFactEvent.Invoke(fact);
@@ -93,10 +93,12 @@ public class FactManager : MonoBehaviour
                  return i;
          }
          return Facts.Length - 1;*/
+        NextEmpties.Sort();
 
-        int id = NextEmptyStack.Pop();
-        if (NextEmptyStack.Count == 0)
-            NextEmptyStack.Push(id + 1);
+        int id = NextEmpties[0];
+        NextEmpties.RemoveAt(0);
+        if (NextEmpties.Count == 0)
+            NextEmpties.Add(id + 1);
 
         Debug.Log("place fact at " + id);
      
