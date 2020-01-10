@@ -33,10 +33,25 @@ public class WorldCursor : MonoBehaviour
    
 
         if(Physics.Raycast(ray, out Hit, 30f, layerMask)){
-            transform.position = Hit.point;
-            transform.up = Hit.normal;
-            transform.position += .01f * Hit.normal;
-            CheckMouseButtons(ray);
+
+            Debug.Log(Hit.transform.tag);
+            if (Hit.collider.transform.CompareTag("SnapZone"))
+            {
+                Hit.point = Hit.collider.transform.position;
+                Hit.normal = Vector3.up;
+                Debug.Log("boom");
+                CheckMouseButtons(true);
+
+            }
+            else
+            {
+                transform.position = Hit.point;
+                transform.up = Hit.normal;
+                transform.position += .01f * Hit.normal;
+                CheckMouseButtons();
+            }
+
+
 
 
         }
@@ -51,7 +66,7 @@ public class WorldCursor : MonoBehaviour
     }
 
     //Check if left Mouse-Button was pressed and handle it
-    void CheckMouseButtons(Ray ray)
+    void CheckMouseButtons(bool OnSnap=false)
     {
        
         if (Input.GetMouseButtonDown(0))
@@ -59,7 +74,8 @@ public class WorldCursor : MonoBehaviour
             if (EventSystem.current.IsPointerOverGameObject()) return; //this prevents rays from shooting through ui
        
             CommunicationEvents.TriggerEvent.Invoke(Hit);
-              
+           if(OnSnap) Hit.collider.enabled = false;
+
         }
     }
 

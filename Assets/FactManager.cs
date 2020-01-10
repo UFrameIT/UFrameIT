@@ -41,6 +41,7 @@ public class FactManager : MonoBehaviour
        
         Facts.Insert(id, new PointFact
         {
+       
             Id = id,
             Point = hit.point,
             Normal = hit.normal
