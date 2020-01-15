@@ -215,9 +215,13 @@ public class FactManager : MonoBehaviour
 
     public void SmallRocket(RaycastHit hit,  int idA)
     {
+        //enable collider to measure angle to the treetop
+     
+
+
         int idB = this.GetFirstEmptyID();
         CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(hit, idB));
-
+        Facts[idB].Representation.GetComponentInChildren<Collider>().enabled = true;
 
         //third point with unknown height
         int idC = this.GetFirstEmptyID();
@@ -270,17 +274,17 @@ public class FactManager : MonoBehaviour
                         CommunicationEvents.StartLineDrawingEvent.Invoke(this.lineModeFirstPointSelected);
                     }
                 }
-                //If no Point was hit
-                else if(Input.GetKey(KeyCode.LeftShift))
+                //if we want to spawn a new point
+                else if (Input.GetKey(KeyCode.LeftShift))
                 {
                     if (this.lineModeIsFirstPointSelected)
                     {
-    
+
 
                         CommunicationEvents.StopLineDrawingEvent.Invoke(null);
 
 
-                        SmallRocket(hit,this.lineModeFirstPointSelected.Id);
+                        SmallRocket(hit, this.lineModeFirstPointSelected.Id);
 
 
                         this.lineModeIsFirstPointSelected = false;
@@ -288,6 +292,32 @@ public class FactManager : MonoBehaviour
                     }
                 }
 
+                //if we hit the top snap zone
+                else if (hit.transform.gameObject.tag=="SnapZone")
+                {
+                    if (this.lineModeIsFirstPointSelected)
+                    {
+
+                        RaycastHit downHit;
+
+                        if (Physics.Raycast(hit.transform.gameObject.transform.position-Vector3.down*2,Vector3.down, out downHit))
+                        {
+                            int idA = downHit.transform.gameObject.GetComponent<FactObject>().Id;
+                            int idB = this.lineModeFirstPointSelected.Id;
+                            int idC = GetFirstEmptyID();
+                            CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(hit, idC));
+                            //Event for end of line-drawing in "ShinyThings"
+                            CommunicationEvents.StopLineDrawingEvent.Invoke(null);
+                            //Create LineFact
+                            CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact(idA, idB, idC, GetFirstEmptyID()));
+                            this.lineModeIsFirstPointSelected = false;
+                            this.lineModeFirstPointSelected = null;
+                        }
+                    }
+                }
+
+
+                //If no Point was hit
                 else
                 {
                     if (this.lineModeIsFirstPointSelected)
