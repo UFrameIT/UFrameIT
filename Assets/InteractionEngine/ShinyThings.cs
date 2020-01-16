@@ -20,6 +20,7 @@ public class ShinyThings : MonoBehaviour
 
     private bool lineDrawingActivated;
     private bool curveDrawingActivated;
+    //These are only the vertices for the Curve
     private int curveDrawingVertexCount = 36;
     private LineFact curveDrawingStartLine;
     private Vector3 curveEndPoint;
@@ -136,10 +137,11 @@ public class ShinyThings : MonoBehaviour
         this.lineDrawingActivated = false;
     }
 
-    //Expect a LineFact here, so that it's possible to change between two possible StartPoints
+    //Expect a LineFact here, where Line.Pid2 will be the Basis-Point of the angle
     public void ActivateCurveDrawing(Fact startFact)
     {
-        this.lineRenderer.positionCount = curveDrawingVertexCount;
+        //In AngleMode with 3 Points we want to draw nearly a rectangle so we add a startPoint and an Endpoint to this preview
+        this.lineRenderer.positionCount = curveDrawingVertexCount + 2;
 
         lineRenderer.startWidth = 0.05f;
         lineRenderer.endWidth = 0.05f;
@@ -148,24 +150,14 @@ public class ShinyThings : MonoBehaviour
         this.curveDrawingActivated = true;
 
         curveDrawingStartLine = (LineFact)startFact;
+        PointFact curveDrawingPoint1 = (PointFact)Facts.Find(x => x.Id == curveDrawingStartLine.Pid1);
+        PointFact curveDrawingPoint2 = (PointFact)Facts.Find(x => x.Id == curveDrawingStartLine.Pid2);
 
-        curveEndPoint = Cursor.transform.position;
-
-        //Determine which point of the line is closer to the cursor and initialize angleMiddlePoint
-        //angleMiddlePoint is needed for the Angle  Preview
-        float Distance1 = (Facts.Find(x => x.Id == curveDrawingStartLine.Pid1).Representation.transform.position - curveEndPoint).magnitude;
-        float Distance2 = (Facts.Find(x => x.Id == curveDrawingStartLine.Pid2).Representation.transform.position - curveEndPoint).magnitude;
-
-        if (Distance1 >= Distance2)
-        {
-            angleMiddlePoint = Facts.Find(x => x.Id == curveDrawingStartLine.Pid2).Representation.transform.position;
-            curveRadius = Distance2;
-        }
-        else
-        {
-            angleMiddlePoint = Facts.Find(x => x.Id == curveDrawingStartLine.Pid1).Representation.transform.position;
-            curveRadius = Distance1;
-        }
+        //curveEndPoint is a point on the Line selected, with some distance from point2
+        curveEndPoint = curveDrawingPoint2.Point + 0.3f * (curveDrawingPoint1.Point - curveDrawingPoint2.Point).magnitude * (curveDrawingPoint1.Point - curveDrawingPoint2.Point).normalized;
+        
+        angleMiddlePoint = curveDrawingPoint2.Point;
+        curveRadius = (curveEndPoint - curveDrawingPoint2.Point).magnitude;
     }
 
     public void UpdateCurveDrawing(Vector3 currentPosition)
@@ -178,6 +170,8 @@ public class ShinyThings : MonoBehaviour
         Vector3 curveMiddlePoint = angleMiddlePoint + curveRadius * (tempCenterPoint - angleMiddlePoint).normalized;
         
         linePositions = new List<Vector3>();
+        //Start: AngleMiddlePoint -> FirstPoint of Curve
+        linePositions.Add(((PointFact)Facts.Find(x => x.Id == curveDrawingStartLine.Pid2)).Point);
 
         for (float ratio = 0; ratio <= 1; ratio += 1.0f / this.curveDrawingVertexCount)
         {
@@ -186,6 +180,9 @@ public class ShinyThings : MonoBehaviour
             var bezierPoint = Vector3.Lerp(tangentLineVertex1, tangentLineVertex2, ratio);
             linePositions.Add(bezierPoint);
         }
+
+        //End: LastPoint of Curve -> AngleMiddlePoint
+        linePositions.Add(((PointFact)Facts.Find(x => x.Id == curveDrawingStartLine.Pid2)).Point);
 
         lineRenderer.positionCount = linePositions.Count;
         lineRenderer.SetPositions(linePositions.ToArray());

@@ -14,8 +14,10 @@ public class FactManager : MonoBehaviour
     public Fact lineModeFirstPointSelected = null;
 
     //Variables for AngleMode distinction
-    public bool angleModeIsFirstLineSelected = false;
-    public Fact angleModeFirstLineSelected = null;
+    public bool angleModeIsFirstPointSelected = false;
+    public Fact angleModeFirstPointSelected = null;
+    public bool angleModeIsSecondPointSelected = false;
+    public Fact angleModeSecondPointSelected = null;
 
     // Start is called before the first frame update
     void Start()
@@ -142,16 +144,16 @@ public class FactManager : MonoBehaviour
                 }
                 break;
             case ToolMode.CreateAngleMode:
-                //If CreateAngleMode is activated we want to have the ability to select Lines for the Angle
-                //but we don't want to have the ability to select Points or Angles
+                //If CreateAngleMode is activated we want to have the ability to select Points for the Angle
+                //but we don't want to have the ability to select Lines or Angles
                 foreach (Fact fact in Facts)
                 {
                     GameObject gO = fact.Representation;
-                    if (gO.layer == LayerMask.NameToLayer("Point") || gO.layer == LayerMask.NameToLayer("Angle"))
+                    if (gO.layer == LayerMask.NameToLayer("Line") || gO.layer == LayerMask.NameToLayer("Angle"))
                     {
                         gO.GetComponentInChildren<Collider>().enabled = false;
                     }
-                    else if (gO.layer == LayerMask.NameToLayer("Line"))
+                    else if (gO.layer == LayerMask.NameToLayer("Point"))
                     {
                         gO.GetComponentInChildren<Collider>().enabled = true;
                     }
@@ -213,6 +215,7 @@ public class FactManager : MonoBehaviour
         CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact(idB,idA,idC, GetFirstEmptyID()));
     }
 
+    //Creating 90-degree Angles
     public void SmallRocket(RaycastHit hit,  int idA)
     {
         //enable collider to measure angle to the treetop
@@ -316,7 +319,6 @@ public class FactManager : MonoBehaviour
                     }
                 }
 
-
                 //If no Point was hit
                 else
                 {
@@ -334,67 +336,72 @@ public class FactManager : MonoBehaviour
                 break;
             //If Left-Mouse-Button was pressed in CreateAngleMode
             case ToolMode.CreateAngleMode:
-                //Check if an existing Line was hit
-                if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Line"))
+                //Check if an existing Point was hit
+                if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
                 {
                     Fact tempFact = Facts[hit.transform.GetComponent<FactObject>().Id];
 
-                    if (this.angleModeIsFirstLineSelected)
+                    //If two points were already selected and now the third point got selected
+                    if (this.angleModeIsFirstPointSelected && this.angleModeIsSecondPointSelected)
                     {
-                        //Event for end of line-rendering in "ShinyThings"
+                        //Event for end of curve-drawing in "ShinyThings"
                         CommunicationEvents.StopCurveDrawingEvent.Invoke(null);
                         //Create AngleFact
-                        //Check if selected Lines are the same -> if true -> cancel
-                        if (!(angleModeFirstLineSelected.Id == tempFact.Id))
+                        //Check if new Point is equal to one of the previous points -> if true -> cancel
+                        if (!(angleModeFirstPointSelected.Id == tempFact.Id || angleModeSecondPointSelected.Id == tempFact.Id))
                         {
-                            //Check if selected Lines have a common Point = id2 for AngleFact
-                            if (((LineFact)angleModeFirstLineSelected).Pid1 == ((LineFact)tempFact).Pid1)
-                            {
-                                CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact(((LineFact)angleModeFirstLineSelected).Pid2, ((LineFact)tempFact).Pid1, ((LineFact)tempFact).Pid2, GetFirstEmptyID()));
-                            }
-                            else if (((LineFact)angleModeFirstLineSelected).Pid1 == ((LineFact)tempFact).Pid2)
-                            {
-                                CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact(((LineFact)angleModeFirstLineSelected).Pid2, ((LineFact)tempFact).Pid2, ((LineFact)tempFact).Pid1, GetFirstEmptyID()));
-                            }
-                            else if (((LineFact)angleModeFirstLineSelected).Pid2 == ((LineFact)tempFact).Pid1)
-                            {
-                                CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact(((LineFact)angleModeFirstLineSelected).Pid1, ((LineFact)tempFact).Pid1, ((LineFact)tempFact).Pid2, GetFirstEmptyID()));
-                            }
-                            else if (((LineFact)angleModeFirstLineSelected).Pid2 == ((LineFact)tempFact).Pid2)
-                            {
-                                CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact(((LineFact)angleModeFirstLineSelected).Pid1, ((LineFact)tempFact).Pid2, ((LineFact)tempFact).Pid1, GetFirstEmptyID()));
-                            }
-                            else
-                            {
-                                //TODO: Hint that the selected Lines have no common point
-                            }
+                            CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact(((PointFact)angleModeFirstPointSelected).Id, ((PointFact)angleModeSecondPointSelected).Id, ((PointFact)tempFact).Id, GetFirstEmptyID()));
                         }
 
-                        this.angleModeIsFirstLineSelected = false;
-                        this.angleModeFirstLineSelected = null;
+                        this.angleModeIsFirstPointSelected = false;
+                        this.angleModeFirstPointSelected = null;
+                        this.angleModeIsSecondPointSelected = false;
+                        this.angleModeSecondPointSelected = null;
                     }
+                    //If only one point was already selected
+                    else if (this.angleModeIsFirstPointSelected && !this.angleModeIsSecondPointSelected) {
+                        //Check if the 2 selected points are the same: If not
+                        if (this.angleModeFirstPointSelected.Id != tempFact.Id)
+                        {
+                            this.angleModeIsSecondPointSelected = true;
+                            this.angleModeSecondPointSelected = tempFact;
+
+                            //Event for start of curve-drawing in "ShinyThings"
+                            //Create new LineFact with the 2 points
+                            LineFact tempLineFact = new LineFact();
+                            tempLineFact.Pid1 = this.angleModeFirstPointSelected.Id;
+                            tempLineFact.Pid2 = this.angleModeSecondPointSelected.Id;
+                            CommunicationEvents.StartCurveDrawingEvent.Invoke(tempLineFact);
+                        }
+                        else {
+                            this.angleModeFirstPointSelected = null;
+                            this.angleModeIsFirstPointSelected = false;
+                        }
+                    }
+                    //If no point was selected before
                     else
                     {
-                        //Activate CurveDrawing for preview
-                        this.angleModeIsFirstLineSelected = true;
-                        this.angleModeFirstLineSelected = tempFact;
-                        //Event for start line-rendering in "ShinyThings"
-                        CommunicationEvents.StartCurveDrawingEvent.Invoke(this.angleModeFirstLineSelected);
+                        //Save the first point selected
+                        this.angleModeIsFirstPointSelected = true;
+                        this.angleModeFirstPointSelected = tempFact;
                     }
                 }
+                //No point was hit
                 else
                 {
-                    //TODO: If Point was hit: Angle Drawing with Selecting 3 Points
-                    if (this.angleModeIsFirstLineSelected)
+                    if (this.angleModeIsFirstPointSelected && this.angleModeIsSecondPointSelected)
                     {
-                        //Deactivate CurveDrawing and first line selection
-                        this.angleModeIsFirstLineSelected = false;
-                        this.angleModeFirstLineSelected = null;
-                        //Event for end of line-drawing in "ShinyThings"
+                        //Event for end of curve-drawing in "ShinyThings"
                         CommunicationEvents.StopCurveDrawingEvent.Invoke(null);
                     }
 
-                    //TODO: Hint that only a curve can be drawn between already existing lines
+                    //Reset Angle-Preview-Attributes
+                    this.angleModeIsFirstPointSelected = false;
+                    this.angleModeFirstPointSelected = null;
+                    this.angleModeIsSecondPointSelected = false;
+                    this.angleModeSecondPointSelected = null;
+
+                    //TODO: Hint that only an angle can be created between 3 already existing points
                 }
                 break;
             //If Left-Mouse-Button was pressed in DeleteMode
