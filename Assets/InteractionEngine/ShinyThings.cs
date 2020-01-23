@@ -162,13 +162,35 @@ public class ShinyThings : MonoBehaviour
 
     public void UpdateCurveDrawing(Vector3 currentPosition)
     {
-        
-        //Determine the Start-Point
-        Vector3 startPoint = angleMiddlePoint + curveRadius * (currentPosition - angleMiddlePoint).normalized;
+
+        //Find the nearest of all potential third points
+        PointFact nearestPoint = null;
+        foreach (Fact fact in Facts) {
+            if (fact is PointFact && fact.Id != curveDrawingStartLine.Pid1 && fact.Id != curveDrawingStartLine.Pid2 && nearestPoint == null)
+                nearestPoint = (PointFact)fact;
+            else if (fact is PointFact && fact.Id != curveDrawingStartLine.Pid1 && fact.Id != curveDrawingStartLine.Pid2 && (nearestPoint.Point - currentPosition).magnitude > (((PointFact)fact).Point - currentPosition).magnitude)
+                nearestPoint = (PointFact)fact;
+        }
+
+        Vector3 startPoint = new Vector3(0,0,0);
+
+        if (nearestPoint != null)
+        {
+            Vector3 planePoint = Vector3.ProjectOnPlane(currentPosition, Vector3.Cross((nearestPoint.Point-angleMiddlePoint), (curveEndPoint-angleMiddlePoint)));
+
+            //Determine the Start-Point for the nearest third-point
+            startPoint = angleMiddlePoint + curveRadius * (planePoint - angleMiddlePoint).normalized;
+        }
+        else
+        {
+            //Determine the Start-Point
+            startPoint = angleMiddlePoint + curveRadius * (currentPosition - angleMiddlePoint).normalized;
+        }
+
         //Determine the Center of Start-Point and End-Point 
         Vector3 tempCenterPoint = Vector3.Lerp(startPoint, curveEndPoint, 0.5f);
         Vector3 curveMiddlePoint = angleMiddlePoint + curveRadius * (tempCenterPoint - angleMiddlePoint).normalized;
-        
+
         linePositions = new List<Vector3>();
         //Start: AngleMiddlePoint -> FirstPoint of Curve
         linePositions.Add(((PointFact)Facts.Find(x => x.Id == curveDrawingStartLine.Pid2)).Point);
