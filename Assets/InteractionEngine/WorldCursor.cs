@@ -39,8 +39,9 @@ public class WorldCursor : MonoBehaviour
             {
                 Hit.point = Hit.collider.transform.position;
                 Hit.normal = Vector3.up;
-                Debug.Log("boom");
                 CheckMouseButtons(true);
+                transform.position = Hit.point;
+                transform.up = Hit.normal;
 
             }
             else
@@ -57,7 +58,10 @@ public class WorldCursor : MonoBehaviour
         }
         else
         {
-            transform.position = Cam.ScreenToWorldPoint(Input.mousePosition);
+            var dist = 10f;
+            if (Hit.transform!=null)
+            dist = (Camera.main.transform.position - Hit.transform.position).magnitude;
+            transform.position = Cam.ScreenToWorldPoint(Input.mousePosition + new Vector3(0,0,1) *dist);
             transform.up = -Cam.transform.forward;
         }
 

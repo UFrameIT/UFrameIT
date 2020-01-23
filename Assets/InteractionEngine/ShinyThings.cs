@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using static CommunicationEvents;
+using System;
 
 public class ShinyThings : MonoBehaviour
 {
@@ -45,16 +46,43 @@ public class ShinyThings : MonoBehaviour
 
         RaycastHit Hit = Cursor.Hit;
 
-        if (Hit.transform != null)
+        Highlighting(Hit);
+
+       
+        //LineRendering-Part
+
+        //@John before:  hit.point
+
+        Debug.Log(this.transform.position);
+
+        if (this.lineDrawingActivated)
+            UpdateLineDrawing(this.transform.position);
+        else if (this.curveDrawingActivated)
+            UpdateCurveDrawing(this.transform.position);
+        
+
+
+    }
+
+    private void Highlighting(RaycastHit hit)
+    {
+        if (hit.transform != null)
         {
-            Transform selection = Hit.transform;
+            Transform selection = hit.transform;
+
+            //only do stuff if selection changes
+
 
             //Set the last Fact unselected
             if (this.lastFactSelection != null)
             {
+                if (selection == this.lastFactSelection) return;
                 //Invoke the EndHighlightEvent that will be handled in FactSpawner
                 // CommunicationEvents.EndHighlightEvent.Invoke(this.lastFactSelection);
-                OnMouseOverFactEnd(lastFactSelection);
+                if (this.lastFactSelection.CompareTag(selectableTag))
+                    OnMouseOverFactEnd(lastFactSelection);
+                else
+                    OnMouseOverSnapZoneEnd(lastFactSelection);
                 this.lastFactSelection = null;
             }
 
@@ -66,16 +94,52 @@ public class ShinyThings : MonoBehaviour
                 //CommunicationEvents.HighlightEvent.Invoke(selection);
                 OnMouseOverFact(lastFactSelection);
             }
-            //SELECTION-HIGHLIGHTING-PART-END
+            else if (selection.CompareTag("SnapZone"))
+            {
+                this.lastFactSelection = selection;
+                OnMouseOverSnapZone(lastFactSelection);
 
-            //LineRendering-Part
-            if (this.lineDrawingActivated)
-                UpdateLineDrawing(Hit.point);
-            else if (this.curveDrawingActivated)
-                UpdateCurveDrawing(Hit.point);
+            }
         }
 
 
+        //SELECTION-HIGHLIGHTING-PART-END
+    }
+
+    private void OnMouseOverSnapZoneEnd(Transform selection)
+    {
+        Renderer selectionRenderer;
+
+        if (selection != null)
+        {
+            selectionRenderer = selection.GetComponent<Renderer>();
+            if (selectionRenderer != null)
+            {
+                //Add transparency
+                var oldCol = selectionRenderer.material.color;
+                oldCol.a = .25f;
+                selectionRenderer.material.color = oldCol;
+                //Unhide Mouse cursor
+                UnityEngine.Cursor.visible = true;
+            }
+        }
+    }
+
+    private void OnMouseOverSnapZone(Transform selection)
+    {
+        Renderer selectionRenderer;
+        selectionRenderer = selection.GetComponent<Renderer>();
+        if (selectionRenderer != null)
+        {
+            //Remove transparency
+            var oldCol = selectionRenderer.material.color;
+            oldCol.a = 1;
+            selectionRenderer.material.color = oldCol;
+
+            //Hide Mouse cursor
+           UnityEngine.Cursor.visible = false;
+
+        }
     }
 
     public void OnMouseOverFact(Transform selection)
