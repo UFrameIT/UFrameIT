@@ -2315,7 +2315,8 @@ MonoBehaviour:
   SmartMenu: {fileID: 5601740127768851631, guid: e693bf633c633d243b0254d117ec3893,
     type: 3}
   lineModeIsFirstPointSelected: 0
-  angleModeIsFirstLineSelected: 0
+  angleModeIsFirstPointSelected: 0
+  angleModeIsSecondPointSelected: 0
 --- !u!23 &1661088671 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 2600518978420199386, guid: 9cb473a50d07f1245b0f6a7ee2557d4f,
