@@ -49,4 +49,11 @@ public class ScrollDetails : MonoBehaviour
         }
         gameObject.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = s.description;
     }
+
+    public void magicButton() {
+        for (int i = 0; i < ParameterDisplays.Length; i++) {
+            Fact facti = ParameterDisplays[i].GetComponent<DropHandling>().currentFact;
+            Declaration decl_i = scroll.declarations[i];
+        }
+    }
 }
