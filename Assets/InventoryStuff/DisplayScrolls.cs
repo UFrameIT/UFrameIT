@@ -4,6 +4,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Networking;
 
 public class DisplayScrolls : MonoBehaviour
 {
@@ -47,32 +48,52 @@ public class DisplayScrolls : MonoBehaviour
 
     [System.Serializable]
     class ScrollArrayWrapper{
-        public Scroll[] scrolls;
+        public Scroll[] Scrolls;
     };
 
     // Start is called before the first frame update
     void Start()
     {
         //get Scrolls from Backend;
-        //TODO REST-Call instead of Json-File
-        string path = "Mock-Scrolls.json";
-        string jsonString = File.ReadAllText(path);
+
+        //string path = "Mock-Scrolls.json";
+        //string jsonString = File.ReadAllText(path);
+        //buildScrollSelection(jsonString);
+        StartCoroutine(getScrollsfromServer());
+        
+    }
+
+    IEnumerator getScrollsfromServer() {
+        UnityWebRequest request = UnityWebRequest.Get("localhost:8081/scroll/list");
+        yield return request.Send();
+        if (request.isNetworkError || request.isHttpError)
+        {
+            Debug.LogError(request.error);
+        }
+        else
+        {
+            string jsonString = request.downloadHandler.text;
+            buildScrollSelection(jsonString);
+        }
+    }
+
+    void buildScrollSelection(string jsonString) {
         jsonString = jsonString.Replace(System.Environment.NewLine, "");
-        jsonString = jsonString.Replace("\t", ""); 
+        jsonString = jsonString.Replace("\t", "");
 
         ScrollArrayWrapper scrollsRead = new ScrollArrayWrapper();
         scrollsRead = (ScrollArrayWrapper)JsonUtility.FromJson(jsonString, scrollsRead.GetType());
-        this.scrolls = scrollsRead.scrolls;
+        this.scrolls = scrollsRead.Scrolls;
 
         //Build Selection-GUI of Scrolls
-        for (int i = 0; i < this.scrolls.Length; i++) {
+        for (int i = 0; i < this.scrolls.Length; i++)
+        {
             var obj = Instantiate(ScrollPrefab, Vector3.zero, Quaternion.identity, transform);
             obj.GetComponent<RectTransform>().localPosition = GetPosition(i);
             obj.GetComponent<ScrollClickedScript>().scroll = this.scrolls[i];
             obj.GetComponent<ScrollClickedScript>().DetailScreen = this.DetailScreen;
             obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = this.scrolls[i].label;
-
-            
         }
+
     }
 }
