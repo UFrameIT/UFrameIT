@@ -12,11 +12,11 @@ public class DropHandling : MonoBehaviour, IDropHandler
         Destroy(current);
         current = Instantiate(eventData.pointerDrag,Vector3.zero, Quaternion.identity);
         current.transform.SetParent(gameObject.transform, false);
-        GameObject scrollShow = gameObject.transform.parent.gameObject;
         //PythagorasScript pythagorasScript = scrollShow.GetComponent<PythagorasScript>();
-        var fact = ((FactWrapper)current.GetComponent<FactWrapper>()).fact;
-        currentFact = fact;
+        currentFact = eventData.pointerDrag.GetComponent<FactWrapper>().fact;
+        Debug.Log("recieved Fact: " + currentFact.backendURI);
         //pythagorasScript.putFact(gameObject.name, fact);
     }
 
 }
+ 

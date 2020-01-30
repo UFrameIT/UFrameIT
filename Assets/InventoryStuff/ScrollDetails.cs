@@ -54,11 +54,23 @@ public class ScrollDetails : MonoBehaviour
     }
 
     public void magicButton() {
-        sendView();
+        string view = sendView();
+        if (view.Equals(FAIL)) {
+            Debug.Log("DAS HAT NICHT GEKLAPPT");
+            //TODO: hier ne Art PopUp, wo drin steht, dass das nicht geklappt hat
+            return;
+        }
+        string ret = pushout(view);
+        Debug.Log(ret);
+
     }
 
+    string FAIL = "FAIL";
+    class ViewResponse {
+         public string view;
+    }
 
-    private void sendView() {
+    private string sendView() {
         string jsonRequest = @"{";
         jsonRequest = jsonRequest + @" ""from"":""" + this.scroll.problemTheory + @""", "; 
         jsonRequest = jsonRequest + @" ""to"":""" + this.situationTheory + @""", ";
@@ -68,9 +80,10 @@ public class ScrollDetails : MonoBehaviour
         for (int i = 0; i < ParameterDisplays.Length; i++)
         {
             Fact fact_i = ParameterDisplays[i].GetComponentInChildren<DropHandling>().currentFact;
+            var drophandler = ParameterDisplays[i].GetComponentInChildren<DropHandling>();
             Declaration decl_i = scroll.declarations[i];
             jsonRequest = jsonRequest + @" """+decl_i.identifier +@""":""" + fact_i.backendURI + @""",";
-            if (decl_i.value != null && fact_i.backendValueURI != null) ;
+            if (decl_i.value != null && fact_i.backendValueURI != null)
             {
                 jsonRequest = jsonRequest + @" """ + decl_i.value + @""":""" + fact_i.backendValueURI + @""",";
             }
@@ -78,20 +91,45 @@ public class ScrollDetails : MonoBehaviour
         //removing the last ','
         jsonRequest = jsonRequest.Substring(0, jsonRequest.Length - 1);
         jsonRequest = jsonRequest + "}}";
-        Debug.Log(jsonRequest);
-        /*
-        UnityWebRequest www = UnityWebRequest.Post("localhost:8081/view/add", jsonRequest);
-        yield return www.SendWebRequest();
+        
+        UnityWebRequest www = UnityWebRequest.Put("localhost:8081/view/add", jsonRequest);
+        www.method = UnityWebRequest.kHttpVerbPOST;
+        var async = www.Send();
+        while (!async.isDone) { }
+
+        if (www.isNetworkError || www.isHttpError)
+        {
+            Debug.Log(www.error);
+            return FAIL;
+        }
+        else
+        {
+            string answer = www.downloadHandler.text;
+            return JsonUtility.FromJson<ViewResponse>(answer).view;
+        }
+    }
+
+
+    private string pushout(string view) {
+        string path = "localhost:8081/pushout?";
+        path = path + "problem=" + this.scroll.problemTheory + "&";
+        path = path + "solution=" + this.scroll.solutionTheory + "&";
+        path = path + "view=" + view;
+        UnityWebRequest www = UnityWebRequest.Get(path);
+        var async = www.Send();
+        while (!async.isDone) { }
 
         if (www.isNetworkError || www.isHttpError)
         {
             Debug.Log(www.error);
             //TODO: hier ne Art PopUp, wo drin steht, dass das nicht geklappt hat
+            return FAIL;
         }
         else
         {
-            Debug.Log("Form upload complete!");
-            string viewUri =  www.downloadHandler.text
-        } */
+            string answer = www.downloadHandler.text;
+            return answer;
+            //TODO Parse Anwser from JSON TO FACTS...
+        }
     }
 }

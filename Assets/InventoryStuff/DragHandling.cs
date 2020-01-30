@@ -14,6 +14,7 @@ public class DragHandling : MonoBehaviour, IDragHandler, IEndDragHandler
             dragged = true;
         }
         transform.position = Input.mousePosition;
+        Debug.Log(gameObject.GetComponent<FactWrapper>().fact.backendURI);
     }
 
     public void OnEndDrag(PointerEventData eventData){
