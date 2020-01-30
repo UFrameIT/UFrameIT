@@ -9,6 +9,7 @@ using UnityEngine.Networking;
 public class DisplayScrolls : MonoBehaviour
 {
     public Scroll[] scrolls;
+    public GameObject[] ScrollButtons;
     public GameObject ScrollPrefab;
     public GameObject DetailScreen;
 
@@ -24,22 +25,9 @@ public class DisplayScrolls : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-      // UpdateDisplay();
+
     }
 
-    public void UpdateDisplay()
-    {
-       /*  for( int i = 0; i< inventory.Scrolls.Count; i++){
-            if(! inventory.Scrolls[i].isDisplayed){
-                var item = inventory.Scrolls[i].item;
-                var obj = Instantiate(item.IconPrefab, Vector3.zero, Quaternion.identity, transform);
-                obj.GetComponent<RectTransform>().localPosition = GetPosition(i);
-                inventory.Scrolls[i].isDisplayed = true;
-            }
-            
-        }
-        */
-    }
 
     public Vector3 GetPosition(int i)
     {
@@ -84,16 +72,20 @@ public class DisplayScrolls : MonoBehaviour
         ScrollArrayWrapper scrollsRead = new ScrollArrayWrapper();
         scrollsRead = (ScrollArrayWrapper)JsonUtility.FromJson(jsonString, scrollsRead.GetType());
         this.scrolls = scrollsRead.Scrolls;
-
+        ScrollButtons = new GameObject[this.scrolls.Length];
         //Build Selection-GUI of Scrolls
         for (int i = 0; i < this.scrolls.Length; i++)
         {
+            
             var obj = Instantiate(ScrollPrefab, Vector3.zero, Quaternion.identity, transform);
             obj.GetComponent<RectTransform>().localPosition = GetPosition(i);
             obj.GetComponent<ScrollClickedScript>().scroll = this.scrolls[i];
             obj.GetComponent<ScrollClickedScript>().DetailScreen = this.DetailScreen;
             obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = this.scrolls[i].label;
+            ScrollButtons[i] = obj;
         }
+        this.DetailScreen.GetComponent<ScrollDetails>().setScroll(this.scrolls[0]);
+
 
     }
 }

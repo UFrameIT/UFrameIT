@@ -34,7 +34,7 @@ public class WorldCursor : MonoBehaviour
 
         if(Physics.Raycast(ray, out Hit, 30f, layerMask)){
 
-            Debug.Log(Hit.transform.tag);
+            // Debug.Log(Hit.transform.tag);
             if (Hit.collider.transform.CompareTag("SnapZone"))
             {
                 Hit.point = Hit.collider.transform.position;

@@ -41,39 +41,20 @@ public class FactManager : MonoBehaviour
 
     PointFact AddPointFact(RaycastHit hit, int id)
     {
-       
-        Facts.Insert(id, new PointFact
-        {
-       
-            Id = id,
-            Point = hit.point,
-            Normal = hit.normal
-        });
-
+        Facts.Insert(id, new PointFact(id, hit.point, hit.normal));
         return Facts.Find(x => x.Id == id) as PointFact;
     }
 
     LineFact AddLineFact(int pid1, int pid2, int id)
     {
-       Facts.Insert(id, new LineFact
-        {
-            Id = id,
-            Pid1 = pid1,
-            Pid2 = pid2
-        });
+       Facts.Insert(id, new LineFact(id,pid1,pid2));
 
         return Facts.Find(x => x.Id == id) as LineFact;
     }
 
     AngleFact AddAngleFact(int pid1, int pid2, int pid3, int id)
     {
-        Facts.Insert(id, new AngleFact
-        {
-            Id = id,
-            Pid1 = pid1,
-            Pid2 = pid2,
-            Pid3 = pid3
-        });
+        Facts.Insert(id, new AngleFact(id,pid1,pid2,pid3));
 
         return Facts.Find(x => x.Id == id) as AngleFact;
     }
