@@ -11,6 +11,7 @@ public abstract class Fact
 
 public class AddFactResponse
 {
+    //class to Read AddFact Responses.
     public string factUri;
     public string factValUri;
 
@@ -35,6 +36,7 @@ public class AddFactResponse
         }
     }
 }
+
 //I am not sure if we ever need to attach these to an object, so one script for all for now...
 public class PointFact : Fact
 {
@@ -51,13 +53,25 @@ public class PointFact : Fact
         this.backendURI = res.factUri;
 
     }
+
+    public PointFact(int i, float a, float b, float c, string uri)
+    {
+        this.Id = i;
+        this.Point = new Vector3(a,b,c);
+        this.Normal = new Vector3(0,1,0);
+        this.backendURI = uri;
+
+    }
+
 }
+
 
 public class OpenLineFact : Fact
 {
     //an infinite Line through the Points Pid1 and Pid2
     public int Pid1, Pid2;
 }
+
 public class LineFact : Fact
 {
     //Id's of the 2 Point-Facts that are connected
@@ -81,8 +95,17 @@ public class LineFact : Fact
         this.backendValueURI = res.factValUri;
     }
 
+    public LineFact(int i, int pid1, int pid2, string uri, string valuri) {
+        this.Id = i;
+        this.Pid1 = pid1;
+        this.Pid2 = pid2;
+        this.backendURI = uri;
+        this.backendValueURI = valuri;
+    }
+
     
 }
+
 public class AngleFact : Fact
 {
     //Id's of the 3 Point-Facts, where Pid2 is the point, where the angle is
@@ -91,7 +114,8 @@ public class AngleFact : Fact
     //only for temporary Use of AngleFacts
     public AngleFact() { }
 
-    public AngleFact(int i, int pid1, int pid2, int pid3) {
+    public AngleFact(int i, int pid1, int pid2, int pid3)
+    {
         this.Id = i;
         this.Pid1 = pid1;
         this.Pid2 = pid2;
@@ -102,13 +126,23 @@ public class AngleFact : Fact
         double v = Vector3.Angle((pf1.Point - pf2.Point), (pf1.Point - pf2.Point));
         string body = @"{" +
           @"""left"":""" + pf1.backendURI + @"""," +
-          @"""middle"":""" + pf2.backendURI + @""","+
-          @"""right"":""" + pf3.backendURI + @""","+
+          @"""middle"":""" + pf2.backendURI + @"""," +
+          @"""right"":""" + pf3.backendURI + @"""," +
           @"""value"":" + v +
           "}";
         AddFactResponse res = AddFactResponse.sendAdd("localhost:8081/fact/add/angle", body);
         this.backendURI = res.factUri;
         this.backendValueURI = res.factValUri;
+    }
+
+    public AngleFact(int i, int pid1, int pid2, int pid3, string uri, string valuri)
+    {
+        this.Id = i;
+        this.Pid1 = pid1;
+        this.Pid2 = pid2;
+        this.Pid3 = pid3;
+        this.backendURI = uri;
+        this.backendValueURI = valuri;
     }
 }
 public class OnLineFact : Fact

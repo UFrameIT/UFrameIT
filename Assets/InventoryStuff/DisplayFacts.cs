@@ -47,6 +47,9 @@ public class DisplayFacts : MonoBehaviour
         }
 
     }
+    string getLetter(int Id) {
+        return ((Char)(64 + Id + 1)).ToString();
+    }
 
     private GameObject CreateDisplay(Transform transform, Fact fact)
     {
@@ -55,8 +58,8 @@ public class DisplayFacts : MonoBehaviour
             case LineFact f:
                 {
                     var obj = Instantiate(prefab_Distance, Vector3.zero, Quaternion.identity, transform);
-                    obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + CommunicationEvents.Facts[f.Pid1].Id;
-                    obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + CommunicationEvents.Facts[f.Pid2].Id;
+                    obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter( CommunicationEvents.Facts[f.Pid1].Id);
+                    obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid2].Id );
                     obj.GetComponent<FactWrapper>().fact = f;
                     return obj;
                 }
@@ -64,9 +67,9 @@ public class DisplayFacts : MonoBehaviour
             case AngleFact f:
                 {
                     var obj = Instantiate(prefab_Angle, Vector3.zero, Quaternion.identity, transform);
-                    obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + CommunicationEvents.Facts[f.Pid1].Id;
-                    obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + CommunicationEvents.Facts[f.Pid2].Id;
-                    obj.transform.GetChild(2).gameObject.GetComponent<TextMeshProUGUI>().text = "" + CommunicationEvents.Facts[f.Pid3].Id;
+                    obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid1].Id);
+                    obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid2].Id);
+                    obj.transform.GetChild(2).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid3].Id);
                     obj.GetComponent<FactWrapper>().fact = f;
                     return obj;
                 }
@@ -74,7 +77,7 @@ public class DisplayFacts : MonoBehaviour
             case PointFact f:
                 {
                     var obj = Instantiate(prefab_Point, Vector3.zero, Quaternion.identity, transform);
-                    obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + f.Id;
+                    obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(f.Id );
                     obj.GetComponent<FactWrapper>().fact = f;
                     return obj;
                 }
