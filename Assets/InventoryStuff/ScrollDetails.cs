@@ -117,6 +117,8 @@ public class ScrollDetails : MonoBehaviour
         public string newSituation;
         public PushoutFact[] outputs;
     }
+
+    [System.Serializable]
     public  class PushoutFact {
         // generic class to make a common Supertype for all PushoutResponses
         public string uri;
@@ -195,6 +197,7 @@ public class ScrollDetails : MonoBehaviour
     }
 
     private void readPushout(string txt) {
+        Debug.Log(txt);
         PushoutReturn ret = JsonUtility.FromJson<PushoutReturn>(txt);
         this.situationTheory = ret.newSituation;
         FactManager factManager = cursor.GetComponent<FactManager>();

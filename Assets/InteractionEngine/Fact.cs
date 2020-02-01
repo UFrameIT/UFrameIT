@@ -7,6 +7,10 @@ public abstract class Fact
     public GameObject Representation;
     public string backendURI;
     public string backendValueURI; // supposed to be null, for Facts without values eg. Points, OpenLines, OnLineFacts...
+
+    public string format(float t) {
+        return t.ToString("0.0000").Replace(',', '.');
+    }
 }
 
 public class AddFactResponse
@@ -48,7 +52,8 @@ public class PointFact : Fact
         this.Point = P;
         this.Normal = N;
 
-        string body = @"{ ""a"":" +P.x + @"," + @"""b"":" +P.y + @","+@"""c"":" + P.z + "}";
+        string body = @"{ ""a"":" +format(P.x) + @"," + @"""b"":" + format(P.y) + @","+@"""c"":" + format(P.y) + "}";
+        Debug.Log(body);
         AddFactResponse res = AddFactResponse.sendAdd("localhost:8081/fact/add/vector", body);
         this.backendURI = res.factUri;
 
@@ -88,8 +93,8 @@ public class LineFact : Fact
         PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
         string p1URI = pf1.backendURI;
         string p2URI = pf2.backendURI;
-        double v = (pf1.Point - pf2.Point).magnitude;
-        string body = @"{ ""pointA"":""" + p1URI + @"""," + @"""pointB"":""" + p2URI + @"""," + @"""value"":" + v + "}";
+        float v = (pf1.Point - pf2.Point).magnitude;
+        string body = @"{ ""pointA"":""" + p1URI + @"""," + @"""pointB"":""" + p2URI + @"""," + @"""value"":" + format(v) + "}";
         AddFactResponse res = AddFactResponse.sendAdd("localhost:8081/fact/add/distance", body);
         this.backendURI = res.factUri;
         this.backendValueURI = res.factValUri;
@@ -123,13 +128,17 @@ public class AngleFact : Fact
         PointFact pf1 = CommunicationEvents.Facts.Find((x => x.Id == pid1)) as PointFact;
         PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
         PointFact pf3 = CommunicationEvents.Facts.Find((x => x.Id == pid3)) as PointFact;
-        double v = Vector3.Angle((pf1.Point - pf2.Point), (pf1.Point - pf2.Point));
+        
+        float v = Vector3.Angle((pf1.Point - pf2.Point), (pf3.Point - pf2.Point));
+        if (Mathf.Abs(v - 90.0f) < 0.01) v = 90.0f;
+        Debug.Log("angle: " + v);
         string body = @"{" +
           @"""left"":""" + pf1.backendURI + @"""," +
           @"""middle"":""" + pf2.backendURI + @"""," +
           @"""right"":""" + pf3.backendURI + @"""," +
-          @"""value"":" + v +
+          @"""value"":" + format(v) +
           "}";
+        Debug.Log(body);
         AddFactResponse res = AddFactResponse.sendAdd("localhost:8081/fact/add/angle", body);
         this.backendURI = res.factUri;
         this.backendValueURI = res.factValUri;
