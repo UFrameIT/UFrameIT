@@ -171,10 +171,14 @@ public class FactSpawner : MonoBehaviour
         //string letter = ((Char)(64 + angleFact.Id + 1)).ToString();
         //Don't need next line anymore: Cause Text is now not above, but in the centre of the angle
         //angle.GetComponentInChildren<TextMeshPro>().transform.localPosition = new Vector3((0.5f * tempProjection).x, angle.GetComponentInChildren<TextMeshPro>().transform.localPosition.y, (0.5f * tempProjection).z);
-        //Change Text not to the id, but to the angle-value
-        angle.GetComponentInChildren<TextMeshPro>().text = Math.Abs(Math.Round(Vector3.Angle((point1-point2).normalized, (point3-point2).normalized), 1)).ToString() + "°";
-        //Change font-size relative to length of the angle
-        angle.GetComponentInChildren<TextMeshPro>().fontSize = angle.GetComponentInChildren<TextMeshPro>().fontSize * angle.transform.GetChild(0).transform.GetChild(0).localScale.x;
+        
+        TextMeshPro[] texts = angle.GetComponentsInChildren<TextMeshPro>();
+        foreach (TextMeshPro t in texts) {
+            //Change Text not to the id, but to the angle-value (from both sides) AND change font-size relative to length of the angle (from both sides)
+            t.text = Math.Abs(Math.Round(Vector3.Angle((point1 - point2).normalized, (point3 - point2).normalized), 1)).ToString() + "°";
+            t.fontSize = angle.GetComponentInChildren<TextMeshPro>().fontSize * angle.transform.GetChild(0).transform.GetChild(0).localScale.x;
+        }
+
         angle.GetComponentInChildren<FactObject>().Id = angleFact.Id;
         //If a new Angle was spawned -> We are in CreateAngleMode -> Then we want the collider to be disabled
         if (CommunicationEvents.ActiveToolMode != ToolMode.ExtraMode)
