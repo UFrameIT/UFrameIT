@@ -63,9 +63,10 @@ public class FactSpawner : MonoBehaviour
 
     public void SpawnLine(LineFact lineFact)
     {
-
-        Vector3 point1 = (Facts[lineFact.Pid1] as PointFact).Point;
-        Vector3 point2 = (Facts[lineFact.Pid2] as PointFact).Point;
+        PointFact pointFact1 = (Facts[lineFact.Pid1] as PointFact);
+        PointFact pointFact2 = (Facts[lineFact.Pid2] as PointFact);
+        Vector3 point1 = pointFact1.Point;
+        Vector3 point2 = pointFact2.Point;
         //Change FactRepresentation to Line
         this.FactRepresentation = (GameObject)Resources.Load("Prefabs/Line", typeof(GameObject));
         GameObject line = GameObject.Instantiate(FactRepresentation);
@@ -85,8 +86,10 @@ public class FactSpawner : MonoBehaviour
         line.transform.GetChild(0).localScale = v3T;
         line.transform.GetChild(0).rotation = Quaternion.FromToRotation(Vector3.right, point2 - point1);
 
-        string letter = ((Char)(64 + lineFact.Id + 1)).ToString();
-        line.GetComponentInChildren<TextMeshPro>().text = letter;
+        //string letter = ((Char)(64 + lineFact.Id + 1)).ToString();
+        //line.GetComponentInChildren<TextMeshPro>().text = letter;
+        line.GetComponentInChildren<TextMeshPro>().text = ((Char)(64 + pointFact1.Id + 1)).ToString() + ((Char)(64 + pointFact2.Id + 1)).ToString();
+        line.GetComponentInChildren<TextMeshPro>().text += " = " + Math.Round((point1-point2).magnitude, 2).ToString() + " m";
         line.GetComponentInChildren<FactObject>().Id = lineFact.Id;
         //If a new Line was spawned -> We are in CreateLineMode -> Then we want the collider to be disabled
         if (CommunicationEvents.ActiveToolMode != ToolMode.ExtraMode)
