@@ -7,8 +7,10 @@ using UnityEngine;
 public class Declaration
 {
     public string name;
-    public string type;
+    public string isProof;
+    public string value;
     public string identifier;
+    public string description;
 }
 
 

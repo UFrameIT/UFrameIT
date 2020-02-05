@@ -53,7 +53,7 @@ public class ShinyThings : MonoBehaviour
 
         //@John before:  hit.point
 
-        Debug.Log(this.transform.position);
+        //Debug.Log(this.transform.position);
 
         if (this.lineDrawingActivated)
             UpdateLineDrawing(this.transform.position);
