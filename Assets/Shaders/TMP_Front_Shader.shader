@@ -90,7 +90,7 @@ Shader "Custom/TMP_Mobile_Distance_Field_Front" {
 
 				#include "UnityCG.cginc"
 				#include "UnityUI.cginc"
-				#include "Assets/TextMesh Pro/Resources/Shaders/TMPro_Properties.cginc"
+				#include "TMPro_Properties.cginc"
 
 				struct vertex_t {
 					UNITY_VERTEX_INPUT_INSTANCE_ID
