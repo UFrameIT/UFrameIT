@@ -157,6 +157,8 @@ public class FactManager : MonoBehaviour
                 */
                 break;
         }
+        //Stop PreviewEvents in ShineThings on ToolModeChange
+        CommunicationEvents.StopPreviewsEvent.Invoke(null);
     }
 
 

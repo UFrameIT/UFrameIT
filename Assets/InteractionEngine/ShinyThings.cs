@@ -36,6 +36,7 @@ public class ShinyThings : MonoBehaviour
         CommunicationEvents.StopLineDrawingEvent.AddListener(DeactivateLineDrawing);
         CommunicationEvents.StartCurveDrawingEvent.AddListener(ActivateCurveDrawing);
         CommunicationEvents.StopCurveDrawingEvent.AddListener(DeactivateCurveDrawing);
+        CommunicationEvents.StopPreviewsEvent.AddListener(StopPreviews);
     }
 
     // Update is called once per frame
@@ -281,5 +282,12 @@ public class ShinyThings : MonoBehaviour
         this.lineRenderer.positionCount = 0;
         this.linePositions = new List<Vector3>();
         this.curveDrawingActivated = false;
+    }
+
+    public void StopPreviews(Fact startFact) {
+        if (lineDrawingActivated)
+            DeactivateLineDrawing(null);
+        if (curveDrawingActivated)
+            DeactivateCurveDrawing(null);
     }
 }
