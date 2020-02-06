@@ -65,6 +65,7 @@ public static class CommunicationEvents
     public static ShinyEvent StopCurveDrawingEvent = new ShinyEvent();
     //Event for stopping all previews -> Made When ToolMode is changed
     public static ShinyEvent StopPreviewsEvent = new ShinyEvent();
+    public static ShinyEvent PushoutFactEvent = new ShinyEvent();
 
 
 

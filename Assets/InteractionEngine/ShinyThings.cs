@@ -28,6 +28,14 @@ public class ShinyThings : MonoBehaviour
     private Vector3 angleMiddlePoint;
     private float curveRadius;
 
+    //Variables for Pushout-Highlighting
+    private Fact highlightedPushoutFact;
+    private bool timerActive { get; set; }
+    private float timer { get; set; }
+    private float timerDuration = 3.0f;
+    public Material pushoutMaterial;
+    private Material tempMaterial;
+
     // Start is called before the first frame update
     public void Start()
     {
@@ -37,6 +45,10 @@ public class ShinyThings : MonoBehaviour
         CommunicationEvents.StartCurveDrawingEvent.AddListener(ActivateCurveDrawing);
         CommunicationEvents.StopCurveDrawingEvent.AddListener(DeactivateCurveDrawing);
         CommunicationEvents.StopPreviewsEvent.AddListener(StopPreviews);
+        CommunicationEvents.PushoutFactEvent.AddListener(StartPushoutFactHighlighting);
+
+        this.timerActive = false;
+        this.timer = 0;
     }
 
     // Update is called once per frame
@@ -60,9 +72,18 @@ public class ShinyThings : MonoBehaviour
             UpdateLineDrawing(this.transform.position);
         else if (this.curveDrawingActivated)
             UpdateCurveDrawing(this.transform.position);
-        
 
-
+        //If the Timer is Active, check if timerDuration is reached and stop Pushout-Highlighting
+        if (this.timerActive)
+        {
+            this.timer += Time.deltaTime;
+            if (this.timer >= this.timerDuration)
+            {
+                this.timerActive = false;
+                this.timer = 0;
+                StopPushoutFactHighlighting();
+            }
+        }
     }
 
     private void Highlighting(RaycastHit hit)
@@ -166,6 +187,51 @@ public class ShinyThings : MonoBehaviour
                 //Set the Material of the fact back to default
                 selectionRenderer.material = defaultMaterial;
             }
+        }
+    }
+
+    public void StartPushoutFactHighlighting(Fact startFact) {
+
+        highlightedPushoutFact = startFact;
+
+        if (typeof(PointFact).IsInstanceOfType(highlightedPushoutFact))
+        {
+            PointFact fact = (PointFact)highlightedPushoutFact;
+            tempMaterial = fact.Representation.transform.GetChild(0).GetComponent<MeshRenderer>().material;
+            fact.Representation.transform.GetChild(0).GetComponent<MeshRenderer>().material = pushoutMaterial;
+        }
+        else if (typeof(LineFact).IsInstanceOfType(highlightedPushoutFact))
+        {
+            LineFact fact = (LineFact)highlightedPushoutFact;
+            tempMaterial = fact.Representation.transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material;
+            fact.Representation.transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material = pushoutMaterial;
+        }
+        else if (typeof(AngleFact).IsInstanceOfType(highlightedPushoutFact)) {
+            AngleFact fact = (AngleFact)highlightedPushoutFact;
+            tempMaterial = fact.Representation.transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material;
+            fact.Representation.transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material = pushoutMaterial;
+        }
+
+        //Activate Timer
+        this.timerActive = true;
+    }
+
+    public void StopPushoutFactHighlighting() {
+
+        if (typeof(PointFact).IsInstanceOfType(highlightedPushoutFact))
+        {
+            PointFact fact = (PointFact)highlightedPushoutFact;
+            fact.Representation.transform.GetChild(0).GetComponent<MeshRenderer>().material = tempMaterial;
+        }
+        else if (typeof(LineFact).IsInstanceOfType(highlightedPushoutFact))
+        {
+            LineFact fact = (LineFact)highlightedPushoutFact;
+            fact.Representation.transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material = tempMaterial;
+        }
+        else if (typeof(AngleFact).IsInstanceOfType(highlightedPushoutFact))
+        {
+            AngleFact fact = (AngleFact)highlightedPushoutFact;
+            fact.Representation.transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material = tempMaterial;
         }
     }
 

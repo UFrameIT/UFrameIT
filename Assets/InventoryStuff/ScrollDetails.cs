@@ -211,6 +211,7 @@ public class ScrollDetails : MonoBehaviour
                 PointFact pf = new PointFact(id, a, b, c, f.uri);
                 CommunicationEvents.Facts.Insert(id, pf);
                 CommunicationEvents.AddFactEvent.Invoke(pf);
+                CommunicationEvents.PushoutFactEvent.Invoke(pf);
             }
             if (f.isDistance()) {
                 int id = factManager.GetFirstEmptyID();
@@ -219,6 +220,7 @@ public class ScrollDetails : MonoBehaviour
                 LineFact lf = new LineFact(id, pid1, pid2, f.uri, f.value);
                 CommunicationEvents.Facts.Insert(id, lf);
                 CommunicationEvents.AddFactEvent.Invoke(lf);
+                CommunicationEvents.PushoutFactEvent.Invoke(lf);
             }
             if (f.isAngle()){
                 int id = factManager.GetFirstEmptyID();
@@ -228,6 +230,7 @@ public class ScrollDetails : MonoBehaviour
                 AngleFact af = new AngleFact(id, pid1, pid2, pid3, f.uri, f.value);
                 CommunicationEvents.Facts.Insert(id, af);
                 CommunicationEvents.AddFactEvent.Invoke(af);
+                CommunicationEvents.PushoutFactEvent.Invoke(af);
             }
         }
     }
