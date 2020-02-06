@@ -7,7 +7,7 @@ using static CommunicationEvents;
 public class FactManager : MonoBehaviour
 {
     public GameObject SmartMenu;
-    private List<int> NextEmpties= new List<int>();
+    private List<int> NextEmpties = new List<int>();
 
     //Variables for LineMode distinction
     public bool lineModeIsFirstPointSelected = false;
@@ -24,13 +24,13 @@ public class FactManager : MonoBehaviour
     {
         CommunicationEvents.ToolModeChangedEvent.AddListener(OnToolModeChanged);
         CommunicationEvents.TriggerEvent.AddListener(OnHit);
-      //  CommunicationEvents.SnapEvent.AddListener(Rocket);
+        //  CommunicationEvents.SnapEvent.AddListener(Rocket);
 
         //We dont want to have this here anymore...
         //CommunicationEvents.RemoveFactEvent.AddListener(DeleteFact);
 
         NextEmpties.Add(0);
-  
+
     }
 
     // Update is called once per frame
@@ -47,14 +47,14 @@ public class FactManager : MonoBehaviour
 
     LineFact AddLineFact(int pid1, int pid2, int id)
     {
-       Facts.Insert(id, new LineFact(id,pid1,pid2));
+        Facts.Insert(id, new LineFact(id, pid1, pid2));
 
         return Facts.Find(x => x.Id == id) as LineFact;
     }
 
     AngleFact AddAngleFact(int pid1, int pid2, int pid3, int id)
     {
-        Facts.Insert(id, new AngleFact(id,pid1,pid2,pid3));
+        Facts.Insert(id, new AngleFact(id, pid1, pid2, pid3));
 
         return Facts.Find(x => x.Id == id) as AngleFact;
     }
@@ -86,7 +86,7 @@ public class FactManager : MonoBehaviour
             NextEmpties.Add(id + 1);
 
         Debug.Log("place fact at " + id);
-     
+
         return id;
 
 
@@ -104,8 +104,8 @@ public class FactManager : MonoBehaviour
                 //everywhere, independent of already existing facts
                 foreach (Fact fact in Facts)
                 {
-                   GameObject gO = fact.Representation;
-                   gO.GetComponentInChildren<Collider>().enabled = false;
+                    GameObject gO = fact.Representation;
+                    gO.GetComponentInChildren<Collider>().enabled = false;
                 }
                 break;
             case ToolMode.CreateLineMode:
@@ -195,14 +195,14 @@ public class FactManager : MonoBehaviour
         CommunicationEvents.AddFactEvent.Invoke(this.AddLineFact(idA, idC, this.GetFirstEmptyID()));
 
         //90degree angle
-        CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact(idB,idA,idC, GetFirstEmptyID()));
+        CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact(idB, idA, idC, GetFirstEmptyID()));
     }
 
     //Creating 90-degree Angles
-    public void SmallRocket(RaycastHit hit,  int idA)
+    public void SmallRocket(RaycastHit hit, int idA)
     {
         //enable collider to measure angle to the treetop
-     
+
 
 
         int idB = this.GetFirstEmptyID();
@@ -212,7 +212,7 @@ public class FactManager : MonoBehaviour
         //third point with unknown height
         int idC = this.GetFirstEmptyID();
         var skyHit = hit;
-        skyHit.point = (Facts[idA] as PointFact).Point+ Vector3.up * 20;
+        skyHit.point = (Facts[idA] as PointFact).Point + Vector3.up * 20;
         CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(skyHit, idC));
 
         //lines
@@ -224,7 +224,39 @@ public class FactManager : MonoBehaviour
         CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact(idB, idA, idC, GetFirstEmptyID()));
     }
 
-
+    public Boolean factAlreadyExists(int[] ids) {
+        switch (ActiveToolMode) {
+            case ToolMode.CreateLineMode:
+                foreach (Fact fact in Facts)
+                {
+                    if (typeof(LineFact).IsInstanceOfType(fact))
+                    {
+                        LineFact line = (LineFact)fact;
+                        if (line.Pid1 == ids[0] && line.Pid2 == ids[1])
+                        {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            case ToolMode.CreateAngleMode:
+                foreach (Fact fact in Facts)
+                {
+                    if (typeof(AngleFact).IsInstanceOfType(fact))
+                    {
+                        AngleFact angle = (AngleFact)fact;
+                        if (angle.Pid1 == ids[0] && angle.Pid2 == ids[1] && angle.Pid3 == ids[2])
+                        {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            default:
+                return false;
+        }
+        return false;
+    }
 
     public void OnHit(RaycastHit hit)
     {
@@ -247,7 +279,9 @@ public class FactManager : MonoBehaviour
                         //Event for end of line-drawing in "ShinyThings"
                         CommunicationEvents.StopLineDrawingEvent.Invoke(null);
                         //Create LineFact
-                        CommunicationEvents.AddFactEvent.Invoke(this.AddLineFact(this.lineModeFirstPointSelected.Id, tempFact.Id, this.GetFirstEmptyID()));
+                        //Check if exactle the same line/distance already exists
+                        if(!factAlreadyExists(new int[] { this.lineModeFirstPointSelected.Id, tempFact.Id }))
+                            CommunicationEvents.AddFactEvent.Invoke(this.AddLineFact(this.lineModeFirstPointSelected.Id, tempFact.Id, this.GetFirstEmptyID()));
                         this.lineModeIsFirstPointSelected = false;
                         this.lineModeFirstPointSelected = null;
                     }
@@ -333,7 +367,9 @@ public class FactManager : MonoBehaviour
                         //Check if new Point is equal to one of the previous points -> if true -> cancel
                         if (!(angleModeFirstPointSelected.Id == tempFact.Id || angleModeSecondPointSelected.Id == tempFact.Id))
                         {
-                            CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact(((PointFact)angleModeFirstPointSelected).Id, ((PointFact)angleModeSecondPointSelected).Id, ((PointFact)tempFact).Id, GetFirstEmptyID()));
+                            //Check if exactly the same angle already exists
+                            if (!factAlreadyExists(new int[] { ((PointFact)angleModeFirstPointSelected).Id, ((PointFact)angleModeSecondPointSelected).Id, ((PointFact)tempFact).Id }))
+                                CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact(((PointFact)angleModeFirstPointSelected).Id, ((PointFact)angleModeSecondPointSelected).Id, ((PointFact)tempFact).Id, GetFirstEmptyID()));
                         }
 
                         this.angleModeIsFirstPointSelected = false;

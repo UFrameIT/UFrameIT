@@ -17,7 +17,7 @@
 # /[Aa]ssets/AssetStoreTools*
 
 # TextMesh Pro files
-[Aa]ssets/TextMesh*Pro/
+# [Aa]ssets/TextMesh*Pro/
 
 # ProBuilder/ProGrid files
 [Aa]ssets/ProCore/
