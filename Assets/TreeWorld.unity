@@ -1031,7 +1031,7 @@ Transform:
   m_GameObject: {fileID: 425457265}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 274389189}
   - {fileID: 1181841652}
@@ -1053,7 +1053,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Key: 9
   CamControl: {fileID: 89227899}
-  LockOnly: 0
+  LockOnly: 1
   CursorRenderer: {fileID: 1661088671}
 --- !u!1 &535944724
 GameObject:
@@ -3191,7 +3191,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -0.0016479488}
+  m_AnchoredPosition: {x: 0, y: -0.0018310543}
   m_SizeDelta: {x: -17, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &2421006697587610782
