@@ -51,6 +51,8 @@ public class ScrollDetails : MonoBehaviour
             obj.GetComponent<RectTransform>().localPosition = GetPosition(i);
             obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = s.declarations[i].description;
             obj.transform.SetParent(viewport);
+            //TODO: Remvoe this reaaaaly bad hack
+            obj.transform.localScale = Vector3.one;
             this.ParameterDisplays[i] = obj;
         }
         gameObject.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = s.description;
