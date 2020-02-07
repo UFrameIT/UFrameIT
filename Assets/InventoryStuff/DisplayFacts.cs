@@ -63,6 +63,14 @@ public class DisplayFacts : MonoBehaviour
                     obj.GetComponent<FactWrapper>().fact = f;
                     return obj;
                 }
+            case RayFact f:
+                {
+                    var obj = Instantiate(prefab_Distance, Vector3.zero, Quaternion.identity, transform);
+                    obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid1].Id);
+                    obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid2].Id);
+                    obj.GetComponent<FactWrapper>().fact = f;
+                    return obj;
+                }
 
             case AngleFact f:
                 {
@@ -86,6 +94,7 @@ public class DisplayFacts : MonoBehaviour
                     var obj = Instantiate(prefab_Default, Vector3.zero, Quaternion.identity, transform);
                     return obj;
                 }
+           
         }
     }
 

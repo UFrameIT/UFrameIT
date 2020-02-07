@@ -51,6 +51,13 @@ public class FactManager : MonoBehaviour
 
         return Facts.Find(x => x.Id == id) as LineFact;
     }
+    RayFact AddRayFact(int pid1, int pid2, int id)
+    {
+        Facts.Insert(id, new RayFact(id, pid1, pid2));
+
+        return Facts.Find(x => x.Id == id) as RayFact;
+    }
+
 
     AngleFact AddAngleFact(int pid1, int pid2, int pid3, int id)
     {
@@ -292,7 +299,11 @@ public class FactManager : MonoBehaviour
                         //Create LineFact
                         //Check if exactle the same line/distance already exists
                         if(!factAlreadyExists(new int[] { this.lineModeFirstPointSelected.Id, tempFact.Id }))
-                            CommunicationEvents.AddFactEvent.Invoke(this.AddLineFact(this.lineModeFirstPointSelected.Id, tempFact.Id, this.GetFirstEmptyID()));
+                            if(ActiveToolMode==ToolMode.CreateLineMode)
+                                CommunicationEvents.AddFactEvent.Invoke(this.AddLineFact(this.lineModeFirstPointSelected.Id, tempFact.Id, this.GetFirstEmptyID()));
+                            else
+                                CommunicationEvents.AddFactEvent.Invoke(this.AddRayFact(this.lineModeFirstPointSelected.Id, tempFact.Id, this.GetFirstEmptyID()));
+
                         this.lineModeIsFirstPointSelected = false;
                         this.lineModeFirstPointSelected = null;
                     }

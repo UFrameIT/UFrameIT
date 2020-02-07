@@ -124,6 +124,7 @@ public class FactSpawner : MonoBehaviour
         //Get the Line-GameObject as the first Child of the Line-Prefab -> That's the Collider
         var v3T = line.transform.GetChild(0).localScale;
         v3T.x = (point2 - point1).magnitude;
+        Debug.Log(v3T.x);
         //For every Coordinate x,y,z we have to devide it by the LocalScale of the Child,
         //because actually the Child should be of this length and not the parent, which is only the Collider
         v3T.x = v3T.x / line.transform.GetChild(0).GetChild(0).localScale.x;
@@ -134,10 +135,9 @@ public class FactSpawner : MonoBehaviour
         line.transform.GetChild(0).localScale = v3T;
         line.transform.GetChild(0).rotation = Quaternion.FromToRotation(Vector3.right, point2 - point1);
 
-        //string letter = ((Char)(64 + lineFact.Id + 1)).ToString();
-        //line.GetComponentInChildren<TextMeshPro>().text = letter;
-        line.GetComponentInChildren<TextMeshPro>().text = ((Char)(64 + pointFact1.Id + 1)).ToString() + ((Char)(64 + pointFact2.Id + 1)).ToString();
-        line.GetComponentInChildren<TextMeshPro>().text += " = " + Math.Round((point1 - point2).magnitude, 2).ToString() + " m";
+        string letter = ((Char)(64 + lineFact.Id + 1)).ToString();
+        line.GetComponentInChildren<TextMeshPro>().text = letter;
+     
         line.GetComponentInChildren<FactObject>().Id = lineFact.Id;
         //If a new Line was spawned -> We are in CreateLineMode -> Then we want the collider to be disabled
         if (CommunicationEvents.ActiveToolMode != ToolMode.ExtraMode)
