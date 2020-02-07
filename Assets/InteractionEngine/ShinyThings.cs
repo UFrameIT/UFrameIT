@@ -155,7 +155,7 @@ public class ShinyThings : MonoBehaviour
         {
             //Remove transparency
             var oldCol = selectionRenderer.material.color;
-            oldCol.a = 1;
+            oldCol.a = .75f;
             selectionRenderer.material.color = oldCol;
 
             //Hide Mouse cursor

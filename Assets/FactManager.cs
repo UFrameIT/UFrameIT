@@ -108,6 +108,10 @@ public class FactManager : MonoBehaviour
                     gO.GetComponentInChildren<Collider>().enabled = false;
                 }
                 break;
+
+            case ToolMode.CreateRayMode:
+                //same as for line mode atm
+
             case ToolMode.CreateLineMode:
                 //If CreateLineMode is activated we want to have the ability to select points for the Line
                 //but we don't want to have the ability to select Lines or Angles
@@ -124,6 +128,9 @@ public class FactManager : MonoBehaviour
                     }
                 }
                 break;
+    
+       
+                
             case ToolMode.CreateAngleMode:
                 //If CreateAngleMode is activated we want to have the ability to select Points for the Angle
                 //but we don't want to have the ability to select Lines or Angles
@@ -140,6 +147,7 @@ public class FactManager : MonoBehaviour
                     }
                 }
                 break;
+                /*
             case ToolMode.DeleteMode:
                 //If DeleteMode is activated we want to have the ability to delete every Fact
                 //independent of the concrete type of fact
@@ -148,7 +156,7 @@ public class FactManager : MonoBehaviour
                     GameObject gO = fact.Representation;
                     gO.GetComponentInChildren<Collider>().enabled = true;
                 }
-                break;
+                break;*/
             case ToolMode.ExtraMode:
                 /*foreach (Fact fact in Facts)
                 {
@@ -267,6 +275,9 @@ public class FactManager : MonoBehaviour
             case ToolMode.MarkPointMode:
                 CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(hit, this.GetFirstEmptyID()));
                 break;
+
+            //same as for linemode atm
+            case ToolMode.CreateRayMode:
             //If Left-Mouse-Button was pressed in CreateLineMode
             case ToolMode.CreateLineMode:
                 //Check if an existing Point was hit
@@ -423,7 +434,7 @@ public class FactManager : MonoBehaviour
                     //TODO: Hint that only an angle can be created between 3 already existing points
                 }
                 break;
-            //If Left-Mouse-Button was pressed in DeleteMode
+          /*  //If Left-Mouse-Button was pressed in DeleteMode
             case ToolMode.DeleteMode:
                 //Search for the Fact that was hit
                 //If the hit GameObject was a Point/Line/Angle
@@ -432,7 +443,7 @@ public class FactManager : MonoBehaviour
                     //Search for the suitable fact from the List
                     this.DeleteFact(Facts.Find(x => x.Id == hit.transform.GetComponent<FactObject>().Id));
                 }
-                break;
+                break;*/
             //If Left-Mouse-Button was pressed in ExtraMode
             case ToolMode.ExtraMode:
                 if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point")) {

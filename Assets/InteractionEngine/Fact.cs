@@ -111,6 +111,43 @@ public class LineFact : Fact
     
 }
 
+public class RayFact : Fact
+{
+    //Id's of the 2 Point-Facts that are connected
+    public int Pid1, Pid2;
+
+    //only for temporary Use of LineFacts.
+    public RayFact() { }
+
+    public RayFact(int i, int pid1, int pid2)
+    {
+        this.Id = i;
+        this.Pid1 = pid1;
+        this.Pid2 = pid2;
+        PointFact pf1 = CommunicationEvents.Facts.Find((x => x.Id == pid1)) as PointFact;
+        PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
+        string p1URI = pf1.backendURI;
+        string p2URI = pf2.backendURI;
+        float v = (pf1.Point - pf2.Point).magnitude;
+        string body = @"{ ""pointA"":""" + p1URI + @"""," + @"""pointB"":""" + p2URI + @"""," + @"""value"":" + format(v) + "}";
+        AddFactResponse res = AddFactResponse.sendAdd("localhost:8081/fact/add/distance", body);
+        this.backendURI = res.factUri;
+        this.backendValueURI = res.factValUri;
+    }
+
+    public RayFact(int i, int pid1, int pid2, string uri, string valuri)
+    {
+        this.Id = i;
+        this.Pid1 = pid1;
+        this.Pid2 = pid2;
+        this.backendURI = uri;
+        this.backendValueURI = valuri;
+    }
+
+
+}
+
+
 public class AngleFact : Fact
 {
     //Id's of the 3 Point-Facts, where Pid2 is the point, where the angle is

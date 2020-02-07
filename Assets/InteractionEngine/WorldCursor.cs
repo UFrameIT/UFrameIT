@@ -81,7 +81,7 @@ public class WorldCursor : MonoBehaviour
             {
                 CommunicationEvents.TriggerEvent.Invoke(Hit);
             }
-            else {
+            else if(CommunicationEvents.ActiveToolMode==ToolMode.MarkPointMode){
                 Hit.collider.enabled = false;
                 CommunicationEvents.TriggerEvent.Invoke(Hit);
             //    CommunicationEvents.SnapEvent.Invoke(Hit);
