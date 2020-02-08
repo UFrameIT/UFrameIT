@@ -9,12 +9,15 @@ public class HideUI : MonoBehaviour
     public UnityStandardAssets.Characters.FirstPerson.FirstPersonController CamControl;
     public bool LockOnly = true;
     public MeshRenderer CursorRenderer;
+    public Canvas UICanvas;
 
     void Start()
     {
         if (!LockOnly)
         {
-            bool camActive = transform.localScale.x != 1;
+            if(UICanvas==null)
+                UICanvas = GetComponentInChildren<Canvas>();
+            bool camActive  = !UICanvas.enabled;
             CamControl.enabled = camActive;
             CursorRenderer.enabled = camActive;
         }
@@ -34,10 +37,10 @@ public class HideUI : MonoBehaviour
             }
             else
             {
-                transform.localScale = Vector3.one * ((transform.localScale.x + 1) % 2);
-                bool camActive = transform.localScale.x != 1;
-
-
+                //  Rect.localScale = Vector3.one * ((Rect.localScale.x + 1) % 2);
+                //bool camActive = Rect.localScale.x != 1;
+                bool camActive = UICanvas.enabled;
+                UICanvas.enabled = !UICanvas.enabled;
                 CamControl.enabled = camActive;
                 CursorRenderer.enabled = camActive;
             }

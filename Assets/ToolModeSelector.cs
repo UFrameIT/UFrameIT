@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class ToolModeSelector : MonoBehaviour
 {
     private Button[] Buttons;
+    private HideUI UIManager;
 
     // Start is called before the first frame update
     void Start()
@@ -27,6 +28,7 @@ public class ToolModeSelector : MonoBehaviour
 
     
         Buttons[(int)CommunicationEvents.ActiveToolMode].transform.localScale *= 2;
+        UIManager = GetComponentInParent<HideUI>();
 
     }
 
@@ -42,7 +44,8 @@ public class ToolModeSelector : MonoBehaviour
     // Update is called once per frame
     void Update()
     {   //Check if the ToolMode was switched
-        CheckToolModeSelection();
+        if(!UIManager.UICanvas.enabled)
+            CheckToolModeSelection();
         
     }
 
