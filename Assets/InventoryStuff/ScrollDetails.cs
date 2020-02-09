@@ -48,11 +48,11 @@ public class ScrollDetails : MonoBehaviour
         this.ParameterDisplays = new GameObject[s.declarations.Length];
         for (int i = 0; i < s.declarations.Length; i++) {
             var obj = Instantiate(parameterDisplayPrefab, Vector3.zero, Quaternion.identity, transform);
-            obj.GetComponent<RectTransform>().localPosition = GetPosition(i);
+            //obj.GetComponent<RectTransform>().localPosition = GetPosition(i);
             obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = s.declarations[i].description;
-            obj.transform.SetParent(viewport);
+            obj.transform.SetParent(viewport.GetChild(0));
             //TODO: Remvoe this reaaaaly bad hack
-            obj.transform.localScale = Vector3.one;
+            //obj.transform.localScale = Vector3.one;
             this.ParameterDisplays[i] = obj;
         }
         gameObject.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = s.description;
