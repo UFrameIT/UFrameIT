@@ -30,9 +30,12 @@ public class ShinyThings : MonoBehaviour
 
     //Variables for Pushout-Highlighting
     private Fact highlightedPushoutFact;
+    private GameObject extraHighlight;
     private bool timerActive { get; set; }
     private float timer { get; set; }
-    private float timerDuration = 3.0f;
+    private float timerDuration = 5.0f;
+    private float timerDurationEnd = 2.5f;
+    private float speedSlowDown;
     public Material pushoutMaterial;
     private Material tempMaterial;
 
@@ -46,6 +49,7 @@ public class ShinyThings : MonoBehaviour
         CommunicationEvents.StopCurveDrawingEvent.AddListener(DeactivateCurveDrawing);
         CommunicationEvents.StopPreviewsEvent.AddListener(StopPreviews);
         CommunicationEvents.PushoutFactEvent.AddListener(StartPushoutFactHighlighting);
+        speedSlowDown = timerDurationEnd * 10;
 
         this.timerActive = false;
         this.timer = 0;
@@ -79,9 +83,19 @@ public class ShinyThings : MonoBehaviour
             this.timer += Time.deltaTime;
             if (this.timer >= this.timerDuration)
             {
-                this.timerActive = false;
-                this.timer = 0;
-                StopPushoutFactHighlighting();
+                if (this.timer >= this.timerDuration + this.timerDurationEnd)
+                {
+                    this.timerActive = false;
+                    this.timer = 0;
+                    StopPushoutFactHighlighting();
+                }
+                else {
+                    var main = this.extraHighlight.transform.GetChild(0).GetComponent<ParticleSystem>().main;
+                    speedSlowDown -= Time.deltaTime * 10;
+                    main.startSpeed = speedSlowDown;
+                    main = this.extraHighlight.transform.GetChild(1).GetComponent<ParticleSystem>().main;
+                    main.startSpeed = speedSlowDown;
+                }
             }
         }
     }
@@ -192,6 +206,7 @@ public class ShinyThings : MonoBehaviour
 
     public void StartPushoutFactHighlighting(Fact startFact) {
 
+        GameObject fireworksRepresentation = (GameObject)Resources.Load("Prefabs/Fireworks", typeof(GameObject));
         highlightedPushoutFact = startFact;
 
         if (typeof(PointFact).IsInstanceOfType(highlightedPushoutFact))
@@ -199,17 +214,23 @@ public class ShinyThings : MonoBehaviour
             PointFact fact = (PointFact)highlightedPushoutFact;
             tempMaterial = fact.Representation.transform.GetChild(0).GetComponent<MeshRenderer>().material;
             fact.Representation.transform.GetChild(0).GetComponent<MeshRenderer>().material = pushoutMaterial;
+            this.extraHighlight = GameObject.Instantiate(fireworksRepresentation);
+            this.extraHighlight.transform.position = fact.Representation.transform.position;
         }
         else if (typeof(LineFact).IsInstanceOfType(highlightedPushoutFact))
         {
             LineFact fact = (LineFact)highlightedPushoutFact;
             tempMaterial = fact.Representation.transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material;
             fact.Representation.transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material = pushoutMaterial;
+            this.extraHighlight = GameObject.Instantiate(fireworksRepresentation);
+            this.extraHighlight.transform.position = fact.Representation.transform.position;
         }
         else if (typeof(AngleFact).IsInstanceOfType(highlightedPushoutFact)) {
             AngleFact fact = (AngleFact)highlightedPushoutFact;
             tempMaterial = fact.Representation.transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material;
             fact.Representation.transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material = pushoutMaterial;
+            this.extraHighlight = GameObject.Instantiate(fireworksRepresentation);
+            this.extraHighlight.transform.position = fact.Representation.transform.position;
         }
 
         //Activate Timer
@@ -233,6 +254,9 @@ public class ShinyThings : MonoBehaviour
             AngleFact fact = (AngleFact)highlightedPushoutFact;
             fact.Representation.transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material = tempMaterial;
         }
+
+        GameObject.Destroy(this.extraHighlight);
+        this.extraHighlight = null;
     }
 
     public void ActivateLineDrawing(Fact startFact)
