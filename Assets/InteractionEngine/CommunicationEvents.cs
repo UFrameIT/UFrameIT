@@ -66,6 +66,7 @@ public static class CommunicationEvents
     //Event for stopping all previews -> Made When ToolMode is changed
     public static ShinyEvent StopPreviewsEvent = new ShinyEvent();
     public static ShinyEvent PushoutFactEvent = new ShinyEvent();
+    public static ShinyEvent PushoutFactFailEvent = new ShinyEvent();
 
 
 

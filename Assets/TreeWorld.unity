@@ -1661,6 +1661,10 @@ MonoBehaviour:
   defaultMaterial: {fileID: 2100000, guid: 8ae9adf4dc782964387385c1e8c0eb72, type: 2}
   highlightMaterial: {fileID: 2100000, guid: c7daa82e15f0cf04d92d0f41ce84f9df, type: 2}
   lineRenderer: {fileID: 1661088668}
+  linePreviewMaterial: {fileID: 2100000, guid: a8a7bf60a30970f469a9c9d3ae2de6ef, type: 2}
+  anglePreviewMaterial: {fileID: 2100000, guid: d24faa9ba77ab91459039238ad17d83c,
+    type: 2}
+  directionalLight: {fileID: 138245305}
   pushoutMaterial: {fileID: 2100000, guid: d9c43ce51f1a01d41a18fae03c0d406c, type: 2}
 --- !u!114 &1661088670
 MonoBehaviour:

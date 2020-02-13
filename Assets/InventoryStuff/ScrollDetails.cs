@@ -63,6 +63,7 @@ public class ScrollDetails : MonoBehaviour
         if (view.Equals(FAIL)) {
             Debug.Log("DAS HAT NICHT GEKLAPPT");
             //TODO: hier ne Art PopUp, wo drin steht, dass das nicht geklappt hat
+            CommunicationEvents.PushoutFactFailEvent.Invoke(null);
             return;
         }
         string ret = pushout(view);

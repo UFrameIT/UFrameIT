@@ -18,6 +18,8 @@ public class ShinyThings : MonoBehaviour
     //Attributes for simulating the drawing of a line/curve
     public LineRenderer lineRenderer;
     private List<Vector3> linePositions = new List<Vector3>();
+    public Material linePreviewMaterial;
+    public Material anglePreviewMaterial;
 
     private bool lineDrawingActivated;
     private bool curveDrawingActivated;
@@ -33,8 +35,18 @@ public class ShinyThings : MonoBehaviour
     private GameObject extraHighlight;
     private bool timerActive { get; set; }
     private float timer { get; set; }
-    private float timerDuration = 5.0f;
-    private float timerDurationEnd = 2.5f;
+    private float timerDuration = 2.5f;
+    private float timerDurationEnd = 5.0f;
+    private int slowDownCount = 8;
+    private int slowDownCounter;
+    private bool[] slowDownSwitch;
+    private float simulationSpeed;
+    private Boolean pushoutFail;
+    public GameObject directionalLight;
+    private Color lightColor;
+    private Color tempColor;
+    private Color darkColor;
+    private Boolean factAnimationActive = false;
     private float speedSlowDown;
     public Material pushoutMaterial;
     private Material tempMaterial;
@@ -49,7 +61,12 @@ public class ShinyThings : MonoBehaviour
         CommunicationEvents.StopCurveDrawingEvent.AddListener(DeactivateCurveDrawing);
         CommunicationEvents.StopPreviewsEvent.AddListener(StopPreviews);
         CommunicationEvents.PushoutFactEvent.AddListener(StartPushoutFactHighlighting);
+        CommunicationEvents.PushoutFactFailEvent.AddListener(StartPushoutFactFailHighlighting);
         speedSlowDown = timerDurationEnd * 10;
+        lightColor = directionalLight.GetComponent<Light>().color;
+
+        slowDownSwitch = new bool[slowDownCount];
+        Array.Clear(slowDownSwitch, 0, slowDownSwitch.Length);
 
         this.timerActive = false;
         this.timer = 0;
@@ -77,26 +94,11 @@ public class ShinyThings : MonoBehaviour
         else if (this.curveDrawingActivated)
             UpdateCurveDrawing(this.transform.position);
 
-        //If the Timer is Active, check if timerDuration is reached and stop Pushout-Highlighting
+        //If the Timer is Active, check Pushout-Highlighting
         if (this.timerActive)
         {
             this.timer += Time.deltaTime;
-            if (this.timer >= this.timerDuration)
-            {
-                if (this.timer >= this.timerDuration + this.timerDurationEnd)
-                {
-                    this.timerActive = false;
-                    this.timer = 0;
-                    StopPushoutFactHighlighting();
-                }
-                else {
-                    var main = this.extraHighlight.transform.GetChild(0).GetComponent<ParticleSystem>().main;
-                    speedSlowDown -= Time.deltaTime * 10;
-                    main.startSpeed = speedSlowDown;
-                    main = this.extraHighlight.transform.GetChild(1).GetComponent<ParticleSystem>().main;
-                    main.startSpeed = speedSlowDown;
-                }
-            }
+            CheckPushoutHighlighting();
         }
     }
 
@@ -206,7 +208,7 @@ public class ShinyThings : MonoBehaviour
 
     public void StartPushoutFactHighlighting(Fact startFact) {
 
-        GameObject fireworksRepresentation = (GameObject)Resources.Load("Prefabs/Fireworks", typeof(GameObject));
+        GameObject fireworksRepresentation = (GameObject)Resources.Load("Prefabs/Fireworks_Animation", typeof(GameObject));
         highlightedPushoutFact = startFact;
 
         if (typeof(PointFact).IsInstanceOfType(highlightedPushoutFact))
@@ -234,6 +236,8 @@ public class ShinyThings : MonoBehaviour
         }
 
         //Activate Timer
+        this.pushoutFail = false;
+        this.slowDownCounter = 0;
         this.timerActive = true;
     }
 
@@ -259,9 +263,116 @@ public class ShinyThings : MonoBehaviour
         this.extraHighlight = null;
     }
 
+    public void StartPushoutFactFailHighlighting(Fact startFact)
+    {
+        this.pushoutFail = true;
+        this.tempColor = this.lightColor;
+        this.darkColor = new Color(0.6f, 0.6f, 0.6f);
+        this.timerActive = true;
+    }
+
+    public void CheckPushoutHighlighting() {
+        //If the Pushout suceeded -> Fireworks-Animation
+        if (this.pushoutFail == false)
+        {
+            //Fireworks already started in StartPushoutFactHighlighting
+            if (this.timer >= this.timerDuration)
+            {
+                //After this.timerDuration+this.timerDurationEnd: Destroy Fireworks-Animation
+                if (this.timer >= this.timerDuration + this.timerDurationEnd)
+                {
+                    this.timerActive = false;
+                    this.timer = 0;
+                    StopPushoutFactHighlighting();
+                }
+                //After this.timerDuration: Slow Down Fireworks
+                else
+                {
+                    ParticleSystem main1 = this.extraHighlight.transform.GetChild(0).GetComponent<ParticleSystem>();
+                    ParticleSystem main2 = this.extraHighlight.transform.GetChild(1).GetComponent<ParticleSystem>();
+                    //Save StartSpeed when first slowing down
+                    if (this.slowDownCounter == 0)
+                        this.simulationSpeed = main1.main.simulationSpeed;
+                    slowDownAnimation(main1, main2);
+                }
+            }
+        }
+        //If the Pushout failed -> Rain-Animation
+        else
+        {
+            if (this.timer <= 0.5f * (this.timerDurationEnd))
+            {
+                //sky slowly gets dark
+                if (directionalLight.GetComponent<Light>().color.r > darkColor.r)
+                {
+                    tempColor.r -= Time.deltaTime/5;
+                    tempColor.g -= Time.deltaTime/5;
+                    tempColor.b -= Time.deltaTime/5;
+                    directionalLight.GetComponent<Light>().color = tempColor;
+                }
+
+            }
+            else if (this.timer <= 2.0f * this.timerDuration + 0.5f * this.timerDurationEnd)
+            {
+                //Rain-Animation starts
+                if (!factAnimationActive)
+                {
+                    GameObject RainRepresentation = (GameObject)Resources.Load("Prefabs/Rainmaker/RainPrefab", typeof(GameObject));
+                    RainRepresentation.transform.position = new Vector3(0, 40, 0);
+                    this.extraHighlight = GameObject.Instantiate(RainRepresentation);
+                    factAnimationActive = true;
+                }
+            }
+            //Rain-Animation stops and sky slowly gets bright again
+            else if (this.timer <= 2.0f * this.timerDuration + this.timerDurationEnd)
+            {
+                if (factAnimationActive)
+                {
+                    //Stop Rain
+                    GameObject.Destroy(this.extraHighlight);
+                    this.extraHighlight = null;
+                    factAnimationActive = false;
+                }
+                //sky slowly gets bright again
+                if (directionalLight.GetComponent<Light>().color.r <= lightColor.r)
+                {
+                    tempColor.r += Time.deltaTime/5;
+                    tempColor.g += Time.deltaTime/5;
+                    tempColor.b += Time.deltaTime/5;
+                    directionalLight.GetComponent<Light>().color = tempColor;
+                }
+            }
+            else
+            {
+                //Stop timer
+                this.timerActive = false;
+                this.timer = 0;
+            }
+        }
+    }
+
+    public void slowDownAnimation(ParticleSystem main1, ParticleSystem main2) {
+
+        if (this.timer <= this.timerDuration + (this.timerDurationEnd*((float)slowDownCounter+1.0f)/(float)slowDownCount))
+        {
+            if(slowDownSwitch[(int)((this.timer-this.timerDuration)/(this.timerDuration/(float)slowDownCount))] == false)
+                if (slowDownCounter < slowDownCount)
+                {
+                    var mainModule1 = main1.main;
+                    float speed = mainModule1.simulationSpeed;
+                    mainModule1.simulationSpeed = speed - (float)(this.simulationSpeed / (float)slowDownCount);
+                    var mainModule2 = main2.main;
+                    mainModule2.simulationSpeed = speed - (float)(this.simulationSpeed / (float)slowDownCount);
+
+                    slowDownSwitch[slowDownCounter] = true;
+                }
+        }
+    }
+
     public void ActivateLineDrawing(Fact startFact)
     {
         this.lineRenderer.positionCount = 2;
+        this.lineRenderer.material = this.linePreviewMaterial;
 
         lineRenderer.startWidth = 0.095f;
         lineRenderer.endWidth = 0.095f;
@@ -297,6 +408,7 @@ public class ShinyThings : MonoBehaviour
     {
         //In AngleMode with 3 Points we want to draw nearly a rectangle so we add a startPoint and an Endpoint to this preview
         this.lineRenderer.positionCount = curveDrawingVertexCount + 2;
+        this.lineRenderer.material = this.anglePreviewMaterial;
 
         lineRenderer.startWidth = 0.05f;
         lineRenderer.endWidth = 0.05f;
