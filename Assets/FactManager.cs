@@ -39,6 +39,7 @@ public class FactManager : MonoBehaviour
 
     }
 
+    //TODO: change the return find....
     PointFact AddPointFact(RaycastHit hit, int id)
     {
         Facts.Insert(id, new PointFact(id, hit.point, hit.normal));
@@ -54,6 +55,11 @@ public class FactManager : MonoBehaviour
     RayFact AddRayFact(int pid1, int pid2, int id)
     {
         Facts.Insert(id, new RayFact(id, pid1, pid2));
+
+        var oPid = GetFirstEmptyID();
+        Facts.Insert(oPid, new RayFact(id, pid1, pid2));
+        oPid = GetFirstEmptyID();
+        Facts.Insert(oPid, new RayFact(id, pid1, pid2));
 
         return Facts.Find(x => x.Id == id) as RayFact;
     }

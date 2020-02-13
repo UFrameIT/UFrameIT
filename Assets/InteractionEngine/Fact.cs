@@ -73,6 +73,7 @@ public class PointFact : Fact
 
 public class OpenLineFact : Fact
 {
+    //R: this is called RayFact for now (see below), feel free to change
     //an infinite Line through the Points Pid1 and Pid2
     public int Pid1, Pid2;
 }
