@@ -71,12 +71,7 @@ public class PointFact : Fact
 }
 
 
-public class OpenLineFact : Fact
-{
-    //R: this is called RayFact for now (see below), feel free to change
-    //an infinite Line through the Points Pid1 and Pid2
-    public int Pid1, Pid2;
-}
+
 
 public class LineFact : Fact
 {
@@ -112,6 +107,13 @@ public class LineFact : Fact
     
 }
 
+public class OpenLineFact : Fact
+{
+    //R: this is called RayFact for now (see below), feel free to change
+    //an infinite Line through the Points Pid1 and Pid2
+    public int Pid1, Pid2;
+}
+
 public class RayFact : Fact
 {
     //Id's of the 2 Point-Facts that are connected
@@ -129,9 +131,9 @@ public class RayFact : Fact
         PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
         string p1URI = pf1.backendURI;
         string p2URI = pf2.backendURI;
-        float v = (pf1.Point - pf2.Point).magnitude;
-        string body = @"{ ""pointA"":""" + p1URI + @"""," + @"""pointB"":""" + p2URI + @"""," + @"""value"":" + format(v) + "}";
-        AddFactResponse res = AddFactResponse.sendAdd("localhost:8081/fact/add/distance", body);
+        //TODO: fix body
+        string body = @"{ ""base"":""" + p1URI + @"""," + @"""dir"":""" + p2URI + @"""," + "}";
+        AddFactResponse res = AddFactResponse.sendAdd("localhost:8081/fact/add/line", body);
         this.backendURI = res.factUri;
         this.backendValueURI = res.factValUri;
     }
@@ -143,6 +145,30 @@ public class RayFact : Fact
         this.Pid2 = pid2;
         this.backendURI = uri;
         this.backendValueURI = valuri;
+    }
+
+
+}
+
+
+public class OnLineFact : Fact
+{
+    //Id's of the Point , and the Id of the Line it sits on
+    public int Pid, Lid;
+
+    public OnLineFact(int i, int pid, int lid)
+    {
+        this.Id = i;
+        this.Pid = pid;
+        this.Lid = lid;
+        PointFact pf = CommunicationEvents.Facts.Find((x => x.Id == pid)) as PointFact;
+        RayFact lf = CommunicationEvents.Facts.Find((x => x.Id == lid)) as RayFact;
+        string pURI = pf.backendURI;
+        string lURI = lf.backendURI;
+        string body = @"{ ""vector"":""" + pURI + @"""," + @"""line"":""" + lURI + @"""," + "}";
+        AddFactResponse res = AddFactResponse.sendAdd("localhost:8081/fact/add/onLine", body);
+        this.backendURI = res.factUri;
+        this.backendValueURI = res.factValUri;
     }
 
 
@@ -192,9 +218,5 @@ public class AngleFact : Fact
         this.backendValueURI = valuri;
     }
 }
-public class OnLineFact : Fact
-{
-    //Id's of the Point , and the Id of the Line it sits on
-    public int Pid1, Lid2;
-}
+
 

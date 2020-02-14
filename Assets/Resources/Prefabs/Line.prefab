@@ -263,7 +263,7 @@ GameObject:
   - component: {fileID: 6179051021116985022}
   m_Layer: 11
   m_Name: Line
-  m_TagString: Selectable
+  m_TagString: SnapZone
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

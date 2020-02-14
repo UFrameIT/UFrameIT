@@ -56,10 +56,12 @@ public class FactManager : MonoBehaviour
     {
         Facts.Insert(id, new RayFact(id, pid1, pid2));
 
-        var oPid = GetFirstEmptyID();
-        Facts.Insert(oPid, new RayFact(id, pid1, pid2));
-        oPid = GetFirstEmptyID();
-        Facts.Insert(oPid, new RayFact(id, pid1, pid2));
+        var oLid = GetFirstEmptyID();
+        Facts.Insert(oLid, new OnLineFact(oLid, pid1, id));
+        oLid = GetFirstEmptyID();
+        Facts.Insert(oLid, new OnLineFact(oLid, pid2, id));
+
+        //TODO: check for more points, question: should MMT do this instead?
 
         return Facts.Find(x => x.Id == id) as RayFact;
     }
@@ -105,6 +107,7 @@ public class FactManager : MonoBehaviour
 
     }
 
+
     public void OnToolModeChanged(ToolMode ActiveToolMode)
     {
         //We need to do this somehwere...
@@ -117,8 +120,10 @@ public class FactManager : MonoBehaviour
                 //everywhere, independent of already existing facts
                 foreach (Fact fact in Facts)
                 {
+                
                     GameObject gO = fact.Representation;
-                    gO.GetComponentInChildren<Collider>().enabled = false;
+                    if ((gO.layer == LayerMask.NameToLayer("Line")))
+                            gO.GetComponentInChildren<Collider>().enabled = true;
                 }
                 break;
 
