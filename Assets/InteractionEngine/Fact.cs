@@ -132,7 +132,7 @@ public class RayFact : Fact
         string p1URI = pf1.backendURI;
         string p2URI = pf2.backendURI;
         //TODO: fix body
-        string body = @"{ ""base"":""" + p1URI + @"""," + @"""dir"":""" + p2URI + @"""," + "}";
+        string body = @"{ ""base"":""" + p1URI + @"""," + @"""second"":""" + p2URI + @"""" + "}";
         AddFactResponse res = AddFactResponse.sendAdd("localhost:8081/fact/add/line", body);
         this.backendURI = res.factUri;
         this.backendValueURI = res.factValUri;
@@ -165,7 +165,7 @@ public class OnLineFact : Fact
         RayFact lf = CommunicationEvents.Facts.Find((x => x.Id == lid)) as RayFact;
         string pURI = pf.backendURI;
         string lURI = lf.backendURI;
-        string body = @"{ ""vector"":""" + pURI + @"""," + @"""line"":""" + lURI + @"""," + "}";
+        string body = @"{ ""vector"":""" + pURI + @"""," + @"""line"":""" + lURI + @"""" + "}";
         AddFactResponse res = AddFactResponse.sendAdd("localhost:8081/fact/add/onLine", body);
         this.backendURI = res.factUri;
         this.backendValueURI = res.factValUri;
