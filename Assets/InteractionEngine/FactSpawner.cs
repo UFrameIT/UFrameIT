@@ -161,7 +161,7 @@ public class FactSpawner : MonoBehaviour
         //Length of the Angle relative to the Length of the shortest of the two lines (point2->point1) and (point2->point3)
         float lengthFactor = 0.3f;
         //AngleGO: Triangle-Length: 3/4, Circle-Length: 1/4
-        float angleGoFactorTriangleToCircle = 1.27f;
+        float angleGoFactorTriangleToCircle = 1.33f;// 1.27f;
 
         //Make 2 TempPoints positioned on length% from Point2 to Point3 and on length% from Point2 to Point1
         //Will be used for z-Coordinate of the Angle
