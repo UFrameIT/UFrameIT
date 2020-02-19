@@ -61,8 +61,52 @@ public class FactManager : MonoBehaviour
         oLid = GetFirstEmptyID();
         Facts.Insert(oLid, new OnLineFact(oLid, pid2, id));
 
-        //TODO: check for more points, question: should MMT do this instead?
+        var p1 = Facts.Find(x => x.Id == pid1);
+        var p2 = Facts.Find(x => x.Id == pid2);
 
+        Vector3 dir = p2.Representation.transform.position - p1.Representation.transform.position;
+
+    
+
+        // Bit shift the index of the layer Point to get a bit mask
+        int layerMask = 1 << LayerMask.NameToLayer("Point");
+        // This casts rays only against colliders in layer 8
+
+
+        RaycastHit[] hits;
+        hits = Physics.RaycastAll(p1.Representation.transform.position - dir * 1000, dir, Mathf.Infinity, layerMask);
+
+        Debug.Log(hits.Length + " hits");
+        for (int i = 0; i < hits.Length; i++)
+        {
+            RaycastHit hit = hits[i];
+
+            bool exists = false;
+
+            foreach (Fact fact in Facts)
+            {
+                if (typeof(OnLineFact).IsInstanceOfType(fact))
+                {
+                    OnLineFact oLFact = (OnLineFact)fact;
+                    if ((oLFact.Lid == id && oLFact.Pid == hit.transform.gameObject.GetComponent<FactObject>().Id))
+                    {
+                        exists = true;
+                        break;
+                    }
+                }
+            }
+
+
+            if (!exists)
+            {
+                oLid = GetFirstEmptyID();
+                var olF = new OnLineFact(oLid, hit.transform.gameObject.GetComponent<FactObject>().Id, id);
+                Facts.Insert(oLid, olF);
+            }
+
+
+        }
+        
         return Facts.Find(x => x.Id == id) as RayFact;
     }
 
@@ -122,7 +166,8 @@ public class FactManager : MonoBehaviour
                 {
                 
                     GameObject gO = fact.Representation;
-                    if ((gO.layer == LayerMask.NameToLayer("Line")))
+                    if (gO == null) continue;
+                    if ((gO.layer == LayerMask.NameToLayer("Ray")))
                             gO.GetComponentInChildren<Collider>().enabled = true;
                 }
                 break;
@@ -136,7 +181,8 @@ public class FactManager : MonoBehaviour
                 foreach (Fact fact in Facts)
                 {
                     GameObject gO = fact.Representation;
-                    if (gO.layer == LayerMask.NameToLayer("Line") || gO.layer == LayerMask.NameToLayer("Angle"))
+                    if (gO == null) continue;
+                    if (gO.layer == LayerMask.NameToLayer("Line") || gO.layer == LayerMask.NameToLayer("Angle")|| gO.layer == LayerMask.NameToLayer("Ray"))
                     {
                         gO.GetComponentInChildren<Collider>().enabled = false;
                     }
@@ -155,6 +201,7 @@ public class FactManager : MonoBehaviour
                 foreach (Fact fact in Facts)
                 {
                     GameObject gO = fact.Representation;
+                    if (gO == null) continue;
                     if (gO.layer == LayerMask.NameToLayer("Line") || gO.layer == LayerMask.NameToLayer("Angle"))
                     {
                         gO.GetComponentInChildren<Collider>().enabled = false;
@@ -291,7 +338,16 @@ public class FactManager : MonoBehaviour
         {
             //If Left-Mouse-Button was pressed in MarkPointMode
             case ToolMode.MarkPointMode:
-                CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(hit, this.GetFirstEmptyID()));
+
+                var pid = this.GetFirstEmptyID();
+                CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(hit,pid ));
+                if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Ray")){
+
+                    var oLid = GetFirstEmptyID();
+                    Facts.Insert(oLid, new OnLineFact(oLid, pid, hit.transform.GetComponent<FactObject>().Id));
+                }
+
+
                 break;
 
             //same as for linemode atm
@@ -313,7 +369,11 @@ public class FactManager : MonoBehaviour
                             if(ActiveToolMode==ToolMode.CreateLineMode)
                                 CommunicationEvents.AddFactEvent.Invoke(this.AddLineFact(this.lineModeFirstPointSelected.Id, tempFact.Id, this.GetFirstEmptyID()));
                             else
+                            {
                                 CommunicationEvents.AddFactEvent.Invoke(this.AddRayFact(this.lineModeFirstPointSelected.Id, tempFact.Id, this.GetFirstEmptyID()));
+                               
+                            }
+                               
 
                         this.lineModeIsFirstPointSelected = false;
                         this.lineModeFirstPointSelected = null;

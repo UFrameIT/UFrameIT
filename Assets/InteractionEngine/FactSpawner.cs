@@ -116,7 +116,7 @@ public class FactSpawner : MonoBehaviour
         point2 += dir * 100;
 
          //Change FactRepresentation to Line
-         this.FactRepresentation = (GameObject)Resources.Load("Prefabs/Line", typeof(GameObject));
+         this.FactRepresentation = (GameObject)Resources.Load("Prefabs/Ray", typeof(GameObject));
         GameObject line = GameObject.Instantiate(FactRepresentation);
         //Place the Line in the centre of the two points
         line.transform.position = Vector3.Lerp(point1, point2, 0.5f);

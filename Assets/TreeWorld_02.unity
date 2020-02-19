@@ -41807,6 +41807,10 @@ MonoBehaviour:
     type: 3}
   prefab_Default: {fileID: 858001163752551619, guid: f019e9f67e8dab947bc60028223b6cec,
     type: 3}
+  prefab_OnLine: {fileID: 6050914136827205310, guid: 496d04605465c7f4dba7638cc6e2dc6e,
+    type: 3}
+  prefab_Line: {fileID: 7510387096843212865, guid: d6ee990520a44954fb494468665d19e9,
+    type: 3}
   x_Start: -125
   y_Start: 475
   X_Pacece_Between_Items: 105

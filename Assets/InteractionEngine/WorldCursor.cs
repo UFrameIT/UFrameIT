@@ -68,10 +68,10 @@ public class WorldCursor : MonoBehaviour
             // Debug.Log(Hit.transform.tag);
             if (Hit.collider.transform.CompareTag("SnapZone"))
             {
-                if(Hit.collider.gameObject.layer == LayerMask.NameToLayer("Line")){
+                if(Hit.collider.gameObject.layer == LayerMask.NameToLayer("Ray")){
 
                     int id = Hit.collider.gameObject.GetComponent<FactObject>().Id;
-                    LineFact lineFact = CommunicationEvents.Facts.Find((x => x.Id == id)) as LineFact;
+                    RayFact lineFact = CommunicationEvents.Facts.Find((x => x.Id == id)) as RayFact;
                     PointFact p1 =  CommunicationEvents.Facts.Find((x => x.Id == lineFact.Pid1)) as PointFact;
                     PointFact p2 = CommunicationEvents.Facts.Find((x => x.Id == lineFact.Pid2)) as PointFact;
 

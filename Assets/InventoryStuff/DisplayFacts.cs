@@ -13,6 +13,8 @@ public class DisplayFacts : MonoBehaviour
     public GameObject prefab_Distance;
     public GameObject prefab_Angle;
     public GameObject prefab_Default;
+    public GameObject prefab_OnLine;
+    public GameObject prefab_Line;
 
     public int x_Start;
     public int y_Start;
@@ -65,7 +67,7 @@ public class DisplayFacts : MonoBehaviour
                 }
             case RayFact f:
                 {
-                    var obj = Instantiate(prefab_Distance, Vector3.zero, Quaternion.identity, transform);
+                    var obj = Instantiate(prefab_Line, Vector3.zero, Quaternion.identity, transform);
                     obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid1].Id);
                     obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid2].Id);
                     obj.GetComponent<FactWrapper>().fact = f;
@@ -89,6 +91,17 @@ public class DisplayFacts : MonoBehaviour
                     obj.GetComponent<FactWrapper>().fact = f;
                     return obj;
                 }
+            case OnLineFact f:
+                {
+                    var obj = Instantiate(prefab_OnLine, Vector3.zero, Quaternion.identity, transform);
+                    obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Lid].Id);
+                    obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid].Id);
+                    obj.GetComponent<FactWrapper>().fact = f;
+                    return obj;
+                }
+
+
+
             default:
                 {
                     var obj = Instantiate(prefab_Default, Vector3.zero, Quaternion.identity, transform);
