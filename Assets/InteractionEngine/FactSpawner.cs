@@ -146,9 +146,7 @@ public class FactSpawner : MonoBehaviour
         lineFact.Representation = line;
 
     }
-
-
-
+    
     //Spawn an angle: point with id = angleFact.Pid2 is the point where the angle gets applied
     public void SpawnAngle(AngleFact angleFact)
     {
