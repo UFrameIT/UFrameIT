@@ -88,11 +88,11 @@ public class ScrollDetails : MonoBehaviour
             Fact fact_i = ParameterDisplays[i].GetComponentInChildren<DropHandling>().currentFact;
             var drophandler = ParameterDisplays[i].GetComponentInChildren<DropHandling>();
             Declaration decl_i = scroll.declarations[i];
-            jsonRequest = jsonRequest + @" """ + decl_i.identifier + @""":""" + fact_i.backendURI + @""",";
             if (decl_i.value != null && fact_i.backendValueURI != null)
             {
                 jsonRequest = jsonRequest + @" """ + decl_i.value + @""":""" + fact_i.backendValueURI + @""",";
             }
+            jsonRequest = jsonRequest + @" """ + decl_i.identifier + @""":""" + fact_i.backendURI + @""",";
         }
         //removing the last ','
         jsonRequest = jsonRequest.Substring(0, jsonRequest.Length - 1);

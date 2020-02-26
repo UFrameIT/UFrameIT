@@ -169,6 +169,7 @@ public class OnLineFact : Fact
         AddFactResponse res = AddFactResponse.sendAdd("localhost:8081/fact/add/onLine", body);
         this.backendURI = res.factUri;
         this.backendValueURI = res.factValUri;
+        Debug.Log("created onLine" +  this.backendURI + " " + this.backendValueURI);
     }
 
 
