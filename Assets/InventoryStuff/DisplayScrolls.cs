@@ -42,6 +42,10 @@ public class DisplayScrolls : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        var rect = GetComponent<RectTransform>();
+        x_Start = (int)(rect.rect.x + X_Pacece_Between_Items * .5f);
+        y_Start = (int)(-rect.rect.y - y_Pacece_Between_Items * .5f);//);
+        number_of_Column =Mathf.Max(1,(int)(rect.rect.width / ScrollPrefab.GetComponent<RectTransform>().rect.width) - 1);
         //get Scrolls from Backend;
 
         //string path = "Mock-Scrolls.json";

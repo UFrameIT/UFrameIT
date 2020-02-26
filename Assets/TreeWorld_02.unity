@@ -41711,8 +41711,8 @@ MonoBehaviour:
   DetailScreen: {fileID: 1338544411842204273}
   x_Start: -240
   y_Start: 200
-  X_Pacece_Between_Items: 110
-  y_Pacece_Between_Items: 110
+  X_Pacece_Between_Items: 105
+  y_Pacece_Between_Items: 105
   number_of_Column: 3
 --- !u!114 &5443790101197921845
 MonoBehaviour:
@@ -41774,10 +41774,10 @@ RectTransform:
   m_Father: {fileID: 443195907}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 1}
-  m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 300, y: -253}
-  m_SizeDelta: {x: 600, y: 506.09}
+  m_AnchorMin: {x: 1, y: 1}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -55, y: -540}
+  m_SizeDelta: {x: 110, y: 1080}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5443790101197921850
 CanvasRenderer:
@@ -41813,8 +41813,8 @@ MonoBehaviour:
     type: 3}
   x_Start: -125
   y_Start: 475
-  X_Pacece_Between_Items: 105
-  y_Pacece_Between_Items: 105
+  X_Pacece_Between_Items: 110
+  y_Pacece_Between_Items: 110
   number_of_Column: 3
 --- !u!114 &5443790102444080677
 MonoBehaviour:
@@ -41869,17 +41869,17 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5443790102444080678}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 443195907}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 1, y: 1}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -182, y: -540}
-  m_SizeDelta: {x: 364.6, y: 1080}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: 300, y: -241.69922}
+  m_SizeDelta: {x: 600, y: 480}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5443790102444080682
 CanvasRenderer:
