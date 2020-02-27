@@ -261,7 +261,10 @@ public class ShinyThings : MonoBehaviour
 
         GameObject.Destroy(this.extraHighlight);
         this.extraHighlight = null;
-    }
+
+        //Event for the happy Task-Charakter
+        CommunicationEvents.PushoutFactEndEvent.Invoke(null);
+}
 
     public void StartPushoutFactFailHighlighting(Fact startFact)
     {

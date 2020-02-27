@@ -56,12 +56,10 @@ public class WorldCursor : MonoBehaviour
     void Update()
     {
         Ray ray = Cam.ScreenPointToRay(Input.mousePosition);
-
-       
-        int layerMask = 1 << LayerMask.NameToLayer("Player"); //only hit player
-        layerMask = ~layerMask; //ignore Player
-
-   
+        
+        int layerMask = LayerMask.GetMask("Player", "TalkingZone");
+        //Ignore player and TalkingZone
+        layerMask = ~layerMask;
 
         if(Physics.Raycast(ray, out Hit, 30f, layerMask)){
 
