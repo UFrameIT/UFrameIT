@@ -9,9 +9,12 @@ public class CharacterDialog : MonoBehaviour
     public TextMeshPro textDisplay;
     public TextMeshPro textHint;
     public string[] sentences;
-    private int index;
+    private int sentenceIndex;
+    private int letterIndex = 0;
+    private bool typingActive = false;
     //speed for typing the Text
     public float typingSpeed;
+    private float timer = 0;
 
     //Only reset once after Player is out of range of the TaskCharacter
     private bool textReseted = true;
@@ -23,12 +26,15 @@ public class CharacterDialog : MonoBehaviour
     {
         CommunicationEvents.PushoutFactEvent.AddListener(PushoutSucceededSentence);
         //Type first sentence
-        StartCoroutine(Type());
+        typingActive = true;
+        TypeFkt();
 
     }
 
     private void Update()
     {
+        TypeFkt();
+
         if(!pushoutSucceeded && Input.GetKeyDown(KeyCode.Return) && TaskCharakterAnimation.getPlayerInTalkingZone())
         {
             //Type Next sentence if player is in the talkinZone around the TaskCharacter AND the player typed the return-Key
@@ -43,20 +49,48 @@ public class CharacterDialog : MonoBehaviour
 
     //Type a sentence slowly
     IEnumerator Type() {
-        foreach (char letter in sentences[index].ToCharArray()) {
+        foreach (char letter in sentences[sentenceIndex].ToCharArray()) {
             textDisplay.text += letter;
             yield return new WaitForSeconds(typingSpeed);
+        }
+    }
+
+    public void TypeFkt() {
+        if (typingActive)
+        {
+            if (this.timer >= this.typingSpeed)
+            {
+                if (letterIndex < sentences[sentenceIndex].Length)
+                {
+                    textDisplay.text += sentences[sentenceIndex].ToCharArray()[letterIndex];
+                    letterIndex++;
+                }
+                else
+                {
+                    this.typingActive = false;
+                    letterIndex = 0;
+                }
+
+                this.timer = 0;
+            }
+            else
+            {
+                this.timer += Time.deltaTime;
+            }
         }
     }
 
 
     public void NextSentence() {
         //-2 because the last sentence is only for SucceededPushout-Purposes
-        if (index < sentences.Length - 2)
+        if (sentenceIndex < sentences.Length - 2)
         {
-            index++;
+            sentenceIndex++;
+            letterIndex = 0;
+            typingActive = true;
+            timer = 0;
             textDisplay.text = "";
-            StartCoroutine(Type());
+            TypeFkt();
             textReseted = false;
         }
         else {
@@ -65,21 +99,27 @@ public class CharacterDialog : MonoBehaviour
     }
 
     public void ResetSentence() {
-        index = 0;
+        sentenceIndex = 0;
+        letterIndex = 0;
+        typingActive = true;
+        timer = 0;
         textDisplay.text = "";
         //Type first sentence again
-        StartCoroutine(Type());
+        TypeFkt();
         textReseted = true;
     }
 
     public void PushoutSucceededSentence(Fact startFact) {
         textDisplay.text = "";
         //Last Sentence is the Pushout-Sentence
-        index = sentences.Length - 1;
+        sentenceIndex = sentences.Length - 1;
+        letterIndex = 0;
+        typingActive = true;
+        timer = 0;
         pushoutSucceeded = true;
         //Disable Hint With Enter-Key for Talking
         textHint.GetComponent<MeshRenderer>().enabled = false;
         //Type final message
-        StartCoroutine(Type());
+        TypeFkt();
     }
 }

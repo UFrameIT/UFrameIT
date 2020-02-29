@@ -64,6 +64,11 @@ public class TaskCharakterAnimation : MonoBehaviour
         else {
             //disable enter-key for talking
             setPlayerInTalkingZone(false);
+            //Change to walking State after Talking Zone so that player can stay inside the radiusAroundObject
+            rotate = false;
+            this.timer = 0;
+            //Change boolean for switching to Walking-State in AnimationController
+            anim.SetBool("standing", false);
         }
 
         //Calculate distance from tree, so that the TaskCharacter only walks in a specific radius around the tree
@@ -142,6 +147,18 @@ public class TaskCharakterAnimation : MonoBehaviour
         //Set Variable in animationController to change the state
         anim.SetBool("solved", false);
         happy = false;
+        resetToStart();
+    }
+
+    public void resetToStart() {
+        //On Reset: Player must go into walking state, because it could be that after the happy/running-animation the player is 
+        //out of radius and rotates -> AnimationController StateMachine always changes into walking-state after hyppAnimation
+        walking = true;
+        standing = false;
+        rotate = true;
+        nextRotation = 0;
+        rotationUnits = 0;
+        playerInTalkingZone = false;
     }
 
     //Static Method for CharacterDialog
