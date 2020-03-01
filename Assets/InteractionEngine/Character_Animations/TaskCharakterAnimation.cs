@@ -12,6 +12,8 @@ public class TaskCharakterAnimation : MonoBehaviour
     private Transform currentTransform;
     private float currentDistance;
 
+    //When changing walking/standing/happy booleans -> the state-variables in the animationController must also be changed
+    //For change of the task-character movements, maybe the transitions in the animationController have also to be adjusted
     private float walkingTime = 5;
     private bool walking = true;
     private float standingTime = 3;
@@ -51,9 +53,10 @@ public class TaskCharakterAnimation : MonoBehaviour
             this.walking = false;
             this.standing = true;
             this.timer = 0;
+            rotate = false;
             //Change boolean for switching to Standing-State in AnimationController
             anim.SetBool("standing", true);
-            //Enable enter-key for talking
+            //Enable enter-key for talking for Charakter-Dialog
             setPlayerInTalkingZone(true);
 
             //Face walkAroundObject to Player (but only on y-Axis, so ignore x-and z-axis)
@@ -64,24 +67,6 @@ public class TaskCharakterAnimation : MonoBehaviour
         else {
             //disable enter-key for talking
             setPlayerInTalkingZone(false);
-            //Change to walking State after Talking Zone so that player can stay inside the radiusAroundObject
-            rotate = false;
-            this.timer = 0;
-            //Change boolean for switching to Walking-State in AnimationController
-            anim.SetBool("standing", false);
-        }
-
-        //Calculate distance from tree, so that the TaskCharacter only walks in a specific radius around the tree
-        //so that the player always knows where he is
-        currentDistance = (currentTransform.position - walkAroundObject.transform.position).magnitude;
-
-        //Turn on the radius-edges around the radiusAroundObject
-        if (currentDistance > radiusAroundObject)
-        {
-            //Change roation if TaskCharacter is at the edges of the radius
-            currentTransform.RotateAround(currentTransform.position, Vector3.up, 30 * Time.deltaTime);
-            //return, because at the radius-edges we only want to rotate without standing/walking
-            return;
         }
 
         this.timer += Time.deltaTime;
@@ -124,11 +109,35 @@ public class TaskCharakterAnimation : MonoBehaviour
                     this.standing = false;
                     this.walking = true;
                     this.timer = 0;
-                    //Rotate Character randomly
-                    nextRotation = Random.Range(0, 180);
-                    int positive = (int)Random.Range(0, 2);
-                    if (positive == 0)
-                        nextRotation *= -1;
+
+                    //Calculate distance from tree, so that the TaskCharacter only walks in a specific radius around the tree
+                    //so that the player always knows where he is
+                    currentDistance = (currentTransform.position - walkAroundObject.transform.position).magnitude;
+                    //Turn on the radius-edges around the radiusAroundObject
+                    if (currentDistance > radiusAroundObject)
+                    {
+                        //Rotate Towards tree if radiusAroundObject is out of radius
+                        //Rotate randomly between +/-5° towards the radiusAroundObject
+                        int temp = Random.Range(0, 5);
+                        int positive = (int)Random.Range(0, 2);
+                        //Calculate NextRotation towards radiusAroundObject
+                        nextRotation = Vector3.Angle(currentTransform.forward, (walkAroundObject.transform.position-currentTransform.position).normalized);
+
+                        if (positive == 0)
+                            nextRotation -= temp;
+                        else
+                            nextRotation += temp;
+                    }
+                    else
+                    {
+                        //Rotate Character randomly if radiusAroundObject is inside the radius
+                        //Rotate inside the range of -180° and 180° because a normal human would turn e.g. -60° instead of 240°
+                        nextRotation = Random.Range(0, 180);
+                        int positive = (int)Random.Range(0, 2);
+                        if (positive == 0)
+                            nextRotation *= -1;
+                    }
+
                     rotationUnits = nextRotation / (rotationTime/Time.deltaTime);
                     rotate = true;
                 }
@@ -153,12 +162,13 @@ public class TaskCharakterAnimation : MonoBehaviour
     public void resetToStart() {
         //On Reset: Player must go into walking state, because it could be that after the happy/running-animation the player is 
         //out of radius and rotates -> AnimationController StateMachine always changes into walking-state after hyppAnimation
-        walking = true;
-        standing = false;
-        rotate = true;
+        walking = false;
+        standing = true;
+        rotate = false;
         nextRotation = 0;
         rotationUnits = 0;
         playerInTalkingZone = false;
+        timer = 0;
     }
 
     //Static Method for CharacterDialog

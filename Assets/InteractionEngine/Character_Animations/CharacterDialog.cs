@@ -94,6 +94,10 @@ public class CharacterDialog : MonoBehaviour
             textReseted = false;
         }
         else {
+            letterIndex = 0;
+            typingActive = false;
+            timer = 0;
+            textReseted = false;
             textDisplay.text = "";
         }
     }
