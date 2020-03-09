@@ -6,6 +6,8 @@ public class HideUI : MonoBehaviour
 {
 
     public KeyCode Key = KeyCode.F1;
+    //public KeyCode ScreenshotKey = KeyCode.F2;
+
     public UnityStandardAssets.Characters.FirstPerson.FirstPersonController CamControl;
     public bool LockOnly = true;
     public MeshRenderer CursorRenderer;
@@ -47,5 +49,10 @@ public class HideUI : MonoBehaviour
 
 
         }
+        /*
+        else if (Input.GetKeyDown(ScreenshotKey)) {
+            ScreenCapture.CaptureScreenshot("UFrameIT-Screenshots\\Unity_ScreenCapture\\Capture.png");
+        }
+        */
     }
 }

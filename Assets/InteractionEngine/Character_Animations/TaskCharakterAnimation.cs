@@ -7,6 +7,7 @@ public class TaskCharakterAnimation : MonoBehaviour
     public GameObject walkAroundObject;
     public GameObject player;
     public float radiusAroundObject;
+    public float talkingZoneDistance;
 
     private Animator anim;
     private Transform currentTransform;
@@ -48,7 +49,7 @@ public class TaskCharakterAnimation : MonoBehaviour
         int layerMask = LayerMask.GetMask("TalkingZone"); //only hit TalkingZone
 
         //If Player is in TalkingZone: TaskCharacter should look to the Player, stop walking and enable enter-key for talking
-        if (Physics.Raycast(ray, out hit, 5f, layerMask))
+        if (Physics.Raycast(ray, out hit, talkingZoneDistance, layerMask))
         {
             this.walking = false;
             this.standing = true;
