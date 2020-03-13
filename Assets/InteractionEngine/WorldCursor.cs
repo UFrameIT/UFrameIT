@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,7 +19,7 @@ public class WorldCursor : MonoBehaviour
         //Set MarkPointMode as the default ActiveToolMode
        // ActiveToolMode = ToolMode.ExtraMode;//ToolMode.MarkPointMode;
         CommunicationEvents.ToolModeChangedEvent.Invoke(ActiveToolMode);
-
+        CultureInfo.CurrentCulture = new CultureInfo("en-US");
     }
 
   

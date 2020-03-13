@@ -92,7 +92,7 @@ public class FactSpawner : MonoBehaviour
         //string letter = ((Char)(64 + lineFact.Id + 1)).ToString();
         //line.GetComponentInChildren<TextMeshPro>().text = letter;
         line.GetComponentInChildren<TextMeshPro>().text = ((Char)(64 + pointFact1.Id + 1)).ToString() + ((Char)(64 + pointFact2.Id + 1)).ToString();
-        line.GetComponentInChildren<TextMeshPro>().text += " = " + Math.Round((point1-point2).magnitude, 2).ToString().Replace(",", ".") + " m";
+        line.GetComponentInChildren<TextMeshPro>().text += " = " + Math.Round((point1-point2).magnitude, 2) + " m";
         line.GetComponentInChildren<FactObject>().Id = lineFact.Id;
         //If a new Line was spawned -> We are in CreateLineMode -> Then we want the collider to be disabled
         if (CommunicationEvents.ActiveToolMode != ToolMode.ExtraMode)
@@ -226,7 +226,7 @@ public class FactSpawner : MonoBehaviour
         TextMeshPro[] texts = angle.GetComponentsInChildren<TextMeshPro>();
         foreach (TextMeshPro t in texts) {
             //Change Text not to the id, but to the angle-value (from both sides) AND change font-size relative to length of the angle (from both sides)
-            t.text = Math.Abs(Math.Round(Vector3.Angle((point1 - point2).normalized, (point3 - point2).normalized), 1)).ToString().Replace(",", ".") + "°";
+            t.text = Math.Abs(Math.Round(Vector3.Angle((point1 - point2).normalized, (point3 - point2).normalized), 1)) + "°";
             t.fontSize = angle.GetComponentInChildren<TextMeshPro>().fontSize * angle.transform.GetChild(0).transform.GetChild(0).localScale.x;
         }
 
