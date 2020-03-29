@@ -359,7 +359,12 @@ public class FactManager : MonoBehaviour
                 {
                     Fact tempFact = Facts[hit.transform.GetComponent<FactObject>().Id];
 
-                    if (this.lineModeIsFirstPointSelected)
+                    //we can only reach points that are lower than that with the measuring tape
+                    if (ActiveToolMode == ToolMode.CreateLineMode && tempFact.Representation.transform.position.y > 2.5f)
+                        return;
+
+                    //no 0 distances
+                    if (this.lineModeIsFirstPointSelected && this.lineModeFirstPointSelected.Id != tempFact.Id)
                     {
                         //Event for end of line-drawing in "ShinyThings"
                         CommunicationEvents.StopLineDrawingEvent.Invoke(null);
@@ -378,7 +383,7 @@ public class FactManager : MonoBehaviour
                         this.lineModeIsFirstPointSelected = false;
                         this.lineModeFirstPointSelected = null;
                     }
-                    else
+                    else 
                     {
                         //Activate LineDrawing for preview
                         this.lineModeIsFirstPointSelected = true;
@@ -528,6 +533,7 @@ public class FactManager : MonoBehaviour
                 break;*/
             //If Left-Mouse-Button was pressed in ExtraMode
             case ToolMode.ExtraMode:
+                /*
                 if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point")) {
                     var menu = GameObject.Instantiate(SmartMenu);
                     menu.GetComponent<SmartMenu>().FactManager = this;
@@ -539,7 +545,7 @@ public class FactManager : MonoBehaviour
                 {
                     PointFact fact = AddPointFact(hit, GetFirstEmptyID());
                     CommunicationEvents.AddFactEvent.Invoke(fact);
-                }
+                }*/
                 break;
 
         }
