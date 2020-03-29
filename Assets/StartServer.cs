@@ -25,18 +25,68 @@ public class StartServer : MonoBehaviour
 
     }
 
-    IEnumerator ServerRoutine()
+    IEnumerator ServerRoutine1()
     {
 
+        string command = "\"" + Application.streamingAssetsPath + "\"/start.BAT "+ "\""   +  Application.streamingAssetsPath + "\"" ;
+        command = command.Replace("/", @"\");
+        command = "\"" + command + "\"";
+        UnityEngine.Debug.Log(command);
+        ProcessStartInfo processInfo;
+        Process process;
+
+        //processInfo = new ProcessStartInfo("cmd.exe", "/C " + command);
+        bool cmd = true;
+        if (cmd)
+        {
+            processInfo = new ProcessStartInfo("cmd.exe", "/C " + command);
+         //   processInfo.CreateNoWindow = false;
+          //  processInfo.UseShellExecute = true;
+
+            process = Process.Start(processInfo);
+        }else
+        /*
+        */
+        Process.Start("powershell.exe", command);
+   
+
+
+
+        // *** Read the streams ***
+        // Warning: This approach can lead to deadlocks, see Edit #2
+        //string output = process.StandardOutput.ReadToEnd();
+        //string error = process.StandardError.ReadToEnd();
+
+        //  exitCode = process.ExitCode;
+        // UnityEngine.Debug.Log(output);
+        // UnityEngine.Debug.Log(error);
+        //  Console.WriteLine("output>>" + (String.IsNullOrEmpty(output) ? "(none)" : output));
+        // Console.WriteLine("error>>" + (String.IsNullOrEmpty(error) ? "(none)" : error));
+        // Console.WriteLine("ExitCode: " + exitCode.ToString(), "ExecuteCommand");
+        //  process.Close();
+
+
+
+
+
+
+        yield return null;
+    }
+
+
+    IEnumerator ServerRoutine()
+    {
         UnityWebRequest request = UnityWebRequest.Get("localhost:8081/scroll/list");
-        yield return request.Send();
+        yield return request.SendWebRequest();
         if (request.isNetworkError || request.isHttpError)
         {
             UnityEngine.Debug.Log("no running server");
 
-            string command = Application.streamingAssetsPath + "/start.BAT " + Application.streamingAssetsPath;
+            string command = "\"" + Application.streamingAssetsPath + "\"/start.BAT " + "\"" + Application.streamingAssetsPath + "\"";
+            command = command.Replace("/", @"\");
+            command = "\"" + command + "\"";
             UnityEngine.Debug.Log(command);
-            int exitCode;
+         //   int exitCode;
             ProcessStartInfo processInfo;
             Process process;
 
@@ -53,10 +103,10 @@ public class StartServer : MonoBehaviour
             while (true)
             {
                 request = UnityWebRequest.Get("localhost:8081/scroll/list");
-                yield return request.Send();
+                yield return request.SendWebRequest();
                 if (request.isNetworkError || request.isHttpError)
                 {
-                    UnityEngine.Debug.Log("no running server");
+                   // UnityEngine.Debug.Log("no running server");
                 }
                 else
                 {
