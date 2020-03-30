@@ -31765,9 +31765,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SmartMenu: {fileID: 5601740127768851631, guid: e693bf633c633d243b0254d117ec3893,
     type: 3}
-  lineModeIsFirstPointSelected: 0
-  angleModeIsFirstPointSelected: 0
-  angleModeIsSecondPointSelected: 0
+  snapZoneTop: {fileID: 1563243733}
+  snapZoneBottom: {fileID: 1009368148}
 --- !u!23 &1661088671 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 2600518978420199386, guid: 9cb473a50d07f1245b0f6a7ee2557d4f,
@@ -41838,7 +41837,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 300, y: -241.69922}
+  m_AnchoredPosition: {x: 300, y: -241.5}
   m_SizeDelta: {x: 600, y: 480}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5443790102444080682
@@ -42993,7 +42992,7 @@ PrefabInstance:
     - target: {fileID: 6789101892953060368, guid: e8183f1330bd6124a9a9bb4d35ef2216,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000012135336
+      value: -0.000018352279
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e8183f1330bd6124a9a9bb4d35ef2216, type: 3}

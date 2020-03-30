@@ -42,6 +42,10 @@ public static class CommunicationEvents
 
     }
 
+    public class SignalEvent : UnityEvent {
+
+    }
+
 
 
     public static HitEvent SnapEvent = new HitEvent();
@@ -68,6 +72,9 @@ public static class CommunicationEvents
     public static ShinyEvent PushoutFactEvent = new ShinyEvent();
     public static ShinyEvent PushoutFactEndEvent = new ShinyEvent();
     public static ShinyEvent PushoutFactFailEvent = new ShinyEvent();
+
+    public static SignalEvent gameSucceededEvent = new SignalEvent();
+    public static SignalEvent gameNotSucceededEvent = new SignalEvent();
 
 
 

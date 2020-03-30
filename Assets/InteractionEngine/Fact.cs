@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
+using static CommunicationEvents;
 
 public abstract class Fact
 {
@@ -67,11 +68,7 @@ public class PointFact : Fact
         this.backendURI = uri;
 
     }
-
 }
-
-
-
 
 public class LineFact : Fact
 {
@@ -103,8 +100,6 @@ public class LineFact : Fact
         this.backendURI = uri;
         this.backendValueURI = valuri;
     }
-
-    
 }
 
 public class OpenLineFact : Fact
@@ -146,8 +141,6 @@ public class RayFact : Fact
         this.backendURI = uri;
         this.backendValueURI = valuri;
     }
-
-
 }
 
 
@@ -171,8 +164,6 @@ public class OnLineFact : Fact
         this.backendValueURI = res.factValUri;
         Debug.Log("created onLine" +  this.backendURI + " " + this.backendValueURI);
     }
-
-
 }
 
 

@@ -26,15 +26,19 @@ public class TaskCharakterAnimation : MonoBehaviour
     private float rotationTime = 2;
     private bool happy = false;
 
+    private bool happyAnimationDone = false;
+    private float happyTimer = 0;
+    private float happyTime = 7.5f;
+
     private static bool playerInTalkingZone = false;
+    private static bool taskCharacterAddressed = false;
+
 
     // Start is called before the first frame update
     void Start()
     {
         anim = GetComponent<Animator>();
         currentTransform = GetComponent<Transform>();
-        CommunicationEvents.PushoutFactEvent.AddListener(startHappy);
-        CommunicationEvents.PushoutFactEndEvent.AddListener(stopHappy);
     }
 
     // Update is called once per frame
@@ -42,7 +46,12 @@ public class TaskCharakterAnimation : MonoBehaviour
     {
         //Do nothing else than the animation if animationController is in happy-State
         if (happy)
+        {
+            this.happyTimer += Time.deltaTime;
+            if (happyTimer >= happyTime)
+                stopHappy();
             return;
+        }
 
         RaycastHit hit;
         Ray ray = new Ray(player.transform.position, player.transform.forward);
@@ -62,6 +71,12 @@ public class TaskCharakterAnimation : MonoBehaviour
 
             //Face walkAroundObject to Player (but only on y-Axis, so ignore x-and z-axis)
             currentTransform.LookAt(new Vector3(player.transform.position.x, currentTransform.position.y, player.transform.position.z));
+
+            if(checkGameSolved() && taskCharacterAddressed && !happyAnimationDone)
+            {
+                startHappy();
+                happyAnimationDone = true;
+            }
 
             return;
         }
@@ -146,14 +161,24 @@ public class TaskCharakterAnimation : MonoBehaviour
         }
     }
 
-    public void startHappy(Fact startFact)
+    public bool checkGameSolved()
+    {
+        return FactManager.gameSolved();
+    }
+
+    public void startHappy()
     {
         //Set Variable in animationController to change the state
         anim.SetBool("solved", true);
         happy = true;
+        //Trigger for CharacterDialog
+        CommunicationEvents.gameSucceededEvent.Invoke();
+        //StartHappyTimer
+        happyTimer = 0;
     }
 
-    public void stopHappy(Fact startFact) {
+    public void stopHappy()
+    {
         //Set Variable in animationController to change the state
         anim.SetBool("solved", false);
         happy = false;
@@ -180,6 +205,18 @@ public class TaskCharakterAnimation : MonoBehaviour
     //Static Method for CharacterDialog
     public static void setPlayerInTalkingZone(bool value) {
         playerInTalkingZone = value;
+    }
+
+    //Static Method for CharacterDialog
+    public static bool getTaskCharacterAddressed()
+    {
+        return taskCharacterAddressed;
+    }
+
+    //Static Method for CharacterDialog
+    public static void setTaskCharacterAddressed(bool value)
+    {
+        taskCharacterAddressed = value;
     }
 
 }

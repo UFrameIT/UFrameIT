@@ -18,40 +18,32 @@ public class CharacterDialog : MonoBehaviour
 
     //Only reset once after Player is out of range of the TaskCharacter
     private bool textReseted = true;
-    //If pushoutSucceeded -> Disable Talking with TaskCharacter
-    private bool pushoutSucceeded = false;
+    //If gameSucceeded -> Disable Talking with TaskCharacter
+    private bool gameSucceeded = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        CommunicationEvents.PushoutFactEvent.AddListener(PushoutSucceededSentence);
+        CommunicationEvents.gameSucceededEvent.AddListener(StartGameSucceededSentence);
+        CommunicationEvents.gameNotSucceededEvent.AddListener(StopGameSucceededSentence);
         //Type first sentence
         typingActive = true;
         TypeFkt();
-
     }
 
     private void Update()
     {
         TypeFkt();
 
-        if(!pushoutSucceeded && Input.GetKeyDown(KeyCode.Return) && TaskCharakterAnimation.getPlayerInTalkingZone())
+        if(!gameSucceeded && Input.GetKeyDown(KeyCode.Return) && TaskCharakterAnimation.getPlayerInTalkingZone())
         {
             //Type Next sentence if player is in the talkinZone around the TaskCharacter AND the player typed the return-Key
             NextSentence();
         }
-        else if (!pushoutSucceeded && !TaskCharakterAnimation.getPlayerInTalkingZone() && !textReseted)
+        else if (!gameSucceeded && !TaskCharakterAnimation.getPlayerInTalkingZone() && !textReseted)
         {
             //Reset Sentence if Player is out of range of the TaskCharacter and it's not already reseted
             ResetSentence();
-        }
-    }
-
-    //Type a sentence slowly
-    IEnumerator Type() {
-        foreach (char letter in sentences[sentenceIndex].ToCharArray()) {
-            textDisplay.text += letter;
-            yield return new WaitForSeconds(typingSpeed);
         }
     }
 
@@ -85,6 +77,7 @@ public class CharacterDialog : MonoBehaviour
         //-2 because the last sentence is only for SucceededPushout-Purposes
         if (sentenceIndex < sentences.Length - 2)
         {
+            TaskCharakterAnimation.setTaskCharacterAddressed(true);
             sentenceIndex++;
             letterIndex = 0;
             typingActive = true;
@@ -103,6 +96,7 @@ public class CharacterDialog : MonoBehaviour
     }
 
     public void ResetSentence() {
+        TaskCharakterAnimation.setTaskCharacterAddressed(false);
         sentenceIndex = 0;
         letterIndex = 0;
         typingActive = true;
@@ -113,17 +107,32 @@ public class CharacterDialog : MonoBehaviour
         textReseted = true;
     }
 
-    public void PushoutSucceededSentence(Fact startFact) {
-        textDisplay.text = "";
-        //Last Sentence is the Pushout-Sentence
-        sentenceIndex = sentences.Length - 1;
-        letterIndex = 0;
-        typingActive = true;
-        timer = 0;
-        pushoutSucceeded = true;
-        //Disable Hint With Enter-Key for Talking
-        textHint.GetComponent<MeshRenderer>().enabled = false;
-        //Type final message
-        TypeFkt();
+    public void StartGameSucceededSentence()
+    {
+        if (!gameSucceeded)
+        {
+            textDisplay.text = "";
+            //Last Sentence is the Pushout-Sentence
+            sentenceIndex = sentences.Length - 1;
+            letterIndex = 0;
+            typingActive = true;
+            timer = 0;
+            gameSucceeded = true;
+            //Disable Hint With Enter-Key for Talking
+            textHint.GetComponent<MeshRenderer>().enabled = false;
+            //Type final message
+            TypeFkt();
+        }
+    }
+
+    public void StopGameSucceededSentence()
+    {
+        if (gameSucceeded)
+        {
+            gameSucceeded = false;
+            //Enable Hint With Enter-Key for Talking
+            textHint.GetComponent<MeshRenderer>().enabled = true;
+            ResetSentence();
+        }
     }
 }
