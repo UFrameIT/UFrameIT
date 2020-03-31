@@ -82,13 +82,29 @@ public class StartServer : MonoBehaviour
         {
             UnityEngine.Debug.Log("no running server");
 
-            string command = "\"" + Application.streamingAssetsPath + "\"/start.BAT " + "\"" + Application.streamingAssetsPath + "\"";
-            command = command.Replace("/", @"\");
-            command = "\"" + command + "\"";
-            UnityEngine.Debug.Log(command);
+
+
          //   int exitCode;
             ProcessStartInfo processInfo;
             Process process;
+
+
+#if UNITY_STANDALONE_LINUX
+
+             ProcessStartInfo proc = new ProcessStartInfo();
+             proc.FileName = "xdg-open";
+             proc.WorkingDirectory = Application.streamingAssetsPath;
+             proc.Arguments = "startServer.sh";
+             proc.WindowStyle = ProcessWindowStyle.Minimized;
+             proc.CreateNoWindow = true;
+             process = Process.Start(proc);
+
+#else
+            string command = "";
+            command = "\"" + Application.streamingAssetsPath + "\"/start.BAT " + "\"" + Application.streamingAssetsPath + "\"";
+            command = command.Replace("/", @"\");
+            command = "\"" + command + "\"";
+
 
             processInfo = new ProcessStartInfo("cmd.exe", "/c " + command);
             processInfo.CreateNoWindow = false;
@@ -97,7 +113,10 @@ public class StartServer : MonoBehaviour
             // processInfo.RedirectStandardError = true;
             //processInfo.RedirectStandardOutput = true;
 
+
+
             process = Process.Start(processInfo);
+#endif
             yield return null;
 
             while (true)

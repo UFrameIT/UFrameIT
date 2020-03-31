@@ -637,7 +637,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -210, y: 157}
+  m_AnchoredPosition: {x: -294, y: 140}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1809880658
@@ -658,8 +658,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Your task is to measure the height of a tree with the help of gadgets and
-    trigonometry.
+  m_text: 'You will find yourself in a virtual forest-like environment. Your task
+    is to measure the height of a tree with the help of gadgets and trigonometry.
 
 
     This game was built with the FrameIT method, which proposes the use of Knowledge
@@ -714,7 +714,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 62
+  m_firstOverflowCharacterIndex: 77
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_isTextTruncated: 0
@@ -735,13 +735,13 @@ MonoBehaviour:
   m_firstVisibleCharacter: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: -193.95554, y: 0, z: -440.0515, w: 0}
+  m_margin: {x: -193.95554, y: 0, z: -491.03467, w: 0}
   m_textInfo:
     textComponent: {fileID: 1809880658}
-    characterCount: 366
+    characterCount: 427
     spriteCount: 0
-    spaceCount: 64
-    wordCount: 62
+    spaceCount: 73
+    wordCount: 71
     linkCount: 0
     lineCount: 9
     pageCount: 1
