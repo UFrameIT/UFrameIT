@@ -91,8 +91,8 @@ public class StartServer : MonoBehaviour
             Process process;
 
             processInfo = new ProcessStartInfo("cmd.exe", "/c " + command);
-            processInfo.CreateNoWindow = true;
-            processInfo.UseShellExecute = false;
+            processInfo.CreateNoWindow = false;
+            processInfo.UseShellExecute = true;
             // *** Redirect the output ***
             // processInfo.RedirectStandardError = true;
             //processInfo.RedirectStandardOutput = true;
