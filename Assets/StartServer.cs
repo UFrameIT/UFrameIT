@@ -94,7 +94,7 @@ public class StartServer : MonoBehaviour
              ProcessStartInfo proc = new ProcessStartInfo();
              proc.FileName = "xdg-open";
              proc.WorkingDirectory = Application.streamingAssetsPath;
-             proc.Arguments = "startServer.sh";
+             proc.Arguments = "startServer.sh "+Application.streamingAssetsPath;
              proc.WindowStyle = ProcessWindowStyle.Minimized;
              proc.CreateNoWindow = true;
              process = Process.Start(proc);
