@@ -14,7 +14,6 @@ public class WorldCursor : MonoBehaviour
 
     void Start()
     {
-
         Cam = Camera.main;
         //Set MarkPointMode as the default ActiveToolMode
        // ActiveToolMode = ToolMode.ExtraMode;//ToolMode.MarkPointMode;

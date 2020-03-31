@@ -10,14 +10,20 @@ public class FactManager : MonoBehaviour
     private List<int> NextEmpties = new List<int>();
 
     //Variables for LineMode distinction
-    public bool lineModeIsFirstPointSelected = false;
-    public Fact lineModeFirstPointSelected = null;
+    private bool lineModeIsFirstPointSelected = false;
+    private Fact lineModeFirstPointSelected = null;
 
     //Variables for AngleMode distinction
-    public bool angleModeIsFirstPointSelected = false;
-    public Fact angleModeFirstPointSelected = null;
-    public bool angleModeIsSecondPointSelected = false;
-    public Fact angleModeSecondPointSelected = null;
+    private bool angleModeIsFirstPointSelected = false;
+    private Fact angleModeFirstPointSelected = null;
+    private bool angleModeIsSecondPointSelected = false;
+    private Fact angleModeSecondPointSelected = null;
+
+    //Solving game parameters
+    public GameObject snapZoneTop;
+    public GameObject snapZoneBottom;
+    private static Vector3 solutionVector;
+    private static bool solved = false;
 
     // Start is called before the first frame update
     void Start()
@@ -31,6 +37,8 @@ public class FactManager : MonoBehaviour
 
         NextEmpties.Add(0);
 
+        //Calculate Solution-Vector
+        solutionVector = snapZoneTop.transform.position - snapZoneBottom.transform.position;
     }
 
     // Update is called once per frame
@@ -151,6 +159,125 @@ public class FactManager : MonoBehaviour
 
     }
 
+    public Boolean factAlreadyExists(int[] ids)
+    {
+        switch (ActiveToolMode)
+        {
+            case ToolMode.CreateLineMode:
+                foreach (Fact fact in Facts)
+                {
+                    if (typeof(LineFact).IsInstanceOfType(fact))
+                    {
+                        LineFact line = (LineFact)fact;
+                        if (line.Pid1 == ids[0] && line.Pid2 == ids[1])
+                        {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            case ToolMode.CreateAngleMode:
+                foreach (Fact fact in Facts)
+                {
+                    if (typeof(AngleFact).IsInstanceOfType(fact))
+                    {
+                        AngleFact angle = (AngleFact)fact;
+                        if (angle.Pid1 == ids[0] && angle.Pid2 == ids[1] && angle.Pid3 == ids[2])
+                        {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            default:
+                return false;
+        }
+    }
+
+    public static Boolean gameSolved() {
+
+        Vector3 tempDir1 = new Vector3(0, 0, 0);
+        Vector3 tempDir2 = new Vector3(0, 0, 0);
+
+        if (solved == true)
+            return true;
+        else {
+            //Look for solutionFact in global factList
+            foreach (Fact fact in Facts)
+            {
+                if (typeof(LineFact).IsInstanceOfType(fact))
+                {
+                    tempDir1 = ((PointFact)Facts.Find(x => x.Id == ((LineFact)fact).Pid1)).Point - ((PointFact)Facts.Find(x => x.Id == ((LineFact)fact).Pid2)).Point;
+                    tempDir2 = ((PointFact)Facts.Find(x => x.Id == ((LineFact)fact).Pid2)).Point - ((PointFact)Facts.Find(x => x.Id == ((LineFact)fact).Pid1)).Point;
+                    if (solutionVector == tempDir1 || solutionVector == tempDir2)
+                    {
+                        solved = true;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+    }
+
+    //automatic 90 degree angle construction
+    public void Rocket(RaycastHit hit)
+    {
+
+        int idA, idB, idC;
+
+        //usual point
+        idA = this.GetFirstEmptyID();
+        CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(hit, idA));
+
+        //second point
+        idB = this.GetFirstEmptyID();
+        var shiftedHit = hit;
+        var playerPos = Camera.main.transform.position;
+        playerPos.y = hit.point.y;
+        shiftedHit.point = playerPos;
+        CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(shiftedHit, idB));
+
+        //third point with unknown height
+        idC = this.GetFirstEmptyID();
+        var skyHit = hit;
+        skyHit.point += Vector3.up * 20;
+        CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(skyHit, idC));
+
+        //lines
+        CommunicationEvents.AddFactEvent.Invoke(this.AddLineFact(idA, idB, this.GetFirstEmptyID()));
+        //lines
+        CommunicationEvents.AddFactEvent.Invoke(this.AddLineFact(idA, idC, this.GetFirstEmptyID()));
+
+        //90degree angle
+        CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact(idB, idA, idC, GetFirstEmptyID()));
+    }
+
+    //Creating 90-degree Angles
+    public void SmallRocket(RaycastHit hit, int idA)
+    {
+        //enable collider to measure angle to the treetop
+
+
+
+        int idB = this.GetFirstEmptyID();
+        CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(hit, idB));
+        Facts[idB].Representation.GetComponentInChildren<Collider>().enabled = true;
+
+        //third point with unknown height
+        int idC = this.GetFirstEmptyID();
+        var skyHit = hit;
+        skyHit.point = (Facts[idA] as PointFact).Point + Vector3.up * 20;
+        CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(skyHit, idC));
+
+        //lines
+        CommunicationEvents.AddFactEvent.Invoke(this.AddLineFact(idA, idB, this.GetFirstEmptyID()));
+        //lines
+        CommunicationEvents.AddFactEvent.Invoke(this.AddLineFact(idA, idC, this.GetFirstEmptyID()));
+
+        //90degree angle
+        CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact(idB, idA, idC, GetFirstEmptyID()));
+    }
 
     public void OnToolModeChanged(ToolMode ActiveToolMode)
     {
@@ -232,103 +359,6 @@ public class FactManager : MonoBehaviour
         }
         //Stop PreviewEvents in ShineThings on ToolModeChange
         CommunicationEvents.StopPreviewsEvent.Invoke(null);
-    }
-
-
-
-
-
-    //automatic 90 degree angle construction
-    public void Rocket(RaycastHit hit)
-    {
-
-        int idA, idB, idC;
-
-        //usual point
-        idA = this.GetFirstEmptyID();
-        CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(hit, idA));
-
-        //second point
-        idB = this.GetFirstEmptyID();
-        var shiftedHit = hit;
-        var playerPos = Camera.main.transform.position;
-        playerPos.y = hit.point.y;
-        shiftedHit.point = playerPos;
-        CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(shiftedHit, idB));
-
-        //third point with unknown height
-        idC = this.GetFirstEmptyID();
-        var skyHit = hit;
-        skyHit.point += Vector3.up * 20;
-        CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(skyHit, idC));
-
-        //lines
-        CommunicationEvents.AddFactEvent.Invoke(this.AddLineFact(idA, idB, this.GetFirstEmptyID()));
-        //lines
-        CommunicationEvents.AddFactEvent.Invoke(this.AddLineFact(idA, idC, this.GetFirstEmptyID()));
-
-        //90degree angle
-        CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact(idB, idA, idC, GetFirstEmptyID()));
-    }
-
-    //Creating 90-degree Angles
-    public void SmallRocket(RaycastHit hit, int idA)
-    {
-        //enable collider to measure angle to the treetop
-
-
-
-        int idB = this.GetFirstEmptyID();
-        CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(hit, idB));
-        Facts[idB].Representation.GetComponentInChildren<Collider>().enabled = true;
-
-        //third point with unknown height
-        int idC = this.GetFirstEmptyID();
-        var skyHit = hit;
-        skyHit.point = (Facts[idA] as PointFact).Point + Vector3.up * 20;
-        CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(skyHit, idC));
-
-        //lines
-        CommunicationEvents.AddFactEvent.Invoke(this.AddLineFact(idA, idB, this.GetFirstEmptyID()));
-        //lines
-        CommunicationEvents.AddFactEvent.Invoke(this.AddLineFact(idA, idC, this.GetFirstEmptyID()));
-
-        //90degree angle
-        CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact(idB, idA, idC, GetFirstEmptyID()));
-    }
-
-    public Boolean factAlreadyExists(int[] ids) {
-        switch (ActiveToolMode) {
-            case ToolMode.CreateLineMode:
-                foreach (Fact fact in Facts)
-                {
-                    if (typeof(LineFact).IsInstanceOfType(fact))
-                    {
-                        LineFact line = (LineFact)fact;
-                        if (line.Pid1 == ids[0] && line.Pid2 == ids[1])
-                        {
-                            return true;
-                        }
-                    }
-                }
-                return false;
-            case ToolMode.CreateAngleMode:
-                foreach (Fact fact in Facts)
-                {
-                    if (typeof(AngleFact).IsInstanceOfType(fact))
-                    {
-                        AngleFact angle = (AngleFact)fact;
-                        if (angle.Pid1 == ids[0] && angle.Pid2 == ids[1] && angle.Pid3 == ids[2])
-                        {
-                            return true;
-                        }
-                    }
-                }
-                return false;
-            default:
-                return false;
-        }
-        return false;
     }
 
     public void OnHit(RaycastHit hit)
