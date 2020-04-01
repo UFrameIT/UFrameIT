@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using UnityEngine.Networking;
-using static CommunicationEvents;
 
 public abstract class Fact
 {
@@ -9,9 +8,15 @@ public abstract class Fact
     public string backendURI;
     public string backendValueURI; // supposed to be null, for Facts without values eg. Points, OpenLines, OnLineFacts...
 
-    public string format(float t) {
+    public string format(float t)
+    {
         return t.ToString("0.0000").Replace(',', '.');
     }
+}
+
+public abstract class DirectedFact : Fact
+{
+    public DirectedFact flippedFact;
 }
 
 public class AddFactResponse
@@ -20,13 +25,14 @@ public class AddFactResponse
     public string factUri;
     public string factValUri;
 
-    public static AddFactResponse sendAdd(string path, string body) {
+    public static AddFactResponse sendAdd(string path, string body)
+    {
         Debug.Log(body);
         //Put constructor parses stringbody to byteArray internally  (goofy workaround)
         UnityWebRequest www = UnityWebRequest.Put(path, body);
         www.method = UnityWebRequest.kHttpVerbPOST;
         www.SetRequestHeader("Content-Type", "application/json");
-        
+
         AsyncOperation op = www.Send();
         while (!op.isDone) { }
         if (www.isNetworkError || www.isHttpError)
@@ -48,12 +54,13 @@ public class PointFact : Fact
     public Vector3 Point;
     public Vector3 Normal;
 
-    public PointFact(int i,Vector3 P, Vector3 N) {
+    public PointFact(int i, Vector3 P, Vector3 N)
+    {
         this.Id = i;
         this.Point = P;
         this.Normal = N;
 
-        string body = @"{ ""a"":" +format(P.x) + @"," + @"""b"":" + format(P.y) + @","+@"""c"":" + format(P.y) + "}";
+        string body = @"{ ""a"":" + format(P.x) + @"," + @"""b"":" + format(P.y) + @"," + @"""c"":" + format(P.y) + "}";
         Debug.Log(body);
         AddFactResponse res = AddFactResponse.sendAdd("localhost:8081/fact/add/vector", body);
         this.backendURI = res.factUri;
@@ -63,14 +70,18 @@ public class PointFact : Fact
     public PointFact(int i, float a, float b, float c, string uri)
     {
         this.Id = i;
-        this.Point = new Vector3(a,b,c);
-        this.Normal = new Vector3(0,1,0);
+        this.Point = new Vector3(a, b, c);
+        this.Normal = new Vector3(0, 1, 0);
         this.backendURI = uri;
 
     }
+
 }
 
-public class LineFact : Fact
+
+
+
+public class LineFact : DirectedFact
 {
     //Id's of the 2 Point-Facts that are connected
     public int Pid1, Pid2;
@@ -78,8 +89,26 @@ public class LineFact : Fact
     //only for temporary Use of LineFacts.
     public LineFact() { }
 
-    public LineFact(int i, int pid1, int pid2) {
+    public LineFact(int i, int pid1, int pid2)
+    {
         this.Id = i;
+        this.Pid1 = pid1;
+        this.Pid2 = pid2;
+        PointFact pf1 = CommunicationEvents.Facts.Find((x => x.Id == pid1)) as PointFact;
+        PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
+        string p1URI = pf1.backendURI;
+        string p2URI = pf2.backendURI;
+        float v = (pf1.Point - pf2.Point).magnitude;
+        string body = @"{ ""pointA"":""" + p1URI + @"""," + @"""pointB"":""" + p2URI + @"""," + @"""value"":" + format(v) + "}";
+        AddFactResponse res = AddFactResponse.sendAdd("localhost:8081/fact/add/distance", body);
+        this.backendURI = res.factUri;
+        this.backendValueURI = res.factValUri;
+        this.flippedFact = new LineFact(pid2, pid1);
+    }
+
+    // to create flipped fact
+    public LineFact(int pid1, int pid2)
+    {
         this.Pid1 = pid1;
         this.Pid2 = pid2;
         PointFact pf1 = CommunicationEvents.Facts.Find((x => x.Id == pid1)) as PointFact;
@@ -93,13 +122,19 @@ public class LineFact : Fact
         this.backendValueURI = res.factValUri;
     }
 
-    public LineFact(int i, int pid1, int pid2, string uri, string valuri) {
+    //pushout return
+    public LineFact(int i, int pid1, int pid2, string uri, string valuri)
+    {
         this.Id = i;
         this.Pid1 = pid1;
         this.Pid2 = pid2;
         this.backendURI = uri;
         this.backendValueURI = valuri;
+        this.flippedFact = new LineFact(pid2, pid1);
+
     }
+
+
 }
 
 public class OpenLineFact : Fact
@@ -141,6 +176,8 @@ public class RayFact : Fact
         this.backendURI = uri;
         this.backendValueURI = valuri;
     }
+
+
 }
 
 
@@ -162,12 +199,14 @@ public class OnLineFact : Fact
         AddFactResponse res = AddFactResponse.sendAdd("localhost:8081/fact/add/onLine", body);
         this.backendURI = res.factUri;
         this.backendValueURI = res.factValUri;
-        Debug.Log("created onLine" +  this.backendURI + " " + this.backendValueURI);
+        Debug.Log("created onLine" + this.backendURI + " " + this.backendValueURI);
     }
+
+
 }
 
 
-public class AngleFact : Fact
+public class AngleFact : DirectedFact
 {
     //Id's of the 3 Point-Facts, where Pid2 is the point, where the angle is
     public int Pid1, Pid2, Pid3;
@@ -184,7 +223,33 @@ public class AngleFact : Fact
         PointFact pf1 = CommunicationEvents.Facts.Find((x => x.Id == pid1)) as PointFact;
         PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
         PointFact pf3 = CommunicationEvents.Facts.Find((x => x.Id == pid3)) as PointFact;
-        
+
+        float v = Vector3.Angle((pf1.Point - pf2.Point), (pf3.Point - pf2.Point));
+        if (Mathf.Abs(v - 90.0f) < 0.01) v = 90.0f;
+        Debug.Log("angle: " + v);
+        string body = @"{" +
+          @"""left"":""" + pf1.backendURI + @"""," +
+          @"""middle"":""" + pf2.backendURI + @"""," +
+          @"""right"":""" + pf3.backendURI + @"""," +
+          @"""value"":" + format(v) +
+          "}";
+        Debug.Log(body);
+        AddFactResponse res = AddFactResponse.sendAdd("localhost:8081/fact/add/angle", body);
+        this.backendURI = res.factUri;
+        this.backendValueURI = res.factValUri;
+        this.flippedFact = new AngleFact(pid3, pid2, pid1);
+    }
+
+    //to create flipped fact
+    public AngleFact(int pid1, int pid2, int pid3)
+    {
+        this.Pid1 = pid1;
+        this.Pid2 = pid2;
+        this.Pid3 = pid3;
+        PointFact pf1 = CommunicationEvents.Facts.Find((x => x.Id == pid1)) as PointFact;
+        PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
+        PointFact pf3 = CommunicationEvents.Facts.Find((x => x.Id == pid3)) as PointFact;
+
         float v = Vector3.Angle((pf1.Point - pf2.Point), (pf3.Point - pf2.Point));
         if (Mathf.Abs(v - 90.0f) < 0.01) v = 90.0f;
         Debug.Log("angle: " + v);
@@ -200,6 +265,7 @@ public class AngleFact : Fact
         this.backendValueURI = res.factValUri;
     }
 
+    //pushout return
     public AngleFact(int i, int pid1, int pid2, int pid3, string uri, string valuri)
     {
         this.Id = i;
@@ -208,6 +274,7 @@ public class AngleFact : Fact
         this.Pid3 = pid3;
         this.backendURI = uri;
         this.backendValueURI = valuri;
+        this.flippedFact = new AngleFact(pid3, pid2, pid1);
     }
 }
 
