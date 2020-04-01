@@ -37,16 +37,19 @@ public class ScrollDetails : MonoBehaviour
 
     }
 
-    public void setScroll(Scroll s) {
+    public void setScroll(Scroll s)
+    {
         Transform scrollView = gameObject.transform.GetChild(2);
         Transform viewport = scrollView.GetChild(0);
         this.scroll = s;
         //wipe out old Displays
-        for (int i = 0; i < this.ParameterDisplays.Length; i++) {
+        for (int i = 0; i < this.ParameterDisplays.Length; i++)
+        {
             Destroy(ParameterDisplays[i]);
         }
         this.ParameterDisplays = new GameObject[s.declarations.Length];
-        for (int i = 0; i < s.declarations.Length; i++) {
+        for (int i = 0; i < s.declarations.Length; i++)
+        {
             var obj = Instantiate(parameterDisplayPrefab, Vector3.zero, Quaternion.identity, transform);
             //obj.GetComponent<RectTransform>().localPosition = GetPosition(i);
             obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = s.declarations[i].description;
@@ -58,9 +61,11 @@ public class ScrollDetails : MonoBehaviour
         gameObject.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = s.description;
     }
 
-    public void magicButton() {
-        string view = sendView();
-        if (view.Equals(FAIL)) {
+    public void magicButton()
+    {
+        string view = sendView2();
+        if (view.Equals(FAIL))
+        {
             Debug.Log("DAS HAT NICHT GEKLAPPT");
             //TODO: hier ne Art PopUp, wo drin steht, dass das nicht geklappt hat
             CommunicationEvents.PushoutFactFailEvent.Invoke(null);
@@ -72,11 +77,13 @@ public class ScrollDetails : MonoBehaviour
     }
 
     string FAIL = "FAIL";
-    class ViewResponse {
+    class ViewResponse
+    {
         public string view;
     }
 
-    private string sendView() {
+    private string sendView()
+    {
         string jsonRequest = @"{";
         jsonRequest = jsonRequest + @" ""from"":""" + this.scroll.problemTheory + @""", ";
         jsonRequest = jsonRequest + @" ""to"":""" + this.situationTheory + @""", ";
@@ -115,14 +122,102 @@ public class ScrollDetails : MonoBehaviour
         }
     }
 
+    private string sendView2()
+    {
+        Dictionary<Declaration, Fact[]> possibilities = new Dictionary<Declaration, Fact[]>();
+        for (int i = 0; i < ParameterDisplays.Length; i++)
+        {
+            Fact fact_i = ParameterDisplays[i].GetComponentInChildren<DropHandling>().currentFact;
+            var drophandler = ParameterDisplays[i].GetComponentInChildren<DropHandling>();
+            Declaration decl_i = scroll.declarations[i];
+            if (fact_i is DirectedFact)
+            {
+                possibilities.Add(decl_i, new Fact[] { fact_i, ((DirectedFact)fact_i).flippedFact });
+            }
+            else
+            {
+                possibilities.Add(decl_i, new Fact[] { fact_i });
+            }
+        }
+        Dictionary<Declaration, Fact> selection = new Dictionary<Declaration, Fact>();
+        for (int i = 0; i < possibilities.Count; i++)
+        {
+            Declaration decl_i = new List<Declaration>(possibilities.Keys)[i];
+            selection[decl_i] = possibilities[decl_i][0];
+        }
+        return testPossibilities(selection, possibilities, 0);
 
-    class PushoutReturn {
+        return "";
+    }
+
+    private string testPossibilities(Dictionary<Declaration, Fact> selection, Dictionary<Declaration, Fact[]> possibilities, int i)
+    {
+        if (i == possibilities.Count)
+        {
+            return testVariant(selection);
+        }
+        else
+        {
+            Declaration decl_i = new List<Declaration>(possibilities.Keys)[i];
+            for (int j = 0; j < possibilities[decl_i].Length; j++)
+            {
+                Fact fact_j = possibilities[decl_i][j];
+                selection.Remove(decl_i);
+                selection.Add(decl_i, fact_j);
+                string ret = testPossibilities(selection, possibilities, i + 1);
+                if (ret != FAIL) return ret;
+            }
+        }
+        return FAIL;
+    }
+
+    private string testVariant(Dictionary<Declaration, Fact> selection)
+    {
+        string jsonRequest = @"{";
+        jsonRequest = jsonRequest + @" ""from"":""" + this.scroll.problemTheory + @""", ";
+        jsonRequest = jsonRequest + @" ""to"":""" + this.situationTheory + @""", ";
+        jsonRequest = jsonRequest + @" ""mappings"": { ";
+        for (int i = 0; i < selection.Count; i++)
+        {
+            Declaration decl_i = new List<Declaration>(selection.Keys)[i];
+            Fact fact_i = selection[decl_i];
+            if (decl_i.value != null && fact_i.backendValueURI != null)
+            {
+                jsonRequest = jsonRequest + @" """ + decl_i.value + @""":""" + fact_i.backendValueURI + @""",";
+            }
+            jsonRequest = jsonRequest + @" """ + decl_i.identifier + @""":""" + fact_i.backendURI + @""",";
+        }
+        //removing the last ','
+        jsonRequest = jsonRequest.Substring(0, jsonRequest.Length - 1);
+        jsonRequest = jsonRequest + "}}";
+
+        UnityWebRequest www = UnityWebRequest.Put("localhost:8081/view/add", jsonRequest);
+        www.method = UnityWebRequest.kHttpVerbPOST;
+        var async = www.Send();
+        while (!async.isDone) { }
+
+        if (www.isNetworkError || www.isHttpError)
+        {
+            Debug.Log(www.error);
+            return FAIL;
+        }
+        else
+        {
+            string answer = www.downloadHandler.text;
+            return JsonUtility.FromJson<ViewResponse>(answer).view;
+        }
+    }
+
+
+    class PushoutReturn
+    {
         public string newSituation;
         public PushoutFact[] outputs;
     }
 
     [System.Serializable]
-    public  class PushoutFact {
+    public class PushoutFact
+    {
         // generic class to make a common Supertype for all PushoutResponses
         public string uri;
         public string value;
@@ -131,12 +226,13 @@ public class ScrollDetails : MonoBehaviour
         public string c;
         public string pointA;
         public string pointB;
-        
+
         public string left;
         public string middle;
         public string right;
 
-        public bool isVector() {
+        public bool isVector()
+        {
             return a != null &&
                 b != null &&
                 c != null &&
@@ -145,7 +241,7 @@ public class ScrollDetails : MonoBehaviour
                 value == null &&
                 left == null &&
                 middle == null &&
-                right == null; 
+                right == null;
         }
         public bool isDistance()
         {
@@ -173,7 +269,8 @@ public class ScrollDetails : MonoBehaviour
         }
     }
 
-    private string pushout(string view) {
+    private string pushout(string view)
+    {
         string path = "localhost:8081/pushout?";
         path = path + "problem=" + this.scroll.problemTheory + "&";
         path = path + "solution=" + this.scroll.solutionTheory + "&";
@@ -199,14 +296,17 @@ public class ScrollDetails : MonoBehaviour
         }
     }
 
-    private void readPushout(string txt) {
+    private void readPushout(string txt)
+    {
         Debug.Log(txt);
         PushoutReturn ret = JsonUtility.FromJson<PushoutReturn>(txt);
         this.situationTheory = ret.newSituation;
         FactManager factManager = cursor.GetComponent<FactManager>();
-        for (int i = 0; i < ret.outputs.Length; i++) {
+        for (int i = 0; i < ret.outputs.Length; i++)
+        {
             PushoutFact f = ret.outputs[i];
-            if (f.isVector()) {
+            if (f.isVector())
+            {
                 float a = float.Parse(f.a);
                 float b = float.Parse(f.b);
                 float c = float.Parse(f.c);
@@ -216,7 +316,8 @@ public class ScrollDetails : MonoBehaviour
                 CommunicationEvents.AddFactEvent.Invoke(pf);
                 CommunicationEvents.PushoutFactEvent.Invoke(pf);
             }
-            if (f.isDistance()) {
+            if (f.isDistance())
+            {
                 int id = factManager.GetFirstEmptyID();
                 int pid1 = getIdforBackendURI(f.pointA);
                 int pid2 = getIdforBackendURI(f.pointB);
@@ -225,7 +326,8 @@ public class ScrollDetails : MonoBehaviour
                 CommunicationEvents.AddFactEvent.Invoke(lf);
                 CommunicationEvents.PushoutFactEvent.Invoke(lf);
             }
-            if (f.isAngle()){
+            if (f.isAngle())
+            {
                 int id = factManager.GetFirstEmptyID();
                 int pid1 = getIdforBackendURI(f.left);
                 int pid2 = getIdforBackendURI(f.middle);
@@ -238,7 +340,8 @@ public class ScrollDetails : MonoBehaviour
         }
     }
 
-    private int getIdforBackendURI(string uri) {
+    private int getIdforBackendURI(string uri)
+    {
         return CommunicationEvents.Facts.Find(x => x.backendURI.Equals(uri)).Id;
     }
 }
