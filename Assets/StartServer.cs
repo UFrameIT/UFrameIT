@@ -80,24 +80,44 @@ public class StartServer : MonoBehaviour
         yield return request.SendWebRequest();
         if (request.isNetworkError || request.isHttpError)
         {
-            UnityEngine.Debug.Log("no running server");
+            UnityEngine.Debug.Log("no running server "+ request.error);
 
 
-
-         //   int exitCode;
+#if!UNITY_WEBGL
+            //   int exitCode;
             ProcessStartInfo processInfo;
             Process process;
 
 
 #if UNITY_STANDALONE_LINUX
 
-             ProcessStartInfo proc = new ProcessStartInfo();
-             proc.FileName = "xdg-open";
-             proc.WorkingDirectory = Application.streamingAssetsPath;
-             proc.Arguments = "startServer.sh "+Application.streamingAssetsPath;
-             proc.WindowStyle = ProcessWindowStyle.Minimized;
-             proc.CreateNoWindow = true;
-             process = Process.Start(proc);
+            ProcessStartInfo proc = new ProcessStartInfo();
+            proc.FileName = "bash";
+         //   proc.WorkingDirectory = Application.streamingAssetsPath;
+            proc.Arguments = Application.streamingAssetsPath+"/startServer.sh";// + " \"" +Application.streamingAssetsPath + "\"";
+            proc.WindowStyle = ProcessWindowStyle.Normal;
+            proc.CreateNoWindow = false;
+            proc.UseShellExecute = true;
+            process = Process.Start(proc);
+
+#elif UNITY_STANDALONE_OSX
+            /*
+            ProcessStartInfo proc = new ProcessStartInfo();//"open", "sh startServer.sh");// +  " \"" +Application.streamingAssetsPath + "\"");
+            proc.FileName = "/bin/bash";
+            proc.WorkingDirectory  = Application.streamingAssetsPath;
+            proc.Arguments = "sh " + Application.streamingAssetsPath+"/startServer.sh";
+            proc.CreateNoWindow = false;
+            proc.UseShellExecute = true;
+            process = Process.Start(proc);
+            */
+            ProcessStartInfo proc = new ProcessStartInfo();
+            String startServerPath = Application.streamingAssetsPath + "/startServer.sh";
+            String runWithTerminalPath = Application.streamingAssetsPath + "/startInTerminal.sh";
+            proc.FileName = "/bin/bash";
+            proc.Arguments = runWithTerminalPath + " /bin/bash " + startServerPath;
+            proc.CreateNoWindow = false;
+            proc.UseShellExecute = true;
+            process = Process.Start(proc);
 
 #else
             string command = "";
@@ -118,7 +138,7 @@ public class StartServer : MonoBehaviour
             process = Process.Start(processInfo);
 #endif
             yield return null;
-
+#endif
             while (true)
             {
                 request = UnityWebRequest.Get("localhost:8081/scroll/list");
@@ -142,13 +162,16 @@ public class StartServer : MonoBehaviour
             //string output = process.StandardOutput.ReadToEnd();
             //string error = process.StandardError.ReadToEnd();
 
-          //  exitCode = process.ExitCode;
+            //  exitCode = process.ExitCode;
             // UnityEngine.Debug.Log(output);
             // UnityEngine.Debug.Log(error);
             //  Console.WriteLine("output>>" + (String.IsNullOrEmpty(output) ? "(none)" : output));
             // Console.WriteLine("error>>" + (String.IsNullOrEmpty(error) ? "(none)" : error));
             // Console.WriteLine("ExitCode: " + exitCode.ToString(), "ExecuteCommand");
+#if !UNITY_WEBGL
+
             process.Close();
+#endif
         }
 
         PrepareGame();
