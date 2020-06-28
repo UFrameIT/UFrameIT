@@ -9,7 +9,7 @@ using System.Xml.Linq;
 
 public class ScrollDetails : MonoBehaviour
 {
-    public GameObject cursor;
+    public WorldCursor cursor;
     public GameObject parameterDisplayPrefab;
     public Scroll scroll;
 
@@ -28,7 +28,7 @@ public class ScrollDetails : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        if (cursor == null) cursor = GameObject.FindObjectOfType<WorldCursor>();
     }
 
     // Update is called once per frame

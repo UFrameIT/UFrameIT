@@ -66,8 +66,8 @@ public class ToolModeSelector : MonoBehaviour
             int move = (int) Mathf.Sign(Input.GetAxis("Mouse ScrollWheel"));
 
             ToolMode tempActiveToolMode = CommunicationEvents.ActiveToolMode;
-            int id = ((int)tempActiveToolMode + move) % System.Enum.GetNames(typeof(ToolMode)).Length;
-            if (id < 0) id = System.Enum.GetNames(typeof(ToolMode)).Length-1;
+            int id = ((int)tempActiveToolMode + move) % Buttons.Length;// System.Enum.GetNames(typeof(ToolMode)).Length;
+            if (id < 0) id = Buttons.Length - 1;// System.Enum.GetNames(typeof(ToolMode)).Length-1;
             Select(id);
         }
 
