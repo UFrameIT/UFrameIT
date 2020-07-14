@@ -18,10 +18,8 @@ public class ShinyThings : MonoBehaviour
     //Attributes for simulating the drawing of a line/curve
     public LineRenderer lineRenderer;
     private List<Vector3> linePositions = new List<Vector3>();
-    public Material linePreviewMaterial;
     public Material anglePreviewMaterial;
-
-    private bool lineDrawingActivated;
+    
     private bool curveDrawingActivated;
     //These are only the vertices for the Curve
     private int curveDrawingVertexCount = 36;
@@ -55,8 +53,6 @@ public class ShinyThings : MonoBehaviour
     public void Start()
     {
         if (Cursor == null) Cursor = GetComponent<WorldCursor>();
-        CommunicationEvents.StartLineDrawingEvent.AddListener(ActivateLineDrawing);
-        CommunicationEvents.StopLineDrawingEvent.AddListener(DeactivateLineDrawing);
         CommunicationEvents.StartCurveDrawingEvent.AddListener(ActivateCurveDrawing);
         CommunicationEvents.StopCurveDrawingEvent.AddListener(DeactivateCurveDrawing);
         CommunicationEvents.StopPreviewsEvent.AddListener(StopPreviews);
@@ -88,10 +84,8 @@ public class ShinyThings : MonoBehaviour
         //@John before:  hit.point
 
         //Debug.Log(this.transform.position);
-
-        if (this.lineDrawingActivated)
-            UpdateLineDrawing(this.transform.position);
-        else if (this.curveDrawingActivated)
+        
+        if (this.curveDrawingActivated)
             UpdateCurveDrawing(this.transform.position);
 
         //If the Timer is Active, check Pushout-Highlighting
@@ -372,40 +366,6 @@ public class ShinyThings : MonoBehaviour
         }
     }
 
-    public void ActivateLineDrawing(Fact startFact)
-    {
-        this.lineRenderer.positionCount = 2;
-        this.lineRenderer.material = this.linePreviewMaterial;
-
-        lineRenderer.startWidth = 0.095f;
-        lineRenderer.endWidth = 0.095f;
-        //Set LineDrawing activated
-        this.lineDrawingActivated = true;
-        //Add the position of the Fact for the start of the Line
-        linePositions.Add(startFact.Representation.transform.position);
-        //The second point is the same point at the moment
-        linePositions.Add(startFact.Representation.transform.position);
-
-        this.lineRenderer.SetPosition(0, linePositions[0]);
-        this.lineRenderer.SetPosition(1, linePositions[1]);
-
-    }
-
-    //Updates the second-point of the Line when First Point was selected in LineMode
-    public void UpdateLineDrawing(Vector3 currentPosition)
-    {
-        this.linePositions[1] = currentPosition;
-        this.lineRenderer.SetPosition(1, this.linePositions[1]);
-    }
-
-    //Deactivate LineDrawing so that no Line gets drawn when Cursor changes
-    public void DeactivateLineDrawing(Fact startFact)
-    {
-        this.lineRenderer.positionCount = 0;
-        this.linePositions = new List<Vector3>();
-        this.lineDrawingActivated = false;
-    }
-
     //Expect a LineFact here, where Line.Pid2 will be the Basis-Point of the angle
     public void ActivateCurveDrawing(Fact startFact)
     {
@@ -490,8 +450,6 @@ public class ShinyThings : MonoBehaviour
     }
 
     public void StopPreviews(Fact startFact) {
-        if (lineDrawingActivated)
-            DeactivateLineDrawing(null);
         if (curveDrawingActivated)
             DeactivateCurveDrawing(null);
     }

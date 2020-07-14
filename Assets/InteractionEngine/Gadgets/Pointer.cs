@@ -5,7 +5,6 @@ using static CommunicationEvents;
 
 public class Pointer : Gadget
 {
-    // Start is called before the first frame update
 
     public override void OnHit(RaycastHit hit)
     {

@@ -31464,7 +31464,6 @@ MonoBehaviour:
   defaultMaterial: {fileID: 2100000, guid: 8ae9adf4dc782964387385c1e8c0eb72, type: 2}
   highlightMaterial: {fileID: 2100000, guid: c7daa82e15f0cf04d92d0f41ce84f9df, type: 2}
   lineRenderer: {fileID: 1661088668}
-  linePreviewMaterial: {fileID: 2100000, guid: a8a7bf60a30970f469a9c9d3ae2de6ef, type: 2}
   anglePreviewMaterial: {fileID: 2100000, guid: 8a28cccde2536794c97ec91954e34e90,
     type: 2}
   directionalLight: {fileID: 138245305}
@@ -31483,7 +31482,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SmartMenu: {fileID: 5601740127768851631, guid: e693bf633c633d243b0254d117ec3893,
     type: 3}
-  lineModeIsFirstPointSelected: 0
   angleModeIsFirstPointSelected: 0
   angleModeIsSecondPointSelected: 0
   snapZoneTop: {fileID: 1563243733}
@@ -40482,6 +40480,26 @@ PrefabInstance:
       propertyPath: GadgetUI
       value: 
       objectReference: {fileID: 339579026}
+    - target: {fileID: 1111866520, guid: 2ba8d552442ba664e8e567adee683a11, type: 3}
+      propertyPath: Cursor
+      value: 
+      objectReference: {fileID: 1661088666}
+    - target: {fileID: 1111866520, guid: 2ba8d552442ba664e8e567adee683a11, type: 3}
+      propertyPath: lineRenderer
+      value: 
+      objectReference: {fileID: 1661088668}
+    - target: {fileID: 1111866520, guid: 2ba8d552442ba664e8e567adee683a11, type: 3}
+      propertyPath: linePreviewMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: a8a7bf60a30970f469a9c9d3ae2de6ef, type: 2}
+    - target: {fileID: 1947773663, guid: 2ba8d552442ba664e8e567adee683a11, type: 3}
+      propertyPath: lineRenderer
+      value: 
+      objectReference: {fileID: 1661088668}
+    - target: {fileID: 1947773663, guid: 2ba8d552442ba664e8e567adee683a11, type: 3}
+      propertyPath: linePreviewMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: a8a7bf60a30970f469a9c9d3ae2de6ef, type: 2}
     - target: {fileID: 2198523595365450379, guid: 2ba8d552442ba664e8e567adee683a11,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -40979,6 +40997,11 @@ PrefabInstance:
       propertyPath: m_textInfo.pageCount
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1082980752285692745, guid: c1d50ceff6c06de40b71063574eba754,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 67
+      objectReference: {fileID: 0}
     - target: {fileID: 1082980752374527135, guid: c1d50ceff6c06de40b71063574eba754,
         type: 3}
       propertyPath: m_textInfo.characterCount
@@ -41124,6 +41147,21 @@ PrefabInstance:
       propertyPath: CursorRenderer
       value: 
       objectReference: {fileID: 1661088671}
+    - target: {fileID: 1082980752622642939, guid: c1d50ceff6c06de40b71063574eba754,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 145
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082980752622642939, guid: c1d50ceff6c06de40b71063574eba754,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 1943
+      objectReference: {fileID: 0}
+    - target: {fileID: 1082980753171492196, guid: c1d50ceff6c06de40b71063574eba754,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -242
+      objectReference: {fileID: 0}
     - target: {fileID: 1082980753599564270, guid: c1d50ceff6c06de40b71063574eba754,
         type: 3}
       propertyPath: m_textInfo.characterCount
