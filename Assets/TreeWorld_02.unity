@@ -31463,9 +31463,6 @@ MonoBehaviour:
   Cursor: {fileID: 1661088666}
   defaultMaterial: {fileID: 2100000, guid: 8ae9adf4dc782964387385c1e8c0eb72, type: 2}
   highlightMaterial: {fileID: 2100000, guid: c7daa82e15f0cf04d92d0f41ce84f9df, type: 2}
-  lineRenderer: {fileID: 1661088668}
-  anglePreviewMaterial: {fileID: 2100000, guid: 8a28cccde2536794c97ec91954e34e90,
-    type: 2}
   directionalLight: {fileID: 138245305}
   pushoutMaterial: {fileID: 2100000, guid: d9c43ce51f1a01d41a18fae03c0d406c, type: 2}
 --- !u!114 &1661088670
@@ -31482,8 +31479,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SmartMenu: {fileID: 5601740127768851631, guid: e693bf633c633d243b0254d117ec3893,
     type: 3}
-  angleModeIsFirstPointSelected: 0
-  angleModeIsSecondPointSelected: 0
   snapZoneTop: {fileID: 1563243733}
   snapZoneBottom: {fileID: 1009368148}
 --- !u!23 &1661088671 stripped
@@ -40476,6 +40471,18 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 729203331, guid: 2ba8d552442ba664e8e567adee683a11, type: 3}
+      propertyPath: Cursor
+      value: 
+      objectReference: {fileID: 1661088666}
+    - target: {fileID: 729203331, guid: 2ba8d552442ba664e8e567adee683a11, type: 3}
+      propertyPath: lineRenderer
+      value: 
+      objectReference: {fileID: 1661088668}
+    - target: {fileID: 729203331, guid: 2ba8d552442ba664e8e567adee683a11, type: 3}
+      propertyPath: anglePreviewMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: 8a28cccde2536794c97ec91954e34e90, type: 2}
     - target: {fileID: 1085307962, guid: 2ba8d552442ba664e8e567adee683a11, type: 3}
       propertyPath: GadgetUI
       value: 

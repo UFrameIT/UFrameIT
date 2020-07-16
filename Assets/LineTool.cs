@@ -43,7 +43,6 @@ public class LineTool : Gadget
             //If first point was already selected AND second point != first point
             if (this.LineModeIsFirstPointSelected && this.LineModeFirstPointSelected.Id != tempFact.Id)
             {
-                this.DeactivateLineDrawing();
                 //Create LineFact
                 //Check if exactly the same line/distance already exists
                 if (!FactManager.factAlreadyExists(new int[] { this.LineModeFirstPointSelected.Id, tempFact.Id }))
@@ -110,7 +109,6 @@ public class LineTool : Gadget
             {
                 //Deactivate LineDrawing and first point selection
                 this.ResetGadget();
-                this.DeactivateLineDrawing();
             }
 
             //TODO: Hint that only a line can be drawn between already existing points

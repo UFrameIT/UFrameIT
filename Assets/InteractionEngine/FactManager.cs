@@ -9,12 +9,6 @@ public class FactManager : MonoBehaviour
     public GameObject SmartMenu;
     private List<int> NextEmpties = new List<int>();
 
-    //Variables for AngleMode distinction
-    public bool angleModeIsFirstPointSelected = false;
-    public Fact angleModeFirstPointSelected = null;
-    public bool angleModeIsSecondPointSelected = false;
-    public Fact angleModeSecondPointSelected = null;
-
     //Solving game parameters
     public GameObject snapZoneTop;
     public GameObject snapZoneBottom;

@@ -5,7 +5,7 @@ using static CommunicationEvents;
 
 public class Tape : Gadget
 {
-    //Variables for LineMode distinction
+    //Variables for TapeMode distinction
     private bool TapeModeIsFirstPointSelected = false;
     private Fact TapeModeFirstPointSelected = null;
 
@@ -43,7 +43,6 @@ public class Tape : Gadget
             //If first point was already selected AND second point != first point
             if (this.TapeModeIsFirstPointSelected && this.TapeModeFirstPointSelected.Id != tempFact.Id)
             {
-                this.DeactivateLineDrawing();
                 //Create LineFact
                 //Check if exactly the same line/distance already exists
                 if (!FactManager.factAlreadyExists(new int[] { this.TapeModeFirstPointSelected.Id, tempFact.Id }))
@@ -110,7 +109,6 @@ public class Tape : Gadget
             {
                 //Deactivate LineDrawing and first point selection
                 this.ResetGadget();
-                this.DeactivateLineDrawing();
             }
 
             //TODO: Hint that only a line can be drawn between already existing points
