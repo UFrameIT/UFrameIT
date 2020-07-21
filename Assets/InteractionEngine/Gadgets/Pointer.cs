@@ -12,6 +12,7 @@ public class Pointer : Gadget
         if (FactManager == null) FactManager = GameObject.FindObjectOfType<FactManager>();
         CommunicationEvents.TriggerEvent.AddListener(OnHit);
         if (this.Cursor == null) this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
+        this.UiName = "Point Mode";
     }
 
     /*

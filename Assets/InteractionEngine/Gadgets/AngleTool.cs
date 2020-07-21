@@ -30,6 +30,7 @@ public class AngleTool : Gadget
         if (FactManager == null) FactManager = GameObject.FindObjectOfType<FactManager>();
         CommunicationEvents.TriggerEvent.AddListener(OnHit);
         if (this.Cursor == null) this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
+        this.UiName = "Angle Mode";
     }
 
     //Initialize Gadget when enabled AND activated

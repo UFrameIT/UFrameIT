@@ -6,7 +6,8 @@ using UnityEngine;
 public class Gadget : MonoBehaviour
 {
 
-    public ToolMode ToolMode;
+    public int id;
+    public string UiName;
     public Sprite Sprite;
     public FactManager FactManager;
     public LayerMask ignoreLayerMask;

@@ -34,7 +34,7 @@ public static class CommunicationEvents
     {
 
     }
-    public class ToolModeEvent : UnityEvent<ToolMode> {
+    public class ToolModeEvent : UnityEvent<int> {
 
     }
 
@@ -70,9 +70,6 @@ public static class CommunicationEvents
 
     //------------------------------------------------------------------------------------
     //-------------------------------Global Variables-------------------------------------
-    //Global ActiveToolMode
-    public static ToolMode ActiveToolMode { get; set; }
-
 
     //Global List of Facts
     public static List<Fact> Facts = new List<Fact>();

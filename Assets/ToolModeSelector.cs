@@ -27,7 +27,7 @@ public class ToolModeSelector : MonoBehaviour
         }
 
     
-        Buttons[(int)CommunicationEvents.ActiveToolMode].transform.localScale *= 2;
+        Buttons[GadgetManager.activeGadget.id].transform.localScale *= 2;
         UIManager = GetComponentInParent<HideUI>();
 
     }
@@ -35,9 +35,9 @@ public class ToolModeSelector : MonoBehaviour
     public void Select(int id)
     {
 
-        Buttons[(int)CommunicationEvents.ActiveToolMode].transform.localScale /= 2;
-        CommunicationEvents.ToolModeChangedEvent.Invoke((ToolMode)id);
-        Buttons[(int)CommunicationEvents.ActiveToolMode].transform.localScale *= 2;
+        Buttons[GadgetManager.activeGadget.id].transform.localScale /= 2;
+        CommunicationEvents.ToolModeChangedEvent.Invoke(id);
+        Buttons[GadgetManager.activeGadget.id].transform.localScale *= 2;
     }
 
 
@@ -55,22 +55,19 @@ public class ToolModeSelector : MonoBehaviour
     {
         if (Input.GetButtonDown("ToolMode"))
         {
-            ToolMode tempActiveToolMode = CommunicationEvents.ActiveToolMode;
-            int id = ((int)tempActiveToolMode + 1) % System.Enum.GetNames(typeof(ToolMode)).Length;
-           // tempActiveToolMode =(ToolMode) id ;
-            //Invoke the Handler for the Facts
-            // CommunicationEvents.ToolModeChangedEvent.Invoke(tempActiveToolMode);
+            Gadget tempActiveGadget = GadgetManager.activeGadget;
+            int id = (tempActiveGadget.id + 1) % GadgetManager.gadgets.Length;
             Select(id);
-        }else if(Input.GetAxis("Mouse ScrollWheel") !=0){
+        }
+        else if(Input.GetAxis("Mouse ScrollWheel") !=0){
 
             int move = (int) Mathf.Sign(Input.GetAxis("Mouse ScrollWheel"));
 
-            ToolMode tempActiveToolMode = CommunicationEvents.ActiveToolMode;
-            int id = ((int)tempActiveToolMode + move) % Buttons.Length;// System.Enum.GetNames(typeof(ToolMode)).Length;
-            if (id < 0) id = Buttons.Length - 1;// System.Enum.GetNames(typeof(ToolMode)).Length-1;
+            Gadget tempActiveGadget = GadgetManager.activeGadget;
+            int id = (tempActiveGadget.id + move) % Buttons.Length;// GadgetManager.gadgets.Length;
+            if (id < 0) id = Buttons.Length - 1;// GadgetManager.gadgets.Length-1;
             Select(id);
         }
-
-
+        
     }
 }

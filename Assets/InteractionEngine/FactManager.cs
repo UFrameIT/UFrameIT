@@ -150,37 +150,37 @@ public class FactManager : MonoBehaviour
 
     public Boolean factAlreadyExists(int[] ids)
     {
-        switch (ActiveToolMode)
-        {
-            case ToolMode.CreateLineMode:
-                foreach (Fact fact in Facts)
+        if (GadgetManager.activeGadget.GetType() == typeof(Tape)) {
+            foreach (Fact fact in Facts)
+            {
+                if (typeof(LineFact).IsInstanceOfType(fact))
                 {
-                    if (typeof(LineFact).IsInstanceOfType(fact))
+                    LineFact line = (LineFact)fact;
+                    if (line.Pid1 == ids[0] && line.Pid2 == ids[1])
                     {
-                        LineFact line = (LineFact)fact;
-                        if (line.Pid1 == ids[0] && line.Pid2 == ids[1])
-                        {
-                            return true;
-                        }
+                        return true;
                     }
                 }
-                return false;
-            case ToolMode.CreateAngleMode:
-                foreach (Fact fact in Facts)
-                {
-                    if (typeof(AngleFact).IsInstanceOfType(fact))
-                    {
-                        AngleFact angle = (AngleFact)fact;
-                        if (angle.Pid1 == ids[0] && angle.Pid2 == ids[1] && angle.Pid3 == ids[2])
-                        {
-                            return true;
-                        }
-                    }
-                }
-                return false;
-            default:
-                return false;
+            }
+            return false;
         }
+        else if (GadgetManager.activeGadget.GetType() == typeof(AngleTool))
+        {
+            foreach (Fact fact in Facts)
+            {
+                if (typeof(AngleFact).IsInstanceOfType(fact))
+                {
+                    AngleFact angle = (AngleFact)fact;
+                    if (angle.Pid1 == ids[0] && angle.Pid2 == ids[1] && angle.Pid3 == ids[2])
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+        else
+            return false;
     }
 
     public static Boolean gameSolved() {

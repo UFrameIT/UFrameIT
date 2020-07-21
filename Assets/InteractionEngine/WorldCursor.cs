@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using static CommunicationEvents;
+using static GadgetManager;
 
 public class WorldCursor : MonoBehaviour
 {
@@ -25,7 +25,7 @@ public class WorldCursor : MonoBehaviour
         Cam = Camera.main;
         //Set MarkPointMode as the default ActiveToolMode
        // ActiveToolMode = ToolMode.ExtraMode;//ToolMode.MarkPointMode;
-        CommunicationEvents.ToolModeChangedEvent.Invoke(ActiveToolMode);
+        CommunicationEvents.ToolModeChangedEvent.Invoke(activeGadget.id);
         CultureInfo.CurrentCulture = new CultureInfo("en-US");
     }
 
@@ -128,15 +128,11 @@ public class WorldCursor : MonoBehaviour
             transform.position = Cam.ScreenToWorldPoint(Input.mousePosition + new Vector3(0,0,1) *dist);
             transform.up = -Cam.transform.forward;
         }
-
-
-        
     }
 
     //Check if left Mouse-Button was pressed and handle it
     void CheckMouseButtons(bool OnSnap=false, bool onLine = false)
     {
-       
         if (Input.GetMouseButtonDown(0))
         {
             if (EventSystem.current.IsPointerOverGameObject()) return; //this prevents rays from shooting through ui
@@ -145,15 +141,11 @@ public class WorldCursor : MonoBehaviour
             {
                 CommunicationEvents.TriggerEvent.Invoke(Hit);
             }
-            else if(CommunicationEvents.ActiveToolMode==ToolMode.MarkPointMode){
+            else if(GadgetManager.activeGadget.GetType() == typeof(Pointer)){
                 if(!onLine)Hit.collider.enabled = false;
                 CommunicationEvents.TriggerEvent.Invoke(Hit);
             //    CommunicationEvents.SnapEvent.Invoke(Hit);
             }
-                
-
-          
-
         }
     }
 
