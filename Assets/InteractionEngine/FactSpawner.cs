@@ -54,14 +54,6 @@ public class FactSpawner : MonoBehaviour
         point.GetComponentInChildren<TextMeshPro>().text = letter;
         point.GetComponent<FactObject>().Id = fact.Id;
         fact.Representation = point;
-
-        //If a new Point was spawned -> We are in MarkPointMode -> Then we want the collider to be disabled
-        //Hint: Thats why by now, if we mark a Point in an other mode than MarkPointMode, the 
-        //Collider will be set disabled
-        if(CommunicationEvents.ActiveToolMode != ToolMode.ExtraMode)
-            point.GetComponentInChildren<SphereCollider>().enabled = false;
-    
-
     }
 
     public void SpawnLine(LineFact lineFact)
@@ -94,10 +86,6 @@ public class FactSpawner : MonoBehaviour
         line.GetComponentInChildren<TextMeshPro>().text = ((Char)(64 + pointFact1.Id + 1)).ToString() + ((Char)(64 + pointFact2.Id + 1)).ToString();
         line.GetComponentInChildren<TextMeshPro>().text += " = " + Math.Round((point1-point2).magnitude, 2) + " m";
         line.GetComponentInChildren<FactObject>().Id = lineFact.Id;
-        //If a new Line was spawned -> We are in CreateLineMode -> Then we want the collider to be disabled
-        if (CommunicationEvents.ActiveToolMode != ToolMode.ExtraMode)
-            //Deactivate the Collider of the Line itself
-            line.transform.GetComponentInChildren<BoxCollider>().enabled = false;
         lineFact.Representation = line;
 
     }
@@ -139,12 +127,7 @@ public class FactSpawner : MonoBehaviour
         line.GetComponentInChildren<TextMeshPro>().text = letter;
      
         line.GetComponentInChildren<FactObject>().Id = lineFact.Id;
-        //If a new Line was spawned -> We are in CreateLineMode -> Then we want the collider to be disabled
-        if (CommunicationEvents.ActiveToolMode != ToolMode.ExtraMode)
-            //Deactivate the Collider of the Line itself
-            line.transform.GetComponentInChildren<BoxCollider>().enabled = false;
         lineFact.Representation = line;
-
     }
     
     //Spawn an angle: point with id = angleFact.Pid2 is the point where the angle gets applied
@@ -231,10 +214,6 @@ public class FactSpawner : MonoBehaviour
         }
 
         angle.GetComponentInChildren<FactObject>().Id = angleFact.Id;
-        //If a new Angle was spawned -> We are in CreateAngleMode -> Then we want the collider to be disabled
-        if (CommunicationEvents.ActiveToolMode != ToolMode.ExtraMode)
-            //Deactivate the Collider of the Angle itself
-            angle.transform.GetComponentInChildren<MeshCollider>().enabled = false;
         angleFact.Representation = angle;
 
     }

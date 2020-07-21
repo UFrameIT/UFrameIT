@@ -16,17 +16,18 @@ public class Tape : Gadget
     private List<Vector3> linePositions = new List<Vector3>();
     public Material linePreviewMaterial;
 
-    //Initialize Gadget when enabled AND activated
-    void OnEnable()
-    {
-        this.ResetGadget();
-    }
-
-    void Start()
+    void Awake()
     {
         if (FactManager == null) FactManager = GameObject.FindObjectOfType<FactManager>();
         CommunicationEvents.TriggerEvent.AddListener(OnHit);
         if (this.Cursor == null) this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
+    }
+
+    //Initialize Gadget when enabled AND activated
+    void OnEnable()
+    {
+        this.Cursor.setLayerMask(~this.ignoreLayerMask.value);
+        this.ResetGadget();
     }
 
     public override void OnHit(RaycastHit hit)
@@ -46,14 +47,8 @@ public class Tape : Gadget
                 //Create LineFact
                 //Check if exactly the same line/distance already exists
                 if (!FactManager.factAlreadyExists(new int[] { this.TapeModeFirstPointSelected.Id, tempFact.Id }))
-                    //TODO: That won't work anymore because of gadget-refactoring
-                    if (ActiveToolMode == ToolMode.CreateLineMode)
-                        CommunicationEvents.AddFactEvent.Invoke(FactManager.AddLineFact(this.TapeModeFirstPointSelected.Id, tempFact.Id, FactManager.GetFirstEmptyID()));
-                    else
-                    {
-                        CommunicationEvents.AddFactEvent.Invoke(FactManager.AddRayFact(this.TapeModeFirstPointSelected.Id, tempFact.Id, FactManager.GetFirstEmptyID()));
-
-                    }
+                    CommunicationEvents.AddFactEvent.Invoke(FactManager.AddLineFact(this.TapeModeFirstPointSelected.Id, tempFact.Id, FactManager.GetFirstEmptyID()));
+                    
 
                 this.ResetGadget();
             }

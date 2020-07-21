@@ -18,7 +18,6 @@ public class FactManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        CommunicationEvents.ToolModeChangedEvent.AddListener(OnToolModeChanged);
 
         //  CommunicationEvents.SnapEvent.AddListener(Rocket);
 
@@ -242,112 +241,6 @@ public class FactManager : MonoBehaviour
         //90degree angle
         CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact(idB, idA, idC, GetFirstEmptyID()));
     }
-
-    //Creating 90-degree Angles
-    public void SmallRocket(RaycastHit hit, int idA)
-    {
-        //enable collider to measure angle to the treetop
-
-
-
-        int idB = this.GetFirstEmptyID();
-        CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(hit, idB));
-        Facts[idB].Representation.GetComponentInChildren<Collider>().enabled = true;
-
-        //third point with unknown height
-        int idC = this.GetFirstEmptyID();
-        var skyHit = hit;
-        skyHit.point = (Facts[idA] as PointFact).Point + Vector3.up * 20;
-        CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(skyHit, idC));
-
-        //lines
-        CommunicationEvents.AddFactEvent.Invoke(this.AddLineFact(idA, idB, this.GetFirstEmptyID()));
-        //lines
-        CommunicationEvents.AddFactEvent.Invoke(this.AddLineFact(idA, idC, this.GetFirstEmptyID()));
-
-        //90degree angle
-        CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact(idB, idA, idC, GetFirstEmptyID()));
-    }*/
-
-    public void OnToolModeChanged(ToolMode ActiveToolMode)
-    {
-
-        //TODO: instead of enabling/disabling colliders we want to change the raycast mask
-        switch (ActiveToolMode)
-        {
-            case ToolMode.MarkPointMode:
-                //If MarkPointMode is activated we want to have the ability to mark the point
-                //everywhere, independent of already existing facts
-                foreach (Fact fact in Facts)
-                {
-                
-                    GameObject gO = fact.Representation;
-                    if (gO == null) continue;
-                    if ((gO.layer == LayerMask.NameToLayer("Ray")))
-                            gO.GetComponentInChildren<Collider>().enabled = true;
-                }
-                break;
-
-            case ToolMode.CreateRayMode:
-                //same as for line mode atm
-
-            case ToolMode.CreateLineMode:
-                //If CreateLineMode is activated we want to have the ability to select points for the Line
-                //but we don't want to have the ability to select Lines or Angles
-                foreach (Fact fact in Facts)
-                {
-                    GameObject gO = fact.Representation;
-                    if (gO == null) continue;
-                    if (gO.layer == LayerMask.NameToLayer("Line") || gO.layer == LayerMask.NameToLayer("Angle")|| gO.layer == LayerMask.NameToLayer("Ray"))
-                    {
-                        gO.GetComponentInChildren<Collider>().enabled = false;
-                    }
-                    else if (gO.layer == LayerMask.NameToLayer("Point"))
-                    {
-                        gO.GetComponentInChildren<Collider>().enabled = true;
-                    }
-                }
-                break;
-    
-       
-                
-            case ToolMode.CreateAngleMode:
-                //If CreateAngleMode is activated we want to have the ability to select Points for the Angle
-                //but we don't want to have the ability to select Lines or Angles
-                foreach (Fact fact in Facts)
-                {
-                    GameObject gO = fact.Representation;
-                    if (gO == null) continue;
-                    if (gO.layer == LayerMask.NameToLayer("Line") || gO.layer == LayerMask.NameToLayer("Angle"))
-                    {
-                        gO.GetComponentInChildren<Collider>().enabled = false;
-                    }
-                    else if (gO.layer == LayerMask.NameToLayer("Point"))
-                    {
-                        gO.GetComponentInChildren<Collider>().enabled = true;
-                    }
-                }
-                break;
-                /*
-            case ToolMode.DeleteMode:
-                //If DeleteMode is activated we want to have the ability to delete every Fact
-                //independent of the concrete type of fact
-                foreach (Fact fact in Facts)
-                {
-                    GameObject gO = fact.Representation;
-                    gO.GetComponentInChildren<Collider>().enabled = true;
-                }
-                break;*/
-            case ToolMode.ExtraMode:
-                /*foreach (Fact fact in Facts)
-                {
-
-                }
-                */
-                break;
-        }
-        //Stop PreviewEvents in ShineThings on ToolModeChange
-        CommunicationEvents.StopPreviewsEvent.Invoke(null);
-    }
+    */
 
 }

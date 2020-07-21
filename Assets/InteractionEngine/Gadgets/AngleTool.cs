@@ -25,17 +25,18 @@ public class AngleTool : Gadget
     private Vector3 angleMiddlePoint;
     private float curveRadius;
 
-    //Initialize Gadget when enabled AND activated
-    void OnEnable()
-    {
-        this.ResetGadget();
-    }
-
-    void Start()
+    void Awake()
     {
         if (FactManager == null) FactManager = GameObject.FindObjectOfType<FactManager>();
         CommunicationEvents.TriggerEvent.AddListener(OnHit);
         if (this.Cursor == null) this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
+    }
+
+    //Initialize Gadget when enabled AND activated
+    void OnEnable()
+    {
+        this.Cursor.setLayerMask(~this.ignoreLayerMask.value);
+        this.ResetGadget();
     }
 
     public override void OnHit(RaycastHit hit)
