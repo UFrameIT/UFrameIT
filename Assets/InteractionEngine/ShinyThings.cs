@@ -14,22 +14,6 @@ public class ShinyThings : MonoBehaviour
     public Material defaultMaterial;
     public Material highlightMaterial;
 
-
-    //Attributes for simulating the drawing of a line/curve
-    public LineRenderer lineRenderer;
-    private List<Vector3> linePositions = new List<Vector3>();
-    public Material linePreviewMaterial;
-    public Material anglePreviewMaterial;
-
-    private bool lineDrawingActivated;
-    private bool curveDrawingActivated;
-    //These are only the vertices for the Curve
-    private int curveDrawingVertexCount = 36;
-    private LineFact curveDrawingStartLine;
-    private Vector3 curveEndPoint;
-    private Vector3 angleMiddlePoint;
-    private float curveRadius;
-
     //Variables for Pushout-Highlighting
     private Fact highlightedPushoutFact;
     private GameObject extraHighlight;
@@ -55,11 +39,6 @@ public class ShinyThings : MonoBehaviour
     public void Start()
     {
         if (Cursor == null) Cursor = GetComponent<WorldCursor>();
-        CommunicationEvents.StartLineDrawingEvent.AddListener(ActivateLineDrawing);
-        CommunicationEvents.StopLineDrawingEvent.AddListener(DeactivateLineDrawing);
-        CommunicationEvents.StartCurveDrawingEvent.AddListener(ActivateCurveDrawing);
-        CommunicationEvents.StopCurveDrawingEvent.AddListener(DeactivateCurveDrawing);
-        CommunicationEvents.StopPreviewsEvent.AddListener(StopPreviews);
         CommunicationEvents.PushoutFactEvent.AddListener(StartPushoutFactHighlighting);
         CommunicationEvents.PushoutFactFailEvent.AddListener(StartPushoutFactFailHighlighting);
         speedSlowDown = timerDurationEnd * 10;
@@ -88,11 +67,6 @@ public class ShinyThings : MonoBehaviour
         //@John before:  hit.point
 
         //Debug.Log(this.transform.position);
-
-        if (this.lineDrawingActivated)
-            UpdateLineDrawing(this.transform.position);
-        else if (this.curveDrawingActivated)
-            UpdateCurveDrawing(this.transform.position);
 
         //If the Timer is Active, check Pushout-Highlighting
         if (this.timerActive)
@@ -370,129 +344,5 @@ public class ShinyThings : MonoBehaviour
                     slowDownSwitch[slowDownCounter] = true;
                 }
         }
-    }
-
-    public void ActivateLineDrawing(Fact startFact)
-    {
-        this.lineRenderer.positionCount = 2;
-        this.lineRenderer.material = this.linePreviewMaterial;
-
-        lineRenderer.startWidth = 0.095f;
-        lineRenderer.endWidth = 0.095f;
-        //Set LineDrawing activated
-        this.lineDrawingActivated = true;
-        //Add the position of the Fact for the start of the Line
-        linePositions.Add(startFact.Representation.transform.position);
-        //The second point is the same point at the moment
-        linePositions.Add(startFact.Representation.transform.position);
-
-        this.lineRenderer.SetPosition(0, linePositions[0]);
-        this.lineRenderer.SetPosition(1, linePositions[1]);
-
-    }
-
-    //Updates the second-point of the Line when First Point was selected in LineMode
-    public void UpdateLineDrawing(Vector3 currentPosition)
-    {
-        this.linePositions[1] = currentPosition;
-        this.lineRenderer.SetPosition(1, this.linePositions[1]);
-    }
-
-    //Deactivate LineDrawing so that no Line gets drawn when Cursor changes
-    public void DeactivateLineDrawing(Fact startFact)
-    {
-        this.lineRenderer.positionCount = 0;
-        this.linePositions = new List<Vector3>();
-        this.lineDrawingActivated = false;
-    }
-
-    //Expect a LineFact here, where Line.Pid2 will be the Basis-Point of the angle
-    public void ActivateCurveDrawing(Fact startFact)
-    {
-        //In AngleMode with 3 Points we want to draw nearly a rectangle so we add a startPoint and an Endpoint to this preview
-        this.lineRenderer.positionCount = curveDrawingVertexCount + 2;
-        this.lineRenderer.material = this.anglePreviewMaterial;
-
-        lineRenderer.startWidth = 0.05f;
-        lineRenderer.endWidth = 0.05f;
-
-        //Set CurveDrawing activated
-        this.curveDrawingActivated = true;
-
-        curveDrawingStartLine = (LineFact)startFact;
-        PointFact curveDrawingPoint1 = (PointFact)Facts.Find(x => x.Id == curveDrawingStartLine.Pid1);
-        PointFact curveDrawingPoint2 = (PointFact)Facts.Find(x => x.Id == curveDrawingStartLine.Pid2);
-
-        //curveEndPoint is a point on the Line selected, with some distance from point2
-        curveEndPoint = curveDrawingPoint2.Point + 0.3f * (curveDrawingPoint1.Point - curveDrawingPoint2.Point).magnitude * (curveDrawingPoint1.Point - curveDrawingPoint2.Point).normalized;
-        
-        angleMiddlePoint = curveDrawingPoint2.Point;
-        curveRadius = (curveEndPoint - curveDrawingPoint2.Point).magnitude;
-    }
-
-    public void UpdateCurveDrawing(Vector3 currentPosition)
-    {
-
-        //Find the nearest of all potential third points
-        PointFact nearestPoint = null;
-        foreach (Fact fact in Facts) {
-            if (fact is PointFact && fact.Id != curveDrawingStartLine.Pid1 && fact.Id != curveDrawingStartLine.Pid2 && nearestPoint == null)
-                nearestPoint = (PointFact)fact;
-            else if (fact is PointFact && fact.Id != curveDrawingStartLine.Pid1 && fact.Id != curveDrawingStartLine.Pid2 && (nearestPoint.Point - currentPosition).magnitude > (((PointFact)fact).Point - currentPosition).magnitude)
-                nearestPoint = (PointFact)fact;
-        }
-
-        Vector3 startPoint = new Vector3(0,0,0);
-
-        if (nearestPoint != null)
-        {
-            Vector3 planePoint = Vector3.ProjectOnPlane(currentPosition, Vector3.Cross((nearestPoint.Point-angleMiddlePoint), (curveEndPoint-angleMiddlePoint)));
-
-            //Determine the Start-Point for the nearest third-point
-            startPoint = angleMiddlePoint + curveRadius * (planePoint - angleMiddlePoint).normalized;
-        }
-        else
-        {
-            //Determine the Start-Point
-            startPoint = angleMiddlePoint + curveRadius * (currentPosition - angleMiddlePoint).normalized;
-        }
-
-        //Determine the Center of Start-Point and End-Point 
-        Vector3 tempCenterPoint = Vector3.Lerp(startPoint, curveEndPoint, 0.5f);
-        Vector3 curveMiddlePoint = angleMiddlePoint + curveRadius * (tempCenterPoint - angleMiddlePoint).normalized;
-
-        linePositions = new List<Vector3>();
-        //Start: AngleMiddlePoint -> FirstPoint of Curve
-        linePositions.Add(((PointFact)Facts.Find(x => x.Id == curveDrawingStartLine.Pid2)).Point);
-
-        for (float ratio = 0; ratio <= 1; ratio += 1.0f / this.curveDrawingVertexCount)
-        {
-            var tangentLineVertex1 = Vector3.Lerp(startPoint, curveMiddlePoint, ratio);
-            var tangentLineVertex2 = Vector3.Lerp(curveMiddlePoint, curveEndPoint, ratio);
-            var bezierPoint = Vector3.Lerp(tangentLineVertex1, tangentLineVertex2, ratio);
-            linePositions.Add(bezierPoint);
-        }
-
-        //End: LastPoint of Curve -> AngleMiddlePoint
-        linePositions.Add(((PointFact)Facts.Find(x => x.Id == curveDrawingStartLine.Pid2)).Point);
-
-        lineRenderer.positionCount = linePositions.Count;
-        lineRenderer.SetPositions(linePositions.ToArray());
-        
-    }
-
-    public void DeactivateCurveDrawing(Fact startFact)
-    {
-        
-        this.lineRenderer.positionCount = 0;
-        this.linePositions = new List<Vector3>();
-        this.curveDrawingActivated = false;
-    }
-
-    public void StopPreviews(Fact startFact) {
-        if (lineDrawingActivated)
-            DeactivateLineDrawing(null);
-        if (curveDrawingActivated)
-            DeactivateCurveDrawing(null);
     }
 }

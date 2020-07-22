@@ -5,24 +5,33 @@ using UnityEngine.UI;
 
 public class GadgetManager : MonoBehaviour
 {
-
-    Dictionary<ToolMode,Gadget> modeToGadget = new Dictionary<ToolMode, Gadget>();
     public GameObject GadgetUI;
+    public static Gadget activeGadget;
+    public static Gadget[] gadgets;
+
     // Start is called before the first frame update
     void Start()
     {
         CommunicationEvents.ToolModeChangedEvent.AddListener(OnToolModeChanged);
-        var gadgets = GetComponentsInChildren<Gadget>();
+        gadgets = GetComponentsInChildren<Gadget>();
 
         Debug.Log(gadgets.Length);
-        foreach (var gadget in gadgets)
-        {
-       
-            modeToGadget.Add(gadget.ToolMode, gadget);
-            CreateButton(gadget);
-            gadget.gameObject.SetActive(false);
+        for (int i = 0; i < gadgets.Length; i++) {
+            gadgets[i].id = i;
+            //Create Buttons and add them to UI
+            CreateButton(gadgets[i]);
+
+            if (i == 0)
+            {
+                gadgets[i].gameObject.SetActive(true);
+                activeGadget = gadgets[i];
+            }
+            else {
+                gadgets[i].gameObject.SetActive(false);
+            }
         }
-        modeToGadget[CommunicationEvents.ActiveToolMode].gameObject.SetActive(true);
+
+        //Activate UI (using buttons)
         GadgetUI.GetComponent<ToolModeSelector>().enabled = true;
     }
 
@@ -35,20 +44,15 @@ public class GadgetManager : MonoBehaviour
         var buttonRect = button.GetComponent<RectTransform>().rect;
         button.transform.localPosition = Vector2.right*(-.5f * uiRect.width //left border
             + buttonRect.width * .75f //border distance including button width
-            + buttonRect.width * 1.5f * (int)gadget.ToolMode); //offset
+            + buttonRect.width * 1.5f * gadget.id); //offset
            
     }
 
-    public void OnToolModeChanged(ToolMode ActiveToolMode)
+    public void OnToolModeChanged(int id)
     {
-        modeToGadget[CommunicationEvents.ActiveToolMode].gameObject.SetActive(false);
-        CommunicationEvents.ActiveToolMode = ActiveToolMode;
-        modeToGadget[CommunicationEvents.ActiveToolMode].gameObject.SetActive(true);
+        activeGadget.gameObject.SetActive(false);
+        activeGadget = gadgets[id];
+        activeGadget.gameObject.SetActive(true);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

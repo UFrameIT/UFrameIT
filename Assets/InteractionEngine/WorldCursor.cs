@@ -5,20 +5,32 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
-using static CommunicationEvents;
+using static GadgetManager;
 
 public class WorldCursor : MonoBehaviour
 {
     public RaycastHit Hit;
     private Camera Cam;
+    private int layerMask;
+
+    private void Awake()
+    {
+        this.layerMask = LayerMask.GetMask("Player", "TalkingZone");
+        //Ignore player and TalkingZone
+        this.layerMask = ~this.layerMask;
+    }
 
     void Start()
     {
         Cam = Camera.main;
         //Set MarkPointMode as the default ActiveToolMode
        // ActiveToolMode = ToolMode.ExtraMode;//ToolMode.MarkPointMode;
-        CommunicationEvents.ToolModeChangedEvent.Invoke(ActiveToolMode);
+        CommunicationEvents.ToolModeChangedEvent.Invoke(activeGadget.id);
         CultureInfo.CurrentCulture = new CultureInfo("en-US");
+    }
+
+    public void setLayerMask(int layerMask) {
+        this.layerMask = layerMask;
     }
 
   
@@ -56,13 +68,11 @@ public class WorldCursor : MonoBehaviour
     void Update()
     {
         Ray ray = Cam.ScreenPointToRay(Input.mousePosition);
-        
-        int layerMask = LayerMask.GetMask("Player", "TalkingZone");
-        //Ignore player and TalkingZone
-        layerMask = ~layerMask;
+        RaycastHit tempHit;
 
-        if(Physics.Raycast(ray, out Hit, 30f, layerMask)){
+        if(Physics.Raycast(ray, out tempHit, 30f, this.layerMask)){
 
+            this.Hit = tempHit;
             // Debug.Log(Hit.transform.tag);
             if (Hit.collider.transform.CompareTag("SnapZone"))
             {
@@ -111,21 +121,18 @@ public class WorldCursor : MonoBehaviour
         }
         else
         {
+            this.Hit = new RaycastHit();
             var dist = 10f;
-            if (Hit.transform!=null)
-            dist = (Camera.main.transform.position - Hit.transform.position).magnitude;
+            if (tempHit.transform!=null)
+            dist = (Camera.main.transform.position - tempHit.transform.position).magnitude;
             transform.position = Cam.ScreenToWorldPoint(Input.mousePosition + new Vector3(0,0,1) *dist);
             transform.up = -Cam.transform.forward;
         }
-
-
-        
     }
 
     //Check if left Mouse-Button was pressed and handle it
     void CheckMouseButtons(bool OnSnap=false, bool onLine = false)
     {
-       
         if (Input.GetMouseButtonDown(0))
         {
             if (EventSystem.current.IsPointerOverGameObject()) return; //this prevents rays from shooting through ui
@@ -134,15 +141,11 @@ public class WorldCursor : MonoBehaviour
             {
                 CommunicationEvents.TriggerEvent.Invoke(Hit);
             }
-            else if(CommunicationEvents.ActiveToolMode==ToolMode.MarkPointMode){
+            else if(GadgetManager.activeGadget.GetType() == typeof(Pointer)){
                 if(!onLine)Hit.collider.enabled = false;
                 CommunicationEvents.TriggerEvent.Invoke(Hit);
             //    CommunicationEvents.SnapEvent.Invoke(Hit);
             }
-                
-
-          
-
         }
     }
 
