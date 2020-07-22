@@ -1,0 +1,24 @@
+{
+  "requests": [
+    {
+      "type": "mmtdecl",
+      "def": {
+        "op": {
+          "text": "test"
+        },
+        "args": null
+      }
+    },
+    {
+      "type": "mmtdecl",
+      "def": {
+        "op": {
+          "DPath": null,
+          "Theory": null,
+          "name": null
+        },
+        "args": null
+      }
+    }
+  ]
+}
