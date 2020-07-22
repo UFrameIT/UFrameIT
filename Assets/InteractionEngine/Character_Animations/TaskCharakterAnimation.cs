@@ -163,7 +163,7 @@ public class TaskCharakterAnimation : MonoBehaviour
 
     public bool checkGameSolved()
     {
-        return FactManager.gameSolved();
+        return Level.gameSolved();
     }
 
     public void startHappy()

@@ -39,6 +39,7 @@ public class ShinyThings : MonoBehaviour
     public void Start()
     {
         if (Cursor == null) Cursor = GetComponent<WorldCursor>();
+        if (directionalLight == null) directionalLight = FindObjectOfType<Light>().gameObject;
         CommunicationEvents.PushoutFactEvent.AddListener(StartPushoutFactHighlighting);
         CommunicationEvents.PushoutFactFailEvent.AddListener(StartPushoutFactFailHighlighting);
         speedSlowDown = timerDurationEnd * 10;

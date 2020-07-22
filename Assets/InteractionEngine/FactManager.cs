@@ -9,11 +9,7 @@ public class FactManager : MonoBehaviour
     public GameObject SmartMenu;
     private List<int> NextEmpties = new List<int>();
 
-    //Solving game parameters
-    public GameObject snapZoneTop;
-    public GameObject snapZoneBottom;
-    public static Vector3 solutionVector;
-    public static bool solved = false;
+
 
     // Start is called before the first frame update
     void Start()
@@ -26,9 +22,11 @@ public class FactManager : MonoBehaviour
 
         NextEmpties.Add(0);
 
-        //Calculate Solution-Vector
-        solutionVector = snapZoneTop.transform.position - snapZoneBottom.transform.position;
     }
+
+
+
+
 
     // Update is called once per frame
     void Update()
@@ -183,31 +181,7 @@ public class FactManager : MonoBehaviour
             return false;
     }
 
-    public static Boolean gameSolved() {
 
-        Vector3 tempDir1 = new Vector3(0, 0, 0);
-        Vector3 tempDir2 = new Vector3(0, 0, 0);
-
-        if (solved == true)
-            return true;
-        else {
-            //Look for solutionFact in global factList
-            foreach (Fact fact in Facts)
-            {
-                if (typeof(LineFact).IsInstanceOfType(fact))
-                {
-                    tempDir1 = ((PointFact)Facts.Find(x => x.Id == ((LineFact)fact).Pid1)).Point - ((PointFact)Facts.Find(x => x.Id == ((LineFact)fact).Pid2)).Point;
-                    tempDir2 = ((PointFact)Facts.Find(x => x.Id == ((LineFact)fact).Pid2)).Point - ((PointFact)Facts.Find(x => x.Id == ((LineFact)fact).Pid1)).Point;
-                    if (solutionVector == tempDir1 || solutionVector == tempDir2)
-                    {
-                        solved = true;
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-    }
     /*
     //automatic 90 degree angle construction
     public void Rocket(RaycastHit hit)
