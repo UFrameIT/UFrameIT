@@ -28366,7 +28366,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 38cd422d38f88564e81d012b615cc77a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ToolMode: 4
+  id: 0
+  UiName: 
   Sprite: {fileID: 21300000, guid: d456617ba2282854d9570dcebcc2b279, type: 3}
   FactManager: {fileID: 0}
   ignoreLayerMask:
@@ -40563,6 +40564,11 @@ PrefabInstance:
       propertyPath: ignoreLayerMask.m_Bits
       value: 31232
       objectReference: {fileID: 0}
+    - target: {fileID: 729203331, guid: 2ba8d552442ba664e8e567adee683a11, type: 3}
+      propertyPath: Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 644edf8b3fa05da418500a0e9dd10820,
+        type: 3}
     - target: {fileID: 1085307962, guid: 2ba8d552442ba664e8e567adee683a11, type: 3}
       propertyPath: GadgetUI
       value: 

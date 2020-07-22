@@ -11,7 +11,7 @@ public class StartServer : MonoBehaviour
    [SerializeField]
     TMPro.TextMeshProUGUI WaitingText;
 
-    bool ServerRunning = false;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -20,7 +20,7 @@ public class StartServer : MonoBehaviour
     void PrepareGame()
     {
         WaitingText.text = "Press any key to start the game";
-        ServerRunning= true;
+        CommunicationEvents.ServerRunning= true;
         UnityEngine.Debug.Log("server fin");
 
     }
@@ -181,7 +181,7 @@ public class StartServer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(ServerRunning && Input.anyKey)
+        if(CommunicationEvents.ServerRunning && Input.anyKey)
         {
              SceneManager.LoadScene(1);
         }

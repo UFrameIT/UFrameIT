@@ -27,18 +27,24 @@ public class AddFactResponse
 
     public static AddFactResponse sendAdd(string path, string body)
     {
+        if (!CommunicationEvents.ServerRunning)
+        {
+            Debug.LogWarning("Server not running");
+            return new AddFactResponse();
+        }
         Debug.Log(body);
         //Put constructor parses stringbody to byteArray internally  (goofy workaround)
         UnityWebRequest www = UnityWebRequest.Put(path, body);
         www.method = UnityWebRequest.kHttpVerbPOST;
         www.SetRequestHeader("Content-Type", "application/json");
-
+        www.timeout = 1;
+        //TODO: implement real asynchronous communication ...
         AsyncOperation op = www.Send();
         while (!op.isDone) { }
         if (www.isNetworkError || www.isHttpError)
         {
-            Debug.Log(www.error);
-            return null;
+            Debug.LogWarning(www.error);
+            return new AddFactResponse();
         }
         else
         {

@@ -60,10 +60,11 @@ public class DisplayScrolls : MonoBehaviour
         yield return request.Send();
         if (request.isNetworkError || request.isHttpError)
         {
-            Debug.LogError(request.error);
+            Debug.LogWarning(request.error);
         }
         else
         {
+            CommunicationEvents.ServerRunning = true;
             string jsonString = request.downloadHandler.text;
             buildScrollSelection(jsonString);
         }

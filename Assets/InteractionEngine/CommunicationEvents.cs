@@ -74,4 +74,6 @@ public static class CommunicationEvents
     //Global List of Facts
     public static List<Fact> Facts = new List<Fact>();
 
+
+    public static bool ServerRunning = false;
 }
