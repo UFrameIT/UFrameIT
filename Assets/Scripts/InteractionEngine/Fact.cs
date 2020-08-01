@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.Networking;
 
 public abstract class Fact
@@ -36,8 +37,8 @@ public class AddFactResponse
         //Put constructor parses stringbody to byteArray internally  (goofy workaround)
         UnityWebRequest www = UnityWebRequest.Put(path, body);
         www.method = UnityWebRequest.kHttpVerbPOST;
-        www.SetRequestHeader("Content-Type", "application/json");
-        www.timeout = 1;
+     //   www.SetRequestHeader("Content-Type", "application/json");
+     //   www.timeout = 1;
         //TODO: implement real asynchronous communication ...
         AsyncOperation op = www.Send();
         while (!op.isDone) { }
@@ -59,6 +60,7 @@ public class PointFact : Fact
 {
     public Vector3 Point;
     public Vector3 Normal;
+    public string ConceptName = "point";
 
     public PointFact(int i, Vector3 P, Vector3 N)
     {
@@ -66,11 +68,31 @@ public class PointFact : Fact
         this.Point = P;
         this.Normal = N;
 
-        string body = @"{ ""a"":" + format(P.x) + @"," + @"""b"":" + format(P.y) + @"," + @"""c"":" + format(P.y) + "}";
-        Debug.Log(body);
-        AddFactResponse res = AddFactResponse.sendAdd("localhost:8081/fact/add/vector", body);
+        List<JSONManager.MMTTerm> arguments = new List<JSONManager.MMTTerm>
+        {
+            new JSONManager.OMF(P.x),
+            new JSONManager.OMF(P.y),
+            new JSONManager.OMF(P.z)
+        };
+
+        JSONManager.MMTTerm tp = new JSONManager.OMA(new JSONManager.OMS(ConceptName), arguments);
+        JSONManager.MMTDeclaration mmtDecl = new JSONManager.MMTDeclaration()
+        {
+            label = "test", //TODO: rework label/id ?
+            tp = tp //JSONManager adds the id prefix
+        };
+        string body = JSONManager.ToJson(mmtDecl);
+
+        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add", body);
         this.backendURI = res.factUri;
 
+        /*
+         * old approach
+        string body = @"{ ""a"":" + format(P.x) + @"," + @"""b"":" + format(P.y) + @"," + @"""c"":" + format(P.y) + "}";
+        Debug.Log(body);
+        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add/vector", body);
+        this.backendURI = res.factUri;
+        */
     }
 
     public PointFact(int i, float a, float b, float c, string uri)
@@ -106,7 +128,7 @@ public class LineFact : DirectedFact
         string p2URI = pf2.backendURI;
         float v = (pf1.Point - pf2.Point).magnitude;
         string body = @"{ ""pointA"":""" + p1URI + @"""," + @"""pointB"":""" + p2URI + @"""," + @"""value"":" + format(v) + "}";
-        AddFactResponse res = AddFactResponse.sendAdd("localhost:8081/fact/add/distance", body);
+        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add/distance", body);
         this.backendURI = res.factUri;
         this.backendValueURI = res.factValUri;
         this.flippedFact = new LineFact(pid2, pid1);
@@ -123,7 +145,7 @@ public class LineFact : DirectedFact
         string p2URI = pf2.backendURI;
         float v = (pf1.Point - pf2.Point).magnitude;
         string body = @"{ ""pointA"":""" + p1URI + @"""," + @"""pointB"":""" + p2URI + @"""," + @"""value"":" + format(v) + "}";
-        AddFactResponse res = AddFactResponse.sendAdd("localhost:8081/fact/add/distance", body);
+        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add/distance", body);
         this.backendURI = res.factUri;
         this.backendValueURI = res.factValUri;
     }
@@ -169,7 +191,7 @@ public class RayFact : Fact
         string p2URI = pf2.backendURI;
         //TODO: fix body
         string body = @"{ ""base"":""" + p1URI + @"""," + @"""second"":""" + p2URI + @"""" + "}";
-        AddFactResponse res = AddFactResponse.sendAdd("localhost:8081/fact/add/line", body);
+        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add/line", body);
         this.backendURI = res.factUri;
         this.backendValueURI = res.factValUri;
     }
@@ -202,7 +224,7 @@ public class OnLineFact : Fact
         string pURI = pf.backendURI;
         string lURI = lf.backendURI;
         string body = @"{ ""vector"":""" + pURI + @"""," + @"""line"":""" + lURI + @"""" + "}";
-        AddFactResponse res = AddFactResponse.sendAdd("localhost:8081/fact/add/onLine", body);
+        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add/onLine", body);
         this.backendURI = res.factUri;
         this.backendValueURI = res.factValUri;
         Debug.Log("created onLine" + this.backendURI + " " + this.backendValueURI);
@@ -240,7 +262,7 @@ public class AngleFact : DirectedFact
           @"""value"":" + format(v) +
           "}";
         Debug.Log(body);
-        AddFactResponse res = AddFactResponse.sendAdd("localhost:8081/fact/add/angle", body);
+        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add/angle", body);
         this.backendURI = res.factUri;
         this.backendValueURI = res.factValUri;
         this.flippedFact = new AngleFact(pid3, pid2, pid1);
@@ -266,7 +288,7 @@ public class AngleFact : DirectedFact
           @"""value"":" + format(v) +
           "}";
         Debug.Log(body);
-        AddFactResponse res = AddFactResponse.sendAdd("localhost:8081/fact/add/angle", body);
+        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add/angle", body);
         this.backendURI = res.factUri;
         this.backendValueURI = res.factValUri;
     }

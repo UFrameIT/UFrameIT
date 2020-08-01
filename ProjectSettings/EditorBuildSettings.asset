@@ -6,9 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/StartScreen.unity
+    path: Assets/Scenes/StartScreen.unity
     guid: 80736d45fa76e1b488eab0eb8650ff3d
   - enabled: 1
-    path: Assets/TreeWorld_02.unity
+    path: Assets/Scenes/TreeWorld_02.unity
     guid: 9b8063e1ae3c04045b13e20d1ccc73d0
   m_configObjects: {}

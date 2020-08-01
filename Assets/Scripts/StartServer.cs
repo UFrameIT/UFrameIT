@@ -76,7 +76,7 @@ public class StartServer : MonoBehaviour
 
     IEnumerator ServerRoutine()
     {
-        UnityWebRequest request = UnityWebRequest.Get("localhost:8081/scroll/list");
+        UnityWebRequest request = UnityWebRequest.Get(CommunicationEvents.ServerAdress+"/scroll/list");
         yield return request.SendWebRequest();
         if (request.isNetworkError || request.isHttpError)
         {
@@ -141,7 +141,7 @@ public class StartServer : MonoBehaviour
 #endif
             while (true)
             {
-                request = UnityWebRequest.Get("localhost:8081/scroll/list");
+                request = UnityWebRequest.Get(CommunicationEvents.ServerAdress+"/scroll/list");
                 yield return request.SendWebRequest();
                 if (request.isNetworkError || request.isHttpError)
                 {

@@ -56,7 +56,7 @@ public class DisplayScrolls : MonoBehaviour
     }
 
     IEnumerator getScrollsfromServer() {
-        UnityWebRequest request = UnityWebRequest.Get("localhost:8081/scroll/list");
+        UnityWebRequest request = UnityWebRequest.Get(CommunicationEvents.ServerAdress+"/scroll/list");
         yield return request.Send();
         if (request.isNetworkError || request.isHttpError)
         {
@@ -66,7 +66,9 @@ public class DisplayScrolls : MonoBehaviour
         {
             CommunicationEvents.ServerRunning = true;
             string jsonString = request.downloadHandler.text;
-            buildScrollSelection(jsonString);
+            Debug.Log(jsonString);
+           //scroll display not yet implemented;
+            //buildScrollSelection(jsonString);
         }
     }
 

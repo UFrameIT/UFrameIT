@@ -76,4 +76,5 @@ public static class CommunicationEvents
 
 
     public static bool ServerRunning = false;
+    public static string ServerAdress = "localhost:8085";
 }
