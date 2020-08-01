@@ -1,0 +1,3 @@
+[submodule "Assets/Plugins/JsonSubTypes"]
+	path = Assets/Plugins/JsonSubTypes
+	url = https://github.com/manuc66/JsonSubTypes
