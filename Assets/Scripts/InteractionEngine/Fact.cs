@@ -37,10 +37,11 @@ public class AddFactResponse
         //Put constructor parses stringbody to byteArray internally  (goofy workaround)
         UnityWebRequest www = UnityWebRequest.Put(path, body);
         www.method = UnityWebRequest.kHttpVerbPOST;
-     //   www.SetRequestHeader("Content-Type", "application/json");
-     //   www.timeout = 1;
+        www.SetRequestHeader("Content-Type", "application/json");
+        www.timeout = 1;
+
         //TODO: implement real asynchronous communication ...
-        AsyncOperation op = www.Send();
+        AsyncOperation op = www.SendWebRequest();
         while (!op.isDone) { }
         if (www.isNetworkError || www.isHttpError)
         {
@@ -60,7 +61,7 @@ public class PointFact : Fact
 {
     public Vector3 Point;
     public Vector3 Normal;
-    public string ConceptName = "point";
+
 
     public PointFact(int i, Vector3 P, Vector3 N)
     {
@@ -75,12 +76,11 @@ public class PointFact : Fact
             new JSONManager.OMF(P.z)
         };
 
-        JSONManager.MMTTerm tp = new JSONManager.OMA(new JSONManager.OMS(ConceptName), arguments);
-        JSONManager.MMTDeclaration mmtDecl = new JSONManager.MMTDeclaration()
-        {
-            label = "test", //TODO: rework label/id ?
-            tp = tp //JSONManager adds the id prefix
-        };
+        //OMS constructor generates full URI
+        JSONManager.MMTTerm tp = new JSONManager.OMS("point");
+        JSONManager.MMTTerm df = new JSONManager.OMA(new JSONManager.OMS("tuple"), arguments);
+
+        JSONManager.MMTDeclaration mmtDecl = new JSONManager.MMTDeclaration("test", tp, df);
         string body = JSONManager.ToJson(mmtDecl);
 
         AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add", body);

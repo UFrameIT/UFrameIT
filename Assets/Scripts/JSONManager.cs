@@ -7,7 +7,15 @@ using UnityEngine;
 public static class JSONManager 
 {
 
-    public static string URIPrefix = "http://mathhub.info/MitM/core/geometry?3DGeometry?";
+    public static Dictionary<string, string> URIDictionary = new Dictionary<string, string> {
+        {"point", "http://mathhub.info/MitM/core/geometry?3DGeometry?point" },
+        {"tuple", "http://gl.mathhub.info/MMT/LFX/Sigma?Symbols?Tuple"},
+        {"line", "http://mathhub.info/MitM/core/geometry?Geometry/Common?line_type" },
+        {"distance", "http://mathhub.info/MitM/core/geometry?Geometry/Common?lineOf" }
+    };
+
+
+
 
     [JsonConverter(typeof(JsonSubtypes), "kind")]
     public class MMTTerm
@@ -32,9 +40,12 @@ public static class JSONManager
         public string uri;
         public string kind = "OMS";
 
-        public OMS(string uri)
+        public OMS(string uri, bool convertToURI = true)
         {
-            this.uri = URIPrefix + uri;
+            if (convertToURI)
+                this.uri = URIDictionary[uri];
+            else
+                this.uri = uri;
         }
     }
 
@@ -51,13 +62,13 @@ public static class JSONManager
         }
     }
 
-
+    /*
     class DeclarationBody : MMTTerm
     {
         MMTTerm original;
         MMTTerm simplified;
         string kind = "O/S";
-    }
+    }*/
 
 
     public class MMTDeclaration
@@ -65,6 +76,13 @@ public static class JSONManager
         public string label;
         public MMTTerm tp;
         public MMTTerm df;
+
+        public MMTDeclaration(string label, MMTTerm tp, MMTTerm df)
+        {
+            this.label = label;
+            this.tp = tp;
+            this.df = df;
+        }
     }
 
     public static MMTDeclaration FromJson(string json)
