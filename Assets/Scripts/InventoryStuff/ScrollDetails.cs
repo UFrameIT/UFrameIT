@@ -321,7 +321,7 @@ public class ScrollDetails : MonoBehaviour
                 int id = factManager.GetFirstEmptyID();
                 int pid1 = getIdforBackendURI(f.pointA);
                 int pid2 = getIdforBackendURI(f.pointB);
-                LineFact lf = new LineFact(id, pid1, pid2, f.uri, f.value);
+                LineFact lf = new LineFact();//id, pid1, pid2, f.uri, f.value);
                 CommunicationEvents.Facts.Insert(id, lf);
                 CommunicationEvents.AddFactEvent.Invoke(lf);
                 CommunicationEvents.PushoutFactEvent.Invoke(lf);
