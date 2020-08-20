@@ -17,7 +17,18 @@ public class ScrollDetails : MonoBehaviour
     public int y_Start;
     public int y_Paece_Between_Items;
 
-    public GameObject[] ParameterDisplays;
+    public static List<GameObject> ParameterDisplays;
+    static TextMeshProUGUI _scrollDescriptionField;
+    static string _scrollDescription;
+    public static string ScrollDescription
+    {
+        get { return _scrollDescription; }
+        set
+        {
+            _scrollDescription = value;
+            _scrollDescriptionField.text = value;
+        }
+    }
 
     public string situationTheory = "http://BenniDoes.Stuff?SituationTheory";
 
@@ -29,6 +40,9 @@ public class ScrollDetails : MonoBehaviour
     void Start()
     {
         if (cursor == null) cursor = GameObject.FindObjectOfType<WorldCursor>();
+
+        _scrollDescriptionField = this.gameObject.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>();
+
     }
 
     // Update is called once per frame
@@ -42,28 +56,31 @@ public class ScrollDetails : MonoBehaviour
         Transform scrollView = gameObject.transform.GetChild(2);
         Transform viewport = scrollView.GetChild(0);
         this.scroll = s;
-        //wipe out old Displays
-        for (int i = 0; i < this.ParameterDisplays.Length; i++)
-        {
-            Destroy(ParameterDisplays[i]);
-        }
-        this.ParameterDisplays = new GameObject[s.declarations.Length];
-        for (int i = 0; i < s.declarations.Length; i++)
+      
+        ParameterDisplays = new List<GameObject>();
+        Scroll.InitDynamicScroll(s.requiredFacts.Count);
+        for (int i = 0; i < s.requiredFacts.Count; i++)
         {
             var obj = Instantiate(parameterDisplayPrefab, Vector3.zero, Quaternion.identity, transform);
+
+            var scrollFact = obj.transform.GetChild(0).GetComponent<ScrollFact>();
+            scrollFact.ID = i;
             //obj.GetComponent<RectTransform>().localPosition = GetPosition(i);
-            obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = s.declarations[i].description;
+            scrollFact.Label = Scroll.ParseString(i,s.requiredFacts[i].label,s.requiredFacts);
             obj.transform.SetParent(viewport.GetChild(0));
+            //this is from benni, I dont know if the hack is the commented line below or the line above....
             //TODO: Remvoe this reaaaaly bad hack
             //obj.transform.localScale = Vector3.one;
-            this.ParameterDisplays[i] = obj;
+            ParameterDisplays.Add(obj);
         }
-        gameObject.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = s.description;
+        //scroll description
+        ScrollDescription = Scroll.ParseString(-1, s.description, s.requiredFacts);
+       
     }
 
     public void magicButton()
     {
-        string view = sendView2();
+        string view = sendView();
         if (view.Equals(FAIL))
         {
             Debug.Log("DAS HAT NICHT GEKLAPPT");
@@ -82,7 +99,34 @@ public class ScrollDetails : MonoBehaviour
         public string view;
     }
 
+
+
     private string sendView()
+    {
+
+        List<Scroll.ScrollAssignment> assignments = new List<Scroll.ScrollAssignment>();
+        Scroll.FilledScroll scroll = new Scroll.FilledScroll(this.scroll, assignments);
+        string body = Scroll.ToJSON(scroll);
+
+        UnityWebRequest www = UnityWebRequest.Put(CommunicationEvents.ServerAdress+"/scroll/apply", body);
+        www.method = UnityWebRequest.kHttpVerbPOST;
+        www.SetRequestHeader("Content-Type", "application/json");
+        var async = www.Send();
+        while (!async.isDone) { }
+
+        if (www.isNetworkError || www.isHttpError)
+        {
+            Debug.Log(www.error);
+            return FAIL;
+        }
+        else
+        {
+            string answer = www.downloadHandler.text;
+            return JsonUtility.FromJson<ViewResponse>(answer).view;
+        }
+    }
+    /*
+     *  private string sendView()
     {
         string jsonRequest = @"{";
         jsonRequest = jsonRequest + @" ""from"":""" + this.scroll.problemTheory + @""", ";
@@ -121,7 +165,6 @@ public class ScrollDetails : MonoBehaviour
             return JsonUtility.FromJson<ViewResponse>(answer).view;
         }
     }
-
     private string sendView2()
     {
         Dictionary<Declaration, Fact[]> possibilities = new Dictionary<Declaration, Fact[]>();
@@ -206,7 +249,7 @@ public class ScrollDetails : MonoBehaviour
             string answer = www.downloadHandler.text;
             return JsonUtility.FromJson<ViewResponse>(answer).view;
         }
-    }
+    }*/
 
 
     class PushoutReturn

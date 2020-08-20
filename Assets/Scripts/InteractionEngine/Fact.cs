@@ -6,7 +6,18 @@ using static JSONManager;
 
 public abstract class Fact
 {
-    public int Id;
+    private int _id;
+    public string Label;
+    public int Id
+    {
+        get { return _id; }
+        set
+        {
+           // if (_id == value) return;
+            _id = value;
+            Label= ((Char)(64 + _id + 1)).ToString();
+        }
+    }
     public GameObject Representation;
     public string backendURI;
     public string backendValueURI; // supposed to be null, for Facts without values eg. Points, OpenLines, OnLineFacts...
@@ -84,7 +95,7 @@ public class PointFact : Fact
         MMTTerm df = new OMA(new OMS(MMTURIs.Tuple), arguments);
 
         //TODO: rework fact list + labeling
-        MMTDeclaration mmtDecl = new MMTDeclaration(((Char)(64 + Id + 1)).ToString(), tp, df);
+        MMTDeclaration mmtDecl = new MMTDeclaration(this.Label, tp, df);
         string body = ToJson(mmtDecl);
 
         AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add", body);
@@ -155,10 +166,14 @@ public class LineFact : DirectedFact
                     )
                 }
             );
-  
+
+        //github + predikate => -ded -eq
+
+
+
         MMTTerm df = null;
         //see point label
-        MMTDeclaration mmtDecl = new MMTDeclaration(((Char)(64 + Id + 1)).ToString(), tp, df);
+        MMTDeclaration mmtDecl = new MMTDeclaration(this.Label, tp, df);
         string body = ToJson(mmtDecl);
         AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress + "/fact/add", body);
         this.backendURI = res.uri;

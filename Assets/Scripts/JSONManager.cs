@@ -86,13 +86,8 @@ public static class JSONManager
         }
     }
 
-    /*
-    class DeclarationBody : MMTTerm
-    {
-        MMTTerm original;
-        MMTTerm simplified;
-        string kind = "O/S";
-    }*/
+    
+
 
 
     public class MMTDeclaration
@@ -108,6 +103,7 @@ public static class JSONManager
             this.df = df;
         }
     }
+
 
     public static MMTDeclaration FromJson(string json)
     {
