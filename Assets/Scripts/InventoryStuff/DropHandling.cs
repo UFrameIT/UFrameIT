@@ -9,7 +9,7 @@ public class DropHandling : MonoBehaviour, IDropHandler
     public Fact currentFact;
     public void OnDrop(PointerEventData eventData){
         
-        var scrollFact = gameObject.GetComponent<ScrollFact>();
+        var scrollFact = gameObject.GetComponent<RenderedScrollFact>();
         Debug.Log(eventData.pointerDrag.GetComponent<FactWrapper>().fact.Label+ " was dropped on "
             + gameObject.name+ " " +scrollFact.ID + "/" +
             ScrollDetails.ParameterDisplays.Count+" label: "+scrollFact.Label);
@@ -37,7 +37,7 @@ public class DropHandling : MonoBehaviour, IDropHandler
                 // and also in facts
                 else
                 {
-                    var affectedFact = ScrollDetails.ParameterDisplays[id.Key].GetComponentInChildren<ScrollFact>();
+                    var affectedFact = ScrollDetails.ParameterDisplays[id.Key].GetComponentInChildren<RenderedScrollFact>();
                     string label = affectedFact.Label;
                     label = label.Remove(id.Value, 1);
                     label = label.Insert(id.Value, scrollFact.Label);

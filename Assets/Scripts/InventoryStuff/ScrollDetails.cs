@@ -63,7 +63,8 @@ public class ScrollDetails : MonoBehaviour
         {
             var obj = Instantiate(parameterDisplayPrefab, Vector3.zero, Quaternion.identity, transform);
 
-            var scrollFact = obj.transform.GetChild(0).GetComponent<ScrollFact>();
+            var scrollFact = obj.transform.GetChild(0).GetComponent<RenderedScrollFact>();
+
             scrollFact.ID = i;
             //obj.GetComponent<RectTransform>().localPosition = GetPosition(i);
             scrollFact.Label = Scroll.ParseString(i,s.requiredFacts[i].label,s.requiredFacts);
