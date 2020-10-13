@@ -95,20 +95,12 @@ public class PointFact : Fact
         MMTTerm df = new OMA(new OMS(MMTURIs.Tuple), arguments);
 
         //TODO: rework fact list + labeling
-        MMTDeclaration mmtDecl = new MMTDeclaration(this.Label, tp, df);
-        string body = ToJson(mmtDecl);
+        MMTSymbolDeclaration mmtDecl = new MMTSymbolDeclaration(this.Label, tp, df);
+        string body = MMTSymbolDeclaration.ToJson(mmtDecl);
 
         AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add", body);
         this.backendURI = res.uri;
         Debug.Log(this.backendURI);
-
-        /*
-         * old approach
-        string body = @"{ ""a"":" + format(P.x) + @"," + @"""b"":" + format(P.y) + @"," + @"""c"":" + format(P.y) + "}";
-        Debug.Log(body);
-        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add/vector", body);
-        this.backendURI = res.uri;
-        */
     }
 
     public PointFact(int i, float a, float b, float c, string uri)
@@ -121,9 +113,6 @@ public class PointFact : Fact
     }
 
 }
-
-
-
 
 public class LineFact : DirectedFact
 {
@@ -144,72 +133,24 @@ public class LineFact : DirectedFact
         string p2URI = pf2.backendURI;
         float v = (pf1.Point - pf2.Point).magnitude;
 
-
-        /* string body = @"{ ""pointA"":""" + p1URI + @"""," + @"""pointB"":""" + p2URI + @"""," + @"""value"":" + format(v) + "}";
-         AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add/distance", body);
-         */
-        MMTTerm tp = 
+        MMTTerm lhs =
             new OMA(
-                new OMS(MMTURIs.Ded),
+                new OMS(MMTURIs.Metric),
                 new List<MMTTerm> {
-                    new OMA(
-                        new OMS(MMTURIs.Eq),
-                        new List<MMTTerm> {
-                            new OMA(
-                                new OMS(MMTURIs.Metric),
-                                new List<MMTTerm>{
-                                    new OMS(p1URI),
-                                    new OMS(p2URI)}
-                            ),
-                            new OMF(v)
-                        }
-                    )
+                    new OMS(p1URI),
+                    new OMS(p2URI)
                 }
             );
 
-        //github + predikate => -ded -eq
+        MMTTerm rhs = new OMF(v);
 
-
-
-        MMTTerm df = null;
         //see point label
-        MMTDeclaration mmtDecl = new MMTDeclaration(this.Label, tp, df);
-        string body = ToJson(mmtDecl);
+        MMTValueDeclaration mmtDecl = new MMTValueDeclaration(this.Label, lhs, rhs);
+        string body = MMTDeclaration.ToJson(mmtDecl);
         AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress + "/fact/add", body);
         this.backendURI = res.uri;
-       // this.backendValueURI = res.factValUri;
-      //  this.flippedFact = new LineFact(pid2, pid1);
+        Debug.Log(this.backendURI);
     }
-
-   /* // to create flipped fact
-    public LineFact(int pid1, int pid2)
-    {
-        this.Pid1 = pid1;
-        this.Pid2 = pid2;
-        PointFact pf1 = CommunicationEvents.Facts.Find((x => x.Id == pid1)) as PointFact;
-        PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
-        string p1URI = pf1.backendURI;
-        string p2URI = pf2.backendURI;
-        float v = (pf1.Point - pf2.Point).magnitude;
-        string body = @"{ ""pointA"":""" + p1URI + @"""," + @"""pointB"":""" + p2URI + @"""," + @"""value"":" + format(v) + "}";
-        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add/distance", body);
-        this.backendURI = res.uri;
-        this.backendValueURI = res.factValUri;
-    }
-
-    //pushout return
-    public LineFact(int i, int pid1, int pid2, string uri, string valuri)
-    {
-        this.Id = i;
-        this.Pid1 = pid1;
-        this.Pid2 = pid2;
-        this.backendURI = uri;
-        this.backendValueURI = valuri;
-        this.flippedFact = new LineFact(pid2, pid1);
-
-    }*/
-
-
 }
 
 public class OpenLineFact : Fact
@@ -298,58 +239,34 @@ public class AngleFact : DirectedFact
         PointFact pf1 = CommunicationEvents.Facts.Find((x => x.Id == pid1)) as PointFact;
         PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
         PointFact pf3 = CommunicationEvents.Facts.Find((x => x.Id == pid3)) as PointFact;
-
+        string p1URI = pf1.backendURI;
+        string p2URI = pf2.backendURI;
+        string p3URI = pf3.backendURI;
         float v = Vector3.Angle((pf1.Point - pf2.Point), (pf3.Point - pf2.Point));
         if (Mathf.Abs(v - 90.0f) < 0.01) v = 90.0f;
+
         Debug.Log("angle: " + v);
-        string body = @"{" +
-          @"""left"":""" + pf1.backendURI + @"""," +
-          @"""middle"":""" + pf2.backendURI + @"""," +
-          @"""right"":""" + pf3.backendURI + @"""," +
-          @"""value"":" + format(v) +
-          "}";
+
+        MMTTerm lhs =
+            new OMA(
+                new OMS(MMTURIs.Angle),
+                new List<MMTTerm> {
+                    new OMS(p1URI),
+                    new OMS(p2URI),
+                    new OMS(p3URI)
+                }
+            );
+
+        MMTTerm rhs = new OMF(v);
+
+        //see point label
+        MMTValueDeclaration mmtDecl = new MMTValueDeclaration(this.Label, lhs, rhs);
+        string body = MMTDeclaration.ToJson(mmtDecl);
+
         Debug.Log(body);
-        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add/angle", body);
+        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add", body);
         this.backendURI = res.uri;
-       // this.backendValueURI = res.factValUri;
-        this.flippedFact = new AngleFact(pid3, pid2, pid1);
-    }
-
-    //to create flipped fact
-    public AngleFact(int pid1, int pid2, int pid3)
-    {
-        this.Pid1 = pid1;
-        this.Pid2 = pid2;
-        this.Pid3 = pid3;
-        PointFact pf1 = CommunicationEvents.Facts.Find((x => x.Id == pid1)) as PointFact;
-        PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
-        PointFact pf3 = CommunicationEvents.Facts.Find((x => x.Id == pid3)) as PointFact;
-
-        float v = Vector3.Angle((pf1.Point - pf2.Point), (pf3.Point - pf2.Point));
-        if (Mathf.Abs(v - 90.0f) < 0.01) v = 90.0f;
-        Debug.Log("angle: " + v);
-        string body = @"{" +
-          @"""left"":""" + pf1.backendURI + @"""," +
-          @"""middle"":""" + pf2.backendURI + @"""," +
-          @"""right"":""" + pf3.backendURI + @"""," +
-          @"""value"":" + format(v) +
-          "}";
-        Debug.Log(body);
-        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add/angle", body);
-        this.backendURI = res.uri;
-       // this.backendValueURI = res.factValUri;
-    }
-
-    //pushout return
-    public AngleFact(int i, int pid1, int pid2, int pid3, string uri, string valuri)
-    {
-        this.Id = i;
-        this.Pid1 = pid1;
-        this.Pid2 = pid2;
-        this.Pid3 = pid3;
-        this.backendURI = uri;
-        this.backendValueURI = valuri;
-        this.flippedFact = new AngleFact(pid3, pid2, pid1);
+        Debug.Log(this.backendURI);
     }
 }
 

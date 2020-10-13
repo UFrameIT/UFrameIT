@@ -14,6 +14,7 @@ public class MMTURICollection
     public string Ded = "http://mathhub.info/MitM/Foundation?Logic?ded";
     public string Eq = "http://mathhub.info/MitM/Foundation?Logic?eq";
     public string Metric = "http://mathhub.info/MitM/core/geometry?Geometry?Common?metric";
+    public string Angle = "http://mathhub.info/MitM/core/geometry?Geometry?Common?angle_between";
     public string Sketch = "http://mathhub.info/MitM/Foundation?InformalProofs?proofsketch";
 }
 
@@ -86,17 +87,27 @@ public static class JSONManager
         }
     }
 
-    
-
-
-
     public class MMTDeclaration
+    {
+        public static MMTDeclaration FromJson(string json)
+        {
+            MMTDeclaration mmtDecl = JsonConvert.DeserializeObject<MMTDeclaration>(json);
+            return mmtDecl;
+        }
+        public static string ToJson(MMTDeclaration mmtDecl)
+        {
+            string json = JsonConvert.SerializeObject(mmtDecl);
+            return json;
+        }
+    }
+
+    public class MMTSymbolDeclaration : MMTDeclaration
     {
         public string label;
         public MMTTerm tp;
         public MMTTerm df;
 
-        public MMTDeclaration(string label, MMTTerm tp, MMTTerm df)
+        public MMTSymbolDeclaration(string label, MMTTerm tp, MMTTerm df)
         {
             this.label = label;
             this.tp = tp;
@@ -104,16 +115,18 @@ public static class JSONManager
         }
     }
 
+    public class MMTValueDeclaration : MMTDeclaration
+    {
+        public string label;
+        public MMTTerm lhs;
+        public MMTTerm rhs;
 
-    public static MMTDeclaration FromJson(string json)
-    {
-        MMTDeclaration mmtDecl = JsonConvert.DeserializeObject<MMTDeclaration>(json);
-        return mmtDecl;
-    }
-    public static string ToJson(MMTDeclaration mmtDecl)
-    {
-        string json = JsonConvert.SerializeObject(mmtDecl);
-        return json;
+        public MMTValueDeclaration(string label, MMTTerm lhs, MMTTerm rhs)
+        {
+            this.label = label;
+            this.lhs = lhs;
+            this.rhs = rhs;
+        }
     }
 
 }
