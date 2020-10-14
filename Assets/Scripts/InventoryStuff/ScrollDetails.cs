@@ -376,7 +376,7 @@ public class ScrollDetails : MonoBehaviour
                 int pid1 = getIdforBackendURI(f.left);
                 int pid2 = getIdforBackendURI(f.middle);
                 int pid3 = getIdforBackendURI(f.right);
-                AngleFact af = new AngleFact(id, pid1, pid2, pid3, f.uri, f.value);
+                AngleFact af = new AngleFact();//id, pid1, pid2, pid3, f.uri, f.value);
                 CommunicationEvents.Facts.Insert(id, af);
                 CommunicationEvents.AddFactEvent.Invoke(af);
                 CommunicationEvents.PushoutFactEvent.Invoke(af);

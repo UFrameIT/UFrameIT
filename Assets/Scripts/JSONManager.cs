@@ -22,17 +22,7 @@ public static class JSONManager
 {
     //could init the strings of MMTURIs with JSON or other settings file instead
     public static MMTURICollection MMTURIs = new MMTURICollection();
-
-    /*
-    public static Dictionary<string, string> URIDictionary = new Dictionary<string, string> {
-        {"point", "http://mathhub.info/MitM/core/geometry?3DGeometry?point" },
-        {"tuple", "http://gl.mathhub.info/MMT/LFX/Sigma?Symbols?Tuple"},
-        {"line", "http://mathhub.info/MitM/core/geometry?Geometry/Common?line_type" },
-        {"distance", "http://mathhub.info/MitM/core/geometry?Geometry/Common?lineOf" }
-    };
-    */
-
-
+    
     [JsonConverter(typeof(JsonSubtypes), "kind")]
     public class MMTTerm
     {
@@ -101,6 +91,9 @@ public static class JSONManager
         }
     }
 
+    /**
+     * MMTSymbolDeclaration: Class for facts without values, e.g. Points
+    **/ 
     public class MMTSymbolDeclaration : MMTDeclaration
     {
         public string label;
@@ -115,6 +108,9 @@ public static class JSONManager
         }
     }
 
+    /**
+     * MMTValueDeclaration: Class for facts with values, e.g. Distances or Angles
+    **/
     public class MMTValueDeclaration : MMTDeclaration
     {
         public string label;
