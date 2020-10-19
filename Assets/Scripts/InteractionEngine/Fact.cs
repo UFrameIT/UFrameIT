@@ -142,10 +142,10 @@ public class LineFact : DirectedFact
                 }
             );
 
-        MMTTerm rhs = new OMF(v);
+        MMTTerm valueTp = new OMF(v);
 
         //see point label
-        MMTValueDeclaration mmtDecl = new MMTValueDeclaration(this.Label, lhs, rhs);
+        MMTValueDeclaration mmtDecl = new MMTValueDeclaration(this.Label, lhs, valueTp, null);
         string body = MMTDeclaration.ToJson(mmtDecl);
         AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress + "/fact/add", body);
         this.backendURI = res.uri;
@@ -257,10 +257,10 @@ public class AngleFact : DirectedFact
                 }
             );
 
-        MMTTerm rhs = new OMF(v);
+        MMTTerm valueTp = new OMF(v);
 
         //see point label
-        MMTValueDeclaration mmtDecl = new MMTValueDeclaration(this.Label, lhs, rhs);
+        MMTValueDeclaration mmtDecl = new MMTValueDeclaration(this.Label, lhs, valueTp, null);
         string body = MMTDeclaration.ToJson(mmtDecl);
 
         Debug.Log(body);

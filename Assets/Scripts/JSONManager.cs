@@ -118,13 +118,15 @@ public static class JSONManager
         public string kind = "veq";
         public string label;
         public MMTTerm lhs;
-        public MMTTerm rhs;
+        public MMTTerm valueTp;
+        public MMTTerm value;
 
-        public MMTValueDeclaration(string label, MMTTerm lhs, MMTTerm rhs)
+        public MMTValueDeclaration(string label, MMTTerm lhs, MMTTerm valueTp, MMTTerm value)
         {
             this.label = label;
             this.lhs = lhs;
-            this.rhs = rhs;
+            this.valueTp = valueTp;
+            this.value = value;
         }
     }
 
