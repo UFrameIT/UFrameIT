@@ -1,4 +1,5 @@
-﻿using JsonSubTypes;
+﻿using System;
+using JsonSubTypes;
 using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,8 +14,8 @@ public class MMTURICollection
     public string LineOf = "http://mathhub.info/MitM/core/geometry?Geometry?Common?lineOf";
     public string Ded = "http://mathhub.info/MitM/Foundation?Logic?ded";
     public string Eq = "http://mathhub.info/MitM/Foundation?Logic?eq";
-    public string Metric = "http://mathhub.info/MitM/core/geometry?Geometry?Common?metric";
-    public string Angle = "http://mathhub.info/MitM/core/geometry?Geometry?Common?angle_between";
+    public string Metric = "http://mathhub.info/MitM/core/geometry?Geometry/Common?metric";
+    public string Angle = "http://mathhub.info/MitM/core/geometry?Geometry/Common?angle_between";
     public string Sketch = "http://mathhub.info/MitM/Foundation?InformalProofs?proofsketch";
 }
 
@@ -68,12 +69,12 @@ public static class JSONManager
     public class OMF : MMTTerm
     {
         [JsonProperty("float")]
-        public float f;
+        public decimal f;
         public string kind = "OMF";
 
         public OMF(float f)
         {
-            this.f = f;
+            this.f = Convert.ToDecimal(f);
         }
     }
 
@@ -96,6 +97,7 @@ public static class JSONManager
     **/ 
     public class MMTSymbolDeclaration : MMTDeclaration
     {
+        public string kind = "general";
         public string label;
         public MMTTerm tp;
         public MMTTerm df;
@@ -113,6 +115,7 @@ public static class JSONManager
     **/
     public class MMTValueDeclaration : MMTDeclaration
     {
+        public string kind = "veq";
         public string label;
         public MMTTerm lhs;
         public MMTTerm rhs;

@@ -75,6 +75,6 @@ public static class CommunicationEvents
     public static List<Fact> Facts = new List<Fact>();
 
 
-    public static bool ServerRunning = false;
+    public static bool ServerRunning = true;
     public static string ServerAdress = "localhost:8085";
 }
