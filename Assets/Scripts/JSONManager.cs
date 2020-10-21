@@ -94,7 +94,7 @@ public static class JSONManager
 
     /**
      * MMTSymbolDeclaration: Class for facts without values, e.g. Points
-    **/ 
+     */ 
     public class MMTSymbolDeclaration : MMTDeclaration
     {
         public string kind = "general";
@@ -102,6 +102,9 @@ public static class JSONManager
         public MMTTerm tp;
         public MMTTerm df;
 
+        /**
+         * Constructor used for sending new declarations to mmt
+         */
         public MMTSymbolDeclaration(string label, MMTTerm tp, MMTTerm df)
         {
             this.label = label;
@@ -112,7 +115,7 @@ public static class JSONManager
 
     /**
      * MMTValueDeclaration: Class for facts with values, e.g. Distances or Angles
-    **/
+     */
     public class MMTValueDeclaration : MMTDeclaration
     {
         public string kind = "veq";
@@ -121,6 +124,9 @@ public static class JSONManager
         public MMTTerm valueTp;
         public MMTTerm value;
 
+        /**
+         * Constructor used for sending new declarations to mmt
+         */
         public MMTValueDeclaration(string label, MMTTerm lhs, MMTTerm valueTp, MMTTerm value)
         {
             this.label = label;

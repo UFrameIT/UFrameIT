@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using UnityEngine;
+using static JSONManager;
+using Newtonsoft.Json;
 
 
 /*
@@ -44,12 +46,18 @@ public class Scroll : LightScroll
 
     public static List<Scroll> FromJSON(string json)
     {
-        List<Scroll> scrolls = Newtonsoft.Json.JsonConvert.DeserializeObject<List<Scroll>>(json);
+        List<Scroll> scrolls = JsonConvert.DeserializeObject<List<Scroll>>(json, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
         return scrolls;
     }
     public static string ToJSON(FilledScroll scroll)
     {
-        string json = Newtonsoft.Json.JsonConvert.SerializeObject(scroll);
+        string json = Newtonsoft.Json.JsonConvert.SerializeObject(scroll, new JsonSerializerSettings
+        {
+            TypeNameHandling = TypeNameHandling.Auto
+        });
         return json;
     }
 
@@ -129,15 +137,28 @@ public class Scroll : LightScroll
     public class ScrollFact
     {
         public string uri;
+        public string kind;
         public string label;
-        public FactBody tp;
-        public JSONManager.MMTTerm df;
     }
 
-    public class FactBody
+    /**
+    * Class used for deserializing incoming symbol-declarations from mmt
+    */
+    public class ScrollSymbolFact : ScrollFact
     {
-        public JSONManager.MMTTerm original;
-        public JSONManager.MMTTerm simplified;
+        public MMTTerm tp;
+        public MMTTerm df;
+    }
+
+    /**
+    * Class used for deserializing incoming value-declarations from mmt
+    */
+    public class ScrollValueFact : ScrollFact
+    {
+        MMTTerm lhs;
+        MMTTerm valueTp;
+        MMTTerm value;
+        MMTTerm proof;
     }
 
 }
