@@ -4,6 +4,7 @@ using System.Linq;
 using System;
 using UnityEngine;
 using static JSONManager;
+using JsonSubTypes;
 using Newtonsoft.Json;
 
 
@@ -43,21 +44,16 @@ public class Scroll : LightScroll
     public string label;
     public string description;
     public List<ScrollFact> requiredFacts;
+    public List<ScrollFact> acquiredFacts;
 
     public static List<Scroll> FromJSON(string json)
     {
-        List<Scroll> scrolls = JsonConvert.DeserializeObject<List<Scroll>>(json, new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.Auto
-        });
+        List<Scroll> scrolls = JsonConvert.DeserializeObject<List<Scroll>>(json);
         return scrolls;
     }
     public static string ToJSON(FilledScroll scroll)
     {
-        string json = Newtonsoft.Json.JsonConvert.SerializeObject(scroll, new JsonSerializerSettings
-        {
-            TypeNameHandling = TypeNameHandling.Auto
-        });
+        string json = Newtonsoft.Json.JsonConvert.SerializeObject(scroll);
         return json;
     }
 
@@ -133,12 +129,19 @@ public class Scroll : LightScroll
     }
 
 
-
+    [JsonConverter(typeof(JsonSubtypes), "kind")]
+    [JsonSubtypes.KnownSubType(typeof(ScrollSymbolFact), "general")]
+    [JsonSubtypes.KnownSubType(typeof(ScrollValueFact), "veq")]
     public class ScrollFact
     {
-        public string uri;
         public string kind;
+        public UriReference @ref;
         public string label;
+    }
+
+    public class UriReference
+    {
+        public string uri;
     }
 
     /**
@@ -164,6 +167,11 @@ public class Scroll : LightScroll
 }
 
 public class LightScroll
+{
+    public ScrollTheoryReference @ref;
+}
+
+public class ScrollTheoryReference
 {
     public string problemTheory;
     public string solutionTheory;

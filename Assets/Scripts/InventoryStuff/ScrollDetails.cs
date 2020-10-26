@@ -316,8 +316,8 @@ public class ScrollDetails : MonoBehaviour
     private string pushout(string view)
     {
         string path = "localhost:8081/pushout?";
-        path = path + "problem=" + this.scroll.problemTheory + "&";
-        path = path + "solution=" + this.scroll.solutionTheory + "&";
+        path = path + "problem=" + this.scroll.@ref.problemTheory + "&";
+        path = path + "solution=" + this.scroll.@ref.solutionTheory + "&";
         path = path + "view=" + view;
         UnityWebRequest www = UnityWebRequest.Get(path);
         var async = www.Send();
