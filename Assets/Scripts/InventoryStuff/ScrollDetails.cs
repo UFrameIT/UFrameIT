@@ -56,7 +56,11 @@ public class ScrollDetails : MonoBehaviour
         Transform scrollView = gameObject.transform.GetChild(2);
         Transform viewport = scrollView.GetChild(0);
         this.scroll = s;
-      
+
+        //Clear all current ScrollFacts
+        foreach (Transform child in viewport.GetChild(0).transform)
+            GameObject.Destroy(child.gameObject);
+
         ParameterDisplays = new List<GameObject>();
         Scroll.InitDynamicScroll(s.requiredFacts.Count);
         for (int i = 0; i < s.requiredFacts.Count; i++)
@@ -67,15 +71,12 @@ public class ScrollDetails : MonoBehaviour
 
             scrollFact.ID = i;
             //obj.GetComponent<RectTransform>().localPosition = GetPosition(i);
-            scrollFact.Label = Scroll.ParseString(i,s.requiredFacts[i].label,s.requiredFacts);
+            scrollFact.Label = s.requiredFacts[i].label;
             obj.transform.SetParent(viewport.GetChild(0));
-            //this is from benni, I dont know if the hack is the commented line below or the line above....
-            //TODO: Remvoe this reaaaaly bad hack
-            //obj.transform.localScale = Vector3.one;
             ParameterDisplays.Add(obj);
         }
         //scroll description
-        ScrollDescription = Scroll.ParseString(-1, s.description, s.requiredFacts);
+        ScrollDescription = s.description;
        
     }
 

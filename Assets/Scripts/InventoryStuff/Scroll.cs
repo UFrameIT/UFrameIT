@@ -7,38 +7,6 @@ using static JSONManager;
 using JsonSubTypes;
 using Newtonsoft.Json;
 
-
-/*
-[Serializable]
-public class Declaration
-{
-    public string name;
-    public string isProof;
-    public string value;
-    public string identifier;
-    public string description;
-}
-
-
-[Serializable]
-public class Scroll
-{
-    public string problemTheory;
-    public string solutionTheory;
-    public string label;
-    public string description;
-    public Declaration[] declarations;
-    //public string output;
-
-    public static Scroll generateFromJson(string json) {
-       return JsonUtility.FromJson<Scroll>(json);
-    }
-
-    public string toJson() {
-        return JsonUtility.ToJson(this);
-    } 
-}
-*/
 public class Scroll : LightScroll
 {
     public string label;
@@ -64,52 +32,6 @@ public class Scroll : LightScroll
     {
         FactOccurences = new List<KeyValuePair<int, int>>[n];
     }
-
-
-    //also collects occurences to be changed later
-    public static string ParseString(int stringId, string raw, List<ScrollFact> scrollFacts)
-    {
-       
-        int i = 0;
-        while(true)
-        {
-            char[] rawChars = raw.ToCharArray();
-            i = Array.FindIndex(rawChars,i, c => c == '$');
-            if (i == -1) break;
-           // Debug.Log(i);
-
-            //id of Fact, specified after the $
-            int toChange = (int) Char.GetNumericValue(raw[i + 1]);
-
-            //label of this Fact
-            string label = scrollFacts[toChange].label;
-
-            raw = raw.Remove(i,2);
-            raw = raw.Insert(i,label);
-
-            if(FactOccurences[toChange] == null)
-            {
-                FactOccurences[toChange] = new List<KeyValuePair<int, int>>();
-            }
-            //if (toChange >= 0) Debug.Log(stringId);
-            FactOccurences[toChange].Add(new KeyValuePair<int, int>(stringId,i));
-
-        
-        }
-
-        return raw;
-    }
-
-  
-
-
-
-/*
-    public class ScrollList
-    {
-        public List<Scroll> scrolls;
-       
-    }*/
 
     public class ScrollAssignment
     {
