@@ -23,6 +23,16 @@ public static class JSONManager
 {
     //could init the strings of MMTURIs with JSON or other settings file instead
     public static MMTURICollection MMTURIs = new MMTURICollection();
+
+    public class URI
+    {
+        public string uri;
+
+        public URI(string uri)
+        {
+            this.uri = uri;
+        }
+    }
     
     [JsonConverter(typeof(JsonSubtypes), "kind")]
     public class MMTTerm

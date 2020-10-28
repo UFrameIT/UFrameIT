@@ -7,8 +7,9 @@ using static JSONManager;
 using JsonSubTypes;
 using Newtonsoft.Json;
 
-public class Scroll : LightScroll
+public class Scroll
 {
+    public ScrollTheoryReference @ref;
     public string label;
     public string description;
     public List<ScrollFact> requiredFacts;
@@ -33,32 +34,35 @@ public class Scroll : LightScroll
         FactOccurences = new List<KeyValuePair<int, int>>[n];
     }
 
-    public class ScrollAssignment
-    {
-       public KeyValuePair<string, JSONManager.MMTTerm> assignment;
-    }
-
     public class FilledScroll
     {
-        LightScroll scroll;
-        List<ScrollAssignment> assignments;
+        public ScrollTheoryReference scroll;
+        //public List<List<KeyValuePair<JSONManager.URI, JSONManager.MMTTerm>>> assignments;
+        public List<List<System.Object>> assignments;
 
-        public FilledScroll(LightScroll scroll, List<ScrollAssignment> assignments)
+        public FilledScroll(ScrollTheoryReference scroll, List<List<System.Object>> assignments)
         {
             this.scroll = scroll;
             this.assignments = assignments;
         }
     }
 
+    public class ScrollTheoryReference
+    {
+        public string problemTheory;
+        public string solutionTheory;
+    }
 
     [JsonConverter(typeof(JsonSubtypes), "kind")]
     [JsonSubtypes.KnownSubType(typeof(ScrollSymbolFact), "general")]
     [JsonSubtypes.KnownSubType(typeof(ScrollValueFact), "veq")]
-    public class ScrollFact
+    public abstract class ScrollFact
     {
         public string kind;
         public UriReference @ref;
         public string label;
+
+        public abstract String getType();
     }
 
     public class UriReference
@@ -73,6 +77,13 @@ public class Scroll : LightScroll
     {
         public MMTTerm tp;
         public MMTTerm df;
+        
+        public override String getType() {
+            if (this.tp is OMS)
+                return ((OMS)this.tp).uri;
+            else
+                return null;
+        }
     }
 
     /**
@@ -80,23 +91,20 @@ public class Scroll : LightScroll
     */
     public class ScrollValueFact : ScrollFact
     {
-        MMTTerm lhs;
-        MMTTerm valueTp;
-        MMTTerm value;
-        MMTTerm proof;
+        public MMTTerm lhs;
+        public MMTTerm valueTp;
+        public MMTTerm value;
+        public MMTTerm proof;
+
+        public override String getType()
+        {
+            if (this.lhs is OMA & (((OMA)this.lhs).applicant is OMS))
+                return ((OMS)((OMA)this.lhs).applicant).uri;
+            else
+                return null;
+        }
     }
 
-}
-
-public class LightScroll
-{
-    public ScrollTheoryReference @ref;
-}
-
-public class ScrollTheoryReference
-{
-    public string problemTheory;
-    public string solutionTheory;
 }
 
 

@@ -3,6 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
 using static JSONManager;
+using static FactManager;
+
+public class ParsingDictionary {
+
+    public static Dictionary<string, Func<Scroll.ScrollFact, Fact>> parseFactDictionary = new Dictionary<string, Func<Scroll.ScrollFact, Fact>>() {
+        {MMTURIs.Point, PointFact.parseFact},
+        {MMTURIs.Metric, LineFact.parseFact},
+        {MMTURIs.Angle, AngleFact.parseFact}
+    };
+
+}
 
 public abstract class Fact
 {
@@ -103,13 +114,19 @@ public class PointFact : Fact
         Debug.Log(this.backendURI);
     }
 
-    public PointFact(int i, float a, float b, float c, string uri)
+    public PointFact(float a, float b, float c, string uri)
     {
-        this.Id = i;
         this.Point = new Vector3(a, b, c);
         this.Normal = new Vector3(0, 1, 0);
         this.backendURI = uri;
+    }
 
+    public static PointFact parseFact(Scroll.ScrollFact fact) {
+        String uri = fact.@ref.uri;
+        float a = (float) ((OMF)((OMA)((Scroll.ScrollSymbolFact)fact).df).arguments[0]).f;
+        float b = (float) ((OMF)((OMA)((Scroll.ScrollSymbolFact)fact).df).arguments[1]).f;
+        float c = (float) ((OMF)((OMA)((Scroll.ScrollSymbolFact)fact).df).arguments[2]).f;
+        return new PointFact(a, b, c, uri);
     }
 
 }
@@ -150,6 +167,23 @@ public class LineFact : DirectedFact
         AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress + "/fact/add", body);
         this.backendURI = res.uri;
         Debug.Log(this.backendURI);
+    }
+
+    public LineFact(int Pid1, int Pid2, string backendURI)
+    {
+        this.Pid1 = Pid1;
+        this.Pid2 = Pid2;
+        this.backendURI = backendURI;
+    }
+
+    public static LineFact parseFact(Scroll.ScrollFact fact)
+    {
+        String uri = fact.@ref.uri;
+        String pointAUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[0]).uri;
+        String pointBUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[1]).uri;
+        int pid1 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointAUri)).Id;
+        int pid2 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointBUri)).Id;
+        return new LineFact(pid1, pid2, uri);
     }
 }
 
@@ -267,6 +301,26 @@ public class AngleFact : DirectedFact
         AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add", body);
         this.backendURI = res.uri;
         Debug.Log(this.backendURI);
+    }
+
+    public AngleFact(int Pid1, int Pid2, int Pid3, string backendURI)
+    {
+        this.Pid1 = Pid1;
+        this.Pid2 = Pid2;
+        this.Pid3 = Pid3;
+        this.backendURI = backendURI;
+    }
+
+    public static AngleFact parseFact(Scroll.ScrollFact fact)
+    {
+        String uri = fact.@ref.uri;
+        String pointAUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[0]).uri;
+        String pointBUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[1]).uri;
+        String pointCUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[2]).uri;
+        int pid1 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointAUri)).Id;
+        int pid2 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointBUri)).Id;
+        int pid3 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointCUri)).Id;
+        return new AngleFact(pid1, pid2, pid3, uri);
     }
 }
 
