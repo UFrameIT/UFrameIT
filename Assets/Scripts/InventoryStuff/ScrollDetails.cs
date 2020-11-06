@@ -44,6 +44,8 @@ public class ScrollDetails : MonoBehaviour
 
         _scrollDescriptionField = this.gameObject.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>();
 
+        CommunicationEvents.parameterDisplayHint.AddListener(animateScrollParameter);
+
     }
 
     public void setScroll(Scroll s)
@@ -75,6 +77,13 @@ public class ScrollDetails : MonoBehaviour
        
     }
 
+    public void animateScrollParameter(string label)
+    {
+        var obj = ParameterDisplays.Find(x => x.transform.GetChild(0).GetComponent<RenderedScrollFact>().Label == label);
+        Animator temp = obj.GetComponentInChildren<Animator>();
+        temp.SetTrigger("animateHint");
+    }
+
     public void magicButton()
     {
         List<Scroll.ScrollFact> pushoutFacts = sendView();
@@ -90,27 +99,7 @@ public class ScrollDetails : MonoBehaviour
 
     private List<Scroll.ScrollFact> sendView()
     {
-        Fact tempFact;
-        List<List<System.Object>> assignmentList = new List<List<System.Object>>();
-
-        for(int i = 0; i < ParameterDisplays.Count; i++) {
-            List<System.Object> listEntry = new List<System.Object>();
-            tempFact = ParameterDisplays[i].GetComponentInChildren<DropHandling>().currentFact;
-            if (tempFact != null)
-            {
-                listEntry.Add(new JSONManager.URI(this.scroll.requiredFacts[i].@ref.uri));
-                listEntry.Add(new JSONManager.OMS(tempFact.backendURI));
-            }
-            else
-            {
-                listEntry.Add(new JSONManager.URI(this.scroll.requiredFacts[i].@ref.uri));
-                listEntry.Add(null);
-            }
-            assignmentList.Add(listEntry);
-        }
-        
-        Scroll.FilledScroll filledScroll = new Scroll.FilledScroll(this.scroll.@ref, assignmentList);
-        string body = Scroll.ToJSON(filledScroll);
+        string body = prepareScrollAssignments();
 
         UnityWebRequest www = UnityWebRequest.Put(CommunicationEvents.ServerAdress+"/scroll/apply", body);
         www.method = UnityWebRequest.kHttpVerbPOST;
@@ -143,5 +132,31 @@ public class ScrollDetails : MonoBehaviour
             CommunicationEvents.AddFactEvent.Invoke(newFact);
             CommunicationEvents.PushoutFactEvent.Invoke(newFact);
         }
+    }
+
+    private string prepareScrollAssignments()
+    {
+        Fact tempFact;
+        List<List<System.Object>> assignmentList = new List<List<System.Object>>();
+
+        for (int i = 0; i < ParameterDisplays.Count; i++)
+        {
+            List<System.Object> listEntry = new List<System.Object>();
+            tempFact = ParameterDisplays[i].GetComponentInChildren<DropHandling>().currentFact;
+            if (tempFact != null)
+            {
+                listEntry.Add(new JSONManager.URI(this.scroll.requiredFacts[i].@ref.uri));
+                listEntry.Add(new JSONManager.OMS(tempFact.backendURI));
+            }
+            else
+            {
+                listEntry.Add(new JSONManager.URI(this.scroll.requiredFacts[i].@ref.uri));
+                listEntry.Add(null);
+            }
+            assignmentList.Add(listEntry);
+        }
+
+        Scroll.FilledScroll filledScroll = new Scroll.FilledScroll(this.scroll.@ref, assignmentList);
+        return Scroll.ToJSON(filledScroll);
     }
 }

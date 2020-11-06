@@ -105,6 +105,22 @@ public class Scroll
         }
     }
 
+    public class ScrollDynamicInfo
+    {
+        public Scroll original;
+        public Scroll rendered;
+        //public List<List<ScrollAssignmentsToBeImplemented>> completions
+        public Boolean valid;
+        public ScrollApplicationCheckingError[] errors;
+    }
+
+    public class ScrollApplicationCheckingError
+    {
+        public String kind;
+        public string msg;
+        public MMTTerm fact;
+    }
+
 }
 
 

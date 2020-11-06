@@ -215,7 +215,6 @@ public class FactSpawner : MonoBehaviour
 
         angle.GetComponentInChildren<FactObject>().Id = angleFact.Id;
         angleFact.Representation = angle;
-
     }
 
     public void DeleteObject(Fact fact)

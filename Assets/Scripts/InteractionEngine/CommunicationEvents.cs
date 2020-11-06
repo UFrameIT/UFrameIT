@@ -46,6 +46,10 @@ public static class CommunicationEvents
 
     }
 
+    public class AnimationEvent : UnityEvent<String> {
+
+    }
+
 
 
     public static HitEvent SnapEvent = new HitEvent();
@@ -66,6 +70,8 @@ public static class CommunicationEvents
 
     public static SignalEvent gameSucceededEvent = new SignalEvent();
     public static SignalEvent gameNotSucceededEvent = new SignalEvent();
+
+    public static AnimationEvent parameterDisplayHint = new AnimationEvent();
 
 
     //------------------------------------------------------------------------------------
