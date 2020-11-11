@@ -77,8 +77,10 @@ public class ScrollDetails : MonoBehaviour
     public void animateScrollParameter(string label)
     {
         var obj = ParameterDisplays.Find(x => x.transform.GetChild(0).GetComponent<RenderedScrollFact>().Label == label);
-        Animator temp = obj.GetComponentInChildren<Animator>();
-        temp.SetTrigger("animateHint");
+        //Animate original ScrollParameter
+        obj.GetComponentInChildren<Animator>().SetTrigger("animateHint");
+        //Animate rendered ScrollParameter
+        obj.transform.GetChild(0).GetComponent<DropHandling>().associatedDropHandling.GetComponentInParent<Animator>().SetTrigger("animateHint");
     }
 
     public void magicButton()
