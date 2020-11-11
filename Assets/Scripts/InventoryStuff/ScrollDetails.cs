@@ -1,13 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
-using static ParsingDictionary;
-using System.Runtime.Serialization.Json;
-using System.Text;
-using System.Xml.Linq;
 
 public class ScrollDetails : MonoBehaviour
 {
@@ -20,17 +15,6 @@ public class ScrollDetails : MonoBehaviour
     public int y_Paece_Between_Items;
 
     public static List<GameObject> ParameterDisplays;
-    static TextMeshProUGUI _scrollDescriptionField;
-    static string _scrollDescription;
-    public static string ScrollDescription
-    {
-        get { return _scrollDescription; }
-        set
-        {
-            _scrollDescription = value;
-            _scrollDescriptionField.text = value;
-        }
-    }
 
     public Vector3 GetPosition(int i)
     {
@@ -42,39 +26,52 @@ public class ScrollDetails : MonoBehaviour
     {
         if (cursor == null) cursor = GameObject.FindObjectOfType<WorldCursor>();
 
-        _scrollDescriptionField = this.gameObject.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>();
-
         CommunicationEvents.parameterDisplayHint.AddListener(animateScrollParameter);
 
     }
 
     public void setScroll(Scroll s)
     {
-        Transform scrollView = gameObject.transform.GetChild(2);
-        Transform viewport = scrollView.GetChild(0);
+        Transform originalScroll = gameObject.transform.GetChild(1).transform;
+        Transform renderedScroll = gameObject.transform.GetChild(2).transform;
+
+        Transform originalScrollView = originalScroll.GetChild(1);
+        Transform renderedScrollView = renderedScroll.GetChild(1);
+        Transform originalViewport = originalScrollView.GetChild(0);
+        Transform renderedViewport = renderedScrollView.GetChild(0);
         this.scroll = s;
 
+        originalScroll.GetChild(0).GetComponent<TextMeshProUGUI>().text = s.description;
+        renderedScroll.GetChild(0).GetComponent<TextMeshProUGUI>().text = s.description;
+
         //Clear all current ScrollFacts
-        foreach (Transform child in viewport.GetChild(0).transform)
-            GameObject.Destroy(child.gameObject);
+        for (int i = 0; i < originalViewport.GetChild(0).childCount; i++) {
+            GameObject.Destroy(originalViewport.GetChild(0).transform.GetChild(i).gameObject);
+            GameObject.Destroy(renderedViewport.GetChild(0).transform.GetChild(i).gameObject);
+        }
 
         ParameterDisplays = new List<GameObject>();
-        Scroll.InitDynamicScroll(s.requiredFacts.Count);
         for (int i = 0; i < s.requiredFacts.Count; i++)
         {
-            var obj = Instantiate(parameterDisplayPrefab, Vector3.zero, Quaternion.identity, transform);
+            var originalObj = Instantiate(parameterDisplayPrefab, Vector3.zero, Quaternion.identity, transform);
+            var originalScrollFact = originalObj.transform.GetChild(0).GetComponent<RenderedScrollFact>();
+            originalScrollFact.ID = i;
+            originalScrollFact.Label = s.requiredFacts[i].label;
+            //Copy original Object for use in redered Scroll
+            var renderedObj = Instantiate(originalObj);
+            
+            originalObj.transform.SetParent(originalViewport.GetChild(0));
+            renderedObj.transform.SetParent(renderedViewport.GetChild(0));
 
-            var scrollFact = obj.transform.GetChild(0).GetComponent<RenderedScrollFact>();
+            //Set bidirectional references for DropHandling
+            var originalDropHandling = originalObj.transform.GetChild(0).GetComponent<DropHandling>();
+            var renderedDropHandling = renderedObj.transform.GetChild(0).GetComponent<DropHandling>();
+            originalDropHandling.associatedDropHandling = renderedDropHandling;
+            renderedDropHandling.associatedDropHandling = originalDropHandling;
 
-            scrollFact.ID = i;
-            //obj.GetComponent<RectTransform>().localPosition = GetPosition(i);
-            scrollFact.Label = s.requiredFacts[i].label;
-            obj.transform.SetParent(viewport.GetChild(0));
-            ParameterDisplays.Add(obj);
+            ParameterDisplays.Add(originalObj);
         }
-        //scroll description
-        ScrollDescription = s.description;
-       
+
     }
 
     public void animateScrollParameter(string label)

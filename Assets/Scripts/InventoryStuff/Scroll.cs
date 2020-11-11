@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System;
-using UnityEngine;
 using static JSONManager;
 using JsonSubTypes;
 using Newtonsoft.Json;
@@ -24,14 +21,6 @@ public class Scroll
     {
         string json = Newtonsoft.Json.JsonConvert.SerializeObject(scroll);
         return json;
-    }
-
-    // id of fact, positions in Description
-    public static List<KeyValuePair<int,int>>[] FactOccurences;
-
-    public static void InitDynamicScroll(int n)
-    {
-        FactOccurences = new List<KeyValuePair<int, int>>[n];
     }
 
     public class FilledScroll

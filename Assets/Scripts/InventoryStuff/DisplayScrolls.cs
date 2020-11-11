@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 using UnityEngine.Networking;
 
@@ -78,10 +77,7 @@ public class DisplayScrolls : MonoBehaviour
             BuildScrolls(jsonString);
         }
     }
-
-    //new Protocol
-
-
+    
     void BuildScrolls(string jsonString)
     {
         var scrolls = Scroll.FromJSON(jsonString);
@@ -100,30 +96,4 @@ public class DisplayScrolls : MonoBehaviour
         }
         this.DetailScreen.GetComponent<ScrollDetails>().setScroll(this.scrolls[0]);
     }
-    
-   //old Protocol
-   /*
-    void buildScrollSelection(string jsonString) {
-        jsonString = jsonString.Replace(System.Environment.NewLine, "");
-        jsonString = jsonString.Replace("\t", "");
-
-        ScrollArrayWrapper scrollsRead = new ScrollArrayWrapper();
-        scrollsRead = (ScrollArrayWrapper)JsonUtility.FromJson(jsonString, scrollsRead.GetType());
-        this.scrolls = scrollsRead.Scrolls;
-        ScrollButtons = new GameObject[this.scrolls.Length];
-        //Build Selection-GUI of Scrolls
-        for (int i = 0; i < this.scrolls.Length; i++)
-        {
-            
-            var obj = Instantiate(ScrollPrefab, Vector3.zero, Quaternion.identity, transform);
-            obj.GetComponent<RectTransform>().localPosition = GetPosition(i);
-            obj.GetComponent<ScrollClickedScript>().scroll = this.scrolls[i];
-            obj.GetComponent<ScrollClickedScript>().DetailScreen = this.DetailScreen;
-            obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = this.scrolls[i].label;
-            ScrollButtons[i] = obj;
-        }
-        this.DetailScreen.GetComponent<ScrollDetails>().setScroll(this.scrolls[0]);
-
-
-    }*/
 }
