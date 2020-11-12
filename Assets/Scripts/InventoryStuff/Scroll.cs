@@ -98,7 +98,8 @@ public class Scroll
     {
         public Scroll original;
         public Scroll rendered;
-        //public List<List<ScrollAssignmentsToBeImplemented>> completions
+        //Todo: Adjust due to new Server-Format
+        public List<List<System.Object>> completions;
         public Boolean valid;
         public ScrollApplicationCheckingError[] errors;
     }

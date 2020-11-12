@@ -27,7 +27,7 @@ public class ScrollDetails : MonoBehaviour
         if (cursor == null) cursor = GameObject.FindObjectOfType<WorldCursor>();
 
         CommunicationEvents.parameterDisplayHint.AddListener(animateScrollParameter);
-
+        CommunicationEvents.newAssignmentEvent.AddListener(newAssignment);
     }
 
     public void setScroll(Scroll s)
@@ -57,9 +57,12 @@ public class ScrollDetails : MonoBehaviour
             var originalScrollFact = originalObj.transform.GetChild(0).GetComponent<RenderedScrollFact>();
             originalScrollFact.ID = i;
             originalScrollFact.Label = s.requiredFacts[i].label;
+            originalScrollFact.factUri = s.requiredFacts[i].@ref.uri;
             //Copy original Object for use in redered Scroll
             var renderedObj = Instantiate(originalObj);
-            
+            //Set Text Color to red
+            renderedObj.transform.GetChild(1).GetComponent<TextMeshProUGUI>().color = new Color32(255,0,0,255);
+
             originalObj.transform.SetParent(originalViewport.GetChild(0));
             renderedObj.transform.SetParent(renderedViewport.GetChild(0));
 
@@ -71,7 +74,18 @@ public class ScrollDetails : MonoBehaviour
 
             ParameterDisplays.Add(originalObj);
         }
+    }
 
+    public void updateRenderedScroll(Scroll rendered)
+    {
+        Transform renderedScroll = gameObject.transform.GetChild(2).transform;
+
+        renderedScroll.GetChild(0).GetComponent<TextMeshProUGUI>().text = rendered.description;
+        for (int i = 0; i < rendered.requiredFacts.Count; i++) {
+            var obj = ParameterDisplays.Find(x => x.transform.GetChild(0).GetComponent<RenderedScrollFact>().factUri.Equals(rendered.requiredFacts[i].@ref.uri));
+            obj.transform.GetChild(0).GetComponent<DropHandling>().associatedDropHandling.transform.parent
+                .GetChild(0).GetComponent<RenderedScrollFact>().Label = rendered.requiredFacts[i].label;
+        }
     }
 
     public void animateScrollParameter(string label)
@@ -85,22 +99,37 @@ public class ScrollDetails : MonoBehaviour
 
     public void magicButton()
     {
-        List<Scroll.ScrollFact> pushoutFacts = sendView();
-        if (pushoutFacts == null)
+        string answer = sendView("/scroll/apply");
+        
+        if (answer == null)
         {
             Debug.Log("DAS HAT NICHT GEKLAPPT");
             //TODO: hier ne Art PopUp, wo drin steht, dass das nicht geklappt hat
             CommunicationEvents.PushoutFactFailEvent.Invoke(null);
             return;
         }
+        List<Scroll.ScrollFact> pushoutFacts = JsonConvert.DeserializeObject<List<Scroll.ScrollFact>>(answer);
         readPushout(pushoutFacts);
     }
 
-    private List<Scroll.ScrollFact> sendView()
+    public void newAssignment()
+    {
+        string answer = sendView("/scroll/dynamic");
+
+        if (answer == null)
+        {
+            Debug.Log("DAS HAT NICHT GEKLAPPT");
+            return;
+        }
+        Scroll.ScrollDynamicInfo scrollDynamicInfo = JsonConvert.DeserializeObject<Scroll.ScrollDynamicInfo>(answer);
+        updateRenderedScroll(scrollDynamicInfo.rendered);
+    }
+
+    private string sendView(string endpoint)
     {
         string body = prepareScrollAssignments();
 
-        UnityWebRequest www = UnityWebRequest.Put(CommunicationEvents.ServerAdress+"/scroll/apply", body);
+        UnityWebRequest www = UnityWebRequest.Put(CommunicationEvents.ServerAdress + endpoint, body);
         www.method = UnityWebRequest.kHttpVerbPOST;
         www.SetRequestHeader("Content-Type", "application/json");
         var async = www.Send();
@@ -115,7 +144,7 @@ public class ScrollDetails : MonoBehaviour
         {
             string answer = www.downloadHandler.text;
             Debug.Log(answer);
-            return JsonConvert.DeserializeObject<List<Scroll.ScrollFact>>(answer);
+            return answer;
         }
     }
 
@@ -140,19 +169,15 @@ public class ScrollDetails : MonoBehaviour
 
         for (int i = 0; i < ParameterDisplays.Count; i++)
         {
+            //Todo: Adjust due to new Server-Format
             List<System.Object> listEntry = new List<System.Object>();
             tempFact = ParameterDisplays[i].GetComponentInChildren<DropHandling>().currentFact;
             if (tempFact != null)
             {
                 listEntry.Add(new JSONManager.URI(this.scroll.requiredFacts[i].@ref.uri));
                 listEntry.Add(new JSONManager.OMS(tempFact.backendURI));
+                assignmentList.Add(listEntry);
             }
-            else
-            {
-                listEntry.Add(new JSONManager.URI(this.scroll.requiredFacts[i].@ref.uri));
-                listEntry.Add(null);
-            }
-            assignmentList.Add(listEntry);
         }
 
         Scroll.FilledScroll filledScroll = new Scroll.FilledScroll(this.scroll.@ref, assignmentList);

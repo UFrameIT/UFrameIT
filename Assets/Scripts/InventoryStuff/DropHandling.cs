@@ -25,6 +25,8 @@ public class DropHandling : MonoBehaviour, IDropHandler
 
         currentFact = eventData.pointerDrag.GetComponent<FactWrapper>().fact;
         Debug.Log("recieved Fact: " + currentFact.backendURI);
+
+        CommunicationEvents.newAssignmentEvent.Invoke();
     }
 
 }

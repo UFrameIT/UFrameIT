@@ -6,21 +6,6 @@ using System;
 
 public static class CommunicationEvents
 {
-    /*  public  class PointEvent : UnityEvent<RaycastHit,int>
-      {
-
-      }
-
-      public class LineEvent : UnityEvent<int, int, int> {
-
-      }
-
-
-
-      public class FactEvent : UnityEvent<int>
-      {
-
-      }*/
     public class HitEvent : UnityEvent<RaycastHit>
     {
 
@@ -56,11 +41,6 @@ public static class CommunicationEvents
     public static HitEvent TriggerEvent = new HitEvent();
 
     public static ToolModeEvent ToolModeChangedEvent = new ToolModeEvent();
-    /*
-    public static FactEvent AddPointEvent = new FactEvent();
-    public static FactEvent AddLineEvent = new FactEvent();
-    public static FactEvent AddAngleEvent = new FactEvent();
-    */
     public static FactEvent AddFactEvent = new FactEvent();
     public static FactEvent RemoveFactEvent = new FactEvent();
     
@@ -72,6 +52,7 @@ public static class CommunicationEvents
     public static SignalEvent gameNotSucceededEvent = new SignalEvent();
 
     public static AnimationEvent parameterDisplayHint = new AnimationEvent();
+    public static SignalEvent newAssignmentEvent = new SignalEvent();
 
 
     //------------------------------------------------------------------------------------

@@ -9,6 +9,7 @@ public class RenderedScrollFact : MonoBehaviour
     public int ID;
     public TextMeshProUGUI LabelMesh;
     private string _label;
+    public string factUri;
 
     public string Label
     {
