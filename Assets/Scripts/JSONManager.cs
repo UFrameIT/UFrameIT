@@ -17,6 +17,7 @@ public class MMTURICollection
     public string Metric = "http://mathhub.info/MitM/core/geometry?Geometry/Common?metric";
     public string Angle = "http://mathhub.info/MitM/core/geometry?Geometry/Common?angle_between";
     public string Sketch = "http://mathhub.info/MitM/Foundation?InformalProofs?proofsketch";
+    public string RealLit = "http://mathhub.info/MitM/Foundation?RealLiterals?real_lit";
 }
 
 public static class JSONManager 

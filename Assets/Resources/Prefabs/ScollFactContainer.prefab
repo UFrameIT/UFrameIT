@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7249550241351237421}
   - component: {fileID: 3905790850577996765}
   - component: {fileID: 1086451024575209643}
-  - component: {fileID: 5677314046188869628}
+  - component: {fileID: 6647832152850111550}
   m_Layer: 5
   m_Name: ScollFactContainer
   m_TagString: Untagged
@@ -55,12 +55,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 8260792079148133554}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.15233111, b: 0.9245283, a: 0.392}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -73,7 +74,8 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
---- !u!114 &5677314046188869628
+  m_PixelsPerUnitMultiplier: 1
+--- !u!114 &6647832152850111550
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -85,3 +87,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 714c3b3ded45aea408421f43873d5e17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  associatedDropHandling: {fileID: 0}

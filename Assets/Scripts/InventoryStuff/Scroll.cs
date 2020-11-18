@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 public class Scroll
 {
-    public ScrollTheoryReference @ref;
+    public string @ref;
     public string label;
     public string description;
     public List<ScrollFact> requiredFacts;
@@ -25,11 +25,10 @@ public class Scroll
 
     public class FilledScroll
     {
-        public ScrollTheoryReference scroll;
-        //public List<List<KeyValuePair<JSONManager.URI, JSONManager.MMTTerm>>> assignments;
-        public List<List<System.Object>> assignments;
+        public string scroll;
+        public List<ScrollAssignment> assignments;
 
-        public FilledScroll(ScrollTheoryReference scroll, List<List<System.Object>> assignments)
+        public FilledScroll(string scroll, List<ScrollAssignment> assignments)
         {
             this.scroll = scroll;
             this.assignments = assignments;
@@ -57,6 +56,11 @@ public class Scroll
     public class UriReference
     {
         public string uri;
+
+        public UriReference(string uri)
+        {
+            this.uri = uri;
+        }
     }
 
     /**
@@ -94,12 +98,17 @@ public class Scroll
         }
     }
 
+    public class ScrollAssignment
+    {
+        public UriReference fact;
+        public MMTTerm assignment;
+    }
+
     public class ScrollDynamicInfo
     {
         public Scroll original;
         public Scroll rendered;
-        //Todo: Adjust due to new Server-Format
-        public List<List<System.Object>> completions;
+        public List<List<Scroll.ScrollAssignment>> completions;
         public Boolean valid;
         public ScrollApplicationCheckingError[] errors;
     }
