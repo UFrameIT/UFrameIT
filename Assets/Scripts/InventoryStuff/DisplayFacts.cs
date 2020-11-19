@@ -1,13 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
 using System;
+using static CommunicationEvents;
 
 public class DisplayFacts : MonoBehaviour
 {
-    public HashSet<int> displayedFacts = new HashSet<int>();
+    public Dictionary<string, GameObject> displayedFacts = new Dictionary<string, GameObject>();
 
     public GameObject prefab_Point;
     public GameObject prefab_Distance;
@@ -21,7 +20,8 @@ public class DisplayFacts : MonoBehaviour
     public int X_Pacece_Between_Items;
     public int y_Pacece_Between_Items;
     public int number_of_Column;
-    // Start is called before the first frame update
+
+    //Start is called before the first frame update
     void Start()
     {
         var rect = GetComponent<RectTransform>();
@@ -29,31 +29,22 @@ public class DisplayFacts : MonoBehaviour
         y_Start = (int)(-rect.rect.y - y_Pacece_Between_Items * .5f);//);
         number_of_Column = Mathf.Max(1, (int)(rect.rect.width / prefab_Point.GetComponent<RectTransform>().rect.width) - 1);
 
-        //CreateDisplay();
+        AddFactEvent.AddListener(AddFact);
+        AnimateExistingFactEvent.AddListener(AnimateFact);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        UpdateDisplay2();
+    public void AddFact(Fact fact) {
+        int fid = fact.Id;
+        var obj = CreateDisplay(transform, fact);
+        obj.GetComponent<RectTransform>().localPosition = GetPosition(fid);
+        displayedFacts.Add(fact.backendURI, obj);
     }
 
-    public void UpdateDisplay2()
-    {
-        List<Fact>.Enumerator enumerator = CommunicationEvents.Facts.GetEnumerator();
-        while (enumerator.MoveNext())
-        {
-            int fid = enumerator.Current.Id;
-            if (displayedFacts.Contains(fid))
-            {
-                continue;
-            }
-            var obj = CreateDisplay(transform, enumerator.Current);
-            obj.GetComponent<RectTransform>().localPosition = GetPosition(fid);
-            displayedFacts.Add(fid);
-        }
-
+    public void AnimateFact(Fact fact) {
+        var factIcon = displayedFacts[fact.backendURI];
+        factIcon.GetComponentInChildren<Animator>().SetTrigger("animateHint");
     }
+
     string getLetter(int Id) {
         return ((Char)(64 + Id + 1)).ToString();
     }

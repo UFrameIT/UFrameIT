@@ -101,7 +101,7 @@ public class Scroll
     public class ScrollAssignment
     {
         public UriReference fact;
-        public MMTTerm assignment;
+        public OMS assignment;
     }
 
     public class ScrollDynamicInfo

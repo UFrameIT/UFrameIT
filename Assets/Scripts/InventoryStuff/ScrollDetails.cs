@@ -3,6 +3,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
+using static CommunicationEvents;
 
 public class ScrollDetails : MonoBehaviour
 {
@@ -15,6 +16,7 @@ public class ScrollDetails : MonoBehaviour
     public int y_Paece_Between_Items;
 
     public static List<GameObject> ParameterDisplays;
+    private static List<Scroll.ScrollAssignment> LatestCompletions;
 
     public Vector3 GetPosition(int i)
     {
@@ -26,8 +28,9 @@ public class ScrollDetails : MonoBehaviour
     {
         if (cursor == null) cursor = GameObject.FindObjectOfType<WorldCursor>();
 
-        CommunicationEvents.parameterDisplayHint.AddListener(animateScrollParameter);
-        CommunicationEvents.newAssignmentEvent.AddListener(newAssignment);
+        parameterDisplayHint.AddListener(animateScrollParameter);
+        CompletionsHintEvent.AddListener(animateCompletionsHint);
+        NewAssignmentEvent.AddListener(newAssignment);
     }
 
     public void setScroll(Scroll s)
@@ -58,23 +61,6 @@ public class ScrollDetails : MonoBehaviour
         }
     }
 
-    public void updateRenderedScroll(Scroll rendered)
-    {
-        Transform scroll = gameObject.transform.GetChild(1).transform;
-
-        scroll.GetChild(0).GetComponent<TextMeshProUGUI>().text = rendered.description;
-        for (int i = 0; i < rendered.requiredFacts.Count; i++) {
-            var obj = ParameterDisplays.Find(x => x.transform.GetChild(0).GetComponent<RenderedScrollFact>().factUri.Equals(rendered.requiredFacts[i].@ref.uri));
-            obj.transform.GetChild(0).GetComponent<RenderedScrollFact>().Label = rendered.requiredFacts[i].label;
-        }
-    }
-
-    public void animateScrollParameter(string label)
-    {
-        var obj = ParameterDisplays.Find(x => x.transform.GetChild(0).GetComponent<RenderedScrollFact>().Label == label);
-        obj.GetComponentInChildren<Animator>().SetTrigger("animateHint");
-    }
-
     public void magicButton()
     {
         string answer = sendView("/scroll/apply");
@@ -83,7 +69,7 @@ public class ScrollDetails : MonoBehaviour
         {
             Debug.Log("DAS HAT NICHT GEKLAPPT");
             //TODO: hier ne Art PopUp, wo drin steht, dass das nicht geklappt hat
-            CommunicationEvents.PushoutFactFailEvent.Invoke(null);
+            PushoutFactFailEvent.Invoke(null);
             return;
         }
         List<Scroll.ScrollFact> pushoutFacts = JsonConvert.DeserializeObject<List<Scroll.ScrollFact>>(answer);
@@ -100,14 +86,14 @@ public class ScrollDetails : MonoBehaviour
             return;
         }
         Scroll.ScrollDynamicInfo scrollDynamicInfo = JsonConvert.DeserializeObject<Scroll.ScrollDynamicInfo>(answer);
-        updateRenderedScroll(scrollDynamicInfo.rendered);
+        processScrollDynamicInfo(scrollDynamicInfo);
     }
 
     private string sendView(string endpoint)
     {
         string body = prepareScrollAssignments();
 
-        UnityWebRequest www = UnityWebRequest.Put(CommunicationEvents.ServerAdress + endpoint, body);
+        UnityWebRequest www = UnityWebRequest.Put(ServerAdress + endpoint, body);
         www.method = UnityWebRequest.kHttpVerbPOST;
         www.SetRequestHeader("Content-Type", "application/json");
         var async = www.Send();
@@ -123,20 +109,6 @@ public class ScrollDetails : MonoBehaviour
             string answer = www.downloadHandler.text;
             Debug.Log(answer);
             return answer;
-        }
-    }
-
-    private void readPushout(List<Scroll.ScrollFact> pushoutFacts)
-    {
-        FactManager factManager = cursor.GetComponent<FactManager>();
-        for (int i = 0; i < pushoutFacts.Count; i++)
-        {
-            Fact newFact = ParsingDictionary.parseFactDictionary[pushoutFacts[i].getType()].Invoke(pushoutFacts[i]);
-            int id = factManager.GetFirstEmptyID();
-            newFact.Id = id;
-            CommunicationEvents.Facts.Insert(id, newFact);
-            CommunicationEvents.AddFactEvent.Invoke(newFact);
-            CommunicationEvents.PushoutFactEvent.Invoke(newFact);
         }
     }
 
@@ -159,5 +131,67 @@ public class ScrollDetails : MonoBehaviour
 
         Scroll.FilledScroll filledScroll = new Scroll.FilledScroll(this.scroll.@ref, assignmentList);
         return Scroll.ToJSON(filledScroll);
+    }
+
+    private void readPushout(List<Scroll.ScrollFact> pushoutFacts)
+    {
+        FactManager factManager = cursor.GetComponent<FactManager>();
+        for (int i = 0; i < pushoutFacts.Count; i++)
+        {
+            Fact newFact = ParsingDictionary.parseFactDictionary[pushoutFacts[i].getType()].Invoke(pushoutFacts[i]);
+            int id = factManager.GetFirstEmptyID();
+            newFact.Id = id;
+            Facts.Insert(id, newFact);
+            AddFactEvent.Invoke(newFact);
+            PushoutFactEvent.Invoke(newFact);
+        }
+    }
+
+    public void processScrollDynamicInfo(Scroll.ScrollDynamicInfo scrollDynamicInfo) {
+        LatestCompletions = scrollDynamicInfo.completions[0];
+
+        List<string> completionUris = new List<string>();
+        foreach (Scroll.ScrollAssignment currentCompletion in LatestCompletions) {
+            completionUris.Add(currentCompletion.fact.uri);
+        }
+
+        //Show that Hint is available for ScrollParameter
+        HintAvailableEvent.Invoke(completionUris);
+
+        updateRenderedScroll(scrollDynamicInfo.rendered);
+    }
+
+    public void updateRenderedScroll(Scroll rendered)
+    {
+        Transform scroll = gameObject.transform.GetChild(1).transform;
+
+        scroll.GetChild(0).GetComponent<TextMeshProUGUI>().text = rendered.description;
+        for (int i = 0; i < rendered.requiredFacts.Count; i++)
+        {
+            var obj = ParameterDisplays.Find(x => x.transform.GetChild(0).GetComponent<RenderedScrollFact>().factUri.Equals(rendered.requiredFacts[i].@ref.uri));
+            obj.transform.GetChild(0).GetComponent<RenderedScrollFact>().Label = rendered.requiredFacts[i].label;
+        }
+    }
+
+    public void animateCompletionsHint(GameObject scrollParameter, string scrollParameterUri) {
+        Scroll.ScrollAssignment suitableCompletion = LatestCompletions.Find(x => x.fact.uri.Equals(scrollParameterUri) );
+
+        if (suitableCompletion != null) {
+            Fact fact = Facts.Find(x => x.backendURI.Equals(suitableCompletion.assignment.uri));
+            if (fact != null) {
+                //Animate ScrollParameter
+                scrollParameter.GetComponentInChildren<Animator>().SetTrigger("animateHint");
+                //Animate Fact in FactPanel
+                AnimateExistingFactEvent.Invoke(fact);
+                //Animate factRepresentation in game
+                fact.Representation.GetComponentInChildren<Animator>().SetTrigger("animateHint");
+            }
+        }
+    }
+
+    public void animateScrollParameter(string label)
+    {
+        var obj = ParameterDisplays.Find(x => x.transform.GetChild(0).GetComponent<RenderedScrollFact>().Label == label);
+        obj.GetComponentInChildren<Animator>().SetTrigger("animateHint");
     }
 }

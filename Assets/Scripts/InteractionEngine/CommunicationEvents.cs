@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using System;
@@ -31,7 +30,17 @@ public static class CommunicationEvents
 
     }
 
-    public class AnimationEvent : UnityEvent<String> {
+    public class AnimationEvent : UnityEvent<GameObject, String> {
+
+    }
+
+    public class AnimationEventWithUri : UnityEvent<String>
+    {
+
+    }
+
+    public class AnimationEventWithUris : UnityEvent<List<string>>
+    {
 
     }
 
@@ -50,9 +59,15 @@ public static class CommunicationEvents
 
     public static SignalEvent gameSucceededEvent = new SignalEvent();
     public static SignalEvent gameNotSucceededEvent = new SignalEvent();
+    
+    public static SignalEvent NewAssignmentEvent = new SignalEvent();
 
-    public static AnimationEvent parameterDisplayHint = new AnimationEvent();
-    public static SignalEvent newAssignmentEvent = new SignalEvent();
+    //TODO: Remove this event after CompletionsDemo isn't necessary anymore
+    public static AnimationEventWithUri parameterDisplayHint = new AnimationEventWithUri();
+
+    public static AnimationEvent CompletionsHintEvent = new AnimationEvent();
+    public static FactEvent AnimateExistingFactEvent = new FactEvent();
+    public static AnimationEventWithUris HintAvailableEvent = new AnimationEventWithUris();
 
 
     //------------------------------------------------------------------------------------
