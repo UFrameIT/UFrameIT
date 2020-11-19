@@ -104,6 +104,13 @@ public class Scroll
         public OMS assignment;
     }
 
+    public class ScrollApplicationInfo
+    {
+        public Boolean valid;
+        public ScrollApplicationCheckingError[] errors;
+        public List<Scroll.ScrollFact> acquiredFacts;
+    }
+
     public class ScrollDynamicInfo
     {
         public Scroll original;

@@ -72,8 +72,9 @@ public class ScrollDetails : MonoBehaviour
             PushoutFactFailEvent.Invoke(null);
             return;
         }
-        List<Scroll.ScrollFact> pushoutFacts = JsonConvert.DeserializeObject<List<Scroll.ScrollFact>>(answer);
-        readPushout(pushoutFacts);
+
+        Scroll.ScrollApplicationInfo pushout = JsonConvert.DeserializeObject<Scroll.ScrollApplicationInfo>(answer);
+        readPushout(pushout.acquiredFacts);
     }
 
     public void newAssignment()
@@ -148,7 +149,11 @@ public class ScrollDetails : MonoBehaviour
     }
 
     public void processScrollDynamicInfo(Scroll.ScrollDynamicInfo scrollDynamicInfo) {
-        LatestCompletions = scrollDynamicInfo.completions[0];
+
+        if (scrollDynamicInfo.completions.Count != 0)
+            LatestCompletions = scrollDynamicInfo.completions[0];
+        else
+            LatestCompletions = new List<Scroll.ScrollAssignment>();
 
         List<string> completionUris = new List<string>();
         foreach (Scroll.ScrollAssignment currentCompletion in LatestCompletions) {
