@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class DropHandling : MonoBehaviour, IDropHandler 
+public class DropHandling : MonoBehaviour, IDropHandler, IPointerClickHandler
 {
     GameObject current;
     public Fact currentFact;
@@ -22,6 +22,12 @@ public class DropHandling : MonoBehaviour, IDropHandler
         currentFact = eventData.pointerDrag.GetComponent<FactWrapper>().fact;
         Debug.Log("recieved Fact: " + currentFact.backendURI);
 
+        CommunicationEvents.NewAssignmentEvent.Invoke();
+    }
+
+    public void OnPointerClick(PointerEventData eventData) {
+        Destroy(current);
+        currentFact = null;
         CommunicationEvents.NewAssignmentEvent.Invoke();
     }
 
