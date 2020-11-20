@@ -40088,6 +40088,10 @@ PrefabInstance:
       propertyPath: directionalLight
       value: 
       objectReference: {fileID: 138245305}
+    - target: {fileID: 1661088669, guid: 2ba8d552442ba664e8e567adee683a11, type: 3}
+      propertyPath: highlightMaterial
+      value: 
+      objectReference: {fileID: 2100000, guid: c7daa82e15f0cf04d92d0f41ce84f9df, type: 2}
     - target: {fileID: 1661088670, guid: 2ba8d552442ba664e8e567adee683a11, type: 3}
       propertyPath: snapZoneTop
       value: 
@@ -40155,6 +40159,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: MainPlayer
+      objectReference: {fileID: 0}
+    - target: {fileID: 2600518978782301977, guid: 2ba8d552442ba664e8e567adee683a11,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2ba8d552442ba664e8e567adee683a11, type: 3}
