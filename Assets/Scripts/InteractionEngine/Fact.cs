@@ -146,6 +146,11 @@ public class LineFact : DirectedFact
         this.Pid2 = pid2;
         PointFact pf1 = CommunicationEvents.Facts.Find((x => x.Id == pid1)) as PointFact;
         PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
+
+        //Label is currently set to Fact.setId
+        //Set Label to StringConcatenation of Points
+        this.Label = pf1.Label + pf2.Label;
+
         string p1URI = pf1.backendURI;
         string p2URI = pf2.backendURI;
         float v = (pf1.Point - pf2.Point).magnitude;
@@ -274,6 +279,11 @@ public class AngleFact : DirectedFact
         PointFact pf1 = CommunicationEvents.Facts.Find((x => x.Id == pid1)) as PointFact;
         PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
         PointFact pf3 = CommunicationEvents.Facts.Find((x => x.Id == pid3)) as PointFact;
+
+        //Label is currently set to Fact.setId
+        //Set Label to StringConcatenation of Points
+        this.Label = "∠" + pf1.Label + pf2.Label + pf3.Label;
+
         string p1URI = pf1.backendURI;
         string p2URI = pf2.backendURI;
         string p3URI = pf3.backendURI;
