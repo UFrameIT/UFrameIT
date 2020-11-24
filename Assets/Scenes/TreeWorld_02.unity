@@ -41258,6 +41258,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4004370943283418989, guid: c1d50ceff6c06de40b71063574eba754,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: magicButtonTrigger
+      objectReference: {fileID: 0}
     - target: {fileID: 8372521933580734050, guid: c1d50ceff6c06de40b71063574eba754,
         type: 3}
       propertyPath: m_AnchorMax.x

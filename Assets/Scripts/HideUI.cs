@@ -50,6 +50,7 @@ public class HideUI : MonoBehaviour
 
         }
         /*
+        //Todo before capturing: Make directories "UFrameIT-Screenshots/Unity_ScreenCapture" in project folder
         else if (Input.GetKeyDown(ScreenshotKey)) {
             ScreenCapture.CaptureScreenshot("UFrameIT-Screenshots\\Unity_ScreenCapture\\Capture.png");
         }

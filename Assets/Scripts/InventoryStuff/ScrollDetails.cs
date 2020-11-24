@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.Networking;
@@ -30,7 +31,7 @@ public class ScrollDetails : MonoBehaviour
 
         parameterDisplayHint.AddListener(animateScrollParameter);
         CompletionsHintEvent.AddListener(animateCompletionsHint);
-        NewAssignmentEvent.AddListener(newAssignment);
+        NewAssignmentEvent.AddListener(newAssignmentTrigger);
     }
 
     public void setScroll(Scroll s)
@@ -61,33 +62,64 @@ public class ScrollDetails : MonoBehaviour
         }
     }
 
-    public void magicButton()
-    {
-        string answer = sendView("/scroll/apply");
-        
-        if (answer == null)
-        {
-            Debug.Log("DAS HAT NICHT GEKLAPPT");
-            //TODO: hier ne Art PopUp, wo drin steht, dass das nicht geklappt hat
-            PushoutFactFailEvent.Invoke(null);
-            return;
-        }
-
-        Scroll.ScrollApplicationInfo pushout = JsonConvert.DeserializeObject<Scroll.ScrollApplicationInfo>(answer);
-        readPushout(pushout.acquiredFacts);
+    public void magicButtonTrigger() {
+        StartCoroutine(magicButton());
     }
 
-    public void newAssignment()
+    IEnumerator magicButton()
     {
-        string answer = sendView("/scroll/dynamic");
+        bool workDone = false;
 
-        if (answer == null)
+        while (!workDone)
         {
-            Debug.Log("DAS HAT NICHT GEKLAPPT");
-            return;
+            // Let the engine run for a frame for not letting the game freeze
+            yield return null;
+
+            string answer = sendView("/scroll/apply");
+
+            if (answer == null)
+            {
+                Debug.Log("DAS HAT NICHT GEKLAPPT");
+                //TODO: hier ne Art PopUp, wo drin steht, dass das nicht geklappt hat
+                PushoutFactFailEvent.Invoke(null);
+            }
+            else
+            {
+                Scroll.ScrollApplicationInfo pushout = JsonConvert.DeserializeObject<Scroll.ScrollApplicationInfo>(answer);
+                readPushout(pushout.acquiredFacts);
+            }
+
+            workDone = true;
         }
-        Scroll.ScrollDynamicInfo scrollDynamicInfo = JsonConvert.DeserializeObject<Scroll.ScrollDynamicInfo>(answer);
-        processScrollDynamicInfo(scrollDynamicInfo);
+    }
+
+    public void newAssignmentTrigger() {
+        StartCoroutine(newAssignment());
+    }
+
+    IEnumerator newAssignment()
+    {
+        bool workDone = false;
+
+        while (!workDone)
+        {
+            // Let the engine run for a frame for not letting the game freeze
+            yield return null;
+
+            string answer = sendView("/scroll/dynamic");
+
+            if (answer == null)
+            {
+                Debug.Log("DAS HAT NICHT GEKLAPPT");
+            }
+            else
+            {
+                Scroll.ScrollDynamicInfo scrollDynamicInfo = JsonConvert.DeserializeObject<Scroll.ScrollDynamicInfo>(answer);
+                processScrollDynamicInfo(scrollDynamicInfo);
+            }
+
+            workDone = true;
+        }
     }
 
     private string sendView(string endpoint)
