@@ -197,15 +197,15 @@ public class ShinyThings : MonoBehaviour
         else if (typeof(LineFact).IsInstanceOfType(highlightedPushoutFact))
         {
             LineFact fact = (LineFact)highlightedPushoutFact;
-            tempMaterial = fact.Representation.transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material;
-            fact.Representation.transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material = pushoutMaterial;
+            tempMaterial = fact.Representation.transform.GetChild(0).GetChild(1).GetComponent<MeshRenderer>().material;
+            fact.Representation.transform.GetChild(0).GetChild(1).GetComponent<MeshRenderer>().material = pushoutMaterial;
             this.extraHighlight = GameObject.Instantiate(fireworksRepresentation);
             this.extraHighlight.transform.position = fact.Representation.transform.position;
         }
         else if (typeof(AngleFact).IsInstanceOfType(highlightedPushoutFact)) {
             AngleFact fact = (AngleFact)highlightedPushoutFact;
-            tempMaterial = fact.Representation.transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material;
-            fact.Representation.transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material = pushoutMaterial;
+            tempMaterial = fact.Representation.transform.GetChild(0).GetComponent<MeshRenderer>().material;
+            fact.Representation.transform.GetChild(0).GetComponent<MeshRenderer>().material = pushoutMaterial;
             this.extraHighlight = GameObject.Instantiate(fireworksRepresentation);
             this.extraHighlight.transform.position = fact.Representation.transform.position;
         }
@@ -226,12 +226,12 @@ public class ShinyThings : MonoBehaviour
         else if (typeof(LineFact).IsInstanceOfType(highlightedPushoutFact))
         {
             LineFact fact = (LineFact)highlightedPushoutFact;
-            fact.Representation.transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material = tempMaterial;
+            fact.Representation.transform.GetChild(0).GetChild(1).GetComponent<MeshRenderer>().material = tempMaterial;
         }
         else if (typeof(AngleFact).IsInstanceOfType(highlightedPushoutFact))
         {
             AngleFact fact = (AngleFact)highlightedPushoutFact;
-            fact.Representation.transform.GetChild(0).GetChild(0).GetComponent<MeshRenderer>().material = tempMaterial;
+            fact.Representation.transform.GetChild(0).GetComponent<MeshRenderer>().material = tempMaterial;
         }
 
         GameObject.Destroy(this.extraHighlight);

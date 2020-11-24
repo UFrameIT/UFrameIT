@@ -279,33 +279,31 @@ public class AngleFact : DirectedFact
         PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
         PointFact pf3 = CommunicationEvents.Facts.Find((x => x.Id == pid3)) as PointFact;
 
-        //Label is currently set to Fact.setId
-        //Set Label to StringConcatenation of Points
-        this.Label = "∠" + pf1.Label + pf2.Label + pf3.Label;
-
         string p1URI = pf1.backendURI;
         string p2URI = pf2.backendURI;
         string p3URI = pf3.backendURI;
         float v = Vector3.Angle((pf1.Point - pf2.Point), (pf3.Point - pf2.Point));
-        if (Mathf.Abs(v - 90.0f) < 0.01) v = 90.0f;
+
+        MMTDeclaration mmtDecl;
+
+        if (Mathf.Abs(v - 90.0f) < 0.01)
+        {
+            v = 90.0f;
+            //Label is currently set to Fact.setId
+            //Set Label to StringConcatenation of Points
+            this.Label = "∟" + pf1.Label + pf2.Label + pf3.Label;
+            mmtDecl = generate90DegreeAngleDeclaration(v, p1URI, p2URI, p3URI);
+        }
+        else
+        {
+            //Label is currently set to Fact.setId
+            //Set Label to StringConcatenation of Points
+            this.Label = "∠" + pf1.Label + pf2.Label + pf3.Label;
+            mmtDecl = generateNot90DegreeAngleDeclaration(v, p1URI, p2URI, p3URI);
+        }
 
         Debug.Log("angle: " + v);
 
-        MMTTerm lhs =
-            new OMA(
-                new OMS(MMTURIs.Angle),
-                new List<MMTTerm> {
-                    new OMS(p1URI),
-                    new OMS(p2URI),
-                    new OMS(p3URI)
-                }
-            );
-
-        MMTTerm valueTp = new OMS(MMTURIs.RealLit);
-        MMTTerm value = new OMF(v);
-
-        //see point label
-        MMTValueDeclaration mmtDecl = new MMTValueDeclaration(this.Label, lhs, valueTp, value);
         string body = MMTDeclaration.ToJson(mmtDecl);
 
         Debug.Log(body);
@@ -332,6 +330,48 @@ public class AngleFact : DirectedFact
         int pid2 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointBUri)).Id;
         int pid3 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointCUri)).Id;
         return new AngleFact(pid1, pid2, pid3, uri);
+    }
+
+    private MMTDeclaration generate90DegreeAngleDeclaration(float val, string p1URI, string p2URI, string p3URI) {
+
+        MMTTerm argument = new OMA(
+            new OMS(MMTURIs.Eq),
+            new List<MMTTerm> {
+                new OMS(MMTURIs.RealLit),
+                new OMA(
+                    new OMS(MMTURIs.Angle),
+                    new List<MMTTerm> {
+                        new OMS(p1URI),
+                        new OMS(p2URI),
+                        new OMS(p3URI)
+                    }
+                ),
+                new OMF(val)
+            }
+        );
+        
+        MMTTerm tp = new OMA(new OMS(MMTURIs.Ded), new List<MMTTerm> {argument});
+        MMTTerm df = null;
+
+        return new MMTSymbolDeclaration(this.Label, tp, df);
+    }
+
+    private MMTDeclaration generateNot90DegreeAngleDeclaration(float val, string p1URI, string p2URI, string p3URI)
+    {
+        MMTTerm lhs =
+            new OMA(
+                new OMS(MMTURIs.Angle),
+                new List<MMTTerm> {
+                    new OMS(p1URI),
+                    new OMS(p2URI),
+                    new OMS(p3URI)
+                }
+            );
+
+        MMTTerm valueTp = new OMS(MMTURIs.RealLit);
+        MMTTerm value = new OMF(val);
+        
+        return new MMTValueDeclaration(this.Label, lhs, valueTp, value);
     }
 }
 
