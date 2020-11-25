@@ -19,6 +19,8 @@ public class ScrollDetails : MonoBehaviour
     public static List<GameObject> ParameterDisplays;
     private static List<Scroll.ScrollAssignment> LatestCompletions;
 
+    public string currentMmtAnswer;
+
     public Vector3 GetPosition(int i)
     {
         return new Vector3(x_Start, y_Start + i * (-y_Paece_Between_Items), 0f);
@@ -68,28 +70,19 @@ public class ScrollDetails : MonoBehaviour
 
     IEnumerator magicButton()
     {
-        bool workDone = false;
+        //Non blocking wait till sendView() is finished
+        yield return sendView("/scroll/apply");
 
-        while (!workDone)
+        if (currentMmtAnswer == null)
         {
-            // Let the engine run for a frame for not letting the game freeze
-            yield return null;
-
-            string answer = sendView("/scroll/apply");
-
-            if (answer == null)
-            {
-                Debug.Log("DAS HAT NICHT GEKLAPPT");
-                //TODO: hier ne Art PopUp, wo drin steht, dass das nicht geklappt hat
-                PushoutFactFailEvent.Invoke(null);
-            }
-            else
-            {
-                Scroll.ScrollApplicationInfo pushout = JsonConvert.DeserializeObject<Scroll.ScrollApplicationInfo>(answer);
-                readPushout(pushout.acquiredFacts);
-            }
-
-            workDone = true;
+            Debug.Log("DAS HAT NICHT GEKLAPPT");
+            //TODO: hier ne Art PopUp, wo drin steht, dass das nicht geklappt hat
+            PushoutFactFailEvent.Invoke(null);
+        }
+        else
+        {
+            Scroll.ScrollApplicationInfo pushout = JsonConvert.DeserializeObject<Scroll.ScrollApplicationInfo>(currentMmtAnswer);
+            readPushout(pushout.acquiredFacts);
         }
     }
 
@@ -99,30 +92,21 @@ public class ScrollDetails : MonoBehaviour
 
     IEnumerator newAssignment()
     {
-        bool workDone = false;
+        //Non blocking wait till sendView() is finished
+        yield return sendView("/scroll/dynamic");
 
-        while (!workDone)
+        if (currentMmtAnswer == null)
         {
-            // Let the engine run for a frame for not letting the game freeze
-            yield return null;
-
-            string answer = sendView("/scroll/dynamic");
-
-            if (answer == null)
-            {
-                Debug.Log("DAS HAT NICHT GEKLAPPT");
-            }
-            else
-            {
-                Scroll.ScrollDynamicInfo scrollDynamicInfo = JsonConvert.DeserializeObject<Scroll.ScrollDynamicInfo>(answer);
-                processScrollDynamicInfo(scrollDynamicInfo);
-            }
-
-            workDone = true;
+            Debug.Log("DAS HAT NICHT GEKLAPPT");
+        }
+        else
+        {
+            Scroll.ScrollDynamicInfo scrollDynamicInfo = JsonConvert.DeserializeObject<Scroll.ScrollDynamicInfo>(currentMmtAnswer);
+            processScrollDynamicInfo(scrollDynamicInfo);
         }
     }
 
-    private string sendView(string endpoint)
+    IEnumerator sendView(string endpoint)
     {
         string body = prepareScrollAssignments();
 
@@ -130,18 +114,21 @@ public class ScrollDetails : MonoBehaviour
         www.method = UnityWebRequest.kHttpVerbPOST;
         www.SetRequestHeader("Content-Type", "application/json");
         var async = www.Send();
-        while (!async.isDone) { }
+        while (!async.isDone) {
+            //Non blocking wait for one frame, for letting the game do other things
+            yield return null;
+        }
 
         if (www.isNetworkError || www.isHttpError)
         {
             Debug.Log(www.error);
-            return null;
+            currentMmtAnswer = null;
         }
         else
         {
             string answer = www.downloadHandler.text;
             Debug.Log(answer);
-            return answer;
+            currentMmtAnswer = answer;
         }
     }
 
