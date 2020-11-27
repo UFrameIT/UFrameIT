@@ -9,7 +9,9 @@ public class ParsingDictionary {
     public static Dictionary<string, Func<Scroll.ScrollFact, Fact>> parseFactDictionary = new Dictionary<string, Func<Scroll.ScrollFact, Fact>>() {
         {MMTURIs.Point, PointFact.parseFact},
         {MMTURIs.Metric, LineFact.parseFact},
-        {MMTURIs.Angle, AngleFact.parseFact}
+        {MMTURIs.Angle, AngleFact.parseFact},
+        //90Degree-Angle
+        {MMTURIs.Ded, AngleFact.parseFact}
     };
 
 }
@@ -36,6 +38,15 @@ public abstract class Fact
     {
         return t.ToString("0.0000").Replace(',', '.');
     }
+
+    //If FactType depends on other Facts, e.g. AngleFacts depend on 3 PointFacts
+    public abstract Boolean hasDependentFacts();
+
+    public abstract int[] getDependentFactIds();
+
+    public abstract override bool Equals(System.Object obj);
+
+    public abstract override int GetHashCode();
 }
 
 public abstract class DirectedFact : Fact
@@ -122,12 +133,45 @@ public class PointFact : Fact
 
     public static PointFact parseFact(Scroll.ScrollFact fact) {
         String uri = fact.@ref.uri;
-        float a = (float) ((OMF)((OMA)((Scroll.ScrollSymbolFact)fact).df).arguments[0]).f;
-        float b = (float) ((OMF)((OMA)((Scroll.ScrollSymbolFact)fact).df).arguments[1]).f;
-        float c = (float) ((OMF)((OMA)((Scroll.ScrollSymbolFact)fact).df).arguments[2]).f;
-        return new PointFact(a, b, c, uri);
+        OMA df = (OMA)((Scroll.ScrollSymbolFact)fact).df;
+        if (df != null)
+        {
+            float a = (float)((OMF)df.arguments[0]).f;
+            float b = (float)((OMF)df.arguments[1]).f;
+            float c = (float)((OMF)df.arguments[2]).f;
+            return new PointFact(a, b, c, uri);
+        }
+        else {
+            return null;
+        }
     }
 
+    public override Boolean hasDependentFacts() {
+        return false;
+    }
+
+    public override int[] getDependentFactIds() {
+        return null;
+    }
+
+    public override bool Equals(System.Object obj)
+    {
+        //Check for null and compare run-time types.
+        if ((obj == null) || !this.GetType().Equals(obj.GetType()))
+        {
+            return false;
+        }
+        else
+        {
+            PointFact p = (PointFact)obj;
+            return this.Point.Equals(p.Point) && this.Normal.Equals(p.Normal);
+        }
+    }
+
+    public override int GetHashCode()
+    {
+        return this.Point.GetHashCode() ^ this.Normal.GetHashCode();
+    }
 }
 
 public class LineFact : DirectedFact
@@ -186,9 +230,46 @@ public class LineFact : DirectedFact
         String uri = fact.@ref.uri;
         String pointAUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[0]).uri;
         String pointBUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[1]).uri;
-        int pid1 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointAUri)).Id;
-        int pid2 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointBUri)).Id;
-        return new LineFact(pid1, pid2, uri);
+        if (CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointAUri)) &&
+            CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointBUri)))
+        {
+            int pid1 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointAUri)).Id;
+            int pid2 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointBUri)).Id;
+            return new LineFact(pid1, pid2, uri);
+        }
+        //If dependent facts do not exist return null
+        else {
+            return null;
+        }
+    }
+
+    public override Boolean hasDependentFacts()
+    {
+        return true;
+    }
+
+    public override int[] getDependentFactIds()
+    {
+        return new int[] { Pid1, Pid2 };
+    }
+
+    public override bool Equals(System.Object obj)
+    {
+        //Check for null and compare run-time types.
+        if ((obj == null) || !this.GetType().Equals(obj.GetType()))
+        {
+            return false;
+        }
+        else
+        {
+            LineFact l = (LineFact)obj;
+            return this.Pid1.Equals(l.Pid1) && this.Pid2.Equals(l.Pid2);
+        }
+    }
+
+    public override int GetHashCode()
+    {
+        return this.Pid1 ^ this.Pid2;
     }
 }
 
@@ -197,6 +278,35 @@ public class OpenLineFact : Fact
     //R: this is called RayFact for now (see below), feel free to change
     //an infinite Line through the Points Pid1 and Pid2
     public int Pid1, Pid2;
+
+    public override Boolean hasDependentFacts()
+    {
+        return true;
+    }
+
+    public override int[] getDependentFactIds()
+    {
+        return new int[] { Pid1, Pid2 };
+    }
+
+    public override bool Equals(System.Object obj)
+    {
+        //Check for null and compare run-time types.
+        if ((obj == null) || !this.GetType().Equals(obj.GetType()))
+        {
+            return false;
+        }
+        else
+        {
+            OpenLineFact o = (OpenLineFact)obj;
+            return this.Pid1.Equals(o.Pid1) && this.Pid2.Equals(o.Pid2);
+        }
+    }
+
+    public override int GetHashCode()
+    {
+        return this.Pid1 ^ this.Pid2;
+    }
 }
 
 public class RayFact : Fact
@@ -232,7 +342,34 @@ public class RayFact : Fact
         this.backendValueURI = valuri;
     }
 
+    public override Boolean hasDependentFacts()
+    {
+        return true;
+    }
 
+    public override int[] getDependentFactIds()
+    {
+        return new int[] { Pid1, Pid2 };
+    }
+
+    public override bool Equals(System.Object obj)
+    {
+        //Check for null and compare run-time types.
+        if ((obj == null) || !this.GetType().Equals(obj.GetType()))
+        {
+            return false;
+        }
+        else
+        {
+            RayFact r = (RayFact)obj;
+            return this.Pid1.Equals(r.Pid1) && this.Pid2.Equals(r.Pid2);
+        }
+    }
+
+    public override int GetHashCode()
+    {
+        return this.Pid1 ^ this.Pid2;
+    }
 }
 
 
@@ -257,7 +394,34 @@ public class OnLineFact : Fact
         Debug.Log("created onLine" + this.backendURI + " " + this.backendValueURI);
     }
 
+    public override Boolean hasDependentFacts()
+    {
+        return true;
+    }
 
+    public override int[] getDependentFactIds()
+    {
+        return new int[] { Pid, Lid };
+    }
+
+    public override bool Equals(System.Object obj)
+    {
+        //Check for null and compare run-time types.
+        if ((obj == null) || !this.GetType().Equals(obj.GetType()))
+        {
+            return false;
+        }
+        else
+        {
+            OnLineFact o = (OnLineFact)obj;
+            return this.Pid.Equals(o.Pid) && this.Lid.Equals(o.Lid);
+        }
+    }
+
+    public override int GetHashCode()
+    {
+        return this.Pid ^ this.Lid;
+    }
 }
 
 
@@ -322,13 +486,52 @@ public class AngleFact : DirectedFact
 
     public static AngleFact parseFact(Scroll.ScrollFact fact)
     {
-        String uri = fact.@ref.uri;
-        String pointAUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[0]).uri;
-        String pointBUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[1]).uri;
-        String pointCUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[2]).uri;
-        int pid1 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointAUri)).Id;
-        int pid2 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointBUri)).Id;
-        int pid3 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointCUri)).Id;
+        String uri;
+        String pointAUri;
+        String pointBUri;
+        String pointCUri;
+        int pid1;
+        int pid2;
+        int pid3;
+
+        //If angle is not a 90Degree-Angle
+        if (fact.GetType().Equals(typeof(Scroll.ScrollValueFact)))
+        {
+            uri = fact.@ref.uri;
+            pointAUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[0]).uri;
+            pointBUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[1]).uri;
+            pointCUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[2]).uri;
+            //If dependent facts do not exist return null
+            if (!CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointAUri)) |
+                !CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointBUri)) |
+                !CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointCUri)))
+            {
+                return null;
+            }
+
+            pid1 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointAUri)).Id;
+            pid2 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointBUri)).Id;
+            pid3 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointCUri)).Id;
+        }
+        //If angle is a 90Degree-Angle
+        else {
+            uri = fact.@ref.uri;
+            pointAUri = ((OMS)((OMA)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[1]).arguments[0]).uri;
+            pointBUri = ((OMS)((OMA)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[1]).arguments[1]).uri;
+            pointCUri = ((OMS)((OMA)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[1]).arguments[2]).uri;
+            //If dependent facts do not exist return null
+            if (!CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointAUri)) |
+                !CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointBUri)) |
+                !CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointCUri)))
+            {
+                return null;
+            }
+
+            pid1 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointAUri)).Id;
+            pid2 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointBUri)).Id;
+            pid3 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointCUri)).Id;
+        }
+
         return new AngleFact(pid1, pid2, pid3, uri);
     }
 
@@ -372,6 +575,35 @@ public class AngleFact : DirectedFact
         MMTTerm value = new OMF(val);
         
         return new MMTValueDeclaration(this.Label, lhs, valueTp, value);
+    }
+
+    public override Boolean hasDependentFacts()
+    {
+        return true;
+    }
+
+    public override int[] getDependentFactIds()
+    {
+        return new int[] { Pid1, Pid2, Pid3 };
+    }
+
+    public override bool Equals(System.Object obj)
+    {
+        //Check for null and compare run-time types.
+        if ((obj == null) || !this.GetType().Equals(obj.GetType()))
+        {
+            return false;
+        }
+        else
+        {
+            AngleFact a = (AngleFact)obj;
+            return this.Pid1.Equals(a.Pid1) && this.Pid2.Equals(a.Pid2) && this.Pid3.Equals(a.Pid3);
+        }
+    }
+
+    public override int GetHashCode()
+    {
+        return this.Pid1 ^ this.Pid2 ^ this.Pid3;
     }
 }
 

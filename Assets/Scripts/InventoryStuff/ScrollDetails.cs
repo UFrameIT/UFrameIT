@@ -18,6 +18,7 @@ public class ScrollDetails : MonoBehaviour
 
     public static List<GameObject> ParameterDisplays;
     private static List<Scroll.ScrollAssignment> LatestCompletions;
+    private static List<Fact> LatestRenderedHints;
 
     public string currentMmtAnswer;
 
@@ -32,7 +33,7 @@ public class ScrollDetails : MonoBehaviour
         if (cursor == null) cursor = GameObject.FindObjectOfType<WorldCursor>();
 
         parameterDisplayHint.AddListener(animateScrollParameter);
-        CompletionsHintEvent.AddListener(animateCompletionsHint);
+        ScrollFactHintEvent.AddListener(animateHint);
         NewAssignmentEvent.AddListener(newAssignmentTrigger);
     }
 
@@ -159,11 +160,17 @@ public class ScrollDetails : MonoBehaviour
         for (int i = 0; i < pushoutFacts.Count; i++)
         {
             Fact newFact = ParsingDictionary.parseFactDictionary[pushoutFacts[i].getType()].Invoke(pushoutFacts[i]);
-            int id = factManager.GetFirstEmptyID();
-            newFact.Id = id;
-            Facts.Insert(id, newFact);
-            AddFactEvent.Invoke(newFact);
-            PushoutFactEvent.Invoke(newFact);
+            if (newFact != null)
+            {
+                int id = factManager.GetFirstEmptyID();
+                newFact.Id = id;
+                Facts.Insert(id, newFact);
+                AddFactEvent.Invoke(newFact);
+                PushoutFactEvent.Invoke(newFact);
+            }
+            else {
+                Debug.Log("Parsing on pushout-fact returned null -> One of the dependent facts does not exist");
+            }
         }
     }
 
@@ -174,41 +181,90 @@ public class ScrollDetails : MonoBehaviour
         else
             LatestCompletions = new List<Scroll.ScrollAssignment>();
 
-        List<string> completionUris = new List<string>();
+        LatestRenderedHints = new List<Fact>();
+
+        List<string> hintUris = new List<string>();
         foreach (Scroll.ScrollAssignment currentCompletion in LatestCompletions) {
-            completionUris.Add(currentCompletion.fact.uri);
+            hintUris.Add(currentCompletion.fact.uri);
         }
 
-        //Show that Hint is available for ScrollParameter
-        HintAvailableEvent.Invoke(completionUris);
+        //Update Scroll, process data for later hints and update Uri-List for which hints are available
+        hintUris = processRenderedScroll(scrollDynamicInfo.rendered, hintUris);
 
-        updateRenderedScroll(scrollDynamicInfo.rendered);
+        //Show that Hint is available for ScrollParameter
+        HintAvailableEvent.Invoke(hintUris);
     }
 
-    public void updateRenderedScroll(Scroll rendered)
+    public List<string> processRenderedScroll(Scroll rendered, List<string> hintUris)
     {
         Transform scroll = gameObject.transform.GetChild(1).transform;
 
+        //Update scroll-description
         scroll.GetChild(0).GetComponent<TextMeshProUGUI>().text = rendered.description;
+
         for (int i = 0; i < rendered.requiredFacts.Count; i++)
         {
+            //Update ScrollParameter label
             var obj = ParameterDisplays.Find(x => x.transform.GetChild(0).GetComponent<RenderedScrollFact>().factUri.Equals(rendered.requiredFacts[i].@ref.uri));
             obj.transform.GetChild(0).GetComponent<RenderedScrollFact>().Label = rendered.requiredFacts[i].label;
+
+            //Check Hint Informations
+            //If ScrollFact is assigned -> No Hint
+            if (obj.transform.GetChild(0).GetComponent<DropHandling>().currentFact == null) {
+                Fact currentFact = ParsingDictionary.parseFactDictionary[rendered.requiredFacts[i].getType()].Invoke(rendered.requiredFacts[i]);
+                //If the fact could not be parsed -> Therefore not all dependent Facts exist -> No Hint
+                //AND if fact has no dependent facts -> No Hint
+                if (currentFact != null && currentFact.hasDependentFacts())
+                {
+                    //Hint available for abstract-problem uri
+                    hintUris.Add(currentFact.backendURI);
+                    LatestRenderedHints.Add(currentFact);
+                }
+            }
         }
+
+        return hintUris;
     }
 
-    public void animateCompletionsHint(GameObject scrollParameter, string scrollParameterUri) {
+    public void animateHint(GameObject scrollParameter, string scrollParameterUri) {
         Scroll.ScrollAssignment suitableCompletion = LatestCompletions.Find(x => x.fact.uri.Equals(scrollParameterUri) );
+        Fact fact;
 
-        if (suitableCompletion != null) {
-            Fact fact = Facts.Find(x => x.backendURI.Equals(suitableCompletion.assignment.uri));
-            if (fact != null) {
+        if (suitableCompletion != null)
+        {
+            fact = Facts.Find(x => x.backendURI.Equals(suitableCompletion.assignment.uri));
+            if (fact != null)
+            {
                 //Animate ScrollParameter
                 scrollParameter.GetComponentInChildren<Animator>().SetTrigger("animateHint");
                 //Animate Fact in FactPanel
                 AnimateExistingFactEvent.Invoke(fact);
                 //Animate factRepresentation in game
                 fact.Representation.GetComponentInChildren<Animator>().SetTrigger("animateHint");
+            }
+        }
+        else if (LatestRenderedHints.Exists(x => x.backendURI.Equals(scrollParameterUri))) {
+            fact = LatestRenderedHints.Find(x => x.backendURI.Equals(scrollParameterUri));
+
+            //If there is an equal existing fact -> Animate that fact AND ScrollParameter
+            if (Facts.Exists(x => x.Equals(fact)))
+            {
+                Fact existingFact = Facts.Find(x => x.Equals(fact));
+
+                //Animate ScrollParameter
+                scrollParameter.GetComponentInChildren<Animator>().SetTrigger("animateHint");
+                //Animate Fact in FactPanel
+                AnimateExistingFactEvent.Invoke(existingFact);
+                //Animate factRepresentation in game
+                existingFact.Representation.GetComponentInChildren<Animator>().SetTrigger("animateHint");
+            }
+            //If not -> Generate a Fact-Representation with such dependent facts
+            else
+            {
+                //Animate ScrollParameter
+                scrollParameter.GetComponentInChildren<Animator>().SetTrigger("animateHint");
+                //Generate new FactRepresentation and animate it
+                AnimateNonExistingFactEvent.Invoke(fact);
             }
         }
     }

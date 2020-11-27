@@ -15,36 +15,38 @@ public class FactSpawner : MonoBehaviour
         AddFactEvent.AddListener(FactAction);
         RemoveFactEvent.AddListener(DeleteObject);
 
+        AnimateNonExistingFactEvent.AddListener(animateNonExistingFactTrigger);
+
         //Default FactRepresenation = Sphere-Prefab for Points
         this.FactRepresentation = (GameObject) Resources.Load("Prefabs/Sphere", typeof(GameObject));
 
     }
 
-    public void FactAction(Fact fact)
+    public void FactAction(Fact fact) {
+        getAction(fact)?.Invoke(fact);
+    }
+
+    public Func<Fact, Fact> getAction(Fact fact)
     {
-     
         switch  (fact)
         {
             case PointFact pointFact:
-                SpawnPoint(pointFact);
-                break;
+                return SpawnPoint;
             case LineFact lineFact:
-                SpawnLine(lineFact);
-                break;
+                return SpawnLine;
             case AngleFact angleFact:
-                SpawnAngle(angleFact);
-                break;
+                return SpawnAngle;
             case RayFact rayFact:
-                SpawnRay(rayFact);
-                break;
-
+                return SpawnRay;
+            default:
+                return null;
         }
     }
   
 
-    public void SpawnPoint(PointFact fact)
+    public Fact SpawnPoint(Fact pointFact)
     {
-
+        PointFact fact = ((PointFact)pointFact);
         this.FactRepresentation = (GameObject)Resources.Load("Prefabs/Sphere", typeof(GameObject));
      
         GameObject point = GameObject.Instantiate(FactRepresentation);
@@ -54,10 +56,13 @@ public class FactSpawner : MonoBehaviour
         point.GetComponentInChildren<TextMeshPro>().text = letter;
         point.GetComponent<FactObject>().Id = fact.Id;
         fact.Representation = point;
+        return fact;
     }
 
-    public void SpawnLine(LineFact lineFact)
+    public Fact SpawnLine(Fact fact)
     {
+        LineFact lineFact = ((LineFact)fact);
+
         PointFact pointFact1 = (Facts[lineFact.Pid1] as PointFact);
         PointFact pointFact2 = (Facts[lineFact.Pid2] as PointFact);
         Vector3 point1 = pointFact1.Point;
@@ -87,13 +92,16 @@ public class FactSpawner : MonoBehaviour
         line.GetComponentInChildren<TextMeshPro>().text += " = " + Math.Round((point1-point2).magnitude, 2) + " m";
         line.GetComponentInChildren<FactObject>().Id = lineFact.Id;
         lineFact.Representation = line;
+        return lineFact;
 
     }
 
-    public void SpawnRay(RayFact lineFact)
+    public Fact SpawnRay(Fact fact)
     {
-        PointFact pointFact1 = (Facts[lineFact.Pid1] as PointFact);
-        PointFact pointFact2 = (Facts[lineFact.Pid2] as PointFact);
+        RayFact rayFact = ((RayFact)fact);
+
+        PointFact pointFact1 = (Facts[rayFact.Pid1] as PointFact);
+        PointFact pointFact2 = (Facts[rayFact.Pid2] as PointFact);
 
  
         Vector3 point1 = pointFact1.Point;
@@ -123,16 +131,18 @@ public class FactSpawner : MonoBehaviour
         line.transform.GetChild(0).localScale = v3T;
         line.transform.GetChild(0).rotation = Quaternion.FromToRotation(Vector3.right, point2 - point1);
 
-        string letter = ((Char)(64 + lineFact.Id + 1)).ToString();
+        string letter = ((Char)(64 + rayFact.Id + 1)).ToString();
         line.GetComponentInChildren<TextMeshPro>().text = letter;
      
-        line.GetComponentInChildren<FactObject>().Id = lineFact.Id;
-        lineFact.Representation = line;
+        line.GetComponentInChildren<FactObject>().Id = rayFact.Id;
+        rayFact.Representation = line;
+        return rayFact;
     }
     
     //Spawn an angle: point with id = angleFact.Pid2 is the point where the angle gets applied
-    public void SpawnAngle(AngleFact angleFact)
+    public Fact SpawnAngle(Fact fact)
     {
+        AngleFact angleFact = (AngleFact)fact;
 
         Vector3 point1 = (Facts[angleFact.Pid1] as PointFact).Point;
         Vector3 point2 = (Facts[angleFact.Pid2] as PointFact).Point;
@@ -215,6 +225,7 @@ public class FactSpawner : MonoBehaviour
 
         angle.GetComponentInChildren<FactObject>().Id = angleFact.Id;
         angleFact.Representation = angle;
+        return angleFact;
     }
 
     public void DeleteObject(Fact fact)
@@ -222,6 +233,22 @@ public class FactSpawner : MonoBehaviour
         Debug.Log("delete obj of "+ fact.Id);
         GameObject factRepresentation = fact.Representation;
         GameObject.Destroy(factRepresentation);
-   
+    }
+
+    public void animateNonExistingFactTrigger(Fact fact) {
+        StartCoroutine(animateNonExistingFact(fact));
+    }
+
+    public IEnumerator animateNonExistingFact(Fact fact) {
+        Fact returnedFact = getAction(fact)?.Invoke(fact);
+        if (returnedFact != null)
+        {
+            Animator animator = returnedFact.Representation.GetComponentInChildren<Animator>();
+            animator.SetTrigger("animateHint");
+
+            yield return new WaitForSeconds(7);
+
+            GameObject.Destroy(returnedFact.Representation);
+        }
     }
 }

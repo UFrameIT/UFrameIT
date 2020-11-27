@@ -74,6 +74,8 @@ public class Scroll
         public override String getType() {
             if (this.tp is OMS)
                 return ((OMS)this.tp).uri;
+            else if (this.tp is OMA)
+                return ((OMS)((OMA)this.tp).applicant).uri;
             else
                 return null;
         }

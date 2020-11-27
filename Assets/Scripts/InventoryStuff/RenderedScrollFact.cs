@@ -33,7 +33,7 @@ public class RenderedScrollFact : MonoBehaviour
     }
 
     public void OnClickHintButton() {
-        CompletionsHintEvent.Invoke(this.ScrollParameterObject, factUri);
+        ScrollFactHintEvent.Invoke(this.ScrollParameterObject, factUri);
     }
 
     public void OnHintAvailable(List<string> uris) {

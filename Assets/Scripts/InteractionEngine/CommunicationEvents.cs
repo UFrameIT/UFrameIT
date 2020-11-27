@@ -65,8 +65,9 @@ public static class CommunicationEvents
     //TODO: Remove this event after CompletionsDemo isn't necessary anymore
     public static AnimationEventWithUri parameterDisplayHint = new AnimationEventWithUri();
 
-    public static AnimationEvent CompletionsHintEvent = new AnimationEvent();
+    public static AnimationEvent ScrollFactHintEvent = new AnimationEvent();
     public static FactEvent AnimateExistingFactEvent = new FactEvent();
+    public static FactEvent AnimateNonExistingFactEvent = new FactEvent();
     public static AnimationEventWithUris HintAvailableEvent = new AnimationEventWithUris();
 
 
