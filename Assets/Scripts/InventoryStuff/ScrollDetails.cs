@@ -157,6 +157,10 @@ public class ScrollDetails : MonoBehaviour
     private void readPushout(List<Scroll.ScrollFact> pushoutFacts)
     {
         FactManager factManager = cursor.GetComponent<FactManager>();
+
+        if(pushoutFacts.Count == 0)
+            PushoutFactFailEvent.Invoke(null);
+
         for (int i = 0; i < pushoutFacts.Count; i++)
         {
             Fact newFact = ParsingDictionary.parseFactDictionary[pushoutFacts[i].getType()].Invoke(pushoutFacts[i]);
