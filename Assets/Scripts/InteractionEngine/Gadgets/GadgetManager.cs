@@ -42,9 +42,10 @@ public class GadgetManager : MonoBehaviour
         button.transform.SetParent(GadgetUI.transform);
         var uiRect = GadgetUI.GetComponent<RectTransform>().rect;
         var buttonRect = button.GetComponent<RectTransform>().rect;
-        button.transform.localPosition = Vector2.right*(-.5f * uiRect.width //left border
-            + buttonRect.width * .75f //border distance including button width
-            + buttonRect.width * 1.5f * gadget.id); //offset
+        button.transform.localPosition = Vector2.right*(
+            - uiRect.width *.5f +//left border
+             buttonRect.width * .75f+ //border distance including button width
+             buttonRect.width * 1f * gadget.id); //offset
            
     }
 

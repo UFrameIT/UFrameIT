@@ -9,6 +9,8 @@ public class ToolModeSelector : MonoBehaviour
 {
     private Button[] Buttons;
     private HideUI UIManager;
+    private Canvas ParentCanvas;
+    private bool Showing = false;
 
     // Start is called before the first frame update
     void Start()
@@ -17,7 +19,7 @@ public class ToolModeSelector : MonoBehaviour
         //We could fully generate the buttons instead if we have icons with file names matching the enums
         var buttons = GetComponentsInChildren<Button>();
         Buttons = buttons.OrderBy(x => x.transform.position.x).ToArray();
-
+        ParentCanvas = GetComponentInParent<Canvas>();
         for(int i = 0; i< Buttons.Length;++i)
         {
             int copiedIndex = i; //this is important
@@ -35,9 +37,25 @@ public class ToolModeSelector : MonoBehaviour
     public void Select(int id)
     {
 
+        ParentCanvas.enabled = true;
+        Showing = true;
+        
         Buttons[GadgetManager.activeGadget.id].transform.localScale /= 2;
         CommunicationEvents.ToolModeChangedEvent.Invoke(id);
         Buttons[GadgetManager.activeGadget.id].transform.localScale *= 2;
+        StartCoroutine(HideRoutine());
+
+    }
+
+    IEnumerator HideRoutine()
+    {
+        
+        yield return new WaitForSeconds(2);
+        if (!Showing)
+        {
+            ParentCanvas.enabled = false;
+        }
+
     }
 
 
