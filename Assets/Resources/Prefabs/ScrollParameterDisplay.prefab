@@ -257,6 +257,76 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1430730640409366961, guid: 0f75dbd3f5b33b040948ba58d3b90cb0,
+        type: 3}
+      propertyPath: defaultColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1430730640409366961, guid: 0f75dbd3f5b33b040948ba58d3b90cb0,
+        type: 3}
+      propertyPath: defaultColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1430730640409366961, guid: 0f75dbd3f5b33b040948ba58d3b90cb0,
+        type: 3}
+      propertyPath: defaultColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1430730640409366961, guid: 0f75dbd3f5b33b040948ba58d3b90cb0,
+        type: 3}
+      propertyPath: defaultColor.a
+      value: 0.5294118
+      objectReference: {fileID: 0}
+    - target: {fileID: 1430730640409366961, guid: 0f75dbd3f5b33b040948ba58d3b90cb0,
+        type: 3}
+      propertyPath: highlightColor.r
+      value: 0.9529412
+      objectReference: {fileID: 0}
+    - target: {fileID: 1430730640409366961, guid: 0f75dbd3f5b33b040948ba58d3b90cb0,
+        type: 3}
+      propertyPath: highlightColor.g
+      value: 0.5137255
+      objectReference: {fileID: 0}
+    - target: {fileID: 1430730640409366961, guid: 0f75dbd3f5b33b040948ba58d3b90cb0,
+        type: 3}
+      propertyPath: highlightColor.b
+      value: 0.07058824
+      objectReference: {fileID: 0}
+    - target: {fileID: 1430730640409366961, guid: 0f75dbd3f5b33b040948ba58d3b90cb0,
+        type: 3}
+      propertyPath: defaultHintButtonColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1430730640409366961, guid: 0f75dbd3f5b33b040948ba58d3b90cb0,
+        type: 3}
+      propertyPath: defaultHintButtonColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1430730640409366961, guid: 0f75dbd3f5b33b040948ba58d3b90cb0,
+        type: 3}
+      propertyPath: defaultHintButtonColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1430730640409366961, guid: 0f75dbd3f5b33b040948ba58d3b90cb0,
+        type: 3}
+      propertyPath: defaultHintButtonColor.a
+      value: 0.5294118
+      objectReference: {fileID: 0}
+    - target: {fileID: 1430730640409366961, guid: 0f75dbd3f5b33b040948ba58d3b90cb0,
+        type: 3}
+      propertyPath: availableHintButtonColor.r
+      value: 0.9529412
+      objectReference: {fileID: 0}
+    - target: {fileID: 1430730640409366961, guid: 0f75dbd3f5b33b040948ba58d3b90cb0,
+        type: 3}
+      propertyPath: availableHintButtonColor.g
+      value: 0.5137255
+      objectReference: {fileID: 0}
+    - target: {fileID: 1430730640409366961, guid: 0f75dbd3f5b33b040948ba58d3b90cb0,
+        type: 3}
+      propertyPath: availableHintButtonColor.b
+      value: 0.07058824
+      objectReference: {fileID: 0}
     - target: {fileID: 1686984722580339795, guid: 0f75dbd3f5b33b040948ba58d3b90cb0,
         type: 3}
       propertyPath: m_fontSize
@@ -281,6 +351,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_margin.y
       value: -5.0954895
+      objectReference: {fileID: 0}
+    - target: {fileID: 5738028260646118123, guid: 0f75dbd3f5b33b040948ba58d3b90cb0,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6338961308496269799, guid: 0f75dbd3f5b33b040948ba58d3b90cb0,
+        type: 3}
+      propertyPath: m_Interactable
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7669725544194832573, guid: 0f75dbd3f5b33b040948ba58d3b90cb0,
         type: 3}

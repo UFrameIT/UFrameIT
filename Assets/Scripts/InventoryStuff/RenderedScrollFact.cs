@@ -11,9 +11,6 @@ public class RenderedScrollFact : MonoBehaviour
     private string _label;
     public string factUri;
 
-    private Color defaultColor = new Color(255,255,255,135);
-    private Color highlightColor = new Color(255,0,0,135);
-
     public GameObject ScrollParameterObject;
 
     public string Label
@@ -37,17 +34,14 @@ public class RenderedScrollFact : MonoBehaviour
     }
 
     public void OnHintAvailable(List<string> uris) {
-        UnityEngine.UI.Button button = ScrollParameterObject.GetComponentInChildren<UnityEngine.UI.Button>();
-        UnityEngine.UI.ColorBlock buttonColor = button.colors;
+        GameObject hintButton = ScrollParameterObject.transform.GetChild(2).gameObject;
 
         if (uris.Contains(factUri))
         {
-            buttonColor.normalColor = highlightColor;
-            button.colors = buttonColor;
+            hintButton.SetActive(true);
         }
         else {
-            buttonColor.normalColor = defaultColor;
-            button.colors = buttonColor;
+            hintButton.SetActive(false);
         }
     }
 }
