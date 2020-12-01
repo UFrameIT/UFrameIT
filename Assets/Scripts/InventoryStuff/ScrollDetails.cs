@@ -240,11 +240,11 @@ public class ScrollDetails : MonoBehaviour
             if (fact != null)
             {
                 //Animate ScrollParameter
-                scrollParameter.GetComponentInChildren<Animator>().SetTrigger("animateHint");
+                scrollParameter.GetComponentInChildren<ImageHintAnimation>().AnimationTrigger();
                 //Animate Fact in FactPanel
                 AnimateExistingFactEvent.Invoke(fact);
                 //Animate factRepresentation in game
-                fact.Representation.GetComponentInChildren<Animator>().SetTrigger("animateHint");
+                fact.Representation.GetComponentInChildren<MeshRendererHintAnimation>().AnimationTrigger();
             }
         }
         else if (LatestRenderedHints.Exists(x => x.backendURI.Equals(scrollParameterUri))) {
@@ -256,17 +256,17 @@ public class ScrollDetails : MonoBehaviour
                 Fact existingFact = Facts.Find(x => x.Equals(fact));
 
                 //Animate ScrollParameter
-                scrollParameter.GetComponentInChildren<Animator>().SetTrigger("animateHint");
+                scrollParameter.GetComponentInChildren<ImageHintAnimation>().AnimationTrigger();
                 //Animate Fact in FactPanel
                 AnimateExistingFactEvent.Invoke(existingFact);
                 //Animate factRepresentation in game
-                existingFact.Representation.GetComponentInChildren<Animator>().SetTrigger("animateHint");
+                existingFact.Representation.GetComponentInChildren<MeshRendererHintAnimation>().AnimationTrigger();
             }
             //If not -> Generate a Fact-Representation with such dependent facts
             else
             {
                 //Animate ScrollParameter
-                scrollParameter.GetComponentInChildren<Animator>().SetTrigger("animateHint");
+                scrollParameter.GetComponentInChildren<ImageHintAnimation>().AnimationTrigger();
                 //Generate new FactRepresentation and animate it
                 AnimateNonExistingFactEvent.Invoke(fact);
             }

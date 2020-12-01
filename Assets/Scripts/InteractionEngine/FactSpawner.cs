@@ -243,10 +243,10 @@ public class FactSpawner : MonoBehaviour
         Fact returnedFact = getAction(fact)?.Invoke(fact);
         if (returnedFact != null)
         {
-            Animator animator = returnedFact.Representation.GetComponentInChildren<Animator>();
-            animator.SetTrigger("animateHint");
+            MeshRendererHintAnimation animator = returnedFact.Representation.GetComponentInChildren<MeshRendererHintAnimation>();
+            animator.AnimationTrigger();
 
-            yield return new WaitForSeconds(7);
+            yield return new WaitForSeconds(animator.animateDuration);
 
             GameObject.Destroy(returnedFact.Representation);
         }

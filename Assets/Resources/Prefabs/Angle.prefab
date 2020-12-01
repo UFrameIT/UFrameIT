@@ -218,7 +218,6 @@ GameObject:
   - component: {fileID: 4650993678488610229}
   - component: {fileID: 4650993678488610230}
   - component: {fileID: 4650993678488610231}
-  - component: {fileID: 2982519962414738020}
   m_Layer: 12
   m_Name: AngleOuter
   m_TagString: Selectable
@@ -315,25 +314,6 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: 4fe93ee2ed2d8c64389611c85232bf23, type: 2}
---- !u!95 &2982519962414738020
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4650993678488610235}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 69877ddea3ae6ea4aa5aece6d7bbbeeb, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &4650993679089994827
 GameObject:
   m_ObjectHideFlags: 0
@@ -376,6 +356,7 @@ GameObject:
   - component: {fileID: 4650993679319476103}
   - component: {fileID: 4650993679319476097}
   - component: {fileID: 4650993679319476102}
+  - component: {fileID: 7310199272454353937}
   m_Layer: 12
   m_Name: AngleInner
   m_TagString: Untagged
@@ -446,6 +427,22 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &7310199272454353937
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4650993679319476100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6b9fc46f5bfe6b4eb4adf01e6b65bac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  meshRendererToChange: {fileID: 4650993679319476102}
+  animationStartColor: {r: 0.98039216, g: 0.99215686, b: 0.03137255, a: 1}
+  animationEndColor: {r: 1, g: 0.52156866, b: 0.007843138, a: 1}
+  animateDuration: 5
 --- !u!1 &7003220517868882106
 GameObject:
   m_ObjectHideFlags: 0

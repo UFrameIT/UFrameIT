@@ -42,7 +42,7 @@ public class DisplayFacts : MonoBehaviour
 
     public void AnimateFact(Fact fact) {
         var factIcon = displayedFacts[fact.backendURI];
-        factIcon.GetComponentInChildren<Animator>().SetTrigger("animateHint");
+        factIcon.GetComponentInChildren<ImageHintAnimation>().AnimationTrigger();
     }
 
     string getLetter(int Id) {

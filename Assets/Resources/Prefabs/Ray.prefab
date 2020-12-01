@@ -43,6 +43,7 @@ GameObject:
   - component: {fileID: 2155667380501583430}
   - component: {fileID: 669189071706237370}
   - component: {fileID: 323004521892560777}
+  - component: {fileID: 6869391996213895011}
   m_Layer: 13
   m_Name: LineHighlight
   m_TagString: Untagged
@@ -111,6 +112,22 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+--- !u!114 &6869391996213895011
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3751826764213783083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6b9fc46f5bfe6b4eb4adf01e6b65bac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  meshRendererToChange: {fileID: 323004521892560777}
+  animationStartColor: {r: 0.98039216, g: 0.99215686, b: 0.03137255, a: 1}
+  animationEndColor: {r: 1, g: 0.52156866, b: 0.007843138, a: 1}
+  animateDuration: 5
 --- !u!1 &4853696702160906218
 GameObject:
   m_ObjectHideFlags: 0
