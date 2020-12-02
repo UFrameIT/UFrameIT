@@ -455,7 +455,7 @@ public class AngleFact : DirectedFact
             v = 90.0f;
             //Label is currently set to Fact.setId
             //Set Label to StringConcatenation of Points
-            this.Label = "∟" + pf1.Label + pf2.Label + pf3.Label;
+            this.Label = "⊾" + pf1.Label + pf2.Label + pf3.Label;
             mmtDecl = generate90DegreeAngleDeclaration(v, p1URI, p2URI, p3URI);
         }
         else

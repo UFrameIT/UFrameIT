@@ -19270,7 +19270,7 @@ GameObject:
   - component: {fileID: 990986560}
   - component: {fileID: 990986559}
   m_Layer: 5
-  m_Name: TMP SubMeshUI [LiberationSans SDF Material + ARIALUNI SDF Atlas]
+  m_Name: TMP SubMeshUI [LiberationSans SDF Material + LiberationSans SDF Atlas]
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -19314,12 +19314,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_fontAsset: {fileID: 11400000, guid: e102aafbe9ad5444aa6caf6c496a8c72, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
   m_spriteAsset: {fileID: 0}
   m_material: {fileID: 0}
   m_sharedMaterial: {fileID: 0}
   m_isDefaultMaterial: 0
-  m_padding: 1.63
+  m_padding: 1.934
   m_canvasRenderer: {fileID: 990986560}
   m_TextComponent: {fileID: 854389897}
   m_materialReferenceIndex: 1
@@ -44301,43 +44301,44 @@ PrefabInstance:
         type: 3}
       propertyPath: m_fontAsset
       value: 
-      objectReference: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee,
+      objectReference: {fileID: 11400000, guid: 43b1a8354f0534d41bbdf00f38fcfcae,
         type: 2}
     - target: {fileID: 8372521933548676731, guid: c1d50ceff6c06de40b71063574eba754,
         type: 3}
       propertyPath: m_sharedMaterial
       value: 
-      objectReference: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+      objectReference: {fileID: -5211892872244622076, guid: 43b1a8354f0534d41bbdf00f38fcfcae,
+        type: 2}
     - target: {fileID: 8372521933548676731, guid: c1d50ceff6c06de40b71063574eba754,
         type: 3}
       propertyPath: m_text
-      value: "Hier kommt der Scroll Beschreibungstext hin \u22BEC (AC \u27C2 BC)
-        \u2220 und 221F f\xFCr \u221F\n"
+      value: "Hier kommt der Scroll Beschreibungstext hin ( \u22BE \u22A5 \u2220
+        \u221F )"
       objectReference: {fileID: 0}
     - target: {fileID: 8372521933548676731, guid: c1d50ceff6c06de40b71063574eba754,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 74
+      value: 55
       objectReference: {fileID: 0}
     - target: {fileID: 8372521933548676731, guid: c1d50ceff6c06de40b71063574eba754,
         type: 3}
       propertyPath: m_textInfo.spaceCount
-      value: 15
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 8372521933548676731, guid: c1d50ceff6c06de40b71063574eba754,
         type: 3}
       propertyPath: m_firstOverflowCharacterIndex
-      value: -1
+      value: 22
       objectReference: {fileID: 0}
     - target: {fileID: 8372521933548676731, guid: c1d50ceff6c06de40b71063574eba754,
         type: 3}
       propertyPath: m_textInfo.wordCount
-      value: 12
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8372521933548676731, guid: c1d50ceff6c06de40b71063574eba754,
         type: 3}
       propertyPath: m_textInfo.materialCount
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8372521933548676731, guid: c1d50ceff6c06de40b71063574eba754,
         type: 3}
@@ -44354,6 +44355,16 @@ PrefabInstance:
       propertyPath: m_subTextObjects.Array.data[2]
       value: 
       objectReference: {fileID: 1147651018}
+    - target: {fileID: 8372521933548676731, guid: c1d50ceff6c06de40b71063574eba754,
+        type: 3}
+      propertyPath: m_fontColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8372521933548676731, guid: c1d50ceff6c06de40b71063574eba754,
+        type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4278190080
+      objectReference: {fileID: 0}
     - target: {fileID: 8372521933580734050, guid: c1d50ceff6c06de40b71063574eba754,
         type: 3}
       propertyPath: m_AnchorMax.x
