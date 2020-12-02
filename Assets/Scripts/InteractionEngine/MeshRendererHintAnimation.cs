@@ -1,15 +1,15 @@
 ﻿using UnityEngine;
+using static GlobalSettings;
 
 public class MeshRendererHintAnimation : MonoBehaviour
 {
     public MeshRenderer meshRendererToChange;
     private Color meshRendererToChangeDefaultColor;
-    //Make sure when using RGBA-Colors, the A-value of animationStartColor 
-    //and animationEndColor is the same OR try with value = 255
-    public Color animationStartColor;
-    public Color animationEndColor;
+    
+    private Color animationStartColor;
+    private Color animationEndColor;
 
-    public float animateDuration;
+    private float animateDuration;
     private bool animating = false;
     private float timer = 0;
 
@@ -18,6 +18,10 @@ public class MeshRendererHintAnimation : MonoBehaviour
     {
         if (meshRendererToChange != null)
             meshRendererToChangeDefaultColor = meshRendererToChange.material.color;
+
+        animationStartColor = globalSettings.hintAnimationStartColor;
+        animationEndColor = globalSettings.hintAnimationEndColor;
+        animateDuration = globalSettings.hintAnimationDuration;
     }
 
     // Update is called once per frame

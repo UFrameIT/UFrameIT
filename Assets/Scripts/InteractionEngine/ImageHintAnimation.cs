@@ -1,14 +1,16 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using static GlobalSettings;
 
 public class ImageHintAnimation : MonoBehaviour
 {
     public Image imageToChange;
     private Color imageToChangeDefaultColor;
-    public Color animationStartColor;
-    public Color animationEndColor;
+
+    private Color animationStartColor;
+    private Color animationEndColor;
     
-    public float animateDuration;
+    private float animateDuration;
     private bool animating = false;
     private float timer = 0;
 
@@ -17,6 +19,10 @@ public class ImageHintAnimation : MonoBehaviour
     {
         if (imageToChange != null)
             imageToChangeDefaultColor = imageToChange.color;
+
+        animationStartColor = globalSettings.hintAnimationStartColor;
+        animationEndColor = globalSettings.hintAnimationEndColor;
+        animateDuration = globalSettings.hintAnimationDuration;
     }
 
     // Update is called once per frame

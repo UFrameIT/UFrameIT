@@ -55,6 +55,7 @@ public class DisplayScrolls : MonoBehaviour
     }
 
     IEnumerator getScrollsfromServer() {
+        //Try /scroll/listAll endpoint when scroll/list is not working
         UnityWebRequest request = UnityWebRequest.Get(CommunicationEvents.ServerAdress + "/scroll/list");
         //Postman-Echo-Mock
         //UnityWebRequest request = UnityWebRequest.Get("https://019a8ea5-843a-498b-8d0c-778669aef987.mock.pstmn.io/get");

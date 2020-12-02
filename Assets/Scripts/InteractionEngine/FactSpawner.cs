@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using static CommunicationEvents;
+using static GlobalSettings;
 
 public class FactSpawner : MonoBehaviour
 {
@@ -246,7 +246,7 @@ public class FactSpawner : MonoBehaviour
             MeshRendererHintAnimation animator = returnedFact.Representation.GetComponentInChildren<MeshRendererHintAnimation>();
             animator.AnimationTrigger();
 
-            yield return new WaitForSeconds(animator.animateDuration);
+            yield return new WaitForSeconds(globalSettings.hintAnimationDuration);
 
             GameObject.Destroy(returnedFact.Representation);
         }
