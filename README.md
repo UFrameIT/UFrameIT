@@ -16,13 +16,12 @@ First, you have to set up a development environment:
 
 1. Install [Unity](https://unity3d.com/de/get-unity/download) 2019.4.x (LTS) via the Unity Hub. We periodically update to the latest LTS version. Currently, any 2019.4 version should work; you can safely ignore any version warnings popping up.
 2. Clone this repository: `git clone https://github.com/UFrameIT/UFrameIT.git`
-3. Get the [FrameIT archives](https://github.com/UFrameIT/archives), make sure to always update the submodules.
-4. Install [IntelliJ IDEA](https://www.jetbrains.com/de-de/idea/)
-5. Clone [MMT](https://github.com/UniFormal/MMT/tree/devel), which also contains the [FrameIT MMT server](https://github.com/UniFormal/MMT/tree/devel/src/frameit-mmt), on the *devel* branch: `git clone --branch devel https://github.com/UniFormal/MMT.git`
-and [install](https://github.com/UniFormal/MMT/blob/devel/src/frameit-mmt/installation.md) the Server Component
+3. Install [IntelliJ IDEA](https://www.jetbrains.com/de-de/idea/)
+4. Clone [MMT](https://github.com/UniFormal/MMT/tree/devel), which also contains the [FrameIT MMT server](https://github.com/UniFormal/MMT/tree/devel/src/frameit-mmt), on the *devel* branch: `git clone --branch devel https://github.com/UniFormal/MMT.git`
+5. Follow these [instructions](https://github.com/UniFormal/MMT/blob/devel/src/frameit-mmt/installation.md) to get the necessary MMT archives and install the Server Component
 
 ### Running
 
 1. Open the Unity Hub and add the folder where you have cloned this repository. Then, you can directly open the project in the hub.
-2. Follow the [FrameIT MMT server's usage guide](https://github.com/UniFormal/MMT/tree/devel/src/frameit-mmt) for how to start the FrameIT MMT server
+2. Run the Server via IntelliJ (as described in the [FrameIT MMT server's usage guide](https://github.com/UniFormal/MMT/tree/devel/src/frameit-mmt))
 3. Run the game in unity
