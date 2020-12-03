@@ -17,8 +17,7 @@ First, you have to set up a development environment:
 1. Install [Unity](https://unity3d.com/de/get-unity/download) 2019.4.x (LTS) via the Unity Hub. We periodically update to the latest LTS version. Currently, any 2019.4 version should work; you can safely ignore any version warnings popping up.
 2. Clone this repository: `git clone https://github.com/UFrameIT/UFrameIT.git`
 3. Install [IntelliJ IDEA](https://www.jetbrains.com/de-de/idea/)
-4. Clone [MMT](https://github.com/UniFormal/MMT/tree/devel), which also contains the [FrameIT MMT server](https://github.com/UniFormal/MMT/tree/devel/src/frameit-mmt), on the *devel* branch: `git clone --branch devel https://github.com/UniFormal/MMT.git`
-5. Follow these [instructions](https://github.com/UniFormal/MMT/blob/devel/src/frameit-mmt/installation.md) to get the necessary MMT archives and install the Server Component
+4. Follow these [instructions](https://github.com/UniFormal/MMT/blob/devel/src/frameit-mmt/installation.md) to get the necessary MMT archives and install the Server Component
 
 ### Running
 
