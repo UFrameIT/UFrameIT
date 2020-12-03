@@ -6,7 +6,7 @@ For more information about the project, please visit <https://uframeit.github.io
 
 ## Installation (for end users)
 
-LINK TO LATEST RELEASE.
+Just download our latest release: <https://github.com/UFrameIT/UFrameIT/releases/latest>
 
 ## Installation (for developers)
 
