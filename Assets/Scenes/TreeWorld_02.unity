@@ -44230,7 +44230,7 @@ PrefabInstance:
     - target: {fileID: 8372521933355871045, guid: c1d50ceff6c06de40b71063574eba754,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: -0.000030517578
       objectReference: {fileID: 0}
     - target: {fileID: 8372521933459236753, guid: c1d50ceff6c06de40b71063574eba754,
         type: 3}
@@ -44301,29 +44301,29 @@ PrefabInstance:
         type: 3}
       propertyPath: m_fontAsset
       value: 
-      objectReference: {fileID: 11400000, guid: 43b1a8354f0534d41bbdf00f38fcfcae,
+      objectReference: {fileID: 11400000, guid: 3bce71b32a876f54e96869a29b46e150,
         type: 2}
     - target: {fileID: 8372521933548676731, guid: c1d50ceff6c06de40b71063574eba754,
         type: 3}
       propertyPath: m_sharedMaterial
       value: 
-      objectReference: {fileID: -5211892872244622076, guid: 43b1a8354f0534d41bbdf00f38fcfcae,
+      objectReference: {fileID: 5290021301827705759, guid: 3bce71b32a876f54e96869a29b46e150,
         type: 2}
     - target: {fileID: 8372521933548676731, guid: c1d50ceff6c06de40b71063574eba754,
         type: 3}
       propertyPath: m_text
       value: "Hier kommt der Scroll Beschreibungstext hin ( \u22BE \u22A5 \u2220
-        \u221F )"
+        \u221F \u25B3 )"
       objectReference: {fileID: 0}
     - target: {fileID: 8372521933548676731, guid: c1d50ceff6c06de40b71063574eba754,
         type: 3}
       propertyPath: m_textInfo.characterCount
-      value: 55
+      value: 57
       objectReference: {fileID: 0}
     - target: {fileID: 8372521933548676731, guid: c1d50ceff6c06de40b71063574eba754,
         type: 3}
       propertyPath: m_textInfo.spaceCount
-      value: 11
+      value: 12
       objectReference: {fileID: 0}
     - target: {fileID: 8372521933548676731, guid: c1d50ceff6c06de40b71063574eba754,
         type: 3}
