@@ -20,9 +20,7 @@ public class ImageHintAnimation : MonoBehaviour
         if (imageToChange != null)
             imageToChangeDefaultColor = imageToChange.color;
 
-        animationStartColor = globalSettings.hintAnimationStartColor;
-        animationEndColor = globalSettings.hintAnimationEndColor;
-        animateDuration = globalSettings.hintAnimationDuration;
+        updateAnimationParameters();
     }
 
     // Update is called once per frame
@@ -38,7 +36,10 @@ public class ImageHintAnimation : MonoBehaviour
     public void AnimationTrigger()
     {
         if (imageToChange != null)
+        {
+            updateAnimationParameters();
             animating = true;
+        }
     }
 
     private void Animate()
@@ -54,5 +55,11 @@ public class ImageHintAnimation : MonoBehaviour
             imageToChange.color = Color.Lerp(animationStartColor, animationEndColor, Mathf.PingPong(Time.time, 1));
         }
 
+    }
+
+    private void updateAnimationParameters() {
+        animationStartColor = globalSettings.hintAnimationStartColor;
+        animationEndColor = globalSettings.hintAnimationEndColor;
+        animateDuration = globalSettings.hintAnimationDuration;
     }
 }

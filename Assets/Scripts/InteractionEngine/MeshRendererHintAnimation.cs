@@ -19,9 +19,7 @@ public class MeshRendererHintAnimation : MonoBehaviour
         if (meshRendererToChange != null)
             meshRendererToChangeDefaultColor = meshRendererToChange.material.color;
 
-        animationStartColor = globalSettings.hintAnimationStartColor;
-        animationEndColor = globalSettings.hintAnimationEndColor;
-        animateDuration = globalSettings.hintAnimationDuration;
+        updateAnimationParameters();
     }
 
     // Update is called once per frame
@@ -35,7 +33,10 @@ public class MeshRendererHintAnimation : MonoBehaviour
 
     public void AnimationTrigger() {
         if (meshRendererToChange != null)
+        {
+            updateAnimationParameters();
             animating = true;
+        }
     }
 
     private void Animate() {
@@ -48,6 +49,12 @@ public class MeshRendererHintAnimation : MonoBehaviour
         else {
             meshRendererToChange.material.color = Color.Lerp(animationStartColor, animationEndColor, Mathf.PingPong(Time.time, 1));
         }
+    }
 
+    private void updateAnimationParameters()
+    {
+        animationStartColor = globalSettings.hintAnimationStartColor;
+        animationEndColor = globalSettings.hintAnimationEndColor;
+        animateDuration = globalSettings.hintAnimationDuration;
     }
 }
