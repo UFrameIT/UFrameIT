@@ -51,7 +51,7 @@ public class ToolModeSelector : MonoBehaviour
     {
         
         yield return new WaitForSeconds(2);
-        if (!Showing)
+        //if (!Showing)
         {
             ParentCanvas.enabled = false;
         }
