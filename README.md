@@ -4,7 +4,7 @@ The FrameIT project builds a Framework for developing Serious Games by combining
 The UFrameIT framework uses the Unity game engine with the [MMT](https://uniformal.github.io/) system.
 This repository contains the Unity project, which currently includes the framework itself and a demo game.
 
-For more information about the project, please visit <https://uframeit.github.io/>
+For more information about the project, please visit <https://uframeit.org>
 
 ## Installation (for end users)
 
