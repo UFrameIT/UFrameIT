@@ -18,10 +18,10 @@ First, you have to set up a development environment:
 
    We periodically update to the latest LTS version. Currently, any 2019.4 version should work; you can safely ignore any version warnings popping up.
    
-   Make sure to [activate your license](https://support.unity.com/hc/en-us/articles/211438683-How-do-I-activate-my-license-#:~:text=Log%20into%20your%20Unity%20ID,input%20your%20new%20License%20key).
+   Make sure to [activate your license](https://support.unity.com/hc/en-us/articles/211438683-How-do-I-activate-my-license).
    
 2. Clone this repository: `git clone --recurse-submodules https://github.com/UFrameIT/UFrameIT.git`
-3. Follow the [UFrameIT server installation guide](https://github.com/UniFormal/MMT/blob/devel/src/frameit-mmt/installation.md).
+3. Follow the [UFrameIT server's guide on setting up a dev environment](https://github.com/UniFormal/MMT/blob/devel/src/frameit-mmt/DEVENV.md).
 
    Thereby, you will also install the necessary [archives of formalization UFrameIT/archives](https://github.com/UFrameIT/archives).
 
