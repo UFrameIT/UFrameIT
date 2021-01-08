@@ -1,0 +1,13 @@
+/packages
+*.suo
+bin
+obj
+*.user
+/TestResults
+*.ide
+/.idea
+/.vs
+
+
+# Local History for Visual Studio
+.localhistory/
