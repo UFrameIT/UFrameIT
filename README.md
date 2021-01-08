@@ -20,7 +20,7 @@ First, you have to set up a development environment:
    
    Make sure to [activate your license](https://support.unity.com/hc/en-us/articles/211438683-How-do-I-activate-my-license).
    
-2. [Install Git LFS] (https://docs.github.com/en/free-pro-team@latest/github/managing-large-files/installing-git-large-file-storage)
+2. [Install Git LFS](https://docs.github.com/en/free-pro-team@latest/github/managing-large-files/installing-git-large-file-storage)
 3. Clone this repository: `git clone --recurse-submodules https://github.com/UFrameIT/UFrameIT.git`
 4. Follow the [UFrameIT server's guide on setting up a dev environment](https://github.com/UniFormal/MMT/blob/devel/src/frameit-mmt/DEVENV.md).
 
