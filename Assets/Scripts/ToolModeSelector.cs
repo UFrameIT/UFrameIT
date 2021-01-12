@@ -10,7 +10,7 @@ public class ToolModeSelector : MonoBehaviour
     private Button[] Buttons;
     private HideUI UIManager;
     private Canvas ParentCanvas;
-    private bool Showing = false;
+    private bool Showing = true;
 
     // Start is called before the first frame update
     void Start()
@@ -38,7 +38,6 @@ public class ToolModeSelector : MonoBehaviour
     {
 
         ParentCanvas.enabled = true;
-        Showing = true;
         
         Buttons[GadgetManager.activeGadget.id].transform.localScale /= 2;
         CommunicationEvents.ToolModeChangedEvent.Invoke(id);
@@ -51,7 +50,7 @@ public class ToolModeSelector : MonoBehaviour
     {
         
         yield return new WaitForSeconds(2);
-        //if (!Showing)
+        if (!Showing)
         {
             ParentCanvas.enabled = false;
         }
