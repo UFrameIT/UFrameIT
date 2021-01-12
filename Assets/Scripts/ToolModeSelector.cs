@@ -10,7 +10,7 @@ public class ToolModeSelector : MonoBehaviour
     private Button[] Buttons;
     private HideUI UIManager;
     private Canvas ParentCanvas;
-    private bool Showing = true;
+    private bool Showing = false;
 
     // Start is called before the first frame update
     void Start()
