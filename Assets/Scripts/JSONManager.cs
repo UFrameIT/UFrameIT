@@ -80,12 +80,12 @@ public static class JSONManager
     public class OMF : MMTTerm
     {
         [JsonProperty("float")]
-        public decimal f;
+        public float f;
         public string kind = "OMF";
 
         public OMF(float f)
         {
-            this.f = Convert.ToDecimal(f);
+            this.f = f;
         }
     }
 

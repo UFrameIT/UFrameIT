@@ -40,13 +40,18 @@ public class GadgetManager : MonoBehaviour
         var button = GameObject.Instantiate(Resources.Load("Prefabs/GadgetButton") as GameObject);
         button.GetComponent<Image>().sprite = gadget.Sprite;
         button.transform.SetParent(GadgetUI.transform);
+
+
         var uiRect = GadgetUI.GetComponent<RectTransform>().rect;
         var buttonRect = button.GetComponent<RectTransform>().rect;
-        button.transform.localPosition = Vector2.right*(
-            - uiRect.width *.5f +//left border
-             buttonRect.width * .75f+ //border distance including button width
-             buttonRect.width * 1f * gadget.id); //offset
-           
+
+        var completeGadgetsLength = (gadgets.Length * buttonRect.width) + ((gadgets.Length - 1) * buttonRect.width);
+
+        button.transform.localPosition = Vector2.right * (
+            -completeGadgetsLength * .5f +//left border of gadgets
+             buttonRect.width * .5f + //center of button
+             buttonRect.width * 2f * gadget.id); //margin between buttons
+
     }
 
     public void OnToolModeChanged(int id)

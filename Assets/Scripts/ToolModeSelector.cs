@@ -39,9 +39,9 @@ public class ToolModeSelector : MonoBehaviour
 
         ParentCanvas.enabled = true;
         
-        Buttons[GadgetManager.activeGadget.id].transform.localScale /= 2;
+        Buttons[GadgetManager.activeGadget.id].transform.localScale /= 1.5f;
         CommunicationEvents.ToolModeChangedEvent.Invoke(id);
-        Buttons[GadgetManager.activeGadget.id].transform.localScale *= 2;
+        Buttons[GadgetManager.activeGadget.id].transform.localScale *= 1.5f;
         StartCoroutine(HideRoutine());
 
     }
