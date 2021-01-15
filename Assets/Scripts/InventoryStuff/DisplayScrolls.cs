@@ -100,11 +100,9 @@ public class DisplayScrolls : MonoBehaviour
             obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = this.scrolls[i].label;
             ScrollButtons[i] = obj;
         }
-
+        
         Scroll preferredStartScroll = this.scrolls.Find(x => x.label.Equals(preferredStartScrollName));
         if(preferredStartScroll != null)
             this.DetailScreen.GetComponent<ScrollDetails>().setScroll(preferredStartScroll);
-        else
-            this.DetailScreen.GetComponent<ScrollDetails>().setScroll(this.scrolls[0]);
     }
 }
