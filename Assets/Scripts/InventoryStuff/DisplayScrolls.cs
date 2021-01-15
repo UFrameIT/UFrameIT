@@ -64,7 +64,7 @@ public class DisplayScrolls : MonoBehaviour
         if (request.isNetworkError || request.isHttpError)
         {
             Debug.LogWarning(request.error);
-            string jsonString = File.ReadAllText(Application.dataPath + "/scrolls.json");
+            string jsonString = File.ReadAllText(Application.streamingAssetsPath + "/scrolls.json");
             Debug.Log(jsonString);
             BuildScrolls(jsonString);
         }
@@ -72,7 +72,10 @@ public class DisplayScrolls : MonoBehaviour
         {
             CommunicationEvents.ServerRunning = true;
             string jsonString = request.downloadHandler.text;
-            Debug.Log(jsonString);
+            Debug.Log("JsonString from Server: \n" + jsonString);
+            if(jsonString.Equals("[]"))
+                jsonString = File.ReadAllText(Application.streamingAssetsPath + "/scrolls.json");
+            Debug.Log("Used JsonString: \n" + jsonString);
             //scroll display not yet implemented;
             //buildScrollSelection(jsonString);
             BuildScrolls(jsonString);

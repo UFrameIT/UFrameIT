@@ -1,0 +1,1232 @@
+[
+    {
+        "ref": "http://mathhub.info/FrameIT/frameworld?Midpoint",
+        "label": "MidPoint",
+        "description": "Our MidPoint scroll that given two points P and Q computes the midpoint of the line PQ.",
+        "requiredFacts": [
+            {
+                "ref": {
+                    "uri": "http://mathhub.info/FrameIT/frameworld?Midpoint/Problem?P"
+                },
+                "label": "P",
+                "tp": {
+                    "uri": "http://mathhub.info/MitM/core/geometry?3DGeometry?point",
+                    "kind": "OMS"
+                },
+                "df": null,
+                "kind": "general"
+            },
+            {
+                "ref": {
+                    "uri": "http://mathhub.info/FrameIT/frameworld?Midpoint/Problem?Q"
+                },
+                "label": "Q",
+                "tp": {
+                    "uri": "http://mathhub.info/MitM/core/geometry?3DGeometry?point",
+                    "kind": "OMS"
+                },
+                "df": null,
+                "kind": "general"
+            }
+        ],
+        "acquiredFacts": [
+            {
+                "ref": {
+                    "uri": "http://mathhub.info/FrameIT/frameworld?Midpoint/Solution?midpoint"
+                },
+                "label": "Mid[PQ]",
+                "tp": {
+                    "uri": "http://mathhub.info/MitM/core/geometry?3DGeometry?point",
+                    "kind": "OMS"
+                },
+                "df": {
+                    "applicant": {
+                        "uri": "http://gl.mathhub.info/MMT/LFX/Sigma?Symbols?Tuple",
+                        "kind": "OMS"
+                    },
+                    "arguments": [
+                        {
+                            "applicant": {
+                                "uri": "http://mathhub.info/MitM/core/arithmetics?RealArithmetics?multiplication",
+                                "kind": "OMS"
+                            },
+                            "arguments": [
+                                {
+                                    "float": 0.5,
+                                    "kind": "OMF"
+                                },
+                                {
+                                    "applicant": {
+                                        "uri": "http://mathhub.info/MitM/core/arithmetics?RealArithmetics?addition",
+                                        "kind": "OMS"
+                                    },
+                                    "arguments": [
+                                        {
+                                            "applicant": {
+                                                "uri": "http://mathhub.info/MitM/core/geometry?3DGeometry?xofpoint",
+                                                "kind": "OMS"
+                                            },
+                                            "arguments": [
+                                                {
+                                                    "uri": "http://mathhub.info/FrameIT/frameworld?Midpoint/Problem?P",
+                                                    "kind": "OMS"
+                                                }
+                                            ],
+                                            "kind": "OMA"
+                                        },
+                                        {
+                                            "applicant": {
+                                                "uri": "http://mathhub.info/MitM/core/geometry?3DGeometry?xofpoint",
+                                                "kind": "OMS"
+                                            },
+                                            "arguments": [
+                                                {
+                                                    "uri": "http://mathhub.info/FrameIT/frameworld?Midpoint/Problem?Q",
+                                                    "kind": "OMS"
+                                                }
+                                            ],
+                                            "kind": "OMA"
+                                        }
+                                    ],
+                                    "kind": "OMA"
+                                }
+                            ],
+                            "kind": "OMA"
+                        },
+                        {
+                            "applicant": {
+                                "uri": "http://mathhub.info/MitM/core/arithmetics?RealArithmetics?multiplication",
+                                "kind": "OMS"
+                            },
+                            "arguments": [
+                                {
+                                    "float": 0.5,
+                                    "kind": "OMF"
+                                },
+                                {
+                                    "applicant": {
+                                        "uri": "http://mathhub.info/MitM/core/arithmetics?RealArithmetics?addition",
+                                        "kind": "OMS"
+                                    },
+                                    "arguments": [
+                                        {
+                                            "applicant": {
+                                                "uri": "http://mathhub.info/MitM/core/geometry?3DGeometry?yofpoint",
+                                                "kind": "OMS"
+                                            },
+                                            "arguments": [
+                                                {
+                                                    "uri": "http://mathhub.info/FrameIT/frameworld?Midpoint/Problem?P",
+                                                    "kind": "OMS"
+                                                }
+                                            ],
+                                            "kind": "OMA"
+                                        },
+                                        {
+                                            "applicant": {
+                                                "uri": "http://mathhub.info/MitM/core/geometry?3DGeometry?yofpoint",
+                                                "kind": "OMS"
+                                            },
+                                            "arguments": [
+                                                {
+                                                    "uri": "http://mathhub.info/FrameIT/frameworld?Midpoint/Problem?Q",
+                                                    "kind": "OMS"
+                                                }
+                                            ],
+                                            "kind": "OMA"
+                                        }
+                                    ],
+                                    "kind": "OMA"
+                                }
+                            ],
+                            "kind": "OMA"
+                        },
+                        {
+                            "applicant": {
+                                "uri": "http://mathhub.info/MitM/core/arithmetics?RealArithmetics?multiplication",
+                                "kind": "OMS"
+                            },
+                            "arguments": [
+                                {
+                                    "float": 0.5,
+                                    "kind": "OMF"
+                                },
+                                {
+                                    "applicant": {
+                                        "uri": "http://mathhub.info/MitM/core/arithmetics?RealArithmetics?addition",
+                                        "kind": "OMS"
+                                    },
+                                    "arguments": [
+                                        {
+                                            "applicant": {
+                                                "uri": "http://mathhub.info/MitM/core/geometry?3DGeometry?zofpoint",
+                                                "kind": "OMS"
+                                            },
+                                            "arguments": [
+                                                {
+                                                    "uri": "http://mathhub.info/FrameIT/frameworld?Midpoint/Problem?P",
+                                                    "kind": "OMS"
+                                                }
+                                            ],
+                                            "kind": "OMA"
+                                        },
+                                        {
+                                            "applicant": {
+                                                "uri": "http://mathhub.info/MitM/core/geometry?3DGeometry?zofpoint",
+                                                "kind": "OMS"
+                                            },
+                                            "arguments": [
+                                                {
+                                                    "uri": "http://mathhub.info/FrameIT/frameworld?Midpoint/Problem?Q",
+                                                    "kind": "OMS"
+                                                }
+                                            ],
+                                            "kind": "OMA"
+                                        }
+                                    ],
+                                    "kind": "OMA"
+                                }
+                            ],
+                            "kind": "OMA"
+                        }
+                    ],
+                    "kind": "OMA"
+                },
+                "kind": "general"
+            }
+        ]
+    },
+    {
+        "ref": "http://mathhub.info/FrameIT/frameworld?OppositeLen",
+        "label": "OppositeLen",
+        "description": "Given a triangle △ABC right-angled at ⊾C, the opposide side has length CA = tan(∠ABC) ⋅ BC.",
+        "requiredFacts": [
+            {
+                "ref": {
+                    "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?A"
+                },
+                "label": "A",
+                "tp": {
+                    "uri": "http://mathhub.info/MitM/core/geometry?3DGeometry?point",
+                    "kind": "OMS"
+                },
+                "df": null,
+                "kind": "general"
+            },
+            {
+                "ref": {
+                    "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?B"
+                },
+                "label": "B",
+                "tp": {
+                    "uri": "http://mathhub.info/MitM/core/geometry?3DGeometry?point",
+                    "kind": "OMS"
+                },
+                "df": null,
+                "kind": "general"
+            },
+            {
+                "ref": {
+                    "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?C"
+                },
+                "label": "C",
+                "tp": {
+                    "uri": "http://mathhub.info/MitM/core/geometry?3DGeometry?point",
+                    "kind": "OMS"
+                },
+                "df": null,
+                "kind": "general"
+            },
+            {
+                "ref": {
+                    "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem_RightAngleAtC?rightAngleC"
+                },
+                "label": "⊾C",
+                "tp": {
+                    "applicant": {
+                        "uri": "http://mathhub.info/MitM/Foundation?Logic?ded",
+                        "kind": "OMS"
+                    },
+                    "arguments": [
+                        {
+                            "applicant": {
+                                "uri": "http://mathhub.info/MitM/Foundation?Logic?eq",
+                                "kind": "OMS"
+                            },
+                            "arguments": [
+                                {
+                                    "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?real_lit",
+                                    "kind": "OMS"
+                                },
+                                {
+                                    "applicant": {
+                                        "uri": "http://mathhub.info/MitM/core/geometry?Geometry/Common?angle_between",
+                                        "kind": "OMS"
+                                    },
+                                    "arguments": [
+                                        {
+                                            "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?B",
+                                            "kind": "OMS"
+                                        },
+                                        {
+                                            "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?C",
+                                            "kind": "OMS"
+                                        },
+                                        {
+                                            "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?A",
+                                            "kind": "OMS"
+                                        }
+                                    ],
+                                    "kind": "OMA"
+                                },
+                                {
+                                    "float": 90.0,
+                                    "kind": "OMF"
+                                }
+                            ],
+                            "kind": "OMA"
+                        }
+                    ],
+                    "kind": "OMA"
+                },
+                "df": null,
+                "kind": "general"
+            },
+            {
+                "ref": {
+                    "uri": "http://mathhub.info/FrameIT/frameworld?OppositeLen/Problem?distanceBC"
+                },
+                "label": "BC",
+                "lhs": {
+                    "applicant": {
+                        "uri": "http://mathhub.info/MitM/core/geometry?Geometry/Common?metric",
+                        "kind": "OMS"
+                    },
+                    "arguments": [
+                        {
+                            "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?B",
+                            "kind": "OMS"
+                        },
+                        {
+                            "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?C",
+                            "kind": "OMS"
+                        }
+                    ],
+                    "kind": "OMA"
+                },
+                "valueTp": {
+                    "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?real_lit",
+                    "kind": "OMS"
+                },
+                "value": null,
+                "proof": null,
+                "kind": "veq"
+            },
+            {
+                "ref": {
+                    "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem_AngleAtB?angleB"
+                },
+                "label": "∠ABC",
+                "lhs": {
+                    "applicant": {
+                        "uri": "http://mathhub.info/MitM/core/geometry?Geometry/Common?angle_between",
+                        "kind": "OMS"
+                    },
+                    "arguments": [
+                        {
+                            "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?A",
+                            "kind": "OMS"
+                        },
+                        {
+                            "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?B",
+                            "kind": "OMS"
+                        },
+                        {
+                            "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?C",
+                            "kind": "OMS"
+                        }
+                    ],
+                    "kind": "OMA"
+                },
+                "valueTp": {
+                    "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?real_lit",
+                    "kind": "OMS"
+                },
+                "value": null,
+                "proof": null,
+                "kind": "veq"
+            }
+        ],
+        "acquiredFacts": [
+            {
+                "ref": {
+                    "uri": "http://mathhub.info/FrameIT/frameworld?OppositeLen/Solution?deducedLineCA"
+                },
+                "label": "CA",
+                "lhs": {
+                    "applicant": {
+                        "uri": "http://mathhub.info/MitM/core/geometry?Geometry/Common?metric",
+                        "kind": "OMS"
+                    },
+                    "arguments": [
+                        {
+                            "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?C",
+                            "kind": "OMS"
+                        },
+                        {
+                            "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?A",
+                            "kind": "OMS"
+                        }
+                    ],
+                    "kind": "OMA"
+                },
+                "valueTp": {
+                    "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?real_lit",
+                    "kind": "OMS"
+                },
+                "value": {
+                    "applicant": {
+                        "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?times_real_lit",
+                        "kind": "OMS"
+                    },
+                    "arguments": [
+                        {
+                            "applicant": {
+                                "uri": "http://mathhub.info/MitM/Foundation?Trigonometry?tan",
+                                "kind": "OMS"
+                            },
+                            "arguments": [
+                                {
+                                    "xml": "no raw OMDoc XML here for performance reasons",
+                                    "kind": "RAW"
+                                }
+                            ],
+                            "kind": "OMA"
+                        },
+                        {
+                            "xml": "no raw OMDoc XML here for performance reasons",
+                            "kind": "RAW"
+                        }
+                    ],
+                    "kind": "OMA"
+                },
+                "proof": {
+                    "applicant": {
+                        "uri": "http://mathhub.info/MitM/Foundation?InformalProofs?proofsketch",
+                        "kind": "OMS"
+                    },
+                    "arguments": [
+                        {
+                            "applicant": {
+                                "uri": "http://mathhub.info/MitM/Foundation?Logic?eq",
+                                "kind": "OMS"
+                            },
+                            "arguments": [
+                                {
+                                    "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?real_lit",
+                                    "kind": "OMS"
+                                },
+                                {
+                                    "applicant": {
+                                        "uri": "http://mathhub.info/MitM/Foundation?DescriptionOperator?that",
+                                        "kind": "OMS"
+                                    },
+                                    "arguments": [
+                                        {
+                                            "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?real_lit",
+                                            "kind": "OMS"
+                                        },
+                                        {
+                                            "xml": "no raw OMDoc XML here for performance reasons",
+                                            "kind": "RAW"
+                                        },
+                                        {
+                                            "applicant": {
+                                                "uri": "http://mathhub.info/MitM/Foundation?Logic?ImplicitProof",
+                                                "kind": "OMS"
+                                            },
+                                            "arguments": [
+                                                {
+                                                    "applicant": {
+                                                        "uri": "http://mathhub.info/MitM/Foundation?Logic?exists",
+                                                        "kind": "OMS"
+                                                    },
+                                                    "arguments": [
+                                                        {
+                                                            "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?real_lit",
+                                                            "kind": "OMS"
+                                                        },
+                                                        {
+                                                            "xml": "no raw OMDoc XML here for performance reasons",
+                                                            "kind": "RAW"
+                                                        }
+                                                    ],
+                                                    "kind": "OMA"
+                                                }
+                                            ],
+                                            "kind": "OMA"
+                                        }
+                                    ],
+                                    "kind": "OMA"
+                                },
+                                {
+                                    "applicant": {
+                                        "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?times_real_lit",
+                                        "kind": "OMS"
+                                    },
+                                    "arguments": [
+                                        {
+                                            "applicant": {
+                                                "uri": "http://mathhub.info/MitM/Foundation?Trigonometry?tan",
+                                                "kind": "OMS"
+                                            },
+                                            "arguments": [
+                                                {
+                                                    "xml": "no raw OMDoc XML here for performance reasons",
+                                                    "kind": "RAW"
+                                                }
+                                            ],
+                                            "kind": "OMA"
+                                        },
+                                        {
+                                            "xml": "no raw OMDoc XML here for performance reasons",
+                                            "kind": "RAW"
+                                        }
+                                    ],
+                                    "kind": "OMA"
+                                }
+                            ],
+                            "kind": "OMA"
+                        },
+                        {
+                            "string": "OppositeLen Scroll",
+                            "kind": "OMSTR"
+                        }
+                    ],
+                    "kind": "OMA"
+                },
+                "kind": "veq"
+            }
+        ]
+    },
+    {
+        "ref": "http://mathhub.info/FrameIT/frameworld?AngleSum",
+        "label": "AngleSum",
+        "description": "Given a triangle △ABC and two known angles, we can deduce the missing angle by: ∠BCA = 180° - ∠BAC - ∠ABC.",
+        "requiredFacts": [
+            {
+                "ref": {
+                    "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?A"
+                },
+                "label": "A",
+                "tp": {
+                    "uri": "http://mathhub.info/MitM/core/geometry?3DGeometry?point",
+                    "kind": "OMS"
+                },
+                "df": null,
+                "kind": "general"
+            },
+            {
+                "ref": {
+                    "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?B"
+                },
+                "label": "B",
+                "tp": {
+                    "uri": "http://mathhub.info/MitM/core/geometry?3DGeometry?point",
+                    "kind": "OMS"
+                },
+                "df": null,
+                "kind": "general"
+            },
+            {
+                "ref": {
+                    "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?C"
+                },
+                "label": "C",
+                "tp": {
+                    "uri": "http://mathhub.info/MitM/core/geometry?3DGeometry?point",
+                    "kind": "OMS"
+                },
+                "df": null,
+                "kind": "general"
+            },
+            {
+                "ref": {
+                    "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem_AngleAtA?angleA"
+                },
+                "label": "∠BAC",
+                "lhs": {
+                    "applicant": {
+                        "uri": "http://mathhub.info/MitM/core/geometry?Geometry/Common?angle_between",
+                        "kind": "OMS"
+                    },
+                    "arguments": [
+                        {
+                            "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?B",
+                            "kind": "OMS"
+                        },
+                        {
+                            "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?A",
+                            "kind": "OMS"
+                        },
+                        {
+                            "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?C",
+                            "kind": "OMS"
+                        }
+                    ],
+                    "kind": "OMA"
+                },
+                "valueTp": {
+                    "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?real_lit",
+                    "kind": "OMS"
+                },
+                "value": null,
+                "proof": null,
+                "kind": "veq"
+            },
+            {
+                "ref": {
+                    "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem_AngleAtB?angleB"
+                },
+                "label": "∠ABC",
+                "lhs": {
+                    "applicant": {
+                        "uri": "http://mathhub.info/MitM/core/geometry?Geometry/Common?angle_between",
+                        "kind": "OMS"
+                    },
+                    "arguments": [
+                        {
+                            "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?A",
+                            "kind": "OMS"
+                        },
+                        {
+                            "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?B",
+                            "kind": "OMS"
+                        },
+                        {
+                            "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?C",
+                            "kind": "OMS"
+                        }
+                    ],
+                    "kind": "OMA"
+                },
+                "valueTp": {
+                    "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?real_lit",
+                    "kind": "OMS"
+                },
+                "value": null,
+                "proof": null,
+                "kind": "veq"
+            }
+        ],
+        "acquiredFacts": [
+            {
+                "ref": {
+                    "uri": "http://mathhub.info/FrameIT/frameworld?AngleSum/Solution?angleC"
+                },
+                "label": "∠BCA",
+                "lhs": {
+                    "applicant": {
+                        "uri": "http://mathhub.info/MitM/core/geometry?Geometry/Common?angle_between",
+                        "kind": "OMS"
+                    },
+                    "arguments": [
+                        {
+                            "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?B",
+                            "kind": "OMS"
+                        },
+                        {
+                            "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?C",
+                            "kind": "OMS"
+                        },
+                        {
+                            "uri": "http://mathhub.info/FrameIT/frameworld?TriangleProblem?A",
+                            "kind": "OMS"
+                        }
+                    ],
+                    "kind": "OMA"
+                },
+                "valueTp": {
+                    "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?real_lit",
+                    "kind": "OMS"
+                },
+                "value": {
+                    "applicant": {
+                        "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?plus_real_lit",
+                        "kind": "OMS"
+                    },
+                    "arguments": [
+                        {
+                            "applicant": {
+                                "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?plus_real_lit",
+                                "kind": "OMS"
+                            },
+                            "arguments": [
+                                {
+                                    "float": 180.0,
+                                    "kind": "OMF"
+                                },
+                                {
+                                    "applicant": {
+                                        "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?minus_real_lit",
+                                        "kind": "OMS"
+                                    },
+                                    "arguments": [
+                                        {
+                                            "xml": "no raw OMDoc XML here for performance reasons",
+                                            "kind": "RAW"
+                                        }
+                                    ],
+                                    "kind": "OMA"
+                                }
+                            ],
+                            "kind": "OMA"
+                        },
+                        {
+                            "applicant": {
+                                "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?minus_real_lit",
+                                "kind": "OMS"
+                            },
+                            "arguments": [
+                                {
+                                    "xml": "no raw OMDoc XML here for performance reasons",
+                                    "kind": "RAW"
+                                }
+                            ],
+                            "kind": "OMA"
+                        }
+                    ],
+                    "kind": "OMA"
+                },
+                "proof": {
+                    "applicant": {
+                        "uri": "http://mathhub.info/MitM/Foundation?InformalProofs?proofsketch",
+                        "kind": "OMS"
+                    },
+                    "arguments": [
+                        {
+                            "applicant": {
+                                "uri": "http://mathhub.info/MitM/Foundation?Logic?eq",
+                                "kind": "OMS"
+                            },
+                            "arguments": [
+                                {
+                                    "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?real_lit",
+                                    "kind": "OMS"
+                                },
+                                {
+                                    "applicant": {
+                                        "uri": "http://mathhub.info/MitM/Foundation?Trigonometry?acos",
+                                        "kind": "OMS"
+                                    },
+                                    "arguments": [
+                                        {
+                                            "applicant": {
+                                                "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?times_real_lit",
+                                                "kind": "OMS"
+                                            },
+                                            "arguments": [
+                                                {
+                                                    "applicant": {
+                                                        "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?plus_real_lit",
+                                                        "kind": "OMS"
+                                                    },
+                                                    "arguments": [
+                                                        {
+                                                            "applicant": {
+                                                                "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?plus_real_lit",
+                                                                "kind": "OMS"
+                                                            },
+                                                            "arguments": [
+                                                                {
+                                                                    "applicant": {
+                                                                        "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?times_real_lit",
+                                                                        "kind": "OMS"
+                                                                    },
+                                                                    "arguments": [
+                                                                        {
+                                                                            "applicant": {
+                                                                                "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?plus_real_lit",
+                                                                                "kind": "OMS"
+                                                                            },
+                                                                            "arguments": [
+                                                                                {
+                                                                                    "xml": "no raw OMDoc XML here for performance reasons",
+                                                                                    "kind": "RAW"
+                                                                                },
+                                                                                {
+                                                                                    "applicant": {
+                                                                                        "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?minus_real_lit",
+                                                                                        "kind": "OMS"
+                                                                                    },
+                                                                                    "arguments": [
+                                                                                        {
+                                                                                            "xml": "no raw OMDoc XML here for performance reasons",
+                                                                                            "kind": "RAW"
+                                                                                        }
+                                                                                    ],
+                                                                                    "kind": "OMA"
+                                                                                }
+                                                                            ],
+                                                                            "kind": "OMA"
+                                                                        },
+                                                                        {
+                                                                            "applicant": {
+                                                                                "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?plus_real_lit",
+                                                                                "kind": "OMS"
+                                                                            },
+                                                                            "arguments": [
+                                                                                {
+                                                                                    "xml": "no raw OMDoc XML here for performance reasons",
+                                                                                    "kind": "RAW"
+                                                                                },
+                                                                                {
+                                                                                    "applicant": {
+                                                                                        "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?minus_real_lit",
+                                                                                        "kind": "OMS"
+                                                                                    },
+                                                                                    "arguments": [
+                                                                                        {
+                                                                                            "xml": "no raw OMDoc XML here for performance reasons",
+                                                                                            "kind": "RAW"
+                                                                                        }
+                                                                                    ],
+                                                                                    "kind": "OMA"
+                                                                                }
+                                                                            ],
+                                                                            "kind": "OMA"
+                                                                        }
+                                                                    ],
+                                                                    "kind": "OMA"
+                                                                },
+                                                                {
+                                                                    "applicant": {
+                                                                        "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?times_real_lit",
+                                                                        "kind": "OMS"
+                                                                    },
+                                                                    "arguments": [
+                                                                        {
+                                                                            "applicant": {
+                                                                                "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?plus_real_lit",
+                                                                                "kind": "OMS"
+                                                                            },
+                                                                            "arguments": [
+                                                                                {
+                                                                                    "xml": "no raw OMDoc XML here for performance reasons",
+                                                                                    "kind": "RAW"
+                                                                                },
+                                                                                {
+                                                                                    "applicant": {
+                                                                                        "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?minus_real_lit",
+                                                                                        "kind": "OMS"
+                                                                                    },
+                                                                                    "arguments": [
+                                                                                        {
+                                                                                            "xml": "no raw OMDoc XML here for performance reasons",
+                                                                                            "kind": "RAW"
+                                                                                        }
+                                                                                    ],
+                                                                                    "kind": "OMA"
+                                                                                }
+                                                                            ],
+                                                                            "kind": "OMA"
+                                                                        },
+                                                                        {
+                                                                            "applicant": {
+                                                                                "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?plus_real_lit",
+                                                                                "kind": "OMS"
+                                                                            },
+                                                                            "arguments": [
+                                                                                {
+                                                                                    "xml": "no raw OMDoc XML here for performance reasons",
+                                                                                    "kind": "RAW"
+                                                                                },
+                                                                                {
+                                                                                    "applicant": {
+                                                                                        "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?minus_real_lit",
+                                                                                        "kind": "OMS"
+                                                                                    },
+                                                                                    "arguments": [
+                                                                                        {
+                                                                                            "xml": "no raw OMDoc XML here for performance reasons",
+                                                                                            "kind": "RAW"
+                                                                                        }
+                                                                                    ],
+                                                                                    "kind": "OMA"
+                                                                                }
+                                                                            ],
+                                                                            "kind": "OMA"
+                                                                        }
+                                                                    ],
+                                                                    "kind": "OMA"
+                                                                }
+                                                            ],
+                                                            "kind": "OMA"
+                                                        },
+                                                        {
+                                                            "applicant": {
+                                                                "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?times_real_lit",
+                                                                "kind": "OMS"
+                                                            },
+                                                            "arguments": [
+                                                                {
+                                                                    "applicant": {
+                                                                        "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?plus_real_lit",
+                                                                        "kind": "OMS"
+                                                                    },
+                                                                    "arguments": [
+                                                                        {
+                                                                            "xml": "no raw OMDoc XML here for performance reasons",
+                                                                            "kind": "RAW"
+                                                                        },
+                                                                        {
+                                                                            "applicant": {
+                                                                                "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?minus_real_lit",
+                                                                                "kind": "OMS"
+                                                                            },
+                                                                            "arguments": [
+                                                                                {
+                                                                                    "xml": "no raw OMDoc XML here for performance reasons",
+                                                                                    "kind": "RAW"
+                                                                                }
+                                                                            ],
+                                                                            "kind": "OMA"
+                                                                        }
+                                                                    ],
+                                                                    "kind": "OMA"
+                                                                },
+                                                                {
+                                                                    "applicant": {
+                                                                        "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?plus_real_lit",
+                                                                        "kind": "OMS"
+                                                                    },
+                                                                    "arguments": [
+                                                                        {
+                                                                            "xml": "no raw OMDoc XML here for performance reasons",
+                                                                            "kind": "RAW"
+                                                                        },
+                                                                        {
+                                                                            "applicant": {
+                                                                                "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?minus_real_lit",
+                                                                                "kind": "OMS"
+                                                                            },
+                                                                            "arguments": [
+                                                                                {
+                                                                                    "xml": "no raw OMDoc XML here for performance reasons",
+                                                                                    "kind": "RAW"
+                                                                                }
+                                                                            ],
+                                                                            "kind": "OMA"
+                                                                        }
+                                                                    ],
+                                                                    "kind": "OMA"
+                                                                }
+                                                            ],
+                                                            "kind": "OMA"
+                                                        }
+                                                    ],
+                                                    "kind": "OMA"
+                                                },
+                                                {
+                                                    "applicant": {
+                                                        "uri": "http://mathhub.info/MitM/core/arithmetics?RealArithmetics?inverse",
+                                                        "kind": "OMS"
+                                                    },
+                                                    "arguments": [
+                                                        {
+                                                            "applicant": {
+                                                                "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?times_real_lit",
+                                                                "kind": "OMS"
+                                                            },
+                                                            "arguments": [
+                                                                {
+                                                                    "applicant": {
+                                                                        "uri": "http://mathhub.info/MitM/Foundation?DescriptionOperator?that",
+                                                                        "kind": "OMS"
+                                                                    },
+                                                                    "arguments": [
+                                                                        {
+                                                                            "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?real_lit",
+                                                                            "kind": "OMS"
+                                                                        },
+                                                                        {
+                                                                            "xml": "no raw OMDoc XML here for performance reasons",
+                                                                            "kind": "RAW"
+                                                                        },
+                                                                        {
+                                                                            "applicant": {
+                                                                                "uri": "http://mathhub.info/MitM/Foundation?Logic?ImplicitProof",
+                                                                                "kind": "OMS"
+                                                                            },
+                                                                            "arguments": [
+                                                                                {
+                                                                                    "applicant": {
+                                                                                        "uri": "http://mathhub.info/MitM/Foundation?Logic?exists",
+                                                                                        "kind": "OMS"
+                                                                                    },
+                                                                                    "arguments": [
+                                                                                        {
+                                                                                            "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?real_lit",
+                                                                                            "kind": "OMS"
+                                                                                        },
+                                                                                        {
+                                                                                            "xml": "no raw OMDoc XML here for performance reasons",
+                                                                                            "kind": "RAW"
+                                                                                        }
+                                                                                    ],
+                                                                                    "kind": "OMA"
+                                                                                }
+                                                                            ],
+                                                                            "kind": "OMA"
+                                                                        }
+                                                                    ],
+                                                                    "kind": "OMA"
+                                                                },
+                                                                {
+                                                                    "applicant": {
+                                                                        "uri": "http://mathhub.info/MitM/Foundation?DescriptionOperator?that",
+                                                                        "kind": "OMS"
+                                                                    },
+                                                                    "arguments": [
+                                                                        {
+                                                                            "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?real_lit",
+                                                                            "kind": "OMS"
+                                                                        },
+                                                                        {
+                                                                            "xml": "no raw OMDoc XML here for performance reasons",
+                                                                            "kind": "RAW"
+                                                                        },
+                                                                        {
+                                                                            "applicant": {
+                                                                                "uri": "http://mathhub.info/MitM/Foundation?Logic?ImplicitProof",
+                                                                                "kind": "OMS"
+                                                                            },
+                                                                            "arguments": [
+                                                                                {
+                                                                                    "applicant": {
+                                                                                        "uri": "http://mathhub.info/MitM/Foundation?Logic?exists",
+                                                                                        "kind": "OMS"
+                                                                                    },
+                                                                                    "arguments": [
+                                                                                        {
+                                                                                            "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?real_lit",
+                                                                                            "kind": "OMS"
+                                                                                        },
+                                                                                        {
+                                                                                            "xml": "no raw OMDoc XML here for performance reasons",
+                                                                                            "kind": "RAW"
+                                                                                        }
+                                                                                    ],
+                                                                                    "kind": "OMA"
+                                                                                }
+                                                                            ],
+                                                                            "kind": "OMA"
+                                                                        }
+                                                                    ],
+                                                                    "kind": "OMA"
+                                                                }
+                                                            ],
+                                                            "kind": "OMA"
+                                                        },
+                                                        {
+                                                            "applicant": {
+                                                                "uri": "http://mathhub.info/MitM/Foundation?Logic?ImplicitProof",
+                                                                "kind": "OMS"
+                                                            },
+                                                            "arguments": [
+                                                                {
+                                                                    "applicant": {
+                                                                        "uri": "http://mathhub.info/MitM/Foundation?Logic?not",
+                                                                        "kind": "OMS"
+                                                                    },
+                                                                    "arguments": [
+                                                                        {
+                                                                            "applicant": {
+                                                                                "uri": "http://mathhub.info/MitM/Foundation?Logic?eq",
+                                                                                "kind": "OMS"
+                                                                            },
+                                                                            "arguments": [
+                                                                                {
+                                                                                    "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?real_lit",
+                                                                                    "kind": "OMS"
+                                                                                },
+                                                                                {
+                                                                                    "applicant": {
+                                                                                        "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?times_real_lit",
+                                                                                        "kind": "OMS"
+                                                                                    },
+                                                                                    "arguments": [
+                                                                                        {
+                                                                                            "applicant": {
+                                                                                                "uri": "http://mathhub.info/MitM/Foundation?DescriptionOperator?that",
+                                                                                                "kind": "OMS"
+                                                                                            },
+                                                                                            "arguments": [
+                                                                                                {
+                                                                                                    "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?real_lit",
+                                                                                                    "kind": "OMS"
+                                                                                                },
+                                                                                                {
+                                                                                                    "xml": "no raw OMDoc XML here for performance reasons",
+                                                                                                    "kind": "RAW"
+                                                                                                },
+                                                                                                {
+                                                                                                    "applicant": {
+                                                                                                        "uri": "http://mathhub.info/MitM/Foundation?Logic?ImplicitProof",
+                                                                                                        "kind": "OMS"
+                                                                                                    },
+                                                                                                    "arguments": [
+                                                                                                        {
+                                                                                                            "applicant": {
+                                                                                                                "uri": "http://mathhub.info/MitM/Foundation?Logic?exists",
+                                                                                                                "kind": "OMS"
+                                                                                                            },
+                                                                                                            "arguments": [
+                                                                                                                {
+                                                                                                                    "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?real_lit",
+                                                                                                                    "kind": "OMS"
+                                                                                                                },
+                                                                                                                {
+                                                                                                                    "xml": "no raw OMDoc XML here for performance reasons",
+                                                                                                                    "kind": "RAW"
+                                                                                                                }
+                                                                                                            ],
+                                                                                                            "kind": "OMA"
+                                                                                                        }
+                                                                                                    ],
+                                                                                                    "kind": "OMA"
+                                                                                                }
+                                                                                            ],
+                                                                                            "kind": "OMA"
+                                                                                        },
+                                                                                        {
+                                                                                            "applicant": {
+                                                                                                "uri": "http://mathhub.info/MitM/Foundation?DescriptionOperator?that",
+                                                                                                "kind": "OMS"
+                                                                                            },
+                                                                                            "arguments": [
+                                                                                                {
+                                                                                                    "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?real_lit",
+                                                                                                    "kind": "OMS"
+                                                                                                },
+                                                                                                {
+                                                                                                    "xml": "no raw OMDoc XML here for performance reasons",
+                                                                                                    "kind": "RAW"
+                                                                                                },
+                                                                                                {
+                                                                                                    "applicant": {
+                                                                                                        "uri": "http://mathhub.info/MitM/Foundation?Logic?ImplicitProof",
+                                                                                                        "kind": "OMS"
+                                                                                                    },
+                                                                                                    "arguments": [
+                                                                                                        {
+                                                                                                            "applicant": {
+                                                                                                                "uri": "http://mathhub.info/MitM/Foundation?Logic?exists",
+                                                                                                                "kind": "OMS"
+                                                                                                            },
+                                                                                                            "arguments": [
+                                                                                                                {
+                                                                                                                    "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?real_lit",
+                                                                                                                    "kind": "OMS"
+                                                                                                                },
+                                                                                                                {
+                                                                                                                    "xml": "no raw OMDoc XML here for performance reasons",
+                                                                                                                    "kind": "RAW"
+                                                                                                                }
+                                                                                                            ],
+                                                                                                            "kind": "OMA"
+                                                                                                        }
+                                                                                                    ],
+                                                                                                    "kind": "OMA"
+                                                                                                }
+                                                                                            ],
+                                                                                            "kind": "OMA"
+                                                                                        }
+                                                                                    ],
+                                                                                    "kind": "OMA"
+                                                                                },
+                                                                                {
+                                                                                    "xml": "no raw OMDoc XML here for performance reasons",
+                                                                                    "kind": "RAW"
+                                                                                }
+                                                                            ],
+                                                                            "kind": "OMA"
+                                                                        }
+                                                                    ],
+                                                                    "kind": "OMA"
+                                                                }
+                                                            ],
+                                                            "kind": "OMA"
+                                                        }
+                                                    ],
+                                                    "kind": "OMA"
+                                                }
+                                            ],
+                                            "kind": "OMA"
+                                        }
+                                    ],
+                                    "kind": "OMA"
+                                },
+                                {
+                                    "applicant": {
+                                        "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?plus_real_lit",
+                                        "kind": "OMS"
+                                    },
+                                    "arguments": [
+                                        {
+                                            "applicant": {
+                                                "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?plus_real_lit",
+                                                "kind": "OMS"
+                                            },
+                                            "arguments": [
+                                                {
+                                                    "float": 180.0,
+                                                    "kind": "OMF"
+                                                },
+                                                {
+                                                    "applicant": {
+                                                        "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?minus_real_lit",
+                                                        "kind": "OMS"
+                                                    },
+                                                    "arguments": [
+                                                        {
+                                                            "xml": "no raw OMDoc XML here for performance reasons",
+                                                            "kind": "RAW"
+                                                        }
+                                                    ],
+                                                    "kind": "OMA"
+                                                }
+                                            ],
+                                            "kind": "OMA"
+                                        },
+                                        {
+                                            "applicant": {
+                                                "uri": "http://mathhub.info/MitM/Foundation?RealLiterals?minus_real_lit",
+                                                "kind": "OMS"
+                                            },
+                                            "arguments": [
+                                                {
+                                                    "xml": "no raw OMDoc XML here for performance reasons",
+                                                    "kind": "RAW"
+                                                }
+                                            ],
+                                            "kind": "OMA"
+                                        }
+                                    ],
+                                    "kind": "OMA"
+                                }
+                            ],
+                            "kind": "OMA"
+                        },
+                        {
+                            "string": "By sum of interior angles = 180° in triangles",
+                            "kind": "OMSTR"
+                        }
+                    ],
+                    "kind": "OMA"
+                },
+                "kind": "veq"
+            }
+        ]
+    }
+]

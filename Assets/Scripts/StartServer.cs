@@ -11,7 +11,10 @@ public class StartServer : MonoBehaviour
    [SerializeField]
     TMPro.TextMeshProUGUI WaitingText;
 
-    
+    public static Process process;
+    public static ProcessStartInfo processInfo;
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -85,9 +88,6 @@ public class StartServer : MonoBehaviour
 
 
 #if!UNITY_WEBGL
-            //   int exitCode;
-            ProcessStartInfo processInfo;
-            Process process;
 
 
 #if UNITY_STANDALONE_LINUX
@@ -121,20 +121,12 @@ public class StartServer : MonoBehaviour
             process = Process.Start(proc);
 
 #else
-            string command = "";
-            command = "\"" + Application.streamingAssetsPath + "\"/start.BAT " + "\"" + Application.streamingAssetsPath + "\"";
-            command = command.Replace("/", @"\");
-            command = "\"" + command + "\"";
-
-
-            processInfo = new ProcessStartInfo("cmd.exe", "/c " + command);
-            processInfo.CreateNoWindow = false;
-            processInfo.UseShellExecute = true;
-            // *** Redirect the output ***
-            // processInfo.RedirectStandardError = true;
-            //processInfo.RedirectStandardOutput = true;
-
-
+            processInfo = new ProcessStartInfo();
+            processInfo.FileName = "java";
+            processInfo.Arguments = @"-jar " + Application.streamingAssetsPath + "/frameit.jar" + " -bind :8085 -archive-root " + Application.streamingAssetsPath + "/archives";
+            //set "UseShellExecute = true" AND "CreateNoWindow = false" to see the mmt-server output
+            processInfo.UseShellExecute = false;
+            processInfo.CreateNoWindow = true;
 
             process = Process.Start(processInfo);
 #endif
@@ -169,10 +161,6 @@ public class StartServer : MonoBehaviour
             //  Console.WriteLine("output>>" + (String.IsNullOrEmpty(output) ? "(none)" : output));
             // Console.WriteLine("error>>" + (String.IsNullOrEmpty(error) ? "(none)" : error));
             // Console.WriteLine("ExitCode: " + exitCode.ToString(), "ExecuteCommand");
-#if !UNITY_WEBGL
-
-            process.Close();
-#endif
         }
 
         PrepareGame();
