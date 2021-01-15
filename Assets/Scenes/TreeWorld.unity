@@ -44328,6 +44328,11 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 150
       objectReference: {fileID: 0}
+    - target: {fileID: 293934904814280933, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: preferredStartScrollName
+      value: OppositeLen
+      objectReference: {fileID: 0}
     - target: {fileID: 293934904949885392, guid: b996060e27da25c498842defc1996d84,
         type: 3}
       propertyPath: m_AnchoredPosition.y

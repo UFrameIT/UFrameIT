@@ -16,6 +16,10 @@ public class DropHandling : MonoBehaviour, IDropHandler, IPointerClickHandler
         Destroy(current);
 
         current = Instantiate(eventData.pointerDrag,Vector3.zero, Quaternion.identity);
+        //Set imageToChangeDefaultColor of current: Fix so that current won't take the color
+        //the dragged item was having during animation
+        current.GetComponent<ImageHintAnimation>().imageToChangeDefaultColor = eventData.pointerDrag.GetComponent<ImageHintAnimation>().imageToChangeDefaultColor;
+        current.GetComponent<ImageHintAnimation>().ResetAnimation();
 
         current.transform.SetParent(gameObject.transform, false);
 

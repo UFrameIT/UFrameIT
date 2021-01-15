@@ -7,6 +7,8 @@ using UnityEngine.Networking;
 
 public class DisplayScrolls : MonoBehaviour
 {
+    public string preferredStartScrollName;
+
     public List<Scroll> scrolls;
     public GameObject[] ScrollButtons;
     public GameObject ScrollPrefab;
@@ -98,6 +100,11 @@ public class DisplayScrolls : MonoBehaviour
             obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = this.scrolls[i].label;
             ScrollButtons[i] = obj;
         }
-        this.DetailScreen.GetComponent<ScrollDetails>().setScroll(this.scrolls[0]);
+
+        Scroll preferredStartScroll = this.scrolls.Find(x => x.label.Equals(preferredStartScrollName));
+        if(preferredStartScroll != null)
+            this.DetailScreen.GetComponent<ScrollDetails>().setScroll(preferredStartScroll);
+        else
+            this.DetailScreen.GetComponent<ScrollDetails>().setScroll(this.scrolls[0]);
     }
 }

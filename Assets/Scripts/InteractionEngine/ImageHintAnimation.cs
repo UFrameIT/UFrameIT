@@ -5,7 +5,7 @@ using static GlobalSettings;
 public class ImageHintAnimation : MonoBehaviour
 {
     public Image imageToChange;
-    private Color imageToChangeDefaultColor;
+    public Color imageToChangeDefaultColor { get; set; }
 
     private Color animationStartColor;
     private Color animationEndColor;
@@ -42,19 +42,32 @@ public class ImageHintAnimation : MonoBehaviour
         }
     }
 
+    public void ResetAnimation()
+    {
+        if (imageToChange != null)
+        {
+            Reset();
+        }
+    }
+
     private void Animate()
     {
         if (timer >= animateDuration)
         {
-            animating = false;
-            timer = 0;
-            imageToChange.color = imageToChangeDefaultColor;
+            Reset();
         }
         else
         {
             imageToChange.color = Color.Lerp(animationStartColor, animationEndColor, Mathf.PingPong(Time.time, 1));
         }
 
+    }
+
+    private void Reset()
+    {
+        animating = false;
+        timer = 0;
+        imageToChange.color = imageToChangeDefaultColor;
     }
 
     private void updateAnimationParameters() {
