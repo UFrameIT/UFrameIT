@@ -9,6 +9,7 @@ at the same time with the *same* version number.
 
 Concretely:
 
-1. Create a new GitHub release here: <https://github.com/UFrameIT/UFrameIT/releases>
-2. Merge [FrameIT/frameworld](https://gl.mathhub.info/FrameIT/frameworld)'s devel branch into master and git-tag it appropriately.
+1. Merge [FrameIT/frameworld](https://gl.mathhub.info/FrameIT/frameworld)'s devel branch into master and git-tag appropriately.
+2. Update archive submodules in [UFrameIT/archives](https://github.com/UFrameIT/archives) and git-tag appropriately.
+3. Create a new GitHub release here: <https://github.com/UFrameIT/UFrameIT/releases>
 3. Write a news post on our website: <https://github.com/UFrameIT/UFrameIT.github.io>
