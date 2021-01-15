@@ -1,5 +1,19 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!136 &6999573641307799759
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6395946166520416390}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.5000001
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!1 &6998737061253813773
 GameObject:
   m_ObjectHideFlags: 0
@@ -399,6 +413,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -410,6 +425,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -453,6 +469,7 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
@@ -561,20 +578,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Cam: {fileID: 0}
---- !u!136 &6999573641307799759
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6395946166520416390}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
 --- !u!1 &6999573642288568594
 GameObject:
   m_ObjectHideFlags: 0
@@ -628,6 +631,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -639,6 +643,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -682,10 +687,11 @@ MonoBehaviour:
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
+  m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Press Enter for Talking
+  m_text: Press C-Key for Talking
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2100000, guid: dc000ff84823e7045bac15e87d6da9b2, type: 2}
@@ -994,6 +1000,7 @@ MonoBehaviour:
   walkAroundObject: {fileID: 0}
   player: {fileID: 0}
   radiusAroundObject: 10
+  talkingZoneDistance: 0
 --- !u!1 &7000046267743680389
 GameObject:
   m_ObjectHideFlags: 0
@@ -1040,6 +1047,7 @@ SkinnedMeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -1051,6 +1059,7 @@ SkinnedMeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -2924,15 +2933,15 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7002030793187184893}
     m_Modifications:
-    - target: {fileID: 4170768672499845195, guid: 72d2303fcd9b9b6468855dae77047a1b,
+    - target: {fileID: 2600518978420199386, guid: 72d2303fcd9b9b6468855dae77047a1b,
         type: 3}
-      propertyPath: m_Name
-      value: TalkingZone
-      objectReference: {fileID: 0}
-    - target: {fileID: 4170768672499845195, guid: 72d2303fcd9b9b6468855dae77047a1b,
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: d24faa9ba77ab91459039238ad17d83c, type: 2}
+    - target: {fileID: 2600518978420199386, guid: 72d2303fcd9b9b6468855dae77047a1b,
         type: 3}
-      propertyPath: m_Layer
-      value: 14
+      propertyPath: m_DynamicOccludee
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3052661700889384477, guid: 72d2303fcd9b9b6468855dae77047a1b,
         type: 3}
@@ -2989,15 +2998,15 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2600518978420199386, guid: 72d2303fcd9b9b6468855dae77047a1b,
+    - target: {fileID: 4170768672499845195, guid: 72d2303fcd9b9b6468855dae77047a1b,
         type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: d24faa9ba77ab91459039238ad17d83c, type: 2}
-    - target: {fileID: 2600518978420199386, guid: 72d2303fcd9b9b6468855dae77047a1b,
+      propertyPath: m_Name
+      value: TalkingZone
+      objectReference: {fileID: 0}
+    - target: {fileID: 4170768672499845195, guid: 72d2303fcd9b9b6468855dae77047a1b,
         type: 3}
-      propertyPath: m_DynamicOccludee
-      value: 0
+      propertyPath: m_Layer
+      value: 14
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1324548122521590688, guid: 72d2303fcd9b9b6468855dae77047a1b, type: 3}

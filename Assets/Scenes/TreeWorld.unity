@@ -44301,7 +44301,7 @@ PrefabInstance:
     - target: {fileID: 293934904593747524, guid: b996060e27da25c498842defc1996d84,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 55
+      value: 75
       objectReference: {fileID: 0}
     - target: {fileID: 293934904593747524, guid: b996060e27da25c498842defc1996d84,
         type: 3}
@@ -44322,6 +44322,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 293934904593747524, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 150
+      objectReference: {fileID: 0}
+    - target: {fileID: 293934904949885392, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 293934905101627533, guid: b996060e27da25c498842defc1996d84,
         type: 3}
@@ -44476,7 +44486,12 @@ PrefabInstance:
     - target: {fileID: 293934906431221846, guid: b996060e27da25c498842defc1996d84,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 55
+      value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 293934906431221846, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 150
       objectReference: {fileID: 0}
     - target: {fileID: 798194300310305303, guid: b996060e27da25c498842defc1996d84,
         type: 3}
@@ -44497,6 +44512,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5237843606108538431, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5237843606108538431, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5237843606108538431, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7917866473204990377, guid: b996060e27da25c498842defc1996d84,
         type: 3}

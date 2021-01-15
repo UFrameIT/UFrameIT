@@ -11,6 +11,7 @@ public class ToolModeSelector : MonoBehaviour
     private HideUI UIManager;
     private Canvas ParentCanvas;
     private bool Showing = false;
+    private float activeGadgetScaleFactor = 1.5f;
 
     // Start is called before the first frame update
     void Start()
@@ -29,7 +30,7 @@ public class ToolModeSelector : MonoBehaviour
         }
 
     
-        Buttons[GadgetManager.activeGadget.id].transform.localScale *= 2;
+        Buttons[GadgetManager.activeGadget.id].transform.localScale *= activeGadgetScaleFactor;
         UIManager = GetComponentInParent<HideUI>();
 
     }
@@ -39,9 +40,9 @@ public class ToolModeSelector : MonoBehaviour
 
         ParentCanvas.enabled = true;
         
-        Buttons[GadgetManager.activeGadget.id].transform.localScale /= 1.5f;
+        Buttons[GadgetManager.activeGadget.id].transform.localScale /= activeGadgetScaleFactor;
         CommunicationEvents.ToolModeChangedEvent.Invoke(id);
-        Buttons[GadgetManager.activeGadget.id].transform.localScale *= 1.5f;
+        Buttons[GadgetManager.activeGadget.id].transform.localScale *= activeGadgetScaleFactor;
         StartCoroutine(HideRoutine());
 
     }

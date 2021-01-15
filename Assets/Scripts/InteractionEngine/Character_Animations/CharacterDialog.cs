@@ -35,7 +35,7 @@ public class CharacterDialog : MonoBehaviour
     {
         TypeFkt();
 
-        if(!gameSucceeded && Input.GetKeyDown(KeyCode.Return) && TaskCharakterAnimation.getPlayerInTalkingZone())
+        if(!gameSucceeded && Input.GetKeyDown(KeyCode.C) && TaskCharakterAnimation.getPlayerInTalkingZone())
         {
             //Type Next sentence if player is in the talkinZone around the TaskCharacter AND the player typed the return-Key
             NextSentence();
