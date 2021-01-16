@@ -101,25 +101,6 @@ public class StartServer : MonoBehaviour
             proc.UseShellExecute = true;
             process = Process.Start(proc);
 
-#elif UNITY_STANDALONE_OSX
-            /*
-            ProcessStartInfo proc = new ProcessStartInfo();//"open", "sh startServer.sh");// +  " \"" +Application.streamingAssetsPath + "\"");
-            proc.FileName = "/bin/bash";
-            proc.WorkingDirectory  = Application.streamingAssetsPath;
-            proc.Arguments = "sh " + Application.streamingAssetsPath+"/startServer.sh";
-            proc.CreateNoWindow = false;
-            proc.UseShellExecute = true;
-            process = Process.Start(proc);
-            */
-            ProcessStartInfo proc = new ProcessStartInfo();
-            String startServerPath = Application.streamingAssetsPath + "/startServer.sh";
-            String runWithTerminalPath = Application.streamingAssetsPath + "/startInTerminal.sh";
-            proc.FileName = "/bin/bash";
-            proc.Arguments = runWithTerminalPath + " /bin/bash " + startServerPath;
-            proc.CreateNoWindow = false;
-            proc.UseShellExecute = true;
-            process = Process.Start(proc);
-
 #else
             processInfo = new ProcessStartInfo();
             processInfo.FileName = "java";
