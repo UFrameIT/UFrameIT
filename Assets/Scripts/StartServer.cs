@@ -88,20 +88,10 @@ public class StartServer : MonoBehaviour
 
 
 #if!UNITY_WEBGL
-
-
-#if UNITY_STANDALONE_LINUX
-
-            ProcessStartInfo proc = new ProcessStartInfo();
-            proc.FileName = "bash";
-         //   proc.WorkingDirectory = Application.streamingAssetsPath;
-            proc.Arguments = Application.streamingAssetsPath+"/startServer.sh";// + " \"" +Application.streamingAssetsPath + "\"";
-            proc.WindowStyle = ProcessWindowStyle.Normal;
-            proc.CreateNoWindow = false;
-            proc.UseShellExecute = true;
-            process = Process.Start(proc);
-
-#else
+            
+//#if UNITY_STANDALONE_LINUX
+//#elif UNITY_STANDALONE_OSX
+//#else
             processInfo = new ProcessStartInfo();
             processInfo.FileName = "java";
             processInfo.Arguments = @"-jar " + Application.streamingAssetsPath + "/frameit.jar" + " -bind :8085 -archive-root " + Application.streamingAssetsPath + "/archives";
@@ -110,7 +100,7 @@ public class StartServer : MonoBehaviour
             processInfo.CreateNoWindow = true;
 
             process = Process.Start(processInfo);
-#endif
+//#endif
             yield return null;
 #endif
             while (true)
