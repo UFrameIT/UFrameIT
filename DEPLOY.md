@@ -1,5 +1,7 @@
 # Deployment of new UFrameIT Releases
 
+## A Note on Versioning
+
 We use semantic versioning. A version number looks like `x.y.z`, no `v` prefix.
 
 Always release all of
@@ -10,7 +12,7 @@ Always release all of
 
 at the same time with the *same* version number.
 
-**How to make a new release**
+## Making a new UFrameIT Release
 
 1. Deploy prereleases on the [UFrameIT/UFrameIT GitHub repo](https://github.com/UFrameIT/UFrameIT/releases) for all OS. See below how to do that.
 2. Let people test.
@@ -20,8 +22,7 @@ at the same time with the *same* version number.
 6. Publish prerelease from step 1.
 7. Write a news post on our website: <https://github.com/UFrameIT/UFrameIT.github.io>
 
-
-**Deploying binaries for UFrameIT**
+## Deploying Binaries for UFrameIT
 
 - Archive type
 
