@@ -44,7 +44,12 @@ at the same time with the *same* version number.
 				
 ### Building Archives
 - For Windows: zip -r <TARGET-DIR>/UFrameIT-<version>-Windows.zip <SOURCE-DIR>
-- For Linux/macOS: tar -zcvf UFrameIT-<version>-<TARGET>.tar.gz <SOURCE-DIR>
+- For Linux: tar -zcvf UFrameIT-<version>-Linux.tar.gz <SOURCE-DIR>
+- For macOS: 1) Create a dmg-file from the .app-file (Only possible on macOS) 2) Build a tgz-file from that dmg
+	- mkdir UFrameIT-Image-Folder
+	- cp <UFrameIT-.app-file> UFrameIT-Image-Folder/<UFrameIT-.app-file>
+	- hdiutil create UFrameIT-Image.dmg -volname "UFrameIT Image" -srcfolder UFrameIT-Image-Folder
+	- tar -zcvf UFrameIT-<version>-Mac.tar.gz <SOURCE-DIR>
 		
 ### Hints for deployment
 - The build for macOS usually only works if it's built from a Mac
