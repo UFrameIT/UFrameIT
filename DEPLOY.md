@@ -53,6 +53,7 @@ at the same time with the *same* version number.
 		
 ### Hints for deployment
 - The build for macOS usually only works if it's built from a Mac
+- There was a Unity-Bug, where two different versions of Unity were pointing to the same Unity.exe. When you verify the version of the Unity.exe, with opening its details-panel, this version should match the version used for the build and the version that's set as the default-version for the Unity-Project. If that's not the case, this could lead to the following error on Linux: "Invalid serialized file version: .../FrameWorld_Data/globalgamemanagers. Expected version: 2019.4.0f1. Actual version: 2019.4.3f1"
 - If the resulting binary does not work properly, please go through the player.log file (https://docs.unity3d.com/Manual/LogFiles.html)
     - Linux:	~/.config/unity3d/CompanyName/ProductName/Player.log
 	- macOS:	~/Library/Logs/Company Name/Product Name/Player.log
