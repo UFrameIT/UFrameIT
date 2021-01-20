@@ -7,14 +7,14 @@ set /p unityDir=Please enter your absolute unity installation path:
 set /p projectPath=Please enter your absolute project path: 
 
 echo Windows-Build...
-start "Windows-Build" /D "%projectPath%" /W "%unityDir%"/Unity.exe -batchmode -buildTarget Win64 -projectPath "%projectPath%" -buildWindows64Player Build/FrameWorld1.exe -quit
+start "Windows-Build" /D "%projectPath%" /W "%unityDir%"/Unity.exe -batchmode -buildTarget Win64 -projectPath "%projectPath%" -buildWindows64Player Build/FrameWorld.exe -quit
 if %errorlevel% neq 0 (
 	set /p=An error occured. Hit ENTER to exit...
 	exit %errorlevel%
 )
 
 echo Linux-Build...
-start "Linux-Build" /D "%projectPath%" /W "%unityDir%"/Unity.exe -batchmode -buildTarget Linux64 -projectPath "%projectPath%" -buildLinux64Player Linux/frameworld.x86_64 -quit
+start "Linux-Build" /D "%projectPath%" /W "%unityDir%"/Unity.exe -batchmode -buildTarget Linux64 -projectPath "%projectPath%" -buildLinux64Player Linux/FrameWorld.x86_64 -quit
 if %errorlevel% neq 0 (
 	set /p=An error occured. Hit ENTER to exit...
 	exit %errorlevel%

@@ -43,8 +43,8 @@ at the same time with the *same* version number.
     - Via Unity-UI: File -> Build Settings... -> Choose "Target Platform" and "Architecture" -> Build
 				
 ### Building Archives
-- For Windows: zip -r <TARGET-DIR>/FrameWorld_Windows.zip <SOURCE-DIR>
-- For Linux/macOS: tar -zcvf UFrameIT-3.0-<TARGET>.tar.gz <SOURCE-DIR>
+- For Windows: zip -r <TARGET-DIR>/UFrameIT-<version>-Windows.zip <SOURCE-DIR>
+- For Linux/macOS: tar -zcvf UFrameIT-<version>-<TARGET>.tar.gz <SOURCE-DIR>
 		
 ### Hints for deployment
 - The build for macOS usually only works if it's built from a Mac
