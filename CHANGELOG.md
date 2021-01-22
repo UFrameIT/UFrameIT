@@ -11,8 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Dynamic labels for fact slots of a scroll
 - Hint feature: show hints for unfilled slots of a scroll
-- Added restart button
 
 ### Changed
 - Performance increases of the MMT server
 - Made Unity UI slicker
+- Restart button is now also restarting the MMT server
+- MMT server will now be started directly from jar-file, independent of the OS
+- Removed gadgets for OnLineFacts and OpenLineFacts (refactoring needed)
