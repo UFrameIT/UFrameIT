@@ -26,7 +26,8 @@ at the same time with the *same* version number.
 
 ### Archive type
 
-- For Linux and macOS, deploy `.tar.gz` files (-> smallest file size as compared to `.zip` and `.tar`).
+- For Linux, deploy `.tar.gz` files (-> smallest file size as compared to `.zip` and `.tar`)
+- For macOS, deploy `.dmg` files
 - For Windows, deploy `.zip` files (-> guaranteed compatibility among end users since Windows Explorer can open them)
 
 ### Building Binaries (MultiBuild.bat can be used to do this automatically. MultiBuild.sh is maybe outdated and needs adjustments)
@@ -45,11 +46,11 @@ at the same time with the *same* version number.
 ### Building Archives
 - For Windows: zip -r \<TARGET-DIR\>/UFrameIT-\<version\>-Windows.zip \<SOURCE-DIR\>
 - For Linux: tar -zcvf UFrameIT-\<version\>-Linux.tar.gz \<SOURCE-DIR\>
-- For macOS: 1) Create a dmg-file from the .app-file (Only possible on macOS) 2) Build a tgz-file from that dmg
+- For macOS: Create a dmg-file from the .app-file (Only possible on macOS)
 	- mkdir UFrameIT-Image-Folder
 	- cp \<UFrameIT-.app-file\> UFrameIT-Image-Folder/\<UFrameIT-.app-file\>
-	- hdiutil create UFrameIT-Image.dmg -volname "UFrameIT Image" -srcfolder UFrameIT-Image-Folder
-	- tar -zcvf UFrameIT-\<version\>-Mac.tar.gz \<SOURCE-DIR\>
+	- hdiutil create UFrameIT-\<version\>-Mac.dmg -volname "UFrameIT-\<version\>" -srcfolder UFrameIT-Image-Folder
+	- For adjusting the appearance of the dmg, the image from "Assets/Images/dmg_background.png" can be used
 		
 ### Hints for deployment
 - The build for macOS usually only works if it's built from a Mac

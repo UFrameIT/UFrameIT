@@ -33,5 +33,4 @@ start "Windows-zip" /D "%projectPath%" /W zip -r UFrameIT-Windows.zip Build
 echo Creating Linux tgz-file...
 start "Linux-tgz" /D "%projectPath%" /W tar -zcvf UFrameIT-Linux.tar.gz Linux
 
-echo Creating Mac tgz-file... (Please use macOS to create a dmg-file from the .app-file, see DEPLOY.md)
-start "Mac-tgz" /D "%projectPath%" /W tar -zcvf UFrameIT-Mac.tar.gz FrameWorld.app
+set /p=Please use macOS to create a dmg-file from the .app-file, see DEPLOY.md. Hit ENTER to exit...
