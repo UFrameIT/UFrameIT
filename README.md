@@ -6,6 +6,7 @@ This repository contains the Unity project, which currently includes the framewo
 MMT itself is a large system with many different use cases beyond FrameIT.
 It operates with [archives](https://github.com/UFrameIT/archives) of formalized knowledge.
 For FrameIT, we added a new archive that, in turn, makes use of archives that existed before and contain knowledge about mathematics and logics. 
+Unity and MMT communicate via the [FrameIT-Server](https://github.com/UniFormal/MMT/tree/devel/src/frameit-mmt)
 
 For more information about the project, please visit <https://uframeit.org>
 
