@@ -45,7 +45,7 @@ First, you have to set up a development environment:
 ### FrameIT Server
 * [Installation Guide](https://github.com/UniFormal/MMT/blob/master/src/frameit-mmt/installation.md)
 * [Documentation](https://github.com/UniFormal/MMT/blob/master/src/frameit-mmt/README.md)
-* [FrameIT Server Request Examples](https://documenter.getpostman.com/view/9866886/TVK5c1nG)
+* [FrameIT Server Request Examples](https://kwarc-frameit.postman.co/workspace/FrameIT-Postman-Workspace~d9c28eb0-b28c-47b9-8403-864de6799418/documentation/9866886-8347f2b8-c8a6-4c8b-800c-c4d3b01c9580)
 * [MMT API Documentation](https://uniformal.github.io//doc/api/)
 
 ### Formalized Knowledge
