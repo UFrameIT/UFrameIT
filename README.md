@@ -35,3 +35,22 @@ First, you have to set up a development environment:
 1. Open the Unity Hub and add the folder where you cloned this repository to. Then open the project in the hub.
 2. Follow the [UFrameIT server installation guide](https://github.com/UniFormal/MMT/blob/devel/src/frameit-mmt/installation.md) to run the server
 3. In Unity, select the scene you want to start (the current demo scene is called TreeWorld_02, you can find it at Assets/Scenes) and run the game (Play Button).
+
+## Useful Links for new Developers
+* [Publications](https://kwarc.github.io/bibs/frameit/)
+
+### UFrameIT Unity Plugin
+* [Installation Guide](https://github.com/UFrameIT/UFrameIT/blob/master/README.md)
+
+### FrameIT Server
+* [Installation Guide](https://github.com/UniFormal/MMT/blob/master/src/frameit-mmt/installation.md)
+* [Documentation](https://github.com/UniFormal/MMT/blob/master/src/frameit-mmt/README.md)
+* [FrameIT Server Request Examples](https://documenter.getpostman.com/view/9866886/TVK5c1nG)
+* [MMT API Documentation](https://uniformal.github.io//doc/api/)
+
+### Formalized Knowledge
+* [Installation guide](https://github.com/UFrameIT/archives/blob/master/README.md)
+* [How to write a Scroll](https://gl.mathhub.info/FrameIT/frameworld/-/tree/devel/source/Scrolls)
+* [MMT Language Documentation](https://uniformal.github.io//doc/language/)
+* [MMT Tutorials](https://uniformal.github.io//doc/tutorials/)
+
