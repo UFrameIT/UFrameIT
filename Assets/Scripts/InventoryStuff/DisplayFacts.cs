@@ -15,6 +15,8 @@ public class DisplayFacts : MonoBehaviour
     public GameObject prefab_OnLine;
     public GameObject prefab_Line;
 
+    public Dictionary<string, GameObject> prefabDictionary;
+
     public int x_Start;
     public int y_Start;
     public int X_Pacece_Between_Items;
@@ -31,6 +33,14 @@ public class DisplayFacts : MonoBehaviour
 
         AddFactEvent.AddListener(AddFact);
         AnimateExistingFactEvent.AddListener(AnimateFact);
+
+         prefabDictionary = new Dictionary<string, GameObject>() {
+            {"PointFact", prefab_Point},
+            {"LineFact", prefab_Distance},
+            {"RayFact", prefab_Line},
+            {"AngleFact", prefab_Angle},
+            {"OnLineFact", prefab_OnLine}
+        };
     }
 
     public void AddFact(Fact fact) {
@@ -51,60 +61,7 @@ public class DisplayFacts : MonoBehaviour
 
     private GameObject CreateDisplay(Transform transform, Fact fact)
     {
-        switch (fact)
-        {
-            case LineFact f:
-                {
-                    var obj = Instantiate(prefab_Distance, Vector3.zero, Quaternion.identity, transform);
-                    obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter( CommunicationEvents.Facts[f.Pid1].Id);
-                    obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid2].Id );
-                    obj.GetComponent<FactWrapper>().fact = f;
-                    return obj;
-                }
-            case RayFact f:
-                {
-                    var obj = Instantiate(prefab_Line, Vector3.zero, Quaternion.identity, transform);
-                    obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(f.Id);
-                    //obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid2].Id);
-                    obj.GetComponent<FactWrapper>().fact = f;
-                    return obj;
-                }
-
-            case AngleFact f:
-                {
-                    var obj = Instantiate(prefab_Angle, Vector3.zero, Quaternion.identity, transform);
-                    obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid1].Id);
-                    obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid2].Id);
-                    obj.transform.GetChild(2).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid3].Id);
-                    obj.GetComponent<FactWrapper>().fact = f;
-                    return obj;
-                }
-
-            case PointFact f:
-                {
-                    var obj = Instantiate(prefab_Point, Vector3.zero, Quaternion.identity, transform);
-                    obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(f.Id );
-                    obj.GetComponent<FactWrapper>().fact = f;
-                    return obj;
-                }
-            case OnLineFact f:
-                {
-                    var obj = Instantiate(prefab_OnLine, Vector3.zero, Quaternion.identity, transform);
-                    obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid].Id);
-                    obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Rid].Id);
-                    obj.GetComponent<FactWrapper>().fact = f;
-                    return obj;
-                }
-
-
-
-            default:
-                {
-                    var obj = Instantiate(prefab_Default, Vector3.zero, Quaternion.identity, transform);
-                    return obj;
-                }
-           
-        }
+        return fact.instantiateRepresentation(prefabDictionary[fact.GetType().Name], transform);
     }
 
     public Vector3 GetPosition(int i)

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using TMPro;
 using static JSONManager;
 
 public class ParsingDictionary {
@@ -45,9 +46,16 @@ public abstract class Fact
 
     public abstract int[] getDependentFactIds();
 
+    public abstract GameObject instantiateRepresentation(GameObject prefab, Transform transform);
+
     public abstract override bool Equals(System.Object obj);
 
     public abstract override int GetHashCode();
+
+    public static string getLetter(int Id)
+    {
+        return ((Char)(64 + Id + 1)).ToString();
+    }
 }
 
 public abstract class DirectedFact : Fact
@@ -155,6 +163,13 @@ public class PointFact : Fact
         return null;
     }
 
+    public override GameObject instantiateRepresentation(GameObject prefab, Transform transform) {
+        var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
+        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(this.Id);
+        obj.GetComponent<FactWrapper>().fact = this;
+        return obj;
+    }
+
     public override bool Equals(System.Object obj)
     {
         //Check for null and compare run-time types.
@@ -252,6 +267,15 @@ public class LineFact : DirectedFact
     public override int[] getDependentFactIds()
     {
         return new int[] { Pid1, Pid2 };
+    }
+
+    public override GameObject instantiateRepresentation(GameObject prefab, Transform transform)
+    {
+        var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
+        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Pid1].Id);
+        obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Pid2].Id);
+        obj.GetComponent<FactWrapper>().fact = this;
+        return obj;
     }
 
     public override bool Equals(System.Object obj)
@@ -356,6 +380,14 @@ public class RayFact : Fact
         return new int[] { Pid1, Pid2 };
     }
 
+    public override GameObject instantiateRepresentation(GameObject prefab, Transform transform) {
+        var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
+        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(this.Id);
+        //obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid2].Id);
+        obj.GetComponent<FactWrapper>().fact = this;
+        return obj;
+    }
+
     public override bool Equals(System.Object obj)
     {
         //Check for null and compare run-time types.
@@ -452,6 +484,15 @@ public class OnLineFact : Fact
     public override int[] getDependentFactIds()
     {
         return new int[] { Pid, Rid };
+    }
+
+    public override GameObject instantiateRepresentation(GameObject prefab, Transform transform)
+    {
+        var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
+        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Pid].Id);
+        obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Rid].Id);
+        obj.GetComponent<FactWrapper>().fact = this;
+        return obj;
     }
 
     public override bool Equals(System.Object obj)
@@ -635,6 +676,15 @@ public class AngleFact : DirectedFact
     public override int[] getDependentFactIds()
     {
         return new int[] { Pid1, Pid2, Pid3 };
+    }
+
+    public override GameObject instantiateRepresentation(GameObject prefab, Transform transform) {
+        var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
+        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Pid1].Id);
+        obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Pid2].Id);
+        obj.transform.GetChild(2).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Pid3].Id);
+        obj.GetComponent<FactWrapper>().fact = this;
+        return obj;
     }
 
     public override bool Equals(System.Object obj)
