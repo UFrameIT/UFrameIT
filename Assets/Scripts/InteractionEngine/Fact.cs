@@ -34,7 +34,6 @@ public abstract class Fact
     }
     public GameObject Representation;
     public string backendURI;
-    public string backendValueURI; // supposed to be null, for Facts without values eg. Points, OpenLines, OnLineFacts...
 
     public string format(float t)
     {
@@ -325,18 +324,24 @@ public class RayFact : Fact
     public static RayFact parseFact(Scroll.ScrollFact fact)
     {
         String uri = fact.@ref.uri;
-        String pointAUri = ((OMS)((OMA)((Scroll.ScrollSymbolFact)fact).df).arguments[0]).uri;
-        String pointBUri = ((OMS)((OMA)((Scroll.ScrollSymbolFact)fact).df).arguments[1]).uri;
-        if (CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointAUri)) &&
-            CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointBUri)))
+        if ((OMA)((Scroll.ScrollSymbolFact)fact).df != null)
         {
-            int pid1 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointAUri)).Id;
-            int pid2 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointBUri)).Id;
-            return new RayFact(pid1, pid2, uri);
+            String pointAUri = ((OMS)((OMA)((Scroll.ScrollSymbolFact)fact).df).arguments[0]).uri;
+            String pointBUri = ((OMS)((OMA)((Scroll.ScrollSymbolFact)fact).df).arguments[1]).uri;
+            if (CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointAUri)) &&
+                CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointBUri)))
+            {
+                int pid1 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointAUri)).Id;
+                int pid2 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointBUri)).Id;
+                return new RayFact(pid1, pid2, uri);
+            }
+            //If dependent facts do not exist return null
+            else
+            {
+                return null;
+            }
         }
-        //If dependent facts do not exist return null
-        else
-        {
+        else {
             return null;
         }
     }

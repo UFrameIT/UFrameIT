@@ -259,8 +259,9 @@ public class ScrollDetails : MonoBehaviour
                 scrollParameter.GetComponentInChildren<ImageHintAnimation>().AnimationTrigger();
                 //Animate Fact in FactPanel
                 AnimateExistingFactEvent.Invoke(existingFact);
-                //Animate factRepresentation in game
-                existingFact.Representation.GetComponentInChildren<MeshRendererHintAnimation>().AnimationTrigger();
+                //Animate factRepresentation in game if Fact has a Representation
+                if(existingFact.Representation != null)
+                    existingFact.Representation.GetComponentInChildren<MeshRendererHintAnimation>().AnimationTrigger();
             }
             //If not -> Generate a Fact-Representation with such dependent facts
             else
