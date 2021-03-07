@@ -91,7 +91,7 @@ public class DisplayFacts : MonoBehaviour
                 {
                     var obj = Instantiate(prefab_OnLine, Vector3.zero, Quaternion.identity, transform);
                     obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid].Id);
-                    obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Lid].Id);
+                    obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Rid].Id);
                     obj.GetComponent<FactWrapper>().fact = f;
                     return obj;
                 }

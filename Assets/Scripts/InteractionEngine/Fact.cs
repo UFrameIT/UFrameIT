@@ -10,8 +10,10 @@ public class ParsingDictionary {
         {MMTURIs.Point, PointFact.parseFact},
         {MMTURIs.Metric, LineFact.parseFact},
         {MMTURIs.Angle, AngleFact.parseFact},
+        {MMTURIs.LineType, RayFact.parseFact},
+        {MMTURIs.OnLine, OnLineFact.parseFact},
         //90Degree-Angle
-        {MMTURIs.Ded, AngleFact.parseFact}
+        {MMTURIs.Eq, AngleFact.parseFact}
     };
 
 }
@@ -192,7 +194,7 @@ public class LineFact : DirectedFact
 
         //Label is currently set to Fact.setId
         //Set Label to StringConcatenation of Points
-        this.Label = pf1.Label + pf2.Label;
+        this.Label = "|" + pf1.Label + pf2.Label + "|";
 
         string p1URI = pf1.backendURI;
         string p2URI = pf2.backendURI;
@@ -273,42 +275,6 @@ public class LineFact : DirectedFact
     }
 }
 
-public class OpenLineFact : Fact
-{
-    //R: this is called RayFact for now (see below), feel free to change
-    //an infinite Line through the Points Pid1 and Pid2
-    public int Pid1, Pid2;
-
-    public override Boolean hasDependentFacts()
-    {
-        return true;
-    }
-
-    public override int[] getDependentFactIds()
-    {
-        return new int[] { Pid1, Pid2 };
-    }
-
-    public override bool Equals(System.Object obj)
-    {
-        //Check for null and compare run-time types.
-        if ((obj == null) || !this.GetType().Equals(obj.GetType()))
-        {
-            return false;
-        }
-        else
-        {
-            OpenLineFact o = (OpenLineFact)obj;
-            return this.Pid1.Equals(o.Pid1) && this.Pid2.Equals(o.Pid2);
-        }
-    }
-
-    public override int GetHashCode()
-    {
-        return this.Pid1 ^ this.Pid2;
-    }
-}
-
 public class RayFact : Fact
 {
     //Id's of the 2 Point-Facts that are connected
@@ -326,20 +292,53 @@ public class RayFact : Fact
         PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
         string p1URI = pf1.backendURI;
         string p2URI = pf2.backendURI;
-        //TODO: fix body
-        string body = @"{ ""base"":""" + p1URI + @"""," + @"""second"":""" + p2URI + @"""" + "}";
-        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add/line", body);
+
+        //Set Label to StringConcatenation of Points
+        this.Label = pf1.Label + pf2.Label;
+
+        List<MMTTerm> arguments = new List<MMTTerm>
+        {
+            new OMS(p1URI),
+            new OMS(p2URI)
+        };
+
+        //OMS constructor generates full URI
+        MMTTerm tp = new OMS(MMTURIs.LineType);
+        MMTTerm df = new OMA(new OMS(MMTURIs.LineOf), arguments);
+
+        //TODO: rework fact list + labeling
+        MMTSymbolDeclaration mmtDecl = new MMTSymbolDeclaration(this.Label, tp, df);
+        string body = MMTSymbolDeclaration.ToJson(mmtDecl);
+
+        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress + "/fact/add", body);
         this.backendURI = res.uri;
-      //  this.backendValueURI = res.factValUri;
+        Debug.Log(this.backendURI);
     }
 
-    public RayFact(int i, int pid1, int pid2, string uri, string valuri)
+    public RayFact(int pid1, int pid2, string uri)
     {
-        this.Id = i;
         this.Pid1 = pid1;
         this.Pid2 = pid2;
         this.backendURI = uri;
-        this.backendValueURI = valuri;
+    }
+
+    public static RayFact parseFact(Scroll.ScrollFact fact)
+    {
+        String uri = fact.@ref.uri;
+        String pointAUri = ((OMS)((OMA)((Scroll.ScrollSymbolFact)fact).df).arguments[0]).uri;
+        String pointBUri = ((OMS)((OMA)((Scroll.ScrollSymbolFact)fact).df).arguments[1]).uri;
+        if (CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointAUri)) &&
+            CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointBUri)))
+        {
+            int pid1 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointAUri)).Id;
+            int pid2 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointBUri)).Id;
+            return new RayFact(pid1, pid2, uri);
+        }
+        //If dependent facts do not exist return null
+        else
+        {
+            return null;
+        }
     }
 
     public override Boolean hasDependentFacts()
@@ -375,23 +374,69 @@ public class RayFact : Fact
 
 public class OnLineFact : Fact
 {
-    //Id's of the Point , and the Id of the Line it sits on
-    public int Pid, Lid;
+    //Id's of the Point and the Line it's on
+    public int Pid, Rid;
 
-    public OnLineFact(int i, int pid, int lid)
+    public OnLineFact(int i, int pid, int rid)
     {
         this.Id = i;
         this.Pid = pid;
-        this.Lid = lid;
+        this.Rid = rid;
         PointFact pf = CommunicationEvents.Facts.Find((x => x.Id == pid)) as PointFact;
-        RayFact lf = CommunicationEvents.Facts.Find((x => x.Id == lid)) as RayFact;
+        RayFact rf = CommunicationEvents.Facts.Find((x => x.Id == rid)) as RayFact;
         string pURI = pf.backendURI;
-        string lURI = lf.backendURI;
-        string body = @"{ ""vector"":""" + pURI + @"""," + @"""line"":""" + lURI + @"""" + "}";
-        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add/onLine", body);
+        string rURI = rf.backendURI;
+
+        //Set Label to StringConcatenation of Points
+        this.Label = pf.Label + " ∊ " + rf.Label;
+
+        List<MMTTerm> innerArguments = new List<MMTTerm>
+        {
+            new OMS(rURI),
+            new OMS(pURI)
+        };
+
+        List<MMTTerm> outerArguments = new List<MMTTerm>
+        {
+            new OMA(new OMS(MMTURIs.OnLine), innerArguments)
+        };
+
+        //OMS constructor generates full URI
+        MMTTerm tp = new OMA(new OMS(MMTURIs.Ded), outerArguments);
+        MMTTerm df = null;
+
+        //TODO: rework fact list + labeling
+        MMTSymbolDeclaration mmtDecl = new MMTSymbolDeclaration(this.Label, tp, df);
+        string body = MMTSymbolDeclaration.ToJson(mmtDecl);
+
+        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress + "/fact/add", body);
         this.backendURI = res.uri;
-      //  this.backendValueURI = res.factValUri;
-        Debug.Log("created onLine" + this.backendURI + " " + this.backendValueURI);
+        Debug.Log(this.backendURI);
+    }
+
+    public OnLineFact(int pid, int rid, string uri) {
+        this.Pid = pid;
+        this.Rid = rid;
+        this.backendURI = uri;
+    }
+
+    public static OnLineFact parseFact(Scroll.ScrollFact fact)
+    {
+        String uri = fact.@ref.uri;
+        String lineUri = ((OMS)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[0]).uri;
+        String pointUri = ((OMS)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[1]).uri;
+        if (CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(lineUri)) &&
+            CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointUri)))
+        {
+            int pid = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointUri)).Id;
+            int rid = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(lineUri)).Id;
+            return new OnLineFact(pid, rid, uri);
+        }
+        //If dependent facts do not exist return null
+        else
+        {
+            return null;
+        }
     }
 
     public override Boolean hasDependentFacts()
@@ -401,7 +446,7 @@ public class OnLineFact : Fact
 
     public override int[] getDependentFactIds()
     {
-        return new int[] { Pid, Lid };
+        return new int[] { Pid, Rid };
     }
 
     public override bool Equals(System.Object obj)
@@ -414,13 +459,13 @@ public class OnLineFact : Fact
         else
         {
             OnLineFact o = (OnLineFact)obj;
-            return this.Pid.Equals(o.Pid) && this.Lid.Equals(o.Lid);
+            return this.Pid.Equals(o.Pid) && this.Rid.Equals(o.Rid);
         }
     }
 
     public override int GetHashCode()
     {
-        return this.Pid ^ this.Lid;
+        return this.Pid ^ this.Rid;
     }
 }
 

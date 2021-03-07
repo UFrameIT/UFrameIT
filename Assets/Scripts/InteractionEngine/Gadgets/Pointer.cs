@@ -15,13 +15,6 @@ public class Pointer : Gadget
         this.UiName = "Point Mode";
     }
 
-    /*
-    public override void activate() {
-        this.activated = true;
-        this.Cursor.setLayerMask(this.layerMask);
-    }
-    */
-
     void OnEnable()
     {
         this.Cursor.setLayerMask(~this.ignoreLayerMask.value);
@@ -37,6 +30,7 @@ public class Pointer : Gadget
 
             var oLid = FactManager.GetFirstEmptyID();
             Facts.Insert(oLid, new OnLineFact(oLid, pid, hit.transform.GetComponent<FactObject>().Id));
+            CommunicationEvents.AddFactEvent.Invoke(Facts.Find(x => x.Id == oLid) as OnLineFact);
         }
     }
   
