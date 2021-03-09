@@ -46,7 +46,7 @@ public abstract class Fact
 
     public abstract int[] getDependentFactIds();
 
-    public abstract GameObject instantiateRepresentation(GameObject prefab, Transform transform);
+    public abstract GameObject instantiateDisplay(GameObject prefab, Transform transform);
 
     public abstract override bool Equals(System.Object obj);
 
@@ -163,7 +163,7 @@ public class PointFact : Fact
         return null;
     }
 
-    public override GameObject instantiateRepresentation(GameObject prefab, Transform transform) {
+    public override GameObject instantiateDisplay(GameObject prefab, Transform transform) {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
         obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(this.Id);
         obj.GetComponent<FactWrapper>().fact = this;
@@ -208,7 +208,7 @@ public class LineFact : DirectedFact
 
         //Label is currently set to Fact.setId
         //Set Label to StringConcatenation of Points
-        this.Label = "|" + pf1.Label + pf2.Label + "|";
+        this.Label = pf1.Label + pf2.Label;
 
         string p1URI = pf1.backendURI;
         string p2URI = pf2.backendURI;
@@ -269,7 +269,7 @@ public class LineFact : DirectedFact
         return new int[] { Pid1, Pid2 };
     }
 
-    public override GameObject instantiateRepresentation(GameObject prefab, Transform transform)
+    public override GameObject instantiateDisplay(GameObject prefab, Transform transform)
     {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
         obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Pid1].Id);
@@ -315,9 +315,6 @@ public class RayFact : Fact
         PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
         string p1URI = pf1.backendURI;
         string p2URI = pf2.backendURI;
-
-        //Set Label to StringConcatenation of Points
-        this.Label = pf1.Label + pf2.Label;
 
         List<MMTTerm> arguments = new List<MMTTerm>
         {
@@ -380,7 +377,7 @@ public class RayFact : Fact
         return new int[] { Pid1, Pid2 };
     }
 
-    public override GameObject instantiateRepresentation(GameObject prefab, Transform transform) {
+    public override GameObject instantiateDisplay(GameObject prefab, Transform transform) {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
         obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(this.Id);
         //obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid2].Id);
@@ -425,7 +422,7 @@ public class OnLineFact : Fact
         string rURI = rf.backendURI;
 
         //Set Label to StringConcatenation of Points
-        this.Label = pf.Label + " ∊ " + rf.Label;
+        this.Label = pf.Label + " ∈ " + rf.Label;
 
         List<MMTTerm> innerArguments = new List<MMTTerm>
         {
@@ -486,7 +483,7 @@ public class OnLineFact : Fact
         return new int[] { Pid, Rid };
     }
 
-    public override GameObject instantiateRepresentation(GameObject prefab, Transform transform)
+    public override GameObject instantiateDisplay(GameObject prefab, Transform transform)
     {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
         obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Pid].Id);
@@ -678,7 +675,7 @@ public class AngleFact : DirectedFact
         return new int[] { Pid1, Pid2, Pid3 };
     }
 
-    public override GameObject instantiateRepresentation(GameObject prefab, Transform transform) {
+    public override GameObject instantiateDisplay(GameObject prefab, Transform transform) {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
         obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Pid1].Id);
         obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Pid2].Id);

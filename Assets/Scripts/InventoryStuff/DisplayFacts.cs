@@ -6,6 +6,8 @@ using static CommunicationEvents;
 
 public class DisplayFacts : MonoBehaviour
 {
+    public Dictionary<Type, GameObject> prefabDictionary;
+
     public Dictionary<string, GameObject> displayedFacts = new Dictionary<string, GameObject>();
 
     public GameObject prefab_Point;
@@ -14,8 +16,6 @@ public class DisplayFacts : MonoBehaviour
     public GameObject prefab_Default;
     public GameObject prefab_OnLine;
     public GameObject prefab_Line;
-
-    public Dictionary<string, GameObject> prefabDictionary;
 
     public int x_Start;
     public int y_Start;
@@ -26,6 +26,14 @@ public class DisplayFacts : MonoBehaviour
     //Start is called before the first frame update
     void Start()
     {
+        prefabDictionary = new Dictionary<Type, GameObject>() {
+            {typeof(PointFact), prefab_Point},
+            {typeof(LineFact), prefab_Distance},
+            {typeof(RayFact), prefab_Line},
+            {typeof(AngleFact), prefab_Angle},
+            {typeof(OnLineFact), prefab_OnLine}
+        };
+
         var rect = GetComponent<RectTransform>();
         x_Start = (int)(rect.rect.x + X_Pacece_Between_Items * .5f);
         y_Start = (int)(-rect.rect.y - y_Pacece_Between_Items * .5f);//);
@@ -33,14 +41,6 @@ public class DisplayFacts : MonoBehaviour
 
         AddFactEvent.AddListener(AddFact);
         AnimateExistingFactEvent.AddListener(AnimateFact);
-
-         prefabDictionary = new Dictionary<string, GameObject>() {
-            {"PointFact", prefab_Point},
-            {"LineFact", prefab_Distance},
-            {"RayFact", prefab_Line},
-            {"AngleFact", prefab_Angle},
-            {"OnLineFact", prefab_OnLine}
-        };
     }
 
     public void AddFact(Fact fact) {
@@ -61,7 +61,7 @@ public class DisplayFacts : MonoBehaviour
 
     private GameObject CreateDisplay(Transform transform, Fact fact)
     {
-        return fact.instantiateRepresentation(prefabDictionary[fact.GetType().Name], transform);
+        return fact.instantiateDisplay(prefabDictionary[fact.GetType()], transform);
     }
 
     public Vector3 GetPosition(int i)
