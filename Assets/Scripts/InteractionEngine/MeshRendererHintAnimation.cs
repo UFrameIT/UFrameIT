@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using static GlobalSettings;
 
+[RequireComponent(typeof(MeshRenderer))]
 public class MeshRendererHintAnimation : MonoBehaviour
 {
-    public MeshRenderer meshRendererToChange;
+    private MeshRenderer meshRendererToChange;
     private Color meshRendererToChangeDefaultColor;
     
     private Color animationStartColor;
@@ -16,8 +17,8 @@ public class MeshRendererHintAnimation : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (meshRendererToChange != null)
-            meshRendererToChangeDefaultColor = meshRendererToChange.material.color;
+        meshRendererToChange = this.GetComponent<MeshRenderer>();
+        meshRendererToChangeDefaultColor = meshRendererToChange.material.color;
 
         updateAnimationParameters();
     }
