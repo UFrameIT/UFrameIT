@@ -58,14 +58,17 @@ public class CircleSegmentGenerator : MonoBehaviour
                 float firstPointZ = radius * Mathf.Sin(negAngle * Mathf.Deg2Rad);
                 verticeList.Add(new Vector3(firstPointX, 0, firstPointZ));
                 verticeList.Add(new Vector3(firstPointX, height, firstPointZ));
-                
+
                 //Adding triangles for left side
-                triangleList.Add(center0Index);
-                triangleList.Add(center1Index);
-                triangleList.Add(i + 1);
-                triangleList.Add(center0Index);
-                triangleList.Add(i + 1);
-                triangleList.Add(i);
+                if (absoluteAngle != 360)
+                {
+                    triangleList.Add(center0Index);
+                    triangleList.Add(center1Index);
+                    triangleList.Add(i + 1);
+                    triangleList.Add(center0Index);
+                    triangleList.Add(i + 1);
+                    triangleList.Add(i);
+                }
 
                 i += 2;
             }
@@ -88,7 +91,7 @@ public class CircleSegmentGenerator : MonoBehaviour
             triangleList.Add(i + 1);
             triangleList.Add(i);
 
-            if (nextAngle == posAngle)
+            if (nextAngle == posAngle && absoluteAngle != 360)
             {
                 //Adding triangles for right side
                 triangleList.Add(center0Index);
