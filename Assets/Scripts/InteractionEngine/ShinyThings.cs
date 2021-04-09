@@ -38,6 +38,9 @@ public class ShinyThings : MonoBehaviour
     // Start is called before the first frame update
     public void Start()
     {
+
+        //Debug.Log("ShinyThings is used by: " + gameObject.name);
+
         if (Cursor == null) Cursor = GetComponent<WorldCursor>();
         if (directionalLight == null) directionalLight = FindObjectOfType<Light>().gameObject;
         CommunicationEvents.PushoutFactEvent.AddListener(StartPushoutFactHighlighting);

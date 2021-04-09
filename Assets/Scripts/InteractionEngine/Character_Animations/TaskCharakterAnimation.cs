@@ -37,6 +37,9 @@ public class TaskCharakterAnimation : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+
+        Debug.Log("TaskCharakterAnimation is used by: " + gameObject.name);
+
         anim = GetComponent<Animator>();
         currentTransform = GetComponent<Transform>();
     }

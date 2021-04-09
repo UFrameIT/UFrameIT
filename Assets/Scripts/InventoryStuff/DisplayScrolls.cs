@@ -43,6 +43,7 @@ public class DisplayScrolls : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Debug.Log("Gameobject von Displayscrolls-script = " + gameObject.name);
         var rect = GetComponent<RectTransform>();
         x_Start = (int)(rect.rect.x + X_Pacece_Between_Items * .5f);
         y_Start = (int)(-rect.rect.y - y_Pacece_Between_Items * .5f);//);
