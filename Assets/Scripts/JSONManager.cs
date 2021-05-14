@@ -10,8 +10,9 @@ public class MMTURICollection
 {
     public string Point = "http://mathhub.info/MitM/core/geometry?3DGeometry?point";
     public string Tuple = "http://gl.mathhub.info/MMT/LFX/Sigma?Symbols?Tuple";
-    public string Line_type = "http://mathhub.info/MitM/core/geometry?Geometry?Common?line_type";
-    public string LineOf = "http://mathhub.info/MitM/core/geometry?Geometry?Common?lineOf";
+    public string LineType = "http://mathhub.info/MitM/core/geometry?Geometry/Common?line_type";
+    public string LineOf = "http://mathhub.info/MitM/core/geometry?Geometry/Common?lineOf";
+    public string OnLine = "http://mathhub.info/MitM/core/geometry?Geometry/Common?onLine";
     public string Ded = "http://mathhub.info/MitM/Foundation?Logic?ded";
     public string Eq = "http://mathhub.info/MitM/Foundation?Logic?eq";
     public string Metric = "http://mathhub.info/MitM/core/geometry?Geometry/Common?metric";

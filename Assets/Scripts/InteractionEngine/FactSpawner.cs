@@ -8,6 +8,7 @@ using static GlobalSettings;
 public class FactSpawner : MonoBehaviour
 {
     private GameObject FactRepresentation;
+    private Camera camera;
 
     void Start()
     {
@@ -19,6 +20,8 @@ public class FactSpawner : MonoBehaviour
 
         //Default FactRepresenation = Sphere-Prefab for Points
         this.FactRepresentation = (GameObject) Resources.Load("Prefabs/Sphere", typeof(GameObject));
+
+        camera = Camera.main;
 
     }
 
@@ -148,29 +151,14 @@ public class FactSpawner : MonoBehaviour
         Vector3 point2 = (Facts[angleFact.Pid2] as PointFact).Point;
         Vector3 point3 = (Facts[angleFact.Pid3] as PointFact).Point;
 
-        Vector3 tempPoint1;
-        Vector3 tempPoint3;
-
         //Length of the Angle relative to the Length of the shortest of the two lines (point2->point1) and (point2->point3)
         float lengthFactor = 0.3f;
-        //AngleGO: Triangle-Length: 3/4, Circle-Length: 1/4
-        float angleGoFactorTriangleToCircle = 1.33f;// 1.27f;
-
-        //Make 2 TempPoints positioned on length% from Point2 to Point3 and on length% from Point2 to Point1
-        //Will be used for z-Coordinate of the Angle
+        
         float length = 0;
         if ((point1 - point2).magnitude >= (point3 - point2).magnitude)
-        {
             length = lengthFactor * (point3 - point2).magnitude;
-            tempPoint1 = point2 + length * (point1 - point2).normalized;
-            tempPoint3 = point2 + length * (point3 - point2).normalized;
-        }
         else
-        {
             length = lengthFactor * (point1 - point2).magnitude;
-            tempPoint1 = point2 + length * (point1 - point2).normalized;
-            tempPoint3 = point2 + length * (point3 - point2).normalized;
-        }
 
         //Change FactRepresentation to Angle
         this.FactRepresentation = (GameObject)Resources.Load("Prefabs/Angle", typeof(GameObject));
@@ -181,47 +169,34 @@ public class FactSpawner : MonoBehaviour
 
         //Change scale and rotation, so that the angle is in between the two lines
         var v3T = angle.transform.localScale;
-        //Calculate the Vector from point 2 to a POINT, where (point2->POINT) is orthogonal to (POINT->tempPoint3)
-        Vector3 tempProjection = Vector3.Project((tempPoint3 - point2), (Vector3.Lerp((tempPoint1 - point2).normalized, (tempPoint3 - point2).normalized, 0.5f)));
+        v3T = new Vector3(length, v3T.y, length);
 
-        //Make the Angle as long as length + length of the half-circle
-        v3T.x = (tempProjection).magnitude * angleGoFactorTriangleToCircle;
+        //Calculate Angle:
+        Vector3 from = (point1 - point2).normalized;
+        Vector3 to = (point3 - point2).normalized;
+        float angleValue = Vector3.Angle(from, to); //We always get an angle between 0 and 180° here
+        //Vector3 direction = point2 - camera.transform.position;
+        //float angleSign = Mathf.Sign( Vector3.Dot( direction, Vector3.Cross( from, to ) ) );
 
-        //For every Coordinate x,y,z we have to devide it by the LocalScale of the Child,
-        //because actually the Child should be of this length and not the parent, which is only the Collider
-        v3T.x = v3T.x / angle.transform.GetChild(0).GetChild(0).localScale.x;
-
-        //y of the angle-GameObject here hard coded = ratio of sphere-prefab
-        v3T.y = 0.05f / angle.transform.GetChild(0).GetChild(0).localScale.y;
-
-        //z should be as long as the distance between tempPoint1 and tempPoint3
-        v3T.z = (tempPoint3 - tempPoint1).magnitude / angle.transform.GetChild(0).GetChild(0).localScale.z;
-
-        //Change Scale/Rotation of the Line-GameObject without affecting Scale of the Text
-        angle.transform.GetChild(0).localScale = v3T;
-
-        //Rotate so that the rotation points from point2 to the middle of point3 and point1
-        angle.transform.GetChild(0).rotation = Quaternion.FromToRotation(Vector3.right, (Vector3.Lerp((tempPoint1 - point2).normalized, (tempPoint3 - point2).normalized, 0.5f)));
-        //Now the rotation around that direction must also be adjusted
-        //We calculate the Angle not with Vector3.Angle() because it only returns absolute angle-values
-        float signedAngle = Mathf.Atan2(Vector3.Dot((Vector3.Lerp((tempPoint1 - point2).normalized, (tempPoint3 - point2).normalized, 0.5f)), Vector3.Cross(angle.transform.GetChild(0).forward.normalized, (tempPoint1 - tempPoint3).normalized)), Vector3.Dot(angle.transform.GetChild(0).forward.normalized, (tempPoint1 - tempPoint3).normalized)) * Mathf.Rad2Deg;
+        angle.transform.rotation = Quaternion.FromToRotation(Vector3.right, (Vector3.Lerp((point1 - point2).normalized, (point3 - point2).normalized, 0.5f)));
+        float signedAngle = Mathf.Atan2(Vector3.Dot((Vector3.Lerp((point1 - point2).normalized, (point3 - point2).normalized, 0.5f)), Vector3.Cross(angle.transform.GetChild(0).forward.normalized, (point1 - point3).normalized)), Vector3.Dot(angle.transform.GetChild(0).forward.normalized, (point1 - point3).normalized)) * Mathf.Rad2Deg;
         if (signedAngle < 0)
         {
-            angle.transform.GetChild(0).RotateAround(point2, (Vector3.Lerp((tempPoint1 - point2).normalized, (tempPoint3 - point2).normalized, 0.5f)), Vector3.Angle(angle.transform.GetChild(0).forward.normalized, (tempPoint3 - tempPoint1).normalized));
+            angle.transform.RotateAround(point2, (Vector3.Lerp((point1 - point2).normalized, (point3 - point2).normalized, 0.5f)), Vector3.Angle(angle.transform.GetChild(0).forward.normalized, (point3 - point1).normalized));
         }
         else
-            angle.transform.GetChild(0).RotateAround(point2, (Vector3.Lerp((tempPoint1 - point2).normalized, (tempPoint3 - point2).normalized, 0.5f)), Vector3.Angle(angle.transform.GetChild(0).forward.normalized, (tempPoint1 - tempPoint3).normalized));
+            angle.transform.RotateAround(point2, (Vector3.Lerp((point1 - point2).normalized, (point3 - point2).normalized, 0.5f)), Vector3.Angle(angle.transform.GetChild(0).forward.normalized, (point1 - point3).normalized));
 
-        //string letter = ((Char)(64 + angleFact.Id + 1)).ToString();
-        //Don't need next line anymore: Cause Text is now not above, but in the centre of the angle
-        //angle.GetComponentInChildren<TextMeshPro>().transform.localPosition = new Vector3((0.5f * tempProjection).x, angle.GetComponentInChildren<TextMeshPro>().transform.localPosition.y, (0.5f * tempProjection).z);
-        
         TextMeshPro[] texts = angle.GetComponentsInChildren<TextMeshPro>();
         foreach (TextMeshPro t in texts) {
             //Change Text not to the id, but to the angle-value (from both sides) AND change font-size relative to length of the angle (from both sides)
-            t.text = Math.Abs(Math.Round(Vector3.Angle((point1 - point2).normalized, (point3 - point2).normalized), 1)) + "°";
+            t.text = Math.Round((double) angleValue, 2) + "°";
             t.fontSize = angle.GetComponentInChildren<TextMeshPro>().fontSize * angle.transform.GetChild(0).transform.GetChild(0).localScale.x;
         }
+
+        CircleSegmentGenerator[] segments = angle.GetComponentsInChildren<CircleSegmentGenerator>();
+        foreach (CircleSegmentGenerator c in segments)
+            c.setAngle(angleValue);
 
         angle.GetComponentInChildren<FactObject>().Id = angleFact.Id;
         angleFact.Representation = angle;

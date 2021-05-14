@@ -6,6 +6,8 @@ using static CommunicationEvents;
 
 public class DisplayFacts : MonoBehaviour
 {
+    public Dictionary<Type, GameObject> prefabDictionary;
+
     public Dictionary<string, GameObject> displayedFacts = new Dictionary<string, GameObject>();
 
     public GameObject prefab_Point;
@@ -24,6 +26,14 @@ public class DisplayFacts : MonoBehaviour
     //Start is called before the first frame update
     void Start()
     {
+        prefabDictionary = new Dictionary<Type, GameObject>() {
+            {typeof(PointFact), prefab_Point},
+            {typeof(LineFact), prefab_Distance},
+            {typeof(RayFact), prefab_Line},
+            {typeof(AngleFact), prefab_Angle},
+            {typeof(OnLineFact), prefab_OnLine}
+        };
+
         var rect = GetComponent<RectTransform>();
         x_Start = (int)(rect.rect.x + X_Pacece_Between_Items * .5f);
         y_Start = (int)(-rect.rect.y - y_Pacece_Between_Items * .5f);//);
@@ -51,60 +61,7 @@ public class DisplayFacts : MonoBehaviour
 
     private GameObject CreateDisplay(Transform transform, Fact fact)
     {
-        switch (fact)
-        {
-            case LineFact f:
-                {
-                    var obj = Instantiate(prefab_Distance, Vector3.zero, Quaternion.identity, transform);
-                    obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter( CommunicationEvents.Facts[f.Pid1].Id);
-                    obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid2].Id );
-                    obj.GetComponent<FactWrapper>().fact = f;
-                    return obj;
-                }
-            case RayFact f:
-                {
-                    var obj = Instantiate(prefab_Line, Vector3.zero, Quaternion.identity, transform);
-                    obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(f.Id);
-                    //obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid2].Id);
-                    obj.GetComponent<FactWrapper>().fact = f;
-                    return obj;
-                }
-
-            case AngleFact f:
-                {
-                    var obj = Instantiate(prefab_Angle, Vector3.zero, Quaternion.identity, transform);
-                    obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid1].Id);
-                    obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid2].Id);
-                    obj.transform.GetChild(2).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid3].Id);
-                    obj.GetComponent<FactWrapper>().fact = f;
-                    return obj;
-                }
-
-            case PointFact f:
-                {
-                    var obj = Instantiate(prefab_Point, Vector3.zero, Quaternion.identity, transform);
-                    obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(f.Id );
-                    obj.GetComponent<FactWrapper>().fact = f;
-                    return obj;
-                }
-            case OnLineFact f:
-                {
-                    var obj = Instantiate(prefab_OnLine, Vector3.zero, Quaternion.identity, transform);
-                    obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid].Id);
-                    obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Lid].Id);
-                    obj.GetComponent<FactWrapper>().fact = f;
-                    return obj;
-                }
-
-
-
-            default:
-                {
-                    var obj = Instantiate(prefab_Default, Vector3.zero, Quaternion.identity, transform);
-                    return obj;
-                }
-           
-        }
+        return fact.instantiateDisplay(prefabDictionary[fact.GetType()], transform);
     }
 
     public Vector3 GetPosition(int i)

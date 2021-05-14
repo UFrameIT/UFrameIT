@@ -47,14 +47,14 @@ public class FactManager : MonoBehaviour
 
         return Facts.Find(x => x.Id == id) as LineFact;
     }
-    public RayFact AddRayFact(int pid1, int pid2, int id)
+    public List<Fact> AddRayFact(int pid1, int pid2, int id)
     {
         Facts.Insert(id, new RayFact(id, pid1, pid2));
 
-        var oLid = GetFirstEmptyID();
-        Facts.Insert(oLid, new OnLineFact(oLid, pid1, id));
-        oLid = GetFirstEmptyID();
-        Facts.Insert(oLid, new OnLineFact(oLid, pid2, id));
+        var oLid1 = GetFirstEmptyID();
+        Facts.Insert(oLid1, new OnLineFact(oLid1, pid1, id));
+        var oLid2 = GetFirstEmptyID();
+        Facts.Insert(oLid2, new OnLineFact(oLid2, pid2, id));
 
         var p1 = Facts.Find(x => x.Id == pid1);
         var p2 = Facts.Find(x => x.Id == pid2);
@@ -83,7 +83,7 @@ public class FactManager : MonoBehaviour
                 if (typeof(OnLineFact).IsInstanceOfType(fact))
                 {
                     OnLineFact oLFact = (OnLineFact)fact;
-                    if ((oLFact.Lid == id && oLFact.Pid == hit.transform.gameObject.GetComponent<FactObject>().Id))
+                    if ((oLFact.Rid == id && oLFact.Pid == hit.transform.gameObject.GetComponent<FactObject>().Id))
                     {
                         exists = true;
                         break;
@@ -94,15 +94,19 @@ public class FactManager : MonoBehaviour
 
             if (!exists)
             {
-                oLid = GetFirstEmptyID();
-                var olF = new OnLineFact(oLid, hit.transform.gameObject.GetComponent<FactObject>().Id, id);
-                Facts.Insert(oLid, olF);
+                var anotherOLid = GetFirstEmptyID();
+                var olF = new OnLineFact(anotherOLid, hit.transform.gameObject.GetComponent<FactObject>().Id, id);
+                Facts.Insert(anotherOLid, olF);
             }
 
 
         }
-        
-        return Facts.Find(x => x.Id == id) as RayFact;
+
+        List<Fact> returnedFacts = new List<Fact>();
+        returnedFacts.Add(Facts.Find(x => x.Id == id) as RayFact);
+        returnedFacts.Add(Facts.Find(x => x.Id == oLid1) as OnLineFact);
+        returnedFacts.Add(Facts.Find(x => x.Id == oLid2) as OnLineFact);
+        return returnedFacts;
     }
 
 

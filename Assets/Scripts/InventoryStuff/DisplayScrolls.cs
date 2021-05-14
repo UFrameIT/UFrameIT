@@ -8,6 +8,7 @@ using UnityEngine.Networking;
 public class DisplayScrolls : MonoBehaviour
 {
     public string preferredStartScrollName;
+    public int tryScrollListTimes = 2;
 
     public List<Scroll> scrolls;
     public GameObject[] ScrollButtons;
@@ -62,8 +63,21 @@ public class DisplayScrolls : MonoBehaviour
         UnityWebRequest request = UnityWebRequest.Get(CommunicationEvents.ServerAdress + "/scroll/list");
         //Postman-Echo-Mock
         //UnityWebRequest request = UnityWebRequest.Get("https://019a8ea5-843a-498b-8d0c-778669aef987.mock.pstmn.io/get");
-        request.method = UnityWebRequest.kHttpVerbGET;
-        yield return request.Send();
+
+        for (int i = 0; i < this.tryScrollListTimes; i++) {
+            request = UnityWebRequest.Get(CommunicationEvents.ServerAdress + "/scroll/list");
+            request.method = UnityWebRequest.kHttpVerbGET;
+            yield return request.Send();
+            if (request.isNetworkError || request.isHttpError)
+            {
+                Debug.LogWarning(request.error);
+                Debug.Log("GET Scroll/list failed. Attempt: " + (i+1).ToString());
+            }
+            else {
+                break;
+            }
+        }
+
         if (request.isNetworkError || request.isHttpError)
         {
             Debug.LogWarning(request.error);

@@ -75,7 +75,7 @@ public class Scroll
             if (this.tp is OMS)
                 return ((OMS)this.tp).uri;
             else if (this.tp is OMA)
-                return ((OMS)((OMA)this.tp).applicant).uri;
+                return ((OMS)((OMA)((OMA)this.tp).arguments[0]).applicant).uri;
             else
                 return null;
         }

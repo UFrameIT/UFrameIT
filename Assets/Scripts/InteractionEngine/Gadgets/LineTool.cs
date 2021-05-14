@@ -48,7 +48,10 @@ public class LineTool : Gadget
                 //Create LineFact
                 //Check if exactly the same line/distance already exists
                 if (!FactManager.factAlreadyExists(new int[] { this.LineModeFirstPointSelected.Id, tempFact.Id }))
-                    CommunicationEvents.AddFactEvent.Invoke(FactManager.AddRayFact(this.LineModeFirstPointSelected.Id, tempFact.Id, FactManager.GetFirstEmptyID()));
+                {
+                    List<Fact> returnedFacts = FactManager.AddRayFact(this.LineModeFirstPointSelected.Id, tempFact.Id, FactManager.GetFirstEmptyID());
+                    returnedFacts.ForEach(CommunicationEvents.AddFactEvent.Invoke);
+                }
 
                 this.ResetGadget();
             }
