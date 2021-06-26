@@ -164,29 +164,22 @@ public class FactSpawner : MonoBehaviour
         this.FactRepresentation = (GameObject)Resources.Load("Prefabs/Angle", typeof(GameObject));
         GameObject angle = GameObject.Instantiate(FactRepresentation);
 
-        //Place the Angle at position of point2
-        angle.transform.position = point2;
+        //Calculate Angle:
+        Vector3 from = (point3 - point2).normalized;
+        Vector3 to = (point1 - point2).normalized;
+        float angleValue = Vector3.Angle(from, to); //We always get an angle between 0 and 180° here
 
         //Change scale and rotation, so that the angle is in between the two lines
         var v3T = angle.transform.localScale;
         v3T = new Vector3(length, v3T.y, length);
 
-        //Calculate Angle:
-        Vector3 from = (point1 - point2).normalized;
-        Vector3 to = (point3 - point2).normalized;
-        float angleValue = Vector3.Angle(from, to); //We always get an angle between 0 and 180° here
-        //Vector3 direction = point2 - camera.transform.position;
-        //float angleSign = Mathf.Sign( Vector3.Dot( direction, Vector3.Cross( from, to ) ) );
+        Vector3 up = Vector3.Cross(to, from);
+        angle.transform.rotation = Quaternion.LookRotation(Vector3.Cross((from+to).normalized,up), up);
 
-        angle.transform.rotation = Quaternion.FromToRotation(Vector3.right, (Vector3.Lerp((point1 - point2).normalized, (point3 - point2).normalized, 0.5f)));
-        float signedAngle = Mathf.Atan2(Vector3.Dot((Vector3.Lerp((point1 - point2).normalized, (point3 - point2).normalized, 0.5f)), Vector3.Cross(angle.transform.GetChild(0).forward.normalized, (point1 - point3).normalized)), Vector3.Dot(angle.transform.GetChild(0).forward.normalized, (point1 - point3).normalized)) * Mathf.Rad2Deg;
-        if (signedAngle < 0)
-        {
-            angle.transform.RotateAround(point2, (Vector3.Lerp((point1 - point2).normalized, (point3 - point2).normalized, 0.5f)), Vector3.Angle(angle.transform.GetChild(0).forward.normalized, (point3 - point1).normalized));
-        }
-        else
-            angle.transform.RotateAround(point2, (Vector3.Lerp((point1 - point2).normalized, (point3 - point2).normalized, 0.5f)), Vector3.Angle(angle.transform.GetChild(0).forward.normalized, (point1 - point3).normalized));
+        //Place the Angle at position of point2
+        angle.transform.position = point2;
 
+        //Set text of angle
         TextMeshPro[] texts = angle.GetComponentsInChildren<TextMeshPro>();
         foreach (TextMeshPro t in texts) {
             //Change Text not to the id, but to the angle-value (from both sides) AND change font-size relative to length of the angle (from both sides)
@@ -194,6 +187,7 @@ public class FactSpawner : MonoBehaviour
             t.fontSize = angle.GetComponentInChildren<TextMeshPro>().fontSize * angle.transform.GetChild(0).transform.GetChild(0).localScale.x;
         }
 
+        //Generate angle mesh
         CircleSegmentGenerator[] segments = angle.GetComponentsInChildren<CircleSegmentGenerator>();
         foreach (CircleSegmentGenerator c in segments)
             c.setAngle(angleValue);
