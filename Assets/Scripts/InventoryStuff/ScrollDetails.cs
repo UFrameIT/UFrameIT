@@ -216,6 +216,9 @@ public class ScrollDetails : MonoBehaviour
             //If ScrollFact is assigned -> No Hint
             if (obj.transform.GetChild(0).GetComponent<DropHandling>().currentFact == null) {
                 Fact currentFact = ParsingDictionary.parseFactDictionary[rendered.requiredFacts[i].getType()].Invoke(rendered.requiredFacts[i]);
+                //If currentFact could be parsed: this fact maybe not yet exists in the global fact-list but there must be a fact
+                // of the same type and the same dependent facts in the fact-list, otherwise currentFact could not have been parsed
+
                 //If the fact could not be parsed -> Therefore not all dependent Facts exist -> No Hint
                 //AND if fact has no dependent facts -> No Hint
                 if (currentFact != null && currentFact.hasDependentFacts())
@@ -243,14 +246,16 @@ public class ScrollDetails : MonoBehaviour
                 scrollParameter.GetComponentInChildren<ImageHintAnimation>().AnimationTrigger();
                 //Animate Fact in FactPanel
                 AnimateExistingFactEvent.Invoke(fact);
-                //Animate factRepresentation in game
-                fact.Representation.GetComponentInChildren<MeshRendererHintAnimation>().AnimationTrigger();
+                //Animate factRepresentation in game, if fact has a Representation (e.g. OnLineFact has no Representation)
+                if(fact.Representation != null)
+                    fact.Representation.GetComponentInChildren<MeshRendererHintAnimation>().AnimationTrigger();
             }
         }
         else if (LatestRenderedHints.Exists(x => x.backendURI.Equals(scrollParameterUri))) {
             fact = LatestRenderedHints.Find(x => x.backendURI.Equals(scrollParameterUri));
 
             //If there is an equal existing fact -> Animate that fact AND ScrollParameter
+            //Equal is true, if there exists a fact of the same type and with the same dependent facts
             if (Facts.Exists(x => x.Equals(fact)))
             {
                 Fact existingFact = Facts.Find(x => x.Equals(fact));
@@ -259,8 +264,8 @@ public class ScrollDetails : MonoBehaviour
                 scrollParameter.GetComponentInChildren<ImageHintAnimation>().AnimationTrigger();
                 //Animate Fact in FactPanel
                 AnimateExistingFactEvent.Invoke(existingFact);
-                //Animate factRepresentation in game if Fact has a Representation
-                if(existingFact.Representation != null)
+                //Animate factRepresentation in game if Fact has a Representation (e.g. OnLineFact has no Representation)
+                if (existingFact.Representation != null)
                     existingFact.Representation.GetComponentInChildren<MeshRendererHintAnimation>().AnimationTrigger();
             }
             //If not -> Generate a Fact-Representation with such dependent facts
