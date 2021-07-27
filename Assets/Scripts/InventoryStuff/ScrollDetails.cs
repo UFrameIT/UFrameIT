@@ -22,6 +22,9 @@ public class ScrollDetails : MonoBehaviour
 
     public string currentMmtAnswer;
 
+    public bool dynamicScrollDescriptionsActive = true;
+    public bool automaticHintGenerationActive = true;
+
     public Vector3 GetPosition(int i)
     {
         return new Vector3(x_Start, y_Start + i * (-y_Paece_Between_Items), 0f);
@@ -88,7 +91,8 @@ public class ScrollDetails : MonoBehaviour
     }
 
     public void newAssignmentTrigger() {
-        StartCoroutine(newAssignment());
+        if(this.automaticHintGenerationActive || this.dynamicScrollDescriptionsActive)
+            StartCoroutine(newAssignment());
     }
 
     IEnumerator newAssignment()
@@ -195,22 +199,32 @@ public class ScrollDetails : MonoBehaviour
         //Update Scroll, process data for later hints and update Uri-List for which hints are available
         hintUris = processRenderedScroll(scrollDynamicInfo.rendered, hintUris);
 
-        //Show that Hint is available for ScrollParameter
-        HintAvailableEvent.Invoke(hintUris);
+        if (this.automaticHintGenerationActive)
+        {
+            //Show that Hint is available for ScrollParameter
+            HintAvailableEvent.Invoke(hintUris);
+        }
     }
 
     public List<string> processRenderedScroll(Scroll rendered, List<string> hintUris)
     {
         Transform scroll = gameObject.transform.GetChild(1).transform;
 
-        //Update scroll-description
-        scroll.GetChild(0).GetComponent<TextMeshProUGUI>().text = rendered.description;
+        if (this.dynamicScrollDescriptionsActive)
+        {
+            //Update scroll-description
+            scroll.GetChild(0).GetComponent<TextMeshProUGUI>().text = rendered.description;
+        }
 
         for (int i = 0; i < rendered.requiredFacts.Count; i++)
         {
-            //Update ScrollParameter label
             var obj = ParameterDisplays.Find(x => x.transform.GetChild(0).GetComponent<RenderedScrollFact>().factUri.Equals(rendered.requiredFacts[i].@ref.uri));
-            obj.transform.GetChild(0).GetComponent<RenderedScrollFact>().Label = rendered.requiredFacts[i].label;
+
+            if (this.dynamicScrollDescriptionsActive)
+            {
+                //Update ScrollParameter label
+                obj.transform.GetChild(0).GetComponent<RenderedScrollFact>().Label = rendered.requiredFacts[i].label;
+            }
 
             //Check Hint Informations
             //If ScrollFact is assigned -> No Hint
