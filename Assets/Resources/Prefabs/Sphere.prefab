@@ -35,6 +35,7 @@ Transform:
   - {fileID: 338274751687282010}
   - {fileID: 5939570736350582895}
   - {fileID: 206589483256967431}
+  - {fileID: 1897634834899172406}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -123,10 +124,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6b9fc46f5bfe6b4eb4adf01e6b65bac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meshRendererToChange: {fileID: 1075046474335495899}
-  animationStartColor: {r: 0.98039216, g: 0.99215686, b: 0.03137255, a: 1}
-  animationEndColor: {r: 1, g: 0.52156866, b: 0.007843138, a: 1}
-  animateDuration: 5
 --- !u!1 &942938646191423391
 GameObject:
   m_ObjectHideFlags: 0
@@ -346,6 +343,50 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Cam: {fileID: 0}
+--- !u!1 &3501726312507320707
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1897634834899172406}
+  - component: {fileID: 2282314938058693146}
+  m_Layer: 10
+  m_Name: Sphere_Snap
+  m_TagString: SnapZone
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1897634834899172406
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3501726312507320707}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 7110486964728869325}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &2282314938058693146
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3501726312507320707}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &7522635739010457072
 GameObject:
   m_ObjectHideFlags: 0

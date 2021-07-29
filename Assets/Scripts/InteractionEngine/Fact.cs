@@ -48,7 +48,9 @@ public abstract class Fact
 
     public abstract GameObject instantiateDisplay(GameObject prefab, Transform transform);
 
-    public abstract override bool Equals(System.Object obj);
+    public abstract bool Equivalent(Fact f2);
+    
+    public abstract bool Equivalent(Fact f1, Fact f2);
 
     public abstract override int GetHashCode();
 
@@ -58,9 +60,73 @@ public abstract class Fact
     }
 }
 
-public abstract class DirectedFact : Fact
+public abstract class FactWrappedCRTP<T>: Fact where T: FactWrappedCRTP<T>
 {
-    public DirectedFact flippedFact;
+    public override bool Equivalent(Fact f2)
+    {
+        return Equivalent(this, f2);
+    }
+
+    public override bool Equivalent(Fact f1, Fact f2)
+    {
+        return EquivalentWrapped((T)f1, (T)f2);
+    }
+
+    protected abstract bool EquivalentWrapped(T f1, T f2);
+}
+
+public abstract class AbstractLineFact: FactWrappedCRTP<AbstractLineFact>
+{
+    //Id's of the 2 Point-Facts that are connected
+    public int Pid1, Pid2;
+    // normalized Direction from Pid1 to Pid2
+    public Vector3 Dir;
+
+
+    //only for temporary Use of LineFacts.
+    public AbstractLineFact() { }
+
+    //public AbstractLineFact(int i, int pid1, int pid2);
+
+    public AbstractLineFact(int pid1, int pid2, string backendURI)
+    {
+        this.Pid1 = pid1;
+        this.Pid2 = pid2;
+        PointFact pf1 = CommunicationEvents.Facts.Find((x => x.Id == pid1)) as PointFact;
+        PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
+        this.Dir = (pf2.Point - pf1.Point).normalized;
+        this.backendURI = backendURI;
+    }
+
+    public override bool hasDependentFacts()
+    {
+        return true;
+    }
+
+    public override int[] getDependentFactIds()
+    {
+        return new int[] { Pid1, Pid2 };
+    }
+
+    public override int GetHashCode()
+    {
+        return this.Pid1 ^ this.Pid2;
+    }
+}
+
+public abstract class AbstractLineFactWrappedCRTP<T>: AbstractLineFact where T: AbstractLineFactWrappedCRTP<T>
+{
+    //only for temporary Use of LineFacts.
+    public AbstractLineFactWrappedCRTP() { }
+
+    public AbstractLineFactWrappedCRTP (int pid1, int pid2, string backendURI) : base(pid1, pid2, backendURI) { }
+
+    protected override bool EquivalentWrapped(AbstractLineFact f1, AbstractLineFact f2)
+    {
+        return EquivalentWrapped((T)f1, (T)f2);
+    }
+
+    protected abstract bool EquivalentWrapped(T f1, T f2);
 }
 
 public class AddFactResponse
@@ -101,7 +167,7 @@ public class AddFactResponse
 }
 
 //I am not sure if we ever need to attach these to an object, so one script for all for now...
-public class PointFact : Fact
+public class PointFact : FactWrappedCRTP<PointFact>
 {
     public Vector3 Point;
     public Vector3 Normal;
@@ -169,34 +235,21 @@ public class PointFact : Fact
         obj.GetComponent<FactWrapper>().fact = this;
         return obj;
     }
-
-    public override bool Equals(System.Object obj)
-    {
-        //Check for null and compare run-time types.
-        if ((obj == null) || !this.GetType().Equals(obj.GetType()))
-        {
-            return false;
-        }
-        else
-        {
-            PointFact p = (PointFact)obj;
-            return this.Point.Equals(p.Point) && this.Normal.Equals(p.Normal);
-        }
-    }
-
     public override int GetHashCode()
     {
         return this.Point.GetHashCode() ^ this.Normal.GetHashCode();
     }
+
+    protected override bool EquivalentWrapped(PointFact f1, PointFact f2)
+    {
+        return f1.Point == f2.Point;
+    }
+
 }
 
-public class LineFact : DirectedFact
+public class LineFact : AbstractLineFactWrappedCRTP<LineFact>
 {
-    //Id's of the 2 Point-Facts that are connected
-    public int Pid1, Pid2;
-
-    //only for temporary Use of LineFacts.
-    public LineFact() { }
+    public LineFact(int pid1, int pid2, string backendURI) : base(pid1, pid2, backendURI) { }
 
     public LineFact(int i, int pid1, int pid2)
     {
@@ -205,6 +258,7 @@ public class LineFact : DirectedFact
         this.Pid2 = pid2;
         PointFact pf1 = CommunicationEvents.Facts.Find((x => x.Id == pid1)) as PointFact;
         PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
+        this.Dir = (pf2.Point - pf1.Point).normalized;
 
         //Label is currently set to Fact.setId
         //Set Label to StringConcatenation of Points
@@ -234,13 +288,6 @@ public class LineFact : DirectedFact
         Debug.Log(this.backendURI);
     }
 
-    public LineFact(int Pid1, int Pid2, string backendURI)
-    {
-        this.Pid1 = Pid1;
-        this.Pid2 = Pid2;
-        this.backendURI = backendURI;
-    }
-
     public static LineFact parseFact(Scroll.ScrollFact fact)
     {
         String uri = fact.@ref.uri;
@@ -259,16 +306,6 @@ public class LineFact : DirectedFact
         }
     }
 
-    public override Boolean hasDependentFacts()
-    {
-        return true;
-    }
-
-    public override int[] getDependentFactIds()
-    {
-        return new int[] { Pid1, Pid2 };
-    }
-
     public override GameObject instantiateDisplay(GameObject prefab, Transform transform)
     {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
@@ -278,33 +315,25 @@ public class LineFact : DirectedFact
         return obj;
     }
 
-    public override bool Equals(System.Object obj)
+    protected override bool EquivalentWrapped(LineFact f1, LineFact f2)
     {
-        //Check for null and compare run-time types.
-        if ((obj == null) || !this.GetType().Equals(obj.GetType()))
-        {
-            return false;
-        }
-        else
-        {
-            LineFact l = (LineFact)obj;
-            return this.Pid1.Equals(l.Pid1) && this.Pid2.Equals(l.Pid2);
-        }
-    }
+        if ((f1.Pid1 == f2.Pid1 && f1.Pid2 == f2.Pid2))// || 
+            //(f1.Pid1 == f2.Pid2 && f1.Pid2 == f2.Pid1))
+            return true;
 
-    public override int GetHashCode()
-    {
-        return this.Pid1 ^ this.Pid2;
+        PointFact p1f1 = (PointFact)CommunicationEvents.Facts[f1.Pid1];
+        PointFact p2f1 = (PointFact)CommunicationEvents.Facts[f1.Pid2];
+        PointFact p1f2 = (PointFact)CommunicationEvents.Facts[f2.Pid1];
+        PointFact p2f2 = (PointFact)CommunicationEvents.Facts[f2.Pid2];
+
+        return (p1f1.Equivalent(p1f2) && p2f1.Equivalent(p2f2))
+            ;//|| (p1f1.Equivalent(p2f2) && p2f1.Equivalent(p1f2));
     }
 }
 
-public class RayFact : Fact
+public class RayFact : AbstractLineFactWrappedCRTP<RayFact>
 {
-    //Id's of the 2 Point-Facts that are connected
-    public int Pid1, Pid2;
-
-    //only for temporary Use of LineFacts.
-    public RayFact() { }
+    RayFact(int pid1, int pid2, string backendURI) : base(pid1, pid2, backendURI) { }
 
     public RayFact(int i, int pid1, int pid2)
     {
@@ -313,6 +342,8 @@ public class RayFact : Fact
         this.Pid2 = pid2;
         PointFact pf1 = CommunicationEvents.Facts.Find((x => x.Id == pid1)) as PointFact;
         PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
+        this.Dir = (pf2.Point - pf1.Point).normalized;
+
         string p1URI = pf1.backendURI;
         string p2URI = pf2.backendURI;
 
@@ -333,13 +364,6 @@ public class RayFact : Fact
         AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress + "/fact/add", body);
         this.backendURI = res.uri;
         Debug.Log(this.backendURI);
-    }
-
-    public RayFact(int pid1, int pid2, string uri)
-    {
-        this.Pid1 = pid1;
-        this.Pid2 = pid2;
-        this.backendURI = uri;
     }
 
     public static RayFact parseFact(Scroll.ScrollFact fact)
@@ -367,16 +391,6 @@ public class RayFact : Fact
         }
     }
 
-    public override Boolean hasDependentFacts()
-    {
-        return true;
-    }
-
-    public override int[] getDependentFactIds()
-    {
-        return new int[] { Pid1, Pid2 };
-    }
-
     public override GameObject instantiateDisplay(GameObject prefab, Transform transform) {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
         obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(this.Id);
@@ -385,28 +399,19 @@ public class RayFact : Fact
         return obj;
     }
 
-    public override bool Equals(System.Object obj)
+    protected override bool EquivalentWrapped(RayFact f1, RayFact f2)
     {
-        //Check for null and compare run-time types.
-        if ((obj == null) || !this.GetType().Equals(obj.GetType()))
-        {
+        if (f1.Dir != f2.Dir && f1.Dir != -f2.Dir)
             return false;
-        }
-        else
-        {
-            RayFact r = (RayFact)obj;
-            return this.Pid1.Equals(r.Pid1) && this.Pid2.Equals(r.Pid2);
-        }
-    }
 
-    public override int GetHashCode()
-    {
-        return this.Pid1 ^ this.Pid2;
+        PointFact p1f1 = (PointFact)CommunicationEvents.Facts[f1.Pid1];
+        PointFact p1f2 = (PointFact)CommunicationEvents.Facts[f2.Pid1];
+
+        return Math3d.IsPointApproximatelyOnLine(p1f1.Point, f1.Dir, p1f2.Point);
     }
 }
 
-
-public class OnLineFact : Fact
+public class OnLineFact : FactWrappedCRTP<OnLineFact>
 {
     //Id's of the Point and the Line it's on
     public int Pid, Rid;
@@ -492,28 +497,26 @@ public class OnLineFact : Fact
         return obj;
     }
 
-    public override bool Equals(System.Object obj)
-    {
-        //Check for null and compare run-time types.
-        if ((obj == null) || !this.GetType().Equals(obj.GetType()))
-        {
-            return false;
-        }
-        else
-        {
-            OnLineFact o = (OnLineFact)obj;
-            return this.Pid.Equals(o.Pid) && this.Rid.Equals(o.Rid);
-        }
-    }
-
     public override int GetHashCode()
     {
         return this.Pid ^ this.Rid;
     }
+
+    protected override bool EquivalentWrapped(OnLineFact f1, OnLineFact f2)
+    {
+        if (f1.Pid == f2.Pid && f1.Rid == f2.Rid)
+            return true;
+
+        PointFact pf1 = (PointFact)CommunicationEvents.Facts[f1.Pid];
+        RayFact rf1 = (RayFact)CommunicationEvents.Facts[f1.Rid];
+        PointFact pf2 = (PointFact)CommunicationEvents.Facts[f2.Pid];
+        RayFact rf2 = (RayFact)CommunicationEvents.Facts[f2.Rid];
+
+        return pf1.Equivalent(pf2) && rf1.Equivalent(rf2);
+    }
 }
 
-
-public class AngleFact : DirectedFact
+public class AngleFact : FactWrappedCRTP<AngleFact>
 {
     //Id's of the 3 Point-Facts, where Pid2 is the point, where the angle is
     public int Pid1, Pid2, Pid3;
@@ -684,23 +687,26 @@ public class AngleFact : DirectedFact
         return obj;
     }
 
-    public override bool Equals(System.Object obj)
-    {
-        //Check for null and compare run-time types.
-        if ((obj == null) || !this.GetType().Equals(obj.GetType()))
-        {
-            return false;
-        }
-        else
-        {
-            AngleFact a = (AngleFact)obj;
-            return this.Pid1.Equals(a.Pid1) && this.Pid2.Equals(a.Pid2) && this.Pid3.Equals(a.Pid3);
-        }
-    }
-
     public override int GetHashCode()
     {
         return this.Pid1 ^ this.Pid2 ^ this.Pid3;
+    }
+
+    protected override bool EquivalentWrapped(AngleFact f1, AngleFact f2)
+    {
+        if ((f1.Pid1 == f2.Pid1 && f1.Pid2 == f2.Pid2 && f1.Pid3 == f2.Pid3))// || 
+            //(f1.Pid1 == f2.Pid3 && f1.Pid2 == f2.Pid2 && f1.Pid3 == f2.Pid1))
+            return true;
+
+        PointFact p1f1 = (PointFact)CommunicationEvents.Facts[f1.Pid1];
+        PointFact p2f1 = (PointFact)CommunicationEvents.Facts[f1.Pid2];
+        PointFact p3f1 = (PointFact)CommunicationEvents.Facts[f1.Pid3];
+        PointFact p1f2 = (PointFact)CommunicationEvents.Facts[f2.Pid1];
+        PointFact p2f2 = (PointFact)CommunicationEvents.Facts[f2.Pid2];
+        PointFact p3f2 = (PointFact)CommunicationEvents.Facts[f2.Pid3];
+
+        return (p1f1.Equivalent(p1f2) && p2f1.Equivalent(p2f2) && p3f1.Equivalent(p3f2))
+            ;//|| (p1f1.Equivalent(p3f2) && p2f1.Equivalent(p2f2) && p1f1.Equivalent(p3f2));
     }
 }
 

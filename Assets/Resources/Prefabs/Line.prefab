@@ -343,10 +343,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6b9fc46f5bfe6b4eb4adf01e6b65bac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  meshRendererToChange: {fileID: 4008433908760336842}
-  animationStartColor: {r: 0.98039216, g: 0.99215686, b: 0.03137255, a: 1}
-  animationEndColor: {r: 1, g: 0.52156866, b: 0.007843138, a: 1}
-  animateDuration: 5
 --- !u!1 &6378548342073962023
 GameObject:
   m_ObjectHideFlags: 0

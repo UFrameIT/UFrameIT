@@ -46,10 +46,7 @@ public class Tape : Gadget
             if (this.TapeModeIsFirstPointSelected && this.TapeModeFirstPointSelected.Id != tempFact.Id)
             {
                 //Create LineFact
-                //Check if exactly the same line/distance already exists
-                if (!FactManager.factAlreadyExists(new int[] { this.TapeModeFirstPointSelected.Id, tempFact.Id }))
-                    CommunicationEvents.AddFactEvent.Invoke(FactManager.AddLineFact(this.TapeModeFirstPointSelected.Id, tempFact.Id, FactManager.GetFirstEmptyID()));
-                    
+                FactManager.AddLineFact(this.TapeModeFirstPointSelected.Id, tempFact.Id, FactManager.GetFirstEmptyID());
 
                 this.ResetGadget();
             }
@@ -89,10 +86,10 @@ public class Tape : Gadget
                     int idA = downHit.transform.gameObject.GetComponent<FactObject>().Id;
                     int idB = this.TapeModeFirstPointSelected.Id;
                     int idC = FactManager.GetFirstEmptyID();
-                    CommunicationEvents.AddFactEvent.Invoke(FactManager.AddPointFact(hit, idC));
+                    FactManager.AddPointFact(hit, idC);
                     this.DeactivateLineDrawing();
                     //Create LineFact
-                    CommunicationEvents.AddFactEvent.Invoke(FactManager.AddAngleFact(idA, idB, idC, FactManager.GetFirstEmptyID()));
+                    FactManager.AddAngleFact(idA, idB, idC, FactManager.GetFirstEmptyID());
                     this.TapeModeIsFirstPointSelected = false;
                     this.TapeModeFirstPointSelected = null;
                 }

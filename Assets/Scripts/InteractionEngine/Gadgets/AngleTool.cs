@@ -54,9 +54,7 @@ public class AngleTool : Gadget
                 //Check if new Point is equal to one of the previous points -> if true -> cancel
                 if (!(this.angleModeFirstPointSelected.Id == tempFact.Id || this.angleModeSecondPointSelected.Id == tempFact.Id))
                 {
-                    //Check if exactly the same angle already exists
-                    if (!FactManager.factAlreadyExists(new int[] { ((PointFact)this.angleModeFirstPointSelected).Id, ((PointFact)this.angleModeSecondPointSelected).Id, ((PointFact)tempFact).Id }))
-                        CommunicationEvents.AddFactEvent.Invoke(FactManager.AddAngleFact(((PointFact)this.angleModeFirstPointSelected).Id, ((PointFact)this.angleModeSecondPointSelected).Id, ((PointFact)tempFact).Id, FactManager.GetFirstEmptyID()));
+                    FactManager.AddAngleFact(((PointFact)this.angleModeFirstPointSelected).Id, ((PointFact)this.angleModeSecondPointSelected).Id, ((PointFact)tempFact).Id, FactManager.GetFirstEmptyID());
                 }
 
                 ResetGadget();

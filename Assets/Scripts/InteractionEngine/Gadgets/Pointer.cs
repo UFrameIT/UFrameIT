@@ -22,15 +22,14 @@ public class Pointer : Gadget
 
     public override void OnHit(RaycastHit hit)
     {
+
         if (!this.isActiveAndEnabled) return;
         var pid = FactManager.GetFirstEmptyID();
-        CommunicationEvents.AddFactEvent.Invoke(FactManager.AddPointFact(hit, pid));
+        FactManager.AddPointFact(hit, pid);
+
         if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Ray"))
         {
-
-            var oLid = FactManager.GetFirstEmptyID();
-            Facts.Insert(oLid, new OnLineFact(oLid, pid, hit.transform.GetComponent<FactObject>().Id));
-            CommunicationEvents.AddFactEvent.Invoke(Facts.Find(x => x.Id == oLid) as OnLineFact);
+            FactManager.AddOnLineFact(pid, hit.transform.GetComponent<FactObject>().Id, FactManager.GetFirstEmptyID());
         }
     }
   

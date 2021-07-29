@@ -48,9 +48,9 @@ public class ZZZ_CompletionDemo : MonoBehaviour
     }
 
     public void CompletionDemo() {
-        CommunicationEvents.AddFactEvent.Invoke(FactManager.AddPointFact(point1, 0));
-        CommunicationEvents.AddFactEvent.Invoke(FactManager.AddPointFact(point2, 1));
-        CommunicationEvents.AddFactEvent.Invoke(FactManager.AddPointFact(point3, 2));
+        FactManager.AddPointFact(point1, 0);
+        FactManager.AddPointFact(point2, 1);
+        FactManager.AddPointFact(point3, 2);
 
         StartCoroutine(SpawnAngleCoroutine());
 

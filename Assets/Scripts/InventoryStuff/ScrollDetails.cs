@@ -168,9 +168,10 @@ public class ScrollDetails : MonoBehaviour
             {
                 int id = factManager.GetFirstEmptyID();
                 newFact.Id = id;
-                Facts.Insert(id, newFact);
-                AddFactEvent.Invoke(newFact);
-                PushoutFactEvent.Invoke(newFact);
+
+                FactManager.AddFactIfNotFound(id, newFact, out bool exists);
+                if(!exists)
+                    PushoutFactEvent.Invoke(newFact);
             }
             else {
                 Debug.Log("Parsing on pushout-fact returned null -> One of the dependent facts does not exist");
