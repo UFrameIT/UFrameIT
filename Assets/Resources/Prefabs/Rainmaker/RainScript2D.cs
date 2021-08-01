@@ -4,7 +4,6 @@
 //
 
 using UnityEngine;
-using System.Collections;
 
 namespace DigitalRuby.RainMaker
 {
@@ -153,7 +152,7 @@ namespace DigitalRuby.RainMaker
             for (int i = 0; i < count; i++)
             {
                 Vector3 pos = particles[i].position + RainMistParticleSystem.transform.position;
-                hit = Physics2D.Raycast(pos, particles[i].velocity.normalized, particles[i].velocity.magnitude* Time.deltaTime, CollisionMask);
+                hit = Physics2D.Raycast(pos, particles[i].velocity.normalized, particles[i].velocity.magnitude * Time.deltaTime, CollisionMask);
                 if (hit.collider != null)
                 {
                     particles[i].velocity *= RainMistCollisionMultiplier;

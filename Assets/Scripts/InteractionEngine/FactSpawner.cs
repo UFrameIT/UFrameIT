@@ -8,7 +8,7 @@ using static GlobalSettings;
 public class FactSpawner : MonoBehaviour
 {
     private GameObject FactRepresentation;
-    private Camera camera;
+    //private Camera camera;
 
     void Start()
     {
@@ -21,7 +21,7 @@ public class FactSpawner : MonoBehaviour
         //Default FactRepresenation = Sphere-Prefab for Points
         this.FactRepresentation = (GameObject) Resources.Load("Prefabs/Sphere", typeof(GameObject));
 
-        camera = Camera.main;
+        //camera = Camera.main;
 
     }
 

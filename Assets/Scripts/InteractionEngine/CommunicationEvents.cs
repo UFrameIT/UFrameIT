@@ -59,7 +59,8 @@ public static class CommunicationEvents
 
     public static SignalEvent gameSucceededEvent = new SignalEvent();
     public static SignalEvent gameNotSucceededEvent = new SignalEvent();
-    
+    public static SignalEvent LevelReset = new SignalEvent();
+
     public static SignalEvent NewAssignmentEvent = new SignalEvent();
 
     //TODO: Remove this event after CompletionsDemo isn't necessary anymore
@@ -74,8 +75,8 @@ public static class CommunicationEvents
     //------------------------------------------------------------------------------------
     //-------------------------------Global Variables-------------------------------------
 
-    //Global List of Facts
-    public static List<Fact> Facts = new List<Fact>();
+    //Global Level-List of Facts
+    public static FactOrganizer Facts = new FactOrganizer();
 
 
     public static bool ServerRunning = true;

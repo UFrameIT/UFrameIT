@@ -16,10 +16,14 @@ public class Pendulum : Gadget
 
     void Awake()
     {
-        if (FactManager == null) FactManager = GameObject.FindObjectOfType<FactManager>();
-        CommunicationEvents.TriggerEvent.AddListener(OnHit);
-        if (this.Cursor == null) this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
+        if (FactManager == null)
+            FactManager = GameObject.FindObjectOfType<FactManager>();
+
+        if (this.Cursor == null)
+            this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
+
         this.UiName = "Pendulum";
+        CommunicationEvents.TriggerEvent.AddListener(OnHit);
     }
 
     void OnEnable()

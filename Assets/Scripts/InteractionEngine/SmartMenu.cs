@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SmartMenu : MonoBehaviour
 {
@@ -9,9 +7,7 @@ public class SmartMenu : MonoBehaviour
 
     public void DestroyObject()
     {
-      FactManager.DeleteFact(CommunicationEvents.Facts[transform.parent.GetComponent<FactObject>().Id]);
-      //  CommunicationEvents.RemoveFactEvent.Invoke(CommunicationEvents.Facts[transform.parent.GetComponent<FactObject>().Id]);
-       
+        CommunicationEvents.Facts.Remove(CommunicationEvents.Facts[transform.parent.GetComponent<FactObject>().Id]);
     }
 
 

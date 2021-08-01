@@ -23,10 +23,14 @@ public class LotTool : Gadget
 
     void Awake()
     {
-        if (FactManager == null) FactManager = GameObject.FindObjectOfType<FactManager>();
-        CommunicationEvents.TriggerEvent.AddListener(OnHit);
-        if (this.Cursor == null) this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
+        if (FactManager == null)
+            FactManager = GameObject.FindObjectOfType<FactManager>();
+
+        if (this.Cursor == null)
+            this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
+
         this.UiName = "Lot Mode";
+        CommunicationEvents.TriggerEvent.AddListener(OnHit);
     }
 
     //Initialize Gadget when enabled AND activated
@@ -43,14 +47,14 @@ public class LotTool : Gadget
 
     public override void OnHit(RaycastHit hit)
     {
-        void CreateRayAndAngles(int pidIntersectionPoint, int pidLotPoint)
+        void CreateRayAndAngles(int pidIntersectionPoint, int pidLotPoint, bool samestep)
         {
-            FactManager.AddRayFact(pidIntersectionPoint, pidLotPoint, FactManager.GetFirstEmptyID());
+            FactManager.AddRayFact(pidIntersectionPoint, pidLotPoint, FactManager.GetFirstEmptyID(), samestep);
 
             //TODO: create at all? / for all points on basline?
             FactManager.AddAngleFact(
                 this.LotModeLineSelected.Pid1 == pidIntersectionPoint ? this.LotModeLineSelected.Pid2 : this.LotModeLineSelected.Pid1,
-                pidIntersectionPoint, pidLotPoint, FactManager.GetFirstEmptyID());
+                pidIntersectionPoint, pidLotPoint, FactManager.GetFirstEmptyID(), true);
         }
 
         if (!this.isActiveAndEnabled) return;
@@ -63,7 +67,7 @@ public class LotTool : Gadget
             //TODO: which normal?
             FactManager.AddPointFact(pidLotPoint, LotPoint, hit.normal);
 
-            CreateRayAndAngles(this.LotModeIntersectionPoint.Id, pidLotPoint);
+            CreateRayAndAngles(this.LotModeIntersectionPoint.Id, pidLotPoint, true);
             this.ResetGadget();
         }
 
@@ -87,9 +91,9 @@ public class LotTool : Gadget
             FactManager.AddPointFact(intersectionId, intersectionPoint, this.LotModeLineHit.normal);
 
             if(this.LotModeLineSelected is RayFact) //Add OnLineFact only on Ray not Line
-                FactManager.AddOnLineFact(intersectionId, this.LotModeLineSelected.Id, FactManager.GetFirstEmptyID());
+                FactManager.AddOnLineFact(intersectionId, this.LotModeLineSelected.Id, FactManager.GetFirstEmptyID(), true);
 
-            CreateRayAndAngles(intersectionId, tempFact.Id);
+            CreateRayAndAngles(intersectionId, tempFact.Id, true);
             this.ResetGadget();
         }
 
@@ -103,7 +107,7 @@ public class LotTool : Gadget
             //Activate LineDrawing for preview
             this.LotModeIsLineSelected = true;
             this.LotModeLineSelected = tempFact as AbstractLineFact;
-            this.LotModeLinePointA = (PointFact)CommunicationEvents.Facts[this.LotModeLineSelected.Pid1];
+            this.LotModeLinePointA = (PointFact) Facts[this.LotModeLineSelected.Pid1];
             this.LotModeLineHit = hit;
             this.ActivateLineDrawing();
         }

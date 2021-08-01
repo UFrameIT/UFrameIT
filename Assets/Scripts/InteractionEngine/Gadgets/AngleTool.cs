@@ -27,10 +27,14 @@ public class AngleTool : Gadget
 
     void Awake()
     {
-        if (FactManager == null) FactManager = GameObject.FindObjectOfType<FactManager>();
-        CommunicationEvents.TriggerEvent.AddListener(OnHit);
-        if (this.Cursor == null) this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
+        if (FactManager == null)
+            FactManager = GameObject.FindObjectOfType<FactManager>();
+
+        if (this.Cursor == null)
+            this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
+
         this.UiName = "Angle Mode";
+        CommunicationEvents.TriggerEvent.AddListener(OnHit);
     }
 
     //Initialize Gadget when enabled AND activated
@@ -131,11 +135,12 @@ public class AngleTool : Gadget
 
     public void UpdateCurveDrawing(Vector3 currentPosition)
     {
-
+        //TODO! PERF O(n)
         //Find the nearest of all potential third points
         PointFact nearestPoint = null;
-        foreach (Fact fact in Facts)
+        foreach (var entry in Facts)
         {
+            Fact fact = entry.Value;
             if (fact is PointFact && fact.Id != angleModeFirstPointSelected.Id && fact.Id != angleModeSecondPointSelected.Id && nearestPoint == null)
                 nearestPoint = (PointFact)fact;
             else if (fact is PointFact && fact.Id != angleModeFirstPointSelected.Id && fact.Id != angleModeSecondPointSelected.Id && (nearestPoint.Point - currentPosition).magnitude > (((PointFact)fact).Point - currentPosition).magnitude)

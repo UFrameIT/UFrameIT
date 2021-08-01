@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using System.IO;
 using UnityEditor;
-using System.IO;
+using UnityEngine;
 
 namespace LowPolyWater
 {
@@ -10,8 +10,8 @@ namespace LowPolyWater
 
         public int widthSegments = 1;       //Number of pieces for dividing plane vertically
         public int heightSegments = 1;      //Number of pieces for dividing plane horizontally
-        public float planeWidth = 1.0f;     
-        public float planeHeight = 1.0f;    
+        public float planeWidth = 1.0f;
+        public float planeHeight = 1.0f;
 
         public bool addCollider = false;    //Add box collider?
         public Material material;           //By default, it is assigned to 'LowPolyWaterMaterial' in the editor
@@ -157,7 +157,7 @@ namespace LowPolyWater
 
             //Add LowPolyWater as component
             plane.AddComponent<LowPolyWater>();
-            
+
             Selection.activeObject = plane;
         }
     }

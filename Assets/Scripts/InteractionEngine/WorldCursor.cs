@@ -89,8 +89,8 @@ public class WorldCursor : MonoBehaviour
                     || Hit.collider.gameObject.layer == LayerMask.NameToLayer("Line"))
                 {
                     int id = Hit.collider.gameObject.GetComponent<FactObject>().Id;
-                    AbstractLineFact lineFact = CommunicationEvents.Facts.Find((x => x.Id == id)) as AbstractLineFact;
-                    PointFact p1 =  CommunicationEvents.Facts.Find((x => x.Id == lineFact.Pid1)) as PointFact;
+                    AbstractLineFact lineFact = CommunicationEvents.Facts[id] as AbstractLineFact;
+                    PointFact p1 =  CommunicationEvents.Facts[lineFact.Pid1] as PointFact;
 
                     Hit.point = Math3d.ProjectPointOnLine(p1.Point, lineFact.Dir, Hit.point);
                     CheckMouseButtons(true,true);
@@ -102,7 +102,6 @@ public class WorldCursor : MonoBehaviour
                     CheckMouseButtons(true);
                 }
 
-            
                 transform.position = Hit.point;
                 transform.up = Hit.normal;
 

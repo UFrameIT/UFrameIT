@@ -40,6 +40,7 @@ public class DisplayFacts : MonoBehaviour
         number_of_Column = Mathf.Max(1, (int)(rect.rect.width / prefab_Point.GetComponent<RectTransform>().rect.width) - 1);
 
         AddFactEvent.AddListener(AddFact);
+        RemoveFactEvent.AddListener(RemoveFact);
         AnimateExistingFactEvent.AddListener(AnimateFact);
     }
 
@@ -48,6 +49,12 @@ public class DisplayFacts : MonoBehaviour
         var obj = CreateDisplay(transform, fact);
         obj.GetComponent<RectTransform>().localPosition = GetPosition(fid);
         displayedFacts.Add(fact.backendURI, obj);
+    }
+
+    public void RemoveFact(Fact fact)
+    {
+        GameObject.Destroy(displayedFacts[fact.backendURI]);
+        displayedFacts.Remove(fact.backendURI);
     }
 
     public void AnimateFact(Fact fact) {

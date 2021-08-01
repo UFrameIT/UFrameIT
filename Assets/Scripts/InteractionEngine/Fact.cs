@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using TMPro;
 using static JSONManager;
+using static CommunicationEvents;
 
 public class ParsingDictionary {
 
@@ -19,26 +20,64 @@ public class ParsingDictionary {
 
 }
 
+public class AddFactResponse
+{
+    //class to Read AddFact Responses.
+    // public string factUri;
+    // public string factValUri;
+    public string uri;
+
+    public static AddFactResponse sendAdd(string path, string body)
+    {
+        if (!CommunicationEvents.ServerRunning)
+        {
+            Debug.LogWarning("Server not running");
+            return new AddFactResponse();
+        }
+        Debug.Log(body);
+        //Put constructor parses stringbody to byteArray internally  (goofy workaround)
+        UnityWebRequest www = UnityWebRequest.Put(path, body);
+        www.method = UnityWebRequest.kHttpVerbPOST;
+        www.SetRequestHeader("Content-Type", "application/json");
+        www.timeout = 1;
+
+        //TODO: implement real asynchronous communication ...
+        AsyncOperation op = www.SendWebRequest();
+        while (!op.isDone) { }
+        if (www.isNetworkError || www.isHttpError)
+        {
+            Debug.LogWarning(www.error);
+            return new AddFactResponse();
+        }
+        else
+        {
+            string answer = www.downloadHandler.text;
+            return JsonUtility.FromJson<AddFactResponse>(answer);
+        }
+    }
+}
+
 public abstract class Fact
 {
-    private int _id;
+    public GameObject Representation;
+
+    public string backendURI;
     public string Label;
     public int Id
     {
         get { return _id; }
         set
         {
-           // if (_id == value) return;
             _id = value;
-            Label= ((Char)(64 + _id + 1)).ToString();
+            Label = getLetter(_id);
         }
     }
-    public GameObject Representation;
-    public string backendURI;
+    private int _id;
 
-    public string format(float t)
+
+    public void rename(string newLabel)
     {
-        return t.ToString("0.0000").Replace(',', '.');
+        this.Label = newLabel;
     }
 
     //If FactType depends on other Facts, e.g. AngleFacts depend on 3 PointFacts
@@ -47,6 +86,11 @@ public abstract class Fact
     public abstract int[] getDependentFactIds();
 
     public abstract GameObject instantiateDisplay(GameObject prefab, Transform transform);
+
+    public virtual void delete()
+    {
+        //TODO: MMT
+    }
 
     public abstract bool Equivalent(Fact f2);
     
@@ -92,8 +136,8 @@ public abstract class AbstractLineFact: FactWrappedCRTP<AbstractLineFact>
     {
         this.Pid1 = pid1;
         this.Pid2 = pid2;
-        PointFact pf1 = CommunicationEvents.Facts.Find((x => x.Id == pid1)) as PointFact;
-        PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
+        PointFact pf1 = Facts[pid1] as PointFact;
+        PointFact pf2 = Facts[pid2] as PointFact;
         this.Dir = (pf2.Point - pf1.Point).normalized;
         this.backendURI = backendURI;
     }
@@ -129,42 +173,6 @@ public abstract class AbstractLineFactWrappedCRTP<T>: AbstractLineFact where T: 
     protected abstract bool EquivalentWrapped(T f1, T f2);
 }
 
-public class AddFactResponse
-{
-    //class to Read AddFact Responses.
-    // public string factUri;
-    // public string factValUri;
-    public string uri;
-
-    public static AddFactResponse sendAdd(string path, string body)
-    {
-        if (!CommunicationEvents.ServerRunning)
-        {
-            Debug.LogWarning("Server not running");
-            return new AddFactResponse();
-        }
-        Debug.Log(body);
-        //Put constructor parses stringbody to byteArray internally  (goofy workaround)
-        UnityWebRequest www = UnityWebRequest.Put(path, body);
-        www.method = UnityWebRequest.kHttpVerbPOST;
-        www.SetRequestHeader("Content-Type", "application/json");
-        www.timeout = 1;
-
-        //TODO: implement real asynchronous communication ...
-        AsyncOperation op = www.SendWebRequest();
-        while (!op.isDone) { }
-        if (www.isNetworkError || www.isHttpError)
-        {
-            Debug.LogWarning(www.error);
-            return new AddFactResponse();
-        }
-        else
-        {
-            string answer = www.downloadHandler.text;
-            return JsonUtility.FromJson<AddFactResponse>(answer);
-        }
-    }
-}
 
 //I am not sure if we ever need to attach these to an object, so one script for all for now...
 public class PointFact : FactWrappedCRTP<PointFact>
@@ -256,8 +264,8 @@ public class LineFact : AbstractLineFactWrappedCRTP<LineFact>
         this.Id = i;
         this.Pid1 = pid1;
         this.Pid2 = pid2;
-        PointFact pf1 = CommunicationEvents.Facts.Find((x => x.Id == pid1)) as PointFact;
-        PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
+        PointFact pf1 = Facts[pid1] as PointFact;
+        PointFact pf2 = Facts[pid2] as PointFact;
         this.Dir = (pf2.Point - pf1.Point).normalized;
 
         //Label is currently set to Fact.setId
@@ -293,13 +301,11 @@ public class LineFact : AbstractLineFactWrappedCRTP<LineFact>
         String uri = fact.@ref.uri;
         String pointAUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[0]).uri;
         String pointBUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[1]).uri;
-        if (CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointAUri)) &&
-            CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointBUri)))
-        {
-            int pid1 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointAUri)).Id;
-            int pid2 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointBUri)).Id;
+
+        if (Facts.searchURI(pointAUri, out int pid1)
+         && Facts.searchURI(pointBUri, out int pid2))
             return new LineFact(pid1, pid2, uri);
-        }
+
         //If dependent facts do not exist return null
         else {
             return null;
@@ -309,8 +315,8 @@ public class LineFact : AbstractLineFactWrappedCRTP<LineFact>
     public override GameObject instantiateDisplay(GameObject prefab, Transform transform)
     {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
-        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Pid1].Id);
-        obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Pid2].Id);
+        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(Facts[this.Pid1].Id);
+        obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(Facts[this.Pid2].Id);
         obj.GetComponent<FactWrapper>().fact = this;
         return obj;
     }
@@ -321,10 +327,10 @@ public class LineFact : AbstractLineFactWrappedCRTP<LineFact>
             //(f1.Pid1 == f2.Pid2 && f1.Pid2 == f2.Pid1))
             return true;
 
-        PointFact p1f1 = (PointFact)CommunicationEvents.Facts[f1.Pid1];
-        PointFact p2f1 = (PointFact)CommunicationEvents.Facts[f1.Pid2];
-        PointFact p1f2 = (PointFact)CommunicationEvents.Facts[f2.Pid1];
-        PointFact p2f2 = (PointFact)CommunicationEvents.Facts[f2.Pid2];
+        PointFact p1f1 = (PointFact)Facts[f1.Pid1];
+        PointFact p2f1 = (PointFact)Facts[f1.Pid2];
+        PointFact p1f2 = (PointFact)Facts[f2.Pid1];
+        PointFact p2f2 = (PointFact)Facts[f2.Pid2];
 
         return (p1f1.Equivalent(p1f2) && p2f1.Equivalent(p2f2))
             ;//|| (p1f1.Equivalent(p2f2) && p2f1.Equivalent(p1f2));
@@ -340,8 +346,8 @@ public class RayFact : AbstractLineFactWrappedCRTP<RayFact>
         this.Id = i;
         this.Pid1 = pid1;
         this.Pid2 = pid2;
-        PointFact pf1 = CommunicationEvents.Facts.Find((x => x.Id == pid1)) as PointFact;
-        PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
+        PointFact pf1 = Facts[pid1] as PointFact;
+        PointFact pf2 = Facts[pid2] as PointFact;
         this.Dir = (pf2.Point - pf1.Point).normalized;
 
         string p1URI = pf1.backendURI;
@@ -373,28 +379,20 @@ public class RayFact : AbstractLineFactWrappedCRTP<RayFact>
         {
             String pointAUri = ((OMS)((OMA)((Scroll.ScrollSymbolFact)fact).df).arguments[0]).uri;
             String pointBUri = ((OMS)((OMA)((Scroll.ScrollSymbolFact)fact).df).arguments[1]).uri;
-            if (CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointAUri)) &&
-                CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointBUri)))
-            {
-                int pid1 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointAUri)).Id;
-                int pid2 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointBUri)).Id;
+
+            if (Facts.searchURI(pointAUri, out int pid1)
+             && Facts.searchURI(pointBUri, out int pid2))
                 return new RayFact(pid1, pid2, uri);
-            }
+
             //If dependent facts do not exist return null
-            else
-            {
-                return null;
-            }
         }
-        else {
-            return null;
-        }
+        return null;
     }
 
     public override GameObject instantiateDisplay(GameObject prefab, Transform transform) {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
         obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(this.Id);
-        //obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid2].Id);
+        //obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(Facts2[f.Pid2].Id);
         obj.GetComponent<FactWrapper>().fact = this;
         return obj;
     }
@@ -404,10 +402,12 @@ public class RayFact : AbstractLineFactWrappedCRTP<RayFact>
         if (f1.Dir != f2.Dir && f1.Dir != -f2.Dir)
             return false;
 
-        PointFact p1f1 = (PointFact)CommunicationEvents.Facts[f1.Pid1];
-        PointFact p1f2 = (PointFact)CommunicationEvents.Facts[f2.Pid1];
+        PointFact p1f1 = (PointFact)Facts[f1.Pid1];
+        PointFact p1f2 = (PointFact)Facts[f2.Pid1];
+        PointFact p2f2 = (PointFact)Facts[f2.Pid2];
 
-        return Math3d.IsPointApproximatelyOnLine(p1f1.Point, f1.Dir, p1f2.Point);
+        return Math3d.IsPointApproximatelyOnLine(p1f1.Point, f1.Dir, p1f2.Point)
+            && Math3d.IsPointApproximatelyOnLine(p1f1.Point, f1.Dir, p2f2.Point);
     }
 }
 
@@ -421,8 +421,8 @@ public class OnLineFact : FactWrappedCRTP<OnLineFact>
         this.Id = i;
         this.Pid = pid;
         this.Rid = rid;
-        PointFact pf = CommunicationEvents.Facts.Find((x => x.Id == pid)) as PointFact;
-        RayFact rf = CommunicationEvents.Facts.Find((x => x.Id == rid)) as RayFact;
+        PointFact pf = Facts[pid] as PointFact;
+        RayFact rf = Facts[rid] as RayFact;
         string pURI = pf.backendURI;
         string rURI = rf.backendURI;
 
@@ -464,18 +464,14 @@ public class OnLineFact : FactWrappedCRTP<OnLineFact>
         String uri = fact.@ref.uri;
         String lineUri = ((OMS)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[0]).uri;
         String pointUri = ((OMS)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[1]).uri;
-        if (CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(lineUri)) &&
-            CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointUri)))
-        {
-            int pid = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointUri)).Id;
-            int rid = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(lineUri)).Id;
+
+        if (Facts.searchURI(lineUri, out int rid)
+         && Facts.searchURI(pointUri, out int pid))
             return new OnLineFact(pid, rid, uri);
-        }
+
         //If dependent facts do not exist return null
         else
-        {
             return null;
-        }
     }
 
     public override Boolean hasDependentFacts()
@@ -491,8 +487,8 @@ public class OnLineFact : FactWrappedCRTP<OnLineFact>
     public override GameObject instantiateDisplay(GameObject prefab, Transform transform)
     {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
-        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Pid].Id);
-        obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Rid].Id);
+        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(Facts[this.Pid].Id);
+        obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(Facts[this.Rid].Id);
         obj.GetComponent<FactWrapper>().fact = this;
         return obj;
     }
@@ -507,10 +503,10 @@ public class OnLineFact : FactWrappedCRTP<OnLineFact>
         if (f1.Pid == f2.Pid && f1.Rid == f2.Rid)
             return true;
 
-        PointFact pf1 = (PointFact)CommunicationEvents.Facts[f1.Pid];
-        RayFact rf1 = (RayFact)CommunicationEvents.Facts[f1.Rid];
-        PointFact pf2 = (PointFact)CommunicationEvents.Facts[f2.Pid];
-        RayFact rf2 = (RayFact)CommunicationEvents.Facts[f2.Rid];
+        PointFact pf1 = (PointFact)Facts[f1.Pid];
+        RayFact rf1 = (RayFact)Facts[f1.Rid];
+        PointFact pf2 = (PointFact)Facts[f2.Pid];
+        RayFact rf2 = (RayFact)Facts[f2.Rid];
 
         return pf1.Equivalent(pf2) && rf1.Equivalent(rf2);
     }
@@ -530,9 +526,9 @@ public class AngleFact : FactWrappedCRTP<AngleFact>
         this.Pid1 = pid1;
         this.Pid2 = pid2;
         this.Pid3 = pid3;
-        PointFact pf1 = CommunicationEvents.Facts.Find((x => x.Id == pid1)) as PointFact;
-        PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
-        PointFact pf3 = CommunicationEvents.Facts.Find((x => x.Id == pid3)) as PointFact;
+        PointFact pf1 = Facts[pid1] as PointFact;
+        PointFact pf2 = Facts[pid2] as PointFact;
+        PointFact pf3 = Facts[pid3] as PointFact;
 
         string p1URI = pf1.backendURI;
         string p2URI = pf2.backendURI;
@@ -577,53 +573,33 @@ public class AngleFact : FactWrappedCRTP<AngleFact>
 
     public static AngleFact parseFact(Scroll.ScrollFact fact)
     {
-        String uri;
+        String uri = fact.@ref.uri;
         String pointAUri;
         String pointBUri;
         String pointCUri;
-        int pid1;
-        int pid2;
-        int pid3;
 
         //If angle is not a 90Degree-Angle
         if (fact.GetType().Equals(typeof(Scroll.ScrollValueFact)))
         {
-            uri = fact.@ref.uri;
             pointAUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[0]).uri;
             pointBUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[1]).uri;
             pointCUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[2]).uri;
-            //If dependent facts do not exist return null
-            if (!CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointAUri)) |
-                !CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointBUri)) |
-                !CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointCUri)))
-            {
-                return null;
-            }
-
-            pid1 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointAUri)).Id;
-            pid2 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointBUri)).Id;
-            pid3 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointCUri)).Id;
         }
         //If angle is a 90Degree-Angle
         else {
-            uri = fact.@ref.uri;
             pointAUri = ((OMS)((OMA)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[1]).arguments[0]).uri;
             pointBUri = ((OMS)((OMA)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[1]).arguments[1]).uri;
             pointCUri = ((OMS)((OMA)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[1]).arguments[2]).uri;
-            //If dependent facts do not exist return null
-            if (!CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointAUri)) |
-                !CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointBUri)) |
-                !CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointCUri)))
-            {
-                return null;
-            }
-
-            pid1 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointAUri)).Id;
-            pid2 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointBUri)).Id;
-            pid3 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointCUri)).Id;
         }
 
-        return new AngleFact(pid1, pid2, pid3, uri);
+        if (Facts.searchURI(pointAUri, out int pid1)
+         && Facts.searchURI(pointBUri, out int pid2)
+         && Facts.searchURI(pointCUri, out int pid3))
+
+            return new AngleFact(pid1, pid2, pid3, uri);
+
+        else    //If dependent facts do not exist return null
+            return null;
     }
 
     private MMTDeclaration generate90DegreeAngleDeclaration(float val, string p1URI, string p2URI, string p3URI) {
@@ -680,9 +656,9 @@ public class AngleFact : FactWrappedCRTP<AngleFact>
 
     public override GameObject instantiateDisplay(GameObject prefab, Transform transform) {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
-        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Pid1].Id);
-        obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Pid2].Id);
-        obj.transform.GetChild(2).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Pid3].Id);
+        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(Facts[this.Pid1].Id);
+        obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(Facts[this.Pid2].Id);
+        obj.transform.GetChild(2).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(Facts[this.Pid3].Id);
         obj.GetComponent<FactWrapper>().fact = this;
         return obj;
     }
@@ -698,12 +674,12 @@ public class AngleFact : FactWrappedCRTP<AngleFact>
             //(f1.Pid1 == f2.Pid3 && f1.Pid2 == f2.Pid2 && f1.Pid3 == f2.Pid1))
             return true;
 
-        PointFact p1f1 = (PointFact)CommunicationEvents.Facts[f1.Pid1];
-        PointFact p2f1 = (PointFact)CommunicationEvents.Facts[f1.Pid2];
-        PointFact p3f1 = (PointFact)CommunicationEvents.Facts[f1.Pid3];
-        PointFact p1f2 = (PointFact)CommunicationEvents.Facts[f2.Pid1];
-        PointFact p2f2 = (PointFact)CommunicationEvents.Facts[f2.Pid2];
-        PointFact p3f2 = (PointFact)CommunicationEvents.Facts[f2.Pid3];
+        PointFact p1f1 = (PointFact)Facts[f1.Pid1];
+        PointFact p2f1 = (PointFact)Facts[f1.Pid2];
+        PointFact p3f1 = (PointFact)Facts[f1.Pid3];
+        PointFact p1f2 = (PointFact)Facts[f2.Pid1];
+        PointFact p2f2 = (PointFact)Facts[f2.Pid2];
+        PointFact p3f2 = (PointFact)Facts[f2.Pid3];
 
         return (p1f1.Equivalent(p1f2) && p2f1.Equivalent(p2f2) && p3f1.Equivalent(p3f2))
             ;//|| (p1f1.Equivalent(p3f2) && p2f1.Equivalent(p2f2) && p1f1.Equivalent(p3f2));

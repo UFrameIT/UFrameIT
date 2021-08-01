@@ -1,13 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class ScrollClickedScript: MonoBehaviour
+public class ScrollClickedScript : MonoBehaviour
 {
     public Scroll scroll;
     public GameObject DetailScreen;
 
-    public void onClick() {
+    public void onClick()
+    {
         this.DetailScreen.GetComponent<ScrollDetails>().setScroll(this.scroll);
     }
 }

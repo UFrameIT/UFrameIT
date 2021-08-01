@@ -161,7 +161,8 @@ public class ScrollDetails : MonoBehaviour
         if(pushoutFacts.Count == 0)
             PushoutFactFailEvent.Invoke(null);
 
-        for (int i = 0; i < pushoutFacts.Count; i++)
+        bool samestep = false;
+        for (int i = 0; i < pushoutFacts.Count; i++, samestep = true)
         {
             Fact newFact = ParsingDictionary.parseFactDictionary[pushoutFacts[i].getType()].Invoke(pushoutFacts[i]);
             if (newFact != null)
@@ -169,7 +170,7 @@ public class ScrollDetails : MonoBehaviour
                 int id = factManager.GetFirstEmptyID();
                 newFact.Id = id;
 
-                FactManager.AddFactIfNotFound(id, newFact, out bool exists);
+                FactManager.AddFactIfNotFound(newFact, out bool exists, samestep);
                 if(!exists)
                     PushoutFactEvent.Invoke(newFact);
             }
@@ -237,9 +238,9 @@ public class ScrollDetails : MonoBehaviour
 
         if (suitableCompletion != null)
         {
-            fact = Facts.Find(x => x.backendURI.Equals(suitableCompletion.assignment.uri));
-            if (fact != null)
+            if (Facts.searchURI(suitableCompletion.assignment.uri, out int factId))
             {
+                fact = Facts[factId];
                 //Animate ScrollParameter
                 scrollParameter.GetComponentInChildren<ImageHintAnimation>().AnimationTrigger();
                 //Animate Fact in FactPanel
@@ -248,13 +249,15 @@ public class ScrollDetails : MonoBehaviour
                 fact.Representation.GetComponentInChildren<MeshRendererHintAnimation>().AnimationTrigger();
             }
         }
-        else if (LatestRenderedHints.Exists(x => x.backendURI.Equals(scrollParameterUri))) {
+        else if (LatestRenderedHints.Exists(x => x.backendURI.Equals(scrollParameterUri)))
+        {
             fact = LatestRenderedHints.Find(x => x.backendURI.Equals(scrollParameterUri));
+            int factId = fact.Id;
 
             //If there is an equal existing fact -> Animate that fact AND ScrollParameter
-            if (Facts.Exists(x => x.Equals(fact)))
+            if (Facts.ContainsKey(factId))
             {
-                Fact existingFact = Facts.Find(x => x.Equals(fact));
+                Fact existingFact = Facts[factId];
 
                 //Animate ScrollParameter
                 scrollParameter.GetComponentInChildren<ImageHintAnimation>().AnimationTrigger();

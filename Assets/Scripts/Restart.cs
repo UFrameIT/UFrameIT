@@ -7,7 +7,8 @@ public class Restart : MonoBehaviour
     {
         process.Kill();
         Level.solved = false;
-        CommunicationEvents.Facts.Clear();
+        //TODO: CommunicationEvents.Facts2.Clear();
+        CommunicationEvents.Facts.hardreset();
         UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
 

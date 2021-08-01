@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using static CommunicationEvents;
 
 //TODO: think about having one Level class and then different subclasses like TreeLevel, Tangenslevel?
 public class Level : MonoBehaviour
@@ -28,14 +27,17 @@ public class Level : MonoBehaviour
             return true;
         else
         {
-            var Facts = CommunicationEvents.Facts;
             //Look for solutionFact in global factList
-            foreach (Fact fact in Facts)
+            foreach (var entry in Facts)
             {
+                Fact fact = entry.Value;
                 if (typeof(LineFact).IsInstanceOfType(fact))
                 {
-                    tempDir1 = ((PointFact)Facts.Find(x => x.Id == ((LineFact)fact).Pid1)).Point - ((PointFact)Facts.Find(x => x.Id == ((LineFact)fact).Pid2)).Point;
-                    tempDir2 = ((PointFact)Facts.Find(x => x.Id == ((LineFact)fact).Pid2)).Point - ((PointFact)Facts.Find(x => x.Id == ((LineFact)fact).Pid1)).Point;
+                    tempDir1 = ((PointFact) Facts[((LineFact) fact).Pid1]).Point
+                             - ((PointFact) Facts[((LineFact) fact).Pid2]).Point;
+                    tempDir2 = ((PointFact) Facts[((LineFact) fact).Pid2]).Point
+                             - ((PointFact) Facts[((LineFact) fact).Pid1]).Point;
+
                     if (solutionVector == tempDir1 || solutionVector == tempDir2)
                     {
                         solved = true;

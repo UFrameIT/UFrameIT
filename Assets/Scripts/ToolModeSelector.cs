@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,15 +19,15 @@ public class ToolModeSelector : MonoBehaviour
         var buttons = GetComponentsInChildren<Button>();
         Buttons = buttons.OrderBy(x => x.transform.position.x).ToArray();
         ParentCanvas = GetComponentInParent<Canvas>();
-        for(int i = 0; i< Buttons.Length;++i)
+        for (int i = 0; i < Buttons.Length; ++i)
         {
             int copiedIndex = i; //this is important
             var button = Buttons[i];
-            button.onClick.AddListener(()=> Select(copiedIndex));
-            
+            button.onClick.AddListener(() => Select(copiedIndex));
+
         }
 
-    
+
         Buttons[GadgetManager.activeGadget.id].transform.localScale *= activeGadgetScaleFactor;
         UIManager = GetComponentInParent<HideUI>();
 
@@ -39,7 +37,7 @@ public class ToolModeSelector : MonoBehaviour
     {
 
         ParentCanvas.enabled = true;
-        
+
         Buttons[GadgetManager.activeGadget.id].transform.localScale /= activeGadgetScaleFactor;
         CommunicationEvents.ToolModeChangedEvent.Invoke(id);
         Buttons[GadgetManager.activeGadget.id].transform.localScale *= activeGadgetScaleFactor;
@@ -49,7 +47,7 @@ public class ToolModeSelector : MonoBehaviour
 
     IEnumerator HideRoutine()
     {
-        
+
         yield return new WaitForSeconds(2);
         if (!Showing)
         {
@@ -62,9 +60,9 @@ public class ToolModeSelector : MonoBehaviour
     // Update is called once per frame
     void Update()
     {   //Check if the ToolMode was switched
-        if(!UIManager.UICanvas.enabled)
+        if (!UIManager.UICanvas.enabled)
             CheckToolModeSelection();
-        
+
     }
 
 
@@ -77,15 +75,16 @@ public class ToolModeSelector : MonoBehaviour
             int id = (tempActiveGadget.id + 1) % GadgetManager.gadgets.Length;
             Select(id);
         }
-        else if(Input.GetAxis("Mouse ScrollWheel") !=0){
+        else if (Input.GetAxis("Mouse ScrollWheel") != 0)
+        {
 
-            int move = (int) Mathf.Sign(Input.GetAxis("Mouse ScrollWheel"));
+            int move = (int)Mathf.Sign(Input.GetAxis("Mouse ScrollWheel"));
 
             Gadget tempActiveGadget = GadgetManager.activeGadget;
             int id = (tempActiveGadget.id + move) % Buttons.Length;// GadgetManager.gadgets.Length;
             if (id < 0) id = Buttons.Length - 1;// GadgetManager.gadgets.Length-1;
             Select(id);
         }
-        
+
     }
 }

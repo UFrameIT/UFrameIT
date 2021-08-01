@@ -18,10 +18,14 @@ public class Tape : Gadget
 
     void Awake()
     {
-        if (FactManager == null) FactManager = GameObject.FindObjectOfType<FactManager>();
-        CommunicationEvents.TriggerEvent.AddListener(OnHit);
-        if (this.Cursor == null) this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
+        if (FactManager == null)
+            FactManager = GameObject.FindObjectOfType<FactManager>();
+
+        if (this.Cursor == null)
+            this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
+
         this.UiName = "Distance Mode";
+        CommunicationEvents.TriggerEvent.AddListener(OnHit);
     }
 
     //Initialize Gadget when enabled AND activated
@@ -58,23 +62,10 @@ public class Tape : Gadget
                 this.ActivateLineDrawing();
             }
         }
-        /*
-        //if we want to spawn a new point
-        else if (Input.GetKey(KeyCode.LeftShift))
-        {
-            if (this.TapeModeIsFirstPointSelected)
-            {
-            
-                this.DeactivateLineDrawing();
 
-                SmallRocket(hit, this.TapeModeFirstPointSelected.Id);
-
-                this.ResetGadget();
-            }
-        }
-        */
         //if we hit the top snap zone
-        else if (hit.transform.gameObject.tag == "SnapZone")
+        //TODO: check behaviour
+        else if (hit.transform.gameObject.CompareTag("SnapZone"))
         {
             if (this.TapeModeIsFirstPointSelected)
             {
@@ -87,11 +78,10 @@ public class Tape : Gadget
                     int idB = this.TapeModeFirstPointSelected.Id;
                     int idC = FactManager.GetFirstEmptyID();
                     FactManager.AddPointFact(hit, idC);
-                    this.DeactivateLineDrawing();
                     //Create LineFact
-                    FactManager.AddAngleFact(idA, idB, idC, FactManager.GetFirstEmptyID());
-                    this.TapeModeIsFirstPointSelected = false;
-                    this.TapeModeFirstPointSelected = null;
+                    FactManager.AddAngleFact(idA, idB, idC, FactManager.GetFirstEmptyID(), true);
+
+                    this.ResetGadget();
                 }
             }
         }
@@ -107,27 +97,6 @@ public class Tape : Gadget
             //TODO: Hint that only a line can be drawn between already existing points
         }
     }
-
-    /*
-    //Creating 90-degree Angles
-    public void SmallRocket(RaycastHit hit, int idA)
-    {
-        //enable collider to measure angle to the treetop
-        int idB = this.GetFirstEmptyID();
-        CommunicationEvents.AddFactEvent.Invoke(FactManager.AddPointFact(hit, idB));
-        Facts[idB].Representation.GetComponentInChildren<Collider>().enabled = true;
-        //third point with unknown height
-        int idC = FactManager.GetFirstEmptyID();
-        var skyHit = hit;
-        skyHit.point = (Facts[idA] as PointFact).Point + Vector3.up * 20;
-        CommunicationEvents.AddFactEvent.Invoke(FactManager.AddPointFact(skyHit, idC));
-        //lines
-        CommunicationEvents.AddFactEvent.Invoke(FactManager.AddLineFact(idA, idB, this.GetFirstEmptyID()));
-        //lines
-        CommunicationEvents.AddFactEvent.Invoke(FactManager.AddLineFact(idA, idC, this.GetFirstEmptyID()));
-        //90degree angle
-        CommunicationEvents.AddFactEvent.Invoke(FactManager.AddAngleFact(idB, idA, idC, GetFirstEmptyID()));
-    }*/
 
     void Update()
     {

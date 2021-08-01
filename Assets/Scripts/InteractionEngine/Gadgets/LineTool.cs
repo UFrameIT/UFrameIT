@@ -18,10 +18,14 @@ public class LineTool : Gadget
 
     void Awake()
     {
-        if (FactManager == null) FactManager = GameObject.FindObjectOfType<FactManager>();
-        CommunicationEvents.TriggerEvent.AddListener(OnHit);
-        if (this.Cursor == null) this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
+        if (FactManager == null)
+            FactManager = GameObject.FindObjectOfType<FactManager>();
+
+        if (this.Cursor == null)
+            this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
+
         this.UiName = "Line Mode";
+        CommunicationEvents.TriggerEvent.AddListener(OnHit);
     }
 
     //Initialize Gadget when enabled AND activated
@@ -56,7 +60,8 @@ public class LineTool : Gadget
         }
 
         //if we hit the top snap zone
-        else if (hit.transform.gameObject.tag == "SnapZone")
+        //TODO: check behaviour
+        else if (hit.transform.gameObject.CompareTag("SnapZone"))
         {
             if (this.LineModeIsFirstPointSelected)
             {
@@ -69,11 +74,10 @@ public class LineTool : Gadget
                     int idB = this.LineModeFirstPointSelected.Id;
                     int idC = FactManager.GetFirstEmptyID();
                     FactManager.AddPointFact(hit, idC);
-                    this.DeactivateLineDrawing();
                     //Create LineFact
                     FactManager.AddAngleFact(idA, idB, idC, FactManager.GetFirstEmptyID());
-                    this.LineModeIsFirstPointSelected = false;
-                    this.LineModeFirstPointSelected = null;
+
+                    this.ResetGadget();
                 }
             }
         }

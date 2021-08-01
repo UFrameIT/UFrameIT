@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using static CommunicationEvents;
@@ -47,7 +46,8 @@ public class ZZZ_CompletionDemo : MonoBehaviour
 
     }
 
-    public void CompletionDemo() {
+    public void CompletionDemo()
+    {
         FactManager.AddPointFact(point1, 0);
         FactManager.AddPointFact(point2, 1);
         FactManager.AddPointFact(point3, 2);

@@ -9,10 +9,14 @@ public class Pointer : Gadget
 
     void Awake()
     {
-        if (FactManager == null) FactManager = GameObject.FindObjectOfType<FactManager>();
-        CommunicationEvents.TriggerEvent.AddListener(OnHit);
-        if (this.Cursor == null) this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
+        if (FactManager == null)
+            FactManager = GameObject.FindObjectOfType<FactManager>();
+
+        if (this.Cursor == null)
+            this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
+
         this.UiName = "Point Mode";
+        CommunicationEvents.TriggerEvent.AddListener(OnHit);
     }
 
     void OnEnable()
@@ -29,7 +33,7 @@ public class Pointer : Gadget
 
         if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Ray"))
         {
-            FactManager.AddOnLineFact(pid, hit.transform.GetComponent<FactObject>().Id, FactManager.GetFirstEmptyID());
+            FactManager.AddOnLineFact(pid, hit.transform.GetComponent<FactObject>().Id, FactManager.GetFirstEmptyID(), true);
         }
     }
   
