@@ -10,9 +10,10 @@ using System.Linq;
 //TODO! use URI as key
 
 //PERF: avoid string as key (hash -> colission? -> strcmp[!])
-public class FactOrganizer: Dictionary<int, Fact>
+
+public class FactOrganizer: Dictionary<string, Fact>
 {
-    private Dictionary<int, meta> MetaInf = new Dictionary<int, meta>();
+    private Dictionary<string, meta> MetaInf = new Dictionary<string, meta>();
     private List<stepnote> Workflow = new List<stepnote>();
     // notes position in Workflow for un-/redo; the pointed to element is non-acitve
     private int marker = 0;
@@ -25,7 +26,7 @@ public class FactOrganizer: Dictionary<int, Fact>
     private struct stepnote
     {
         // Fact.Id
-        public int Id;
+        public string Id;
         // true if this Fact has been created in the same step as the last one
         //      steproot[false] (=> steptail[true])*
         public bool samestep;
@@ -35,7 +36,7 @@ public class FactOrganizer: Dictionary<int, Fact>
         public bool creation;
 
 
-        public stepnote(int Id, bool samestep, bool creation, FactOrganizer that)
+        public stepnote(string Id, bool samestep, bool creation, FactOrganizer that)
         {
             this.Id = Id;
             this.samestep = samestep;
@@ -72,20 +73,20 @@ public class FactOrganizer: Dictionary<int, Fact>
 
     public FactOrganizer() : base() { }
 
-    public FactOrganizer(IDictionary<int, Fact> dictionary) : base(dictionary) { }
+    public FactOrganizer(IDictionary<string, Fact> dictionary) : base(dictionary) { }
 
 
     //TODO: PERF: better way than string search? -> use string as key!
-    public bool searchURI(string uri, out int found)
+    public bool searchURI(string uri, out string found)
     {
         foreach(var element in this)
-            if (element.Value.backendURI.Equals(uri))
+            if (element.Value.URI.Equals(uri))
             {
                 found = element.Key;
                 return true;
             }
 
-        found = -1;
+        found = null;
         return false;
     }
 
@@ -168,25 +169,25 @@ public class FactOrganizer: Dictionary<int, Fact>
         }
     }
 
-    public new void Add(int key, Fact value)
+    public new void Add(string key, Fact value)
     // hide
     {
         this.Add(value, out bool obsolete);
     }
 
-    public int Add(Fact value, out bool exists, bool samestep = false)
+    public string Add(Fact value, out bool exists, bool samestep = false)
     // also checks for duplicates and active state
     // returns key of actual Fact
     {
         if (resetted)
             this.hardreset(false);
 
-        int key;
+        string key;
         if (exists = FindEquivalent(value, out Fact found))
         {
             //TODO: MMT: del 'fact' (value) in MMT (alt.: s.TODO in addFact)
 
-            key = found.Id;
+            key = found.URI;
             if (MetaInf[key].active)
                 return key;
         }
@@ -194,7 +195,7 @@ public class FactOrganizer: Dictionary<int, Fact>
         {
             //TODO: MMT: alt: insert in MMT if needed here/ on Invoke() (see WorkflowAdd)
 
-            key = value.Id;
+            key = value.URI;
             base.Add(key, value);
             MetaInf.Add(key, new meta(marker, true));
         }
@@ -203,7 +204,7 @@ public class FactOrganizer: Dictionary<int, Fact>
         return key;
     }
 
-    public new bool Remove(int key)
+    public new bool Remove(string key)
     // hide
     {
         return this.Remove(key, false);
@@ -211,14 +212,14 @@ public class FactOrganizer: Dictionary<int, Fact>
 
     public bool Remove(Fact value, bool samestep = false)
     {
-        if (!this.ContainsKey(value.Id))
+        if (!this.ContainsKey(value.URI))
             return false;
 
-        this.Remove(value.Id, samestep);
+        this.Remove(value.URI, samestep);
         return true;
     }
 
-    public bool Remove(int key, bool samestep = false)
+    public bool Remove(string key, bool samestep = false)
     //no reset check needed (impossible state)
     {
         if (!base.ContainsKey(key))
@@ -226,7 +227,7 @@ public class FactOrganizer: Dictionary<int, Fact>
 
         //TODO: see issue #58
 
-        safe_dependencies(key, out List<int> deletethis);
+        safe_dependencies(key, out List<string> deletethis);
 
         if(deletethis.Count > 0)
         {
@@ -238,12 +239,12 @@ public class FactOrganizer: Dictionary<int, Fact>
 
     // TODO: MMT: decide dependencies there (remember virtual deletions in Unity (un-redo)!)
     // TODO? decrease runtime from O(n/2)
-    public bool safe_dependencies(int key, out List<int> dependencies)
+    public bool safe_dependencies(string key, out List<string> dependencies)
     // searches for dependencies of a Fact; returns false if any dependencies are steproots
     // int key: Fact to be deleted
     // out List<int> dependencies: dependencyList
     {
-        dependencies = new List<int>();
+        dependencies = new List<string>();
         int c_unsafe = 0;
 
         int pos = MetaInf[key].workflow_id;
@@ -280,7 +281,7 @@ public class FactOrganizer: Dictionary<int, Fact>
         return c_unsafe == 0;
     }
 
-    private void yeetusdeletus(List<int> deletereverse, bool samestep = false)
+    private void yeetusdeletus(List<string> deletereverse, bool samestep = false)
     {
         for(int i = deletereverse.Count - 1; i >= 0; i--, samestep = true)
         {
@@ -400,7 +401,7 @@ public class FactOrganizer: Dictionary<int, Fact>
         // TODO: see issue #58
     }
 
-    private void InvokeFactEvent(bool creation, int Id)
+    private void InvokeFactEvent(bool creation, string Id)
     {
         if (creation)
             CommunicationEvents.AddFactEvent.Invoke(this[Id]);

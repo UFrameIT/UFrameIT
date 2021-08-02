@@ -40,17 +40,17 @@ public class Tape : Gadget
         if (!this.isActiveAndEnabled) return;
         if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
-            Fact tempFact = Facts[hit.transform.GetComponent<FactObject>().Id];
+            Fact tempFact = Facts[hit.transform.GetComponent<FactObject>().URI];
 
             //we can only reach points that are lower than that with the measuring tape
             if (/*ActiveToolMode == ToolMode.CreateLineMode && */tempFact.Representation.transform.position.y > 2.5f)
                 return;
 
             //If first point was already selected AND second point != first point
-            if (this.TapeModeIsFirstPointSelected && this.TapeModeFirstPointSelected.Id != tempFact.Id)
+            if (this.TapeModeIsFirstPointSelected && this.TapeModeFirstPointSelected.URI != tempFact.URI)
             {
                 //Create LineFact
-                FactManager.AddLineFact(this.TapeModeFirstPointSelected.Id, tempFact.Id, FactManager.GetFirstEmptyID());
+                FactManager.AddLineFact(this.TapeModeFirstPointSelected.URI, tempFact.URI);
 
                 this.ResetGadget();
             }
@@ -74,12 +74,11 @@ public class Tape : Gadget
 
                 if (Physics.Raycast(hit.transform.gameObject.transform.position - Vector3.down * 2, Vector3.down, out downHit))
                 {
-                    int idA = downHit.transform.gameObject.GetComponent<FactObject>().Id;
-                    int idB = this.TapeModeFirstPointSelected.Id;
-                    int idC = FactManager.GetFirstEmptyID();
-                    FactManager.AddPointFact(hit, idC);
+                    var idA = downHit.transform.gameObject.GetComponent<FactObject>().URI;
+                    var idB = this.TapeModeFirstPointSelected.URI;
+                    var idC = FactManager.AddPointFact(hit).URI;
                     //Create LineFact
-                    FactManager.AddAngleFact(idA, idB, idC, FactManager.GetFirstEmptyID(), true);
+                    FactManager.AddAngleFact(idA, idB, idC, true);
 
                     this.ResetGadget();
                 }

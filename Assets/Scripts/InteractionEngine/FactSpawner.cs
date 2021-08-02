@@ -55,9 +55,8 @@ public class FactSpawner : MonoBehaviour
         GameObject point = GameObject.Instantiate(FactRepresentation);
         point.transform.position = fact.Point;
         point.transform.up = fact.Normal;
-        string letter = ((Char)(64+fact.Id+1)).ToString();
-        point.GetComponentInChildren<TextMeshPro>().text = letter;
-        point.GetComponent<FactObject>().Id = fact.Id;
+        point.GetComponentInChildren<TextMeshPro>().text = fact.Label;
+        point.GetComponent<FactObject>().URI = fact.URI;
         fact.Representation = point;
         return fact;
     }
@@ -91,9 +90,9 @@ public class FactSpawner : MonoBehaviour
 
         //string letter = ((Char)(64 + lineFact.Id + 1)).ToString();
         //line.GetComponentInChildren<TextMeshPro>().text = letter;
-        line.GetComponentInChildren<TextMeshPro>().text = ((Char)(64 + pointFact1.Id + 1)).ToString() + ((Char)(64 + pointFact2.Id + 1)).ToString();
+        line.GetComponentInChildren<TextMeshPro>().text = pointFact1.Label + pointFact2.Label;
         line.GetComponentInChildren<TextMeshPro>().text += " = " + Math.Round((point1-point2).magnitude, 2) + " m";
-        line.GetComponentInChildren<FactObject>().Id = lineFact.Id;
+        line.GetComponentInChildren<FactObject>().URI = lineFact.URI;
         lineFact.Representation = line;
         return lineFact;
 
@@ -134,10 +133,9 @@ public class FactSpawner : MonoBehaviour
         line.transform.GetChild(0).localScale = v3T;
         line.transform.GetChild(0).rotation = Quaternion.FromToRotation(Vector3.right, point2 - point1);
 
-        string letter = ((Char)(64 + rayFact.Id + 1)).ToString();
-        line.GetComponentInChildren<TextMeshPro>().text = letter;
-     
-        line.GetComponentInChildren<FactObject>().Id = rayFact.Id;
+        line.GetComponentInChildren<TextMeshPro>().text = rayFact.Label;
+        line.GetComponentInChildren<FactObject>().URI = rayFact.URI;
+
         rayFact.Representation = line;
         return rayFact;
     }
@@ -192,14 +190,14 @@ public class FactSpawner : MonoBehaviour
         foreach (CircleSegmentGenerator c in segments)
             c.setAngle(angleValue);
 
-        angle.GetComponentInChildren<FactObject>().Id = angleFact.Id;
+        angle.GetComponentInChildren<FactObject>().URI = angleFact.URI;
         angleFact.Representation = angle;
         return angleFact;
     }
 
     public void DeleteObject(Fact fact)
     {
-        Debug.Log("delete obj of "+ fact.Id);
+        Debug.Log("delete obj of "+ fact.URI);
         GameObject factRepresentation = fact.Representation;
         GameObject.Destroy(factRepresentation);
     }

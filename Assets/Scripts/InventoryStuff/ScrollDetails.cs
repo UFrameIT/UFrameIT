@@ -114,13 +114,14 @@ public class ScrollDetails : MonoBehaviour
         UnityWebRequest www = UnityWebRequest.Put(ServerAdress + endpoint, body);
         www.method = UnityWebRequest.kHttpVerbPOST;
         www.SetRequestHeader("Content-Type", "application/json");
-        var async = www.Send();
+        var async = www.SendWebRequest();
         while (!async.isDone) {
             //Non blocking wait for one frame, for letting the game do other things
             yield return null;
         }
 
-        if (www.isNetworkError || www.isHttpError)
+        if (www.result == UnityWebRequest.Result.ConnectionError 
+         || www.result == UnityWebRequest.Result.ProtocolError)
         {
             Debug.Log(www.error);
             currentMmtAnswer = null;
@@ -145,7 +146,7 @@ public class ScrollDetails : MonoBehaviour
             if (tempFact != null)
             {
                 listEntry.fact = new Scroll.UriReference(this.scroll.requiredFacts[i].@ref.uri);
-                listEntry.assignment = new JSONManager.OMS(tempFact.backendURI);
+                listEntry.assignment = new JSONManager.OMS(tempFact.URI);
                 assignmentList.Add(listEntry);
             }
         }
@@ -167,9 +168,6 @@ public class ScrollDetails : MonoBehaviour
             Fact newFact = ParsingDictionary.parseFactDictionary[pushoutFacts[i].getType()].Invoke(pushoutFacts[i]);
             if (newFact != null)
             {
-                int id = factManager.GetFirstEmptyID();
-                newFact.Id = id;
-
                 FactManager.AddFactIfNotFound(newFact, out bool exists, samestep);
                 if(!exists)
                     PushoutFactEvent.Invoke(newFact);
@@ -223,7 +221,7 @@ public class ScrollDetails : MonoBehaviour
                 if (currentFact != null && currentFact.hasDependentFacts())
                 {
                     //Hint available for abstract-problem uri
-                    hintUris.Add(currentFact.backendURI);
+                    hintUris.Add(currentFact.URI);
                     LatestRenderedHints.Add(currentFact);
                 }
             }
@@ -238,9 +236,9 @@ public class ScrollDetails : MonoBehaviour
 
         if (suitableCompletion != null)
         {
-            if (Facts.searchURI(suitableCompletion.assignment.uri, out int factId))
+            if (Facts.ContainsKey(suitableCompletion.assignment.uri))
             {
-                fact = Facts[factId];
+                fact = Facts[suitableCompletion.assignment.uri];
                 //Animate ScrollParameter
                 scrollParameter.GetComponentInChildren<ImageHintAnimation>().AnimationTrigger();
                 //Animate Fact in FactPanel
@@ -249,10 +247,10 @@ public class ScrollDetails : MonoBehaviour
                 fact.Representation.GetComponentInChildren<MeshRendererHintAnimation>().AnimationTrigger();
             }
         }
-        else if (LatestRenderedHints.Exists(x => x.backendURI.Equals(scrollParameterUri)))
+        else if (LatestRenderedHints.Exists(x => x.URI.Equals(scrollParameterUri)))
         {
-            fact = LatestRenderedHints.Find(x => x.backendURI.Equals(scrollParameterUri));
-            int factId = fact.Id;
+            fact = LatestRenderedHints.Find(x => x.URI.Equals(scrollParameterUri));
+            var factId = fact.URI;
 
             //If there is an equal existing fact -> Animate that fact AND ScrollParameter
             if (Facts.ContainsKey(factId))

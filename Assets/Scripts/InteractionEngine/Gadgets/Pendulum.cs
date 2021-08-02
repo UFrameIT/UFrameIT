@@ -45,14 +45,13 @@ public class Pendulum : Gadget
 
         if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
-            PointFact tempFact = Facts[hit.transform.GetComponent<FactObject>().Id] as PointFact;
+            PointFact tempFact = Facts[hit.transform.GetComponent<FactObject>().URI] as PointFact;
 
             //Raycast downwoard
             RaycastHit ground;
             if(Physics.Raycast(tempFact.Point, Vector3.down, out ground, Mathf.Infinity, this.LayerPendulumHits.value))
             {
-                var pid = FactManager.GetFirstEmptyID();
-                FactManager.AddPointFact(ground, pid);
+                FactManager.AddPointFact(ground);
             }
         }
     }

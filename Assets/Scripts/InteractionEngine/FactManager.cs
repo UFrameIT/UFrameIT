@@ -21,29 +21,29 @@ public class FactManager : MonoBehaviour
         return Facts[Facts.Add(fact, out exists, samestep)];
     }
 
-    public PointFact AddPointFact(RaycastHit hit, int id, bool samestep = false)
+    public PointFact AddPointFact(RaycastHit hit, bool samestep = false)
     {
-        return (PointFact) AddFactIfNotFound(new PointFact(id, hit.point, hit.normal), out bool obsolete, samestep);
+        return (PointFact) AddFactIfNotFound(new PointFact(hit.point, hit.normal), out bool obsolete, samestep);
     }
 
-    public PointFact AddPointFact(int id, Vector3 point, Vector3 normal, bool samestep = false)
+    public PointFact AddPointFact(Vector3 point, Vector3 normal, bool samestep = false)
     {
-        return (PointFact) AddFactIfNotFound(new PointFact(id, point, normal), out bool obsolete, samestep);
+        return (PointFact) AddFactIfNotFound(new PointFact(point, normal), out bool obsolete, samestep);
     }
 
-    public OnLineFact AddOnLineFact(int pid, int lid, int id, bool samestep = false)
+    public OnLineFact AddOnLineFact(string pid, string lid, bool samestep = false)
     {
-        return (OnLineFact)AddFactIfNotFound(new OnLineFact(id, pid, lid), out bool obsolete, samestep);
+        return (OnLineFact)AddFactIfNotFound(new OnLineFact(pid, lid), out bool obsolete, samestep);
     }
 
-    public LineFact AddLineFact(int pid1, int pid2, int id, bool samestep = false)
+    public LineFact AddLineFact(string pid1, string pid2, bool samestep = false)
     {
-        return (LineFact)AddFactIfNotFound(new LineFact(id, pid1, pid2), out bool obsolete, samestep);
+        return (LineFact)AddFactIfNotFound(new LineFact(pid1, pid2), out bool obsolete, samestep);
     }
 
-    public RayFact AddRayFact(int pid1, int pid2, int id, bool samestep = false)
+    public RayFact AddRayFact(string pid1, string pid2, bool samestep = false)
     {
-        RayFact rayFact = (RayFact)AddFactIfNotFound(new RayFact(id, pid1, pid2), out bool exists, samestep);
+        RayFact rayFact = (RayFact)AddFactIfNotFound(new RayFact(pid1, pid2), out bool exists, samestep);
         if (exists)
             return rayFact;
 
@@ -58,7 +58,7 @@ public class FactManager : MonoBehaviour
         {
             if (Math3d.IsPointApproximatelyOnLine(rayP1.Point, rayFact.Dir, hit.transform.position))
             {
-                AddOnLineFact(hit.transform.gameObject.GetComponent<FactObject>().Id, rayFact.Id, GetFirstEmptyID(), true);
+                AddOnLineFact(hit.transform.gameObject.GetComponent<FactObject>().URI, rayFact.URI, true);
             }
         }
 
@@ -69,16 +69,16 @@ public class FactManager : MonoBehaviour
             AddHitIfOnLine(hit);
 
         // for good measure
-        AddOnLineFact(rayFact.Pid1, rayFact.Id, GetFirstEmptyID(), true);
-        AddOnLineFact(rayFact.Pid2, rayFact.Id, GetFirstEmptyID(), true);
+        AddOnLineFact(rayFact.Pid1, rayFact.URI, true);
+        AddOnLineFact(rayFact.Pid2, rayFact.URI, true);
 
         return rayFact;
     }
 
 
-    public AngleFact AddAngleFact(int pid1, int pid2, int pid3, int id, bool samestep = false)
+    public AngleFact AddAngleFact(string pid1, string pid2, string pid3, bool samestep = false)
     {
-        return (AngleFact)AddFactIfNotFound(new AngleFact(id, pid1, pid2, pid3), out bool obsolete, samestep);
+        return (AngleFact)AddFactIfNotFound(new AngleFact(pid1, pid2, pid3), out bool obsolete, samestep);
     }
 
     public int GetFirstEmptyID()

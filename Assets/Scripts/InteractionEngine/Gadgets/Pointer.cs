@@ -28,12 +28,11 @@ public class Pointer : Gadget
     {
 
         if (!this.isActiveAndEnabled) return;
-        var pid = FactManager.GetFirstEmptyID();
-        FactManager.AddPointFact(hit, pid);
+        var pid = FactManager.AddPointFact(hit).URI;
 
         if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Ray"))
         {
-            FactManager.AddOnLineFact(pid, hit.transform.GetComponent<FactObject>().Id, FactManager.GetFirstEmptyID(), true);
+            FactManager.AddOnLineFact(pid, hit.transform.GetComponent<FactObject>().URI, true);
         }
     }
   

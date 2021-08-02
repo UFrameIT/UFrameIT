@@ -25,7 +25,7 @@ public class DropHandling : MonoBehaviour, IDropHandler, IPointerClickHandler
         current.transform.SetParent(gameObject.transform, false);
 
         currentFact = eventData.pointerDrag.GetComponent<FactWrapper>().fact;
-        Debug.Log("recieved Fact: " + currentFact.backendURI);
+        Debug.Log("recieved Fact: " + currentFact.URI);
 
         CommunicationEvents.NewAssignmentEvent.Invoke();
     }

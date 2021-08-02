@@ -49,16 +49,16 @@ public class AngleTool : Gadget
         if (!this.isActiveAndEnabled) return;
         if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
-            PointFact tempFact = (PointFact)Facts[hit.transform.GetComponent<FactObject>().Id];
+            PointFact tempFact = (PointFact)Facts[hit.transform.GetComponent<FactObject>().URI];
 
             //If two points were already selected and now the third point got selected
             if (this.angleModeIsFirstPointSelected && this.angleModeIsSecondPointSelected)
             {
                 //Create AngleFact
                 //Check if new Point is equal to one of the previous points -> if true -> cancel
-                if (!(this.angleModeFirstPointSelected.Id == tempFact.Id || this.angleModeSecondPointSelected.Id == tempFact.Id))
+                if (!(this.angleModeFirstPointSelected.URI == tempFact.URI || this.angleModeSecondPointSelected.URI == tempFact.URI))
                 {
-                    FactManager.AddAngleFact(((PointFact)this.angleModeFirstPointSelected).Id, ((PointFact)this.angleModeSecondPointSelected).Id, ((PointFact)tempFact).Id, FactManager.GetFirstEmptyID());
+                    FactManager.AddAngleFact(((PointFact)this.angleModeFirstPointSelected).URI, ((PointFact)this.angleModeSecondPointSelected).URI, ((PointFact)tempFact).URI);
                 }
 
                 ResetGadget();
@@ -67,7 +67,7 @@ public class AngleTool : Gadget
             else if (this.angleModeIsFirstPointSelected && !this.angleModeIsSecondPointSelected)
             {
                 //Check if the 2 selected points are the same: If not
-                if (this.angleModeFirstPointSelected.Id != tempFact.Id)
+                if (this.angleModeFirstPointSelected.URI != tempFact.URI)
                 {
                     this.angleModeIsSecondPointSelected = true;
                     this.angleModeSecondPointSelected = tempFact;
@@ -141,9 +141,9 @@ public class AngleTool : Gadget
         foreach (var entry in Facts)
         {
             Fact fact = entry.Value;
-            if (fact is PointFact && fact.Id != angleModeFirstPointSelected.Id && fact.Id != angleModeSecondPointSelected.Id && nearestPoint == null)
+            if (fact is PointFact && fact.URI != angleModeFirstPointSelected.URI && fact.URI != angleModeSecondPointSelected.URI && nearestPoint == null)
                 nearestPoint = (PointFact)fact;
-            else if (fact is PointFact && fact.Id != angleModeFirstPointSelected.Id && fact.Id != angleModeSecondPointSelected.Id && (nearestPoint.Point - currentPosition).magnitude > (((PointFact)fact).Point - currentPosition).magnitude)
+            else if (fact is PointFact && fact.URI != angleModeFirstPointSelected.URI && fact.URI != angleModeSecondPointSelected.URI && (nearestPoint.Point - currentPosition).magnitude > (((PointFact)fact).Point - currentPosition).magnitude)
                 nearestPoint = (PointFact)fact;
         }
 

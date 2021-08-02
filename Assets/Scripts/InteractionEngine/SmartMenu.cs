@@ -7,7 +7,7 @@ public class SmartMenu : MonoBehaviour
 
     public void DestroyObject()
     {
-        CommunicationEvents.Facts.Remove(CommunicationEvents.Facts[transform.parent.GetComponent<FactObject>().Id]);
+        CommunicationEvents.Facts.Remove(CommunicationEvents.Facts[transform.parent.GetComponent<FactObject>().URI]);
     }
 
 

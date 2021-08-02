@@ -81,7 +81,9 @@ public class StartServer : MonoBehaviour
     {
         UnityWebRequest request = UnityWebRequest.Get(CommunicationEvents.ServerAdress + "/scroll/list");
         yield return request.SendWebRequest();
-        if (request.isNetworkError || request.isHttpError)
+
+        if (request.result == UnityWebRequest.Result.ConnectionError
+         || request.result == UnityWebRequest.Result.ProtocolError)
         {
             UnityEngine.Debug.Log("no running server " + request.error);
 
@@ -106,7 +108,8 @@ public class StartServer : MonoBehaviour
             {
                 request = UnityWebRequest.Get(CommunicationEvents.ServerAdress + "/scroll/list");
                 yield return request.SendWebRequest();
-                if (request.isNetworkError || request.isHttpError)
+                if (request.result == UnityWebRequest.Result.ConnectionError
+                 || request.result == UnityWebRequest.Result.ProtocolError)
                 {
                     // UnityEngine.Debug.Log("no running server");
                 }

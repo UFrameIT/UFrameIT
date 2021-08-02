@@ -68,8 +68,10 @@ public class DisplayScrolls : MonoBehaviour
         {
             request = UnityWebRequest.Get(CommunicationEvents.ServerAdress + "/scroll/list");
             request.method = UnityWebRequest.kHttpVerbGET;
-            yield return request.Send();
-            if (request.isNetworkError || request.isHttpError)
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.ConnectionError
+             || request.result == UnityWebRequest.Result.ProtocolError)
             {
                 Debug.LogWarning(request.error);
                 Debug.Log("GET Scroll/list failed. Attempt: " + (i + 1).ToString());
@@ -80,7 +82,8 @@ public class DisplayScrolls : MonoBehaviour
             }
         }
 
-        if (request.isNetworkError || request.isHttpError)
+        if (request.result == UnityWebRequest.Result.ConnectionError
+         || request.result == UnityWebRequest.Result.ProtocolError)
         {
             Debug.LogWarning(request.error);
             string jsonString = File.ReadAllText(Application.streamingAssetsPath + "/scrolls.json");

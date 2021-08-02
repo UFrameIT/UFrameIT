@@ -43,8 +43,10 @@ public class AddFactResponse
 
         //TODO: implement real asynchronous communication ...
         AsyncOperation op = www.SendWebRequest();
-        while (!op.isDone) { }
-        if (www.isNetworkError || www.isHttpError)
+        while (!op.isDone) ;
+
+        if (www.result == UnityWebRequest.Result.ConnectionError
+         || www.result == UnityWebRequest.Result.ProtocolError)
         {
             Debug.LogWarning(www.error);
             return new AddFactResponse();
@@ -61,18 +63,11 @@ public abstract class Fact
 {
     public GameObject Representation;
 
-    public string backendURI;
+    public string URI { get { return _URI; } }
+    protected string _URI;
     public string Label;
-    public int Id
-    {
-        get { return _id; }
-        set
-        {
-            _id = value;
-            Label = getLetter(_id);
-        }
-    }
-    private int _id;
+
+    private static int LabelId = 0;
 
 
     public void rename(string newLabel)
@@ -83,7 +78,7 @@ public abstract class Fact
     //If FactType depends on other Facts, e.g. AngleFacts depend on 3 PointFacts
     public abstract Boolean hasDependentFacts();
 
-    public abstract int[] getDependentFactIds();
+    public abstract string[] getDependentFactIds();
 
     public abstract GameObject instantiateDisplay(GameObject prefab, Transform transform);
 
@@ -98,9 +93,11 @@ public abstract class Fact
 
     public abstract override int GetHashCode();
 
-    public static string getLetter(int Id)
+    protected abstract string generateLabel(); 
+
+    protected string generateLetter()
     {
-        return ((Char)(64 + Id + 1)).ToString();
+        return ((char)(64 + LabelId++ + 1)).ToString();
     }
 }
 
@@ -122,24 +119,33 @@ public abstract class FactWrappedCRTP<T>: Fact where T: FactWrappedCRTP<T>
 public abstract class AbstractLineFact: FactWrappedCRTP<AbstractLineFact>
 {
     //Id's of the 2 Point-Facts that are connected
-    public int Pid1, Pid2;
+    public string Pid1, Pid2;
     // normalized Direction from Pid1 to Pid2
     public Vector3 Dir;
 
 
     //only for temporary Use of LineFacts.
-    public AbstractLineFact() { }
+    //public AbstractLineFact() { }
 
-    //public AbstractLineFact(int i, int pid1, int pid2);
+    public AbstractLineFact(string pid1, string pid2)
+    {
+        set_public_members(pid1, pid2);
+    }
 
-    public AbstractLineFact(int pid1, int pid2, string backendURI)
+    public AbstractLineFact(string pid1, string pid2, string backendURI)
+    {
+        set_public_members(pid1, pid2);
+        this._URI = backendURI;
+    }
+
+    private void set_public_members(string pid1, string pid2)
     {
         this.Pid1 = pid1;
         this.Pid2 = pid2;
+        this.Label = generateLabel();
         PointFact pf1 = Facts[pid1] as PointFact;
         PointFact pf2 = Facts[pid2] as PointFact;
         this.Dir = (pf2.Point - pf1.Point).normalized;
-        this.backendURI = backendURI;
     }
 
     public override bool hasDependentFacts()
@@ -147,23 +153,25 @@ public abstract class AbstractLineFact: FactWrappedCRTP<AbstractLineFact>
         return true;
     }
 
-    public override int[] getDependentFactIds()
+    public override string[] getDependentFactIds()
     {
-        return new int[] { Pid1, Pid2 };
+        return new string[] { Pid1, Pid2 };
     }
 
     public override int GetHashCode()
     {
-        return this.Pid1 ^ this.Pid2;
+        return this.Pid1.GetHashCode() ^ this.Pid2.GetHashCode();
     }
 }
 
 public abstract class AbstractLineFactWrappedCRTP<T>: AbstractLineFact where T: AbstractLineFactWrappedCRTP<T>
 {
     //only for temporary Use of LineFacts.
-    public AbstractLineFactWrappedCRTP() { }
+    //public AbstractLineFactWrappedCRTP() { }
 
-    public AbstractLineFactWrappedCRTP (int pid1, int pid2, string backendURI) : base(pid1, pid2, backendURI) { }
+    public AbstractLineFactWrappedCRTP (string pid1, string pid2) : base(pid1, pid2) { }
+
+    public AbstractLineFactWrappedCRTP (string pid1, string pid2, string backendURI) : base(pid1, pid2, backendURI) { }
 
     protected override bool EquivalentWrapped(AbstractLineFact f1, AbstractLineFact f2)
     {
@@ -181,11 +189,11 @@ public class PointFact : FactWrappedCRTP<PointFact>
     public Vector3 Normal;
 
 
-    public PointFact(int i, Vector3 P, Vector3 N)
+    public PointFact(Vector3 P, Vector3 N)
     {
-        this.Id = i;
         this.Point = P;
         this.Normal = N;
+        this.Label = generateLabel();
 
         List<MMTTerm> arguments = new List<MMTTerm>
         {
@@ -203,15 +211,16 @@ public class PointFact : FactWrappedCRTP<PointFact>
         string body = MMTSymbolDeclaration.ToJson(mmtDecl);
 
         AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add", body);
-        this.backendURI = res.uri;
-        Debug.Log(this.backendURI);
+        this._URI = res.uri;
+        Debug.Log(this.URI);
     }
 
     public PointFact(float a, float b, float c, string uri)
     {
         this.Point = new Vector3(a, b, c);
         this.Normal = new Vector3(0, 1, 0);
-        this.backendURI = uri;
+        this.Label = generateLabel();
+        this._URI = uri;
     }
 
     public static PointFact parseFact(Scroll.ScrollFact fact) {
@@ -229,20 +238,26 @@ public class PointFact : FactWrappedCRTP<PointFact>
         }
     }
 
+    protected override string generateLabel()
+    {
+        return generateLetter();
+    }
+
     public override Boolean hasDependentFacts() {
         return false;
     }
 
-    public override int[] getDependentFactIds() {
-        return new int[] { }; ;
+    public override string[] getDependentFactIds() {
+        return new string[] { }; ;
     }
 
     public override GameObject instantiateDisplay(GameObject prefab, Transform transform) {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
-        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(this.Id);
+        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = this.Label;
         obj.GetComponent<FactWrapper>().fact = this;
         return obj;
     }
+
     public override int GetHashCode()
     {
         return this.Point.GetHashCode() ^ this.Normal.GetHashCode();
@@ -257,23 +272,15 @@ public class PointFact : FactWrappedCRTP<PointFact>
 
 public class LineFact : AbstractLineFactWrappedCRTP<LineFact>
 {
-    public LineFact(int pid1, int pid2, string backendURI) : base(pid1, pid2, backendURI) { }
+    public LineFact(string pid1, string pid2, string backendURI) : base(pid1, pid2, backendURI) { }
 
-    public LineFact(int i, int pid1, int pid2)
+    public LineFact(string pid1, string pid2) : base(pid1, pid2)
     {
-        this.Id = i;
-        this.Pid1 = pid1;
-        this.Pid2 = pid2;
         PointFact pf1 = Facts[pid1] as PointFact;
         PointFact pf2 = Facts[pid2] as PointFact;
-        this.Dir = (pf2.Point - pf1.Point).normalized;
 
-        //Label is currently set to Fact.setId
-        //Set Label to StringConcatenation of Points
-        this.Label = pf1.Label + pf2.Label;
-
-        string p1URI = pf1.backendURI;
-        string p2URI = pf2.backendURI;
+        string p1URI = pf1.URI;
+        string p2URI = pf2.URI;
         float v = (pf1.Point - pf2.Point).magnitude;
 
         MMTTerm lhs =
@@ -292,31 +299,35 @@ public class LineFact : AbstractLineFactWrappedCRTP<LineFact>
         MMTValueDeclaration mmtDecl = new MMTValueDeclaration(this.Label, lhs, valueTp, value);
         string body = MMTDeclaration.ToJson(mmtDecl);
         AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress + "/fact/add", body);
-        this.backendURI = res.uri;
-        Debug.Log(this.backendURI);
+        this._URI = res.uri;
+        Debug.Log(this.URI);
     }
 
     public static LineFact parseFact(Scroll.ScrollFact fact)
     {
-        String uri = fact.@ref.uri;
-        String pointAUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[0]).uri;
-        String pointBUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[1]).uri;
+        string uri = fact.@ref.uri;
+        string pointAUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[0]).uri;
+        string pointBUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[1]).uri;
 
-        if (Facts.searchURI(pointAUri, out int pid1)
-         && Facts.searchURI(pointBUri, out int pid2))
-            return new LineFact(pid1, pid2, uri);
+        if (Facts.ContainsKey(pointAUri)
+         && Facts.ContainsKey(pointBUri))
+            return new LineFact(pointAUri, pointBUri, uri);
 
         //If dependent facts do not exist return null
         else {
             return null;
         }
     }
+    protected override string generateLabel()
+    {
+        return "[" + Facts[Pid1].Label + Facts[Pid2].Label + "]";
+    }
 
     public override GameObject instantiateDisplay(GameObject prefab, Transform transform)
     {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
-        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(Facts[this.Pid1].Id);
-        obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(Facts[this.Pid2].Id);
+        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = Facts[this.Pid1].Label;
+        obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = Facts[this.Pid2].Label;
         obj.GetComponent<FactWrapper>().fact = this;
         return obj;
     }
@@ -339,19 +350,15 @@ public class LineFact : AbstractLineFactWrappedCRTP<LineFact>
 
 public class RayFact : AbstractLineFactWrappedCRTP<RayFact>
 {
-    RayFact(int pid1, int pid2, string backendURI) : base(pid1, pid2, backendURI) { }
+    public RayFact(string pid1, string pid2, string backendURI) : base(pid1, pid2, backendURI) { }
 
-    public RayFact(int i, int pid1, int pid2)
+    public RayFact(string pid1, string pid2) : base(pid1, pid2)
     {
-        this.Id = i;
-        this.Pid1 = pid1;
-        this.Pid2 = pid2;
         PointFact pf1 = Facts[pid1] as PointFact;
         PointFact pf2 = Facts[pid2] as PointFact;
-        this.Dir = (pf2.Point - pf1.Point).normalized;
 
-        string p1URI = pf1.backendURI;
-        string p2URI = pf2.backendURI;
+        string p1URI = pf1.URI;
+        string p2URI = pf2.URI;
 
         List<MMTTerm> arguments = new List<MMTTerm>
         {
@@ -368,30 +375,35 @@ public class RayFact : AbstractLineFactWrappedCRTP<RayFact>
         string body = MMTSymbolDeclaration.ToJson(mmtDecl);
 
         AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress + "/fact/add", body);
-        this.backendURI = res.uri;
-        Debug.Log(this.backendURI);
+        this._URI = res.uri;
+        Debug.Log(this.URI);
     }
 
     public static RayFact parseFact(Scroll.ScrollFact fact)
     {
-        String uri = fact.@ref.uri;
+        string uri = fact.@ref.uri;
         if ((OMA)((Scroll.ScrollSymbolFact)fact).df != null)
         {
-            String pointAUri = ((OMS)((OMA)((Scroll.ScrollSymbolFact)fact).df).arguments[0]).uri;
-            String pointBUri = ((OMS)((OMA)((Scroll.ScrollSymbolFact)fact).df).arguments[1]).uri;
+            string pointAUri = ((OMS)((OMA)((Scroll.ScrollSymbolFact)fact).df).arguments[0]).uri;
+            string pointBUri = ((OMS)((OMA)((Scroll.ScrollSymbolFact)fact).df).arguments[1]).uri;
 
-            if (Facts.searchURI(pointAUri, out int pid1)
-             && Facts.searchURI(pointBUri, out int pid2))
-                return new RayFact(pid1, pid2, uri);
+            if (Facts.ContainsKey(pointAUri)
+             && Facts.ContainsKey(pointBUri))
+                return new RayFact(pointAUri, pointBUri, uri);
 
             //If dependent facts do not exist return null
         }
         return null;
     }
 
+    protected override string generateLabel()
+    {
+        return "–" + Facts[Pid1].Label + Facts[Pid2].Label + "–";
+    }
+
     public override GameObject instantiateDisplay(GameObject prefab, Transform transform) {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
-        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(this.Id);
+        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = this.Label;
         //obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(Facts2[f.Pid2].Id);
         obj.GetComponent<FactWrapper>().fact = this;
         return obj;
@@ -414,20 +426,18 @@ public class RayFact : AbstractLineFactWrappedCRTP<RayFact>
 public class OnLineFact : FactWrappedCRTP<OnLineFact>
 {
     //Id's of the Point and the Line it's on
-    public int Pid, Rid;
+    public string Pid, Rid;
 
-    public OnLineFact(int i, int pid, int rid)
+    public OnLineFact(string pid, string rid)
     {
-        this.Id = i;
         this.Pid = pid;
         this.Rid = rid;
+        this.Label = generateLabel();
+
         PointFact pf = Facts[pid] as PointFact;
         RayFact rf = Facts[rid] as RayFact;
-        string pURI = pf.backendURI;
-        string rURI = rf.backendURI;
-
-        //Set Label to StringConcatenation of Points
-        this.Label = pf.Label + " ∈ " + rf.Label;
+        string pURI = pf.URI;
+        string rURI = rf.URI;
 
         List<MMTTerm> innerArguments = new List<MMTTerm>
         {
@@ -449,29 +459,35 @@ public class OnLineFact : FactWrappedCRTP<OnLineFact>
         string body = MMTSymbolDeclaration.ToJson(mmtDecl);
 
         AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress + "/fact/add", body);
-        this.backendURI = res.uri;
-        Debug.Log(this.backendURI);
+        this._URI = res.uri;
+        Debug.Log(this.URI);
     }
 
-    public OnLineFact(int pid, int rid, string uri) {
+    public OnLineFact(string pid, string rid, string uri)
+    {
         this.Pid = pid;
         this.Rid = rid;
-        this.backendURI = uri;
+        this.Label = generateLabel();
+        this._URI = uri;
     }
 
     public static OnLineFact parseFact(Scroll.ScrollFact fact)
     {
-        String uri = fact.@ref.uri;
-        String lineUri = ((OMS)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[0]).uri;
-        String pointUri = ((OMS)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[1]).uri;
+        string uri = fact.@ref.uri;
+        string lineUri = ((OMS)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[0]).uri;
+        string pointUri = ((OMS)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[1]).uri;
 
-        if (Facts.searchURI(lineUri, out int rid)
-         && Facts.searchURI(pointUri, out int pid))
-            return new OnLineFact(pid, rid, uri);
+        if (Facts.ContainsKey(pointUri)
+         && Facts.ContainsKey(lineUri))
+            return new OnLineFact(pointUri, lineUri, uri);
 
         //If dependent facts do not exist return null
         else
             return null;
+    }
+    protected override string generateLabel()
+    {
+        return Facts[Pid].Label + "∈" + Facts[Rid].Label;
     }
 
     public override Boolean hasDependentFacts()
@@ -479,23 +495,23 @@ public class OnLineFact : FactWrappedCRTP<OnLineFact>
         return true;
     }
 
-    public override int[] getDependentFactIds()
+    public override string[] getDependentFactIds()
     {
-        return new int[] { Pid, Rid };
+        return new string[] { Pid, Rid };
     }
 
     public override GameObject instantiateDisplay(GameObject prefab, Transform transform)
     {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
-        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(Facts[this.Pid].Id);
-        obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(Facts[this.Rid].Id);
+        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = Facts[this.Pid].Label;
+        obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = Facts[this.Rid].Label;
         obj.GetComponent<FactWrapper>().fact = this;
         return obj;
     }
 
     public override int GetHashCode()
     {
-        return this.Pid ^ this.Rid;
+        return this.Pid.GetHashCode() ^ this.Rid.GetHashCode();
     }
 
     protected override bool EquivalentWrapped(OnLineFact f1, OnLineFact f2)
@@ -515,43 +531,30 @@ public class OnLineFact : FactWrappedCRTP<OnLineFact>
 public class AngleFact : FactWrappedCRTP<AngleFact>
 {
     //Id's of the 3 Point-Facts, where Pid2 is the point, where the angle is
-    public int Pid1, Pid2, Pid3;
+    public string Pid1, Pid2, Pid3;
+    public bool is_right_angle;
 
-    //only for temporary Use of AngleFacts
-    public AngleFact() { }
-
-    public AngleFact(int i, int pid1, int pid2, int pid3)
+    public AngleFact(string pid1, string pid2, string pid3)
     {
-        this.Id = i;
         this.Pid1 = pid1;
         this.Pid2 = pid2;
         this.Pid3 = pid3;
+
         PointFact pf1 = Facts[pid1] as PointFact;
         PointFact pf2 = Facts[pid2] as PointFact;
         PointFact pf3 = Facts[pid3] as PointFact;
 
-        string p1URI = pf1.backendURI;
-        string p2URI = pf2.backendURI;
-        string p3URI = pf3.backendURI;
-        float v = Vector3.Angle((pf1.Point - pf2.Point), (pf3.Point - pf2.Point));
+        float v = GetAngle(); // sets is_right_angle
+        this.Label = generateLabel(); //needs is_right_angle
 
         MMTDeclaration mmtDecl;
-
-        if (Mathf.Abs(v - 90.0f) < 0.01)
-        {
-            v = 90.0f;
-            //Label is currently set to Fact.setId
-            //Set Label to StringConcatenation of Points
-            this.Label = "⊾" + pf1.Label + pf2.Label + pf3.Label;
+        string p1URI = pf1.URI;
+        string p2URI = pf2.URI;
+        string p3URI = pf3.URI;
+        if (is_right_angle)
             mmtDecl = generate90DegreeAngleDeclaration(v, p1URI, p2URI, p3URI);
-        }
         else
-        {
-            //Label is currently set to Fact.setId
-            //Set Label to StringConcatenation of Points
-            this.Label = "∠" + pf1.Label + pf2.Label + pf3.Label;
             mmtDecl = generateNot90DegreeAngleDeclaration(v, p1URI, p2URI, p3URI);
-        }
 
         Debug.Log("angle: " + v);
 
@@ -559,24 +562,29 @@ public class AngleFact : FactWrappedCRTP<AngleFact>
 
         Debug.Log(body);
         AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add", body);
-        this.backendURI = res.uri;
-        Debug.Log(this.backendURI);
+        this._URI = res.uri;
+        Debug.Log(this.URI);
     }
 
-    public AngleFact(int Pid1, int Pid2, int Pid3, string backendURI)
+    public AngleFact(string Pid1, string Pid2, string Pid3, string backendURI)
     {
         this.Pid1 = Pid1;
         this.Pid2 = Pid2;
         this.Pid3 = Pid3;
-        this.backendURI = backendURI;
+
+        GetAngle();
+        this.Label = generateLabel();
+
+        this._URI = backendURI;
     }
 
     public static AngleFact parseFact(Scroll.ScrollFact fact)
     {
-        String uri = fact.@ref.uri;
-        String pointAUri;
-        String pointBUri;
-        String pointCUri;
+        string uri = fact.@ref.uri;
+        string
+            pointAUri,
+            pointBUri,
+            pointCUri;
 
         //If angle is not a 90Degree-Angle
         if (fact.GetType().Equals(typeof(Scroll.ScrollValueFact)))
@@ -592,14 +600,31 @@ public class AngleFact : FactWrappedCRTP<AngleFact>
             pointCUri = ((OMS)((OMA)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[1]).arguments[2]).uri;
         }
 
-        if (Facts.searchURI(pointAUri, out int pid1)
-         && Facts.searchURI(pointBUri, out int pid2)
-         && Facts.searchURI(pointCUri, out int pid3))
+        if (Facts.ContainsKey(pointAUri)
+         && Facts.ContainsKey(pointBUri)
+         && Facts.ContainsKey(pointCUri))
 
-            return new AngleFact(pid1, pid2, pid3, uri);
+            return new AngleFact(pointAUri, pointBUri, pointCUri, uri);
 
         else    //If dependent facts do not exist return null
             return null;
+    }
+
+    protected override string generateLabel()
+    {
+        return (is_right_angle ? "⊾" : "∠") + Facts[Pid1].Label + Facts[Pid2].Label + Facts[Pid2].Label;
+    }
+
+    private float GetAngle()
+    {
+        PointFact pf1 = Facts[Pid1] as PointFact;
+        PointFact pf2 = Facts[Pid2] as PointFact;
+        PointFact pf3 = Facts[Pid3] as PointFact;
+
+        float v = Vector3.Angle((pf1.Point - pf2.Point), (pf3.Point - pf2.Point));
+        this.is_right_angle = Mathf.Abs(v - 90.0f) < 0.01;
+
+        return is_right_angle ? 90f : v;
     }
 
     private MMTDeclaration generate90DegreeAngleDeclaration(float val, string p1URI, string p2URI, string p3URI) {
@@ -616,7 +641,7 @@ public class AngleFact : FactWrappedCRTP<AngleFact>
                         new OMS(p3URI)
                     }
                 ),
-                new OMF(val)
+                new OMF(val) // 90f
             }
         );
         
@@ -649,23 +674,23 @@ public class AngleFact : FactWrappedCRTP<AngleFact>
         return true;
     }
 
-    public override int[] getDependentFactIds()
+    public override string[] getDependentFactIds()
     {
-        return new int[] { Pid1, Pid2, Pid3 };
+        return new string[] { Pid1, Pid2, Pid3 };
     }
 
     public override GameObject instantiateDisplay(GameObject prefab, Transform transform) {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
-        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(Facts[this.Pid1].Id);
-        obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(Facts[this.Pid2].Id);
-        obj.transform.GetChild(2).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(Facts[this.Pid3].Id);
+        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = Facts[this.Pid1].Label;
+        obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = Facts[this.Pid2].Label;
+        obj.transform.GetChild(2).gameObject.GetComponent<TextMeshProUGUI>().text = Facts[this.Pid3].Label;
         obj.GetComponent<FactWrapper>().fact = this;
         return obj;
     }
 
     public override int GetHashCode()
     {
-        return this.Pid1 ^ this.Pid2 ^ this.Pid3;
+        return this.Pid1.GetHashCode() ^ this.Pid2.GetHashCode() ^ this.Pid3.GetHashCode();
     }
 
     protected override bool EquivalentWrapped(AngleFact f1, AngleFact f2)

@@ -88,7 +88,7 @@ public class WorldCursor : MonoBehaviour
                 if(Hit.collider.gameObject.layer == LayerMask.NameToLayer("Ray")
                     || Hit.collider.gameObject.layer == LayerMask.NameToLayer("Line"))
                 {
-                    int id = Hit.collider.gameObject.GetComponent<FactObject>().Id;
+                    var id = Hit.collider.gameObject.GetComponent<FactObject>().URI;
                     AbstractLineFact lineFact = CommunicationEvents.Facts[id] as AbstractLineFact;
                     PointFact p1 =  CommunicationEvents.Facts[lineFact.Pid1] as PointFact;
 

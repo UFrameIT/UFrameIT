@@ -45,20 +45,20 @@ public class DisplayFacts : MonoBehaviour
     }
 
     public void AddFact(Fact fact) {
-        int fid = fact.Id;
+        var fid = fact.URI;
         var obj = CreateDisplay(transform, fact);
-        obj.GetComponent<RectTransform>().localPosition = GetPosition(fid);
-        displayedFacts.Add(fact.backendURI, obj);
+        obj.GetComponent<RectTransform>().localPosition = GetPosition(displayedFacts.Count);
+        displayedFacts.Add(fact.URI, obj);
     }
 
     public void RemoveFact(Fact fact)
     {
-        GameObject.Destroy(displayedFacts[fact.backendURI]);
-        displayedFacts.Remove(fact.backendURI);
+        GameObject.Destroy(displayedFacts[fact.URI]);
+        displayedFacts.Remove(fact.URI);
     }
 
     public void AnimateFact(Fact fact) {
-        var factIcon = displayedFacts[fact.backendURI];
+        var factIcon = displayedFacts[fact.URI];
         factIcon.GetComponentInChildren<ImageHintAnimation>().AnimationTrigger();
     }
 

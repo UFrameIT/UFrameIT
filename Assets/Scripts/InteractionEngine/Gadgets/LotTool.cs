@@ -47,14 +47,14 @@ public class LotTool : Gadget
 
     public override void OnHit(RaycastHit hit)
     {
-        void CreateRayAndAngles(int pidIntersectionPoint, int pidLotPoint, bool samestep)
+        void CreateRayAndAngles(string pidIntersectionPoint, string pidLotPoint, bool samestep)
         {
-            FactManager.AddRayFact(pidIntersectionPoint, pidLotPoint, FactManager.GetFirstEmptyID(), samestep);
+            FactManager.AddRayFact(pidIntersectionPoint, pidLotPoint, samestep);
 
             //TODO: create at all? / for all points on basline?
             FactManager.AddAngleFact(
                 this.LotModeLineSelected.Pid1 == pidIntersectionPoint ? this.LotModeLineSelected.Pid2 : this.LotModeLineSelected.Pid1,
-                pidIntersectionPoint, pidLotPoint, FactManager.GetFirstEmptyID(), true);
+                pidIntersectionPoint, pidLotPoint, true);
         }
 
         if (!this.isActiveAndEnabled) return;
@@ -62,19 +62,17 @@ public class LotTool : Gadget
         //If LotPoint is on baseLine
         if (this.LotModeIsPointSelected && (hit.transform.gameObject.layer == LayerMask.NameToLayer("Default") || hit.transform.gameObject.layer == LayerMask.NameToLayer("Tree")))
         {
-            var pidLotPoint = FactManager.GetFirstEmptyID();
             Vector3 LotPoint = Math3d.ProjectPointOnLine(hit.point, this.LotModeLineSelected.Dir, this.LotModeIntersectionPoint.Point);
-            //TODO: which normal?
-            FactManager.AddPointFact(pidLotPoint, LotPoint, hit.normal);
 
-            CreateRayAndAngles(this.LotModeIntersectionPoint.Id, pidLotPoint, true);
+            //TODO: which normal?
+            CreateRayAndAngles(this.LotModeIntersectionPoint.URI, FactManager.AddPointFact(LotPoint, hit.normal).URI, true);
             this.ResetGadget();
         }
 
         //If baseline already selected and point selected
         else if (this.LotModeIsLineSelected && !this.LotModeIsPointSelected && hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
-            PointFact tempFact = Facts[hit.transform.GetComponent<FactObject>().Id] as PointFact;
+            PointFact tempFact = Facts[hit.transform.GetComponent<FactObject>().URI] as PointFact;
 
             Vector3 intersectionPoint = Math3d.ProjectPointOnLine(this.LotModeLinePointA.Point, this.LotModeLineSelected.Dir, tempFact.Point);
 
@@ -87,13 +85,12 @@ public class LotTool : Gadget
 
             //TODO: test Facts existance
             //add Facts
-            var intersectionId = FactManager.GetFirstEmptyID();
-            FactManager.AddPointFact(intersectionId, intersectionPoint, this.LotModeLineHit.normal);
+            var intersectionId = FactManager.AddPointFact(intersectionPoint, this.LotModeLineHit.normal).URI;
 
             if(this.LotModeLineSelected is RayFact) //Add OnLineFact only on Ray not Line
-                FactManager.AddOnLineFact(intersectionId, this.LotModeLineSelected.Id, FactManager.GetFirstEmptyID(), true);
+                FactManager.AddOnLineFact(intersectionId, this.LotModeLineSelected.URI, true);
 
-            CreateRayAndAngles(intersectionId, tempFact.Id, true);
+            CreateRayAndAngles(intersectionId, tempFact.URI, true);
             this.ResetGadget();
         }
 
@@ -102,7 +99,7 @@ public class LotTool : Gadget
             && (hit.transform.gameObject.layer == LayerMask.NameToLayer("Ray")
             || hit.transform.gameObject.layer == LayerMask.NameToLayer("Line")))
         {
-            Fact tempFact = Facts[hit.transform.GetComponent<FactObject>().Id];
+            Fact tempFact = Facts[hit.transform.GetComponent<FactObject>().URI];
 
             //Activate LineDrawing for preview
             this.LotModeIsLineSelected = true;

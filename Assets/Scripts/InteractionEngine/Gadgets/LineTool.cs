@@ -40,13 +40,13 @@ public class LineTool : Gadget
         if (!this.isActiveAndEnabled) return;
         if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
-            Fact tempFact = Facts[hit.transform.GetComponent<FactObject>().Id];
+            Fact tempFact = Facts[hit.transform.GetComponent<FactObject>().URI];
 
             //If first point was already selected AND second point != first point
-            if (this.LineModeIsFirstPointSelected && this.LineModeFirstPointSelected.Id != tempFact.Id)
+            if (this.LineModeIsFirstPointSelected && this.LineModeFirstPointSelected.URI != tempFact.URI)
             {
                 //Create LineFact
-                FactManager.AddRayFact(this.LineModeFirstPointSelected.Id, tempFact.Id, FactManager.GetFirstEmptyID());
+                FactManager.AddRayFact(this.LineModeFirstPointSelected.URI, tempFact.URI);
 
                 this.ResetGadget();
             }
@@ -70,12 +70,10 @@ public class LineTool : Gadget
 
                 if (Physics.Raycast(hit.transform.gameObject.transform.position - Vector3.down * 2, Vector3.down, out downHit))
                 {
-                    int idA = downHit.transform.gameObject.GetComponent<FactObject>().Id;
-                    int idB = this.LineModeFirstPointSelected.Id;
-                    int idC = FactManager.GetFirstEmptyID();
-                    FactManager.AddPointFact(hit, idC);
                     //Create LineFact
-                    FactManager.AddAngleFact(idA, idB, idC, FactManager.GetFirstEmptyID());
+                    var idA = downHit.transform.gameObject.GetComponent<FactObject>().URI;
+                    var idB = this.LineModeFirstPointSelected.URI;
+                    FactManager.AddAngleFact(idA, idB, FactManager.AddPointFact(hit).URI);
 
                     this.ResetGadget();
                 }

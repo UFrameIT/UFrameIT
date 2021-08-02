@@ -20,7 +20,7 @@ namespace UnityStandardAssets.Utility
             {
                 transform.DetachChildren();
             }
-            DestroyObject(gameObject);
+            Destroy(gameObject);
         }
     }
 }
