@@ -39,25 +39,25 @@ public class FactOrganizer: Dictionary<int, Fact>
         {
             this.Id = Id;
             this.samestep = samestep;
-            this.steplink = samestep ? that.Workflow[that.Workflow.Count - 1].steplink : that.Workflow.Count + 1;
             this.creation = creation;
 
             if (samestep)
-            // steplink = first steptail ? steproot : previous.steplink
+            // steplink = !first_steptail ? previous.steplink : steproot
             {
-                stepnote prev = that.Workflow[that.Workflow.Count - 1];
-                this.steplink = prev.samestep ? prev.steplink : that.Workflow.Count - 1;
+                stepnote prev = that.Workflow[that.marker - 1];
+                this.steplink = prev.samestep ? prev.steplink : that.marker - 1;
             }
             else
             // steproot sets steplink after itself (end of steptail)
-                this.steplink = that.Workflow.Count + 1;
+                this.steplink = that.marker + 1;
 
         }
     }
 
     private struct meta
     {
-        // TODO? -> last occurence for safe_dependencies
+        // TODO? -> public int last_occurence for safe_dependencies
+
         // reference to first occurrence in Workflow
         public int workflow_id;
         // keeps track wether Fact is currently in Scene
@@ -111,6 +111,8 @@ public class FactOrganizer: Dictionary<int, Fact>
     private void WorkflowAdd(stepnote note)
     // adds Workflow; updates meta struct; Invokes Events
     {
+        PruneWorkflow();
+
         if (note.samestep)
         // update steplink of steproot
         {
@@ -118,6 +120,8 @@ public class FactOrganizer: Dictionary<int, Fact>
             tmp.steplink = Workflow.Count + 1;
             Workflow[note.steplink] = tmp;
         }
+        else
+            worksteps++;
 
         Workflow.Add(note);
         marker = Workflow.Count;
@@ -128,6 +132,33 @@ public class FactOrganizer: Dictionary<int, Fact>
         MetaInf[note.Id] = info;
 
         InvokeFactEvent(note.creation, note.Id);
+    }
+
+    private void PruneWorkflow()
+    // set current (displayed) state in stone; resets un-redo parameters
+    {
+        if (backlog > 0)
+        {
+            worksteps -= backlog;
+            backlog = 0;
+
+            for (int i = Workflow.Count - 1; i >= marker; i--)
+            // cleanup now obsolete Facts
+            {
+                stepnote last = Workflow[i];
+
+                if (MetaInf[last.Id].workflow_id == i)
+                // remove for good, if original creation gets pruned
+                {
+                    this[last.Id].delete();
+                    base.Remove(last.Id);
+                    MetaInf.Remove(last.Id);
+                }
+            }
+
+            // prune Worklfow down to marker
+            Workflow.RemoveRange(marker, Workflow.Count - marker);
+        }
     }
 
     public new void Add(int key, Fact value)
@@ -142,27 +173,6 @@ public class FactOrganizer: Dictionary<int, Fact>
     {
         if (resetted)
             this.hardreset(false);
-
-        else if (backlog > 0)
-        {
-            worksteps -= backlog;
-            backlog = 0;
-
-            //TODO! incorporate deletion/ multiples in Workflow
-            for (int i = Workflow.Count - 1; i >= marker; i--)
-            {
-                stepnote last = Workflow[i];
-
-                this[last.Id].delete();
-                base.Remove(last.Id);
-                MetaInf.Remove(last.Id);
-            }
-
-            Workflow.RemoveRange(marker, Workflow.Count - marker);
-        }
-
-        if (!samestep)
-            worksteps++;
 
         int key;
         if (exists = FindEquivalent(value, out Fact found))
@@ -179,7 +189,7 @@ public class FactOrganizer: Dictionary<int, Fact>
 
             key = value.Id;
             base.Add(key, value);
-            MetaInf.Add(key, new meta(Workflow.Count, true));
+            MetaInf.Add(key, new meta(marker, true));
         }
 
         WorkflowAdd(new stepnote(key, samestep, true, this));
@@ -201,9 +211,8 @@ public class FactOrganizer: Dictionary<int, Fact>
         return true;
     }
 
-    //TODO! test
     public bool Remove(int key, bool samestep = false)
-    //no reset check (impossible)
+    //no reset check needed (impossible state)
     {
         if (!base.ContainsKey(key))
             return false;
@@ -211,13 +220,16 @@ public class FactOrganizer: Dictionary<int, Fact>
         //TODO: see issue #58
 
         safe_dependencies(key, out List<int> deletethis);
-        yeetusdeletus(deletethis, samestep);
+
+        if(deletethis.Count > 0)
+        {
+            yeetusdeletus(deletethis, samestep);
+        }
 
         return true;
     }
 
-    // TODO: MMT: decide dependencies there
-    // TODO? handle deletions better
+    // TODO: MMT: decide dependencies there (remember virtual deletions in Unity (un-redo)!)
     // TODO? decrease runtime from O(n/2)
     private bool safe_dependencies(int key, out List<int> dependencies)
     // searches for dependencies of a Fact; returns false if any dependencies are steproots
@@ -230,7 +242,7 @@ public class FactOrganizer: Dictionary<int, Fact>
         int pos = MetaInf[key].workflow_id;
         dependencies.Add(key);
 
-        /* consequent!= samestep != dependent
+        /* consequent != samestep != dependent
         // get steproot
         if (Workflow[pos].samestep)
             pos = Workflow[pos].steplink;
@@ -242,7 +254,7 @@ public class FactOrganizer: Dictionary<int, Fact>
         */
 
         // accumulate facts that are dependent of dependencies
-        for (int i = pos; i < Workflow.Count; i++)
+        for (int i = pos; i < marker; i++)
         {
             if (!Workflow[i].creation)
             {
@@ -341,7 +353,7 @@ public class FactOrganizer: Dictionary<int, Fact>
     {
         foreach(var entry in this)
         {
-            if (invoke_event) //TODO: check if removed?
+            if (invoke_event) //TODO? check if removed
                 CommunicationEvents.RemoveFactEvent.Invoke(entry.Value);
             entry.Value.delete();
         }

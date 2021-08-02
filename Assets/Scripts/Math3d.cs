@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Math3d
 {
-    public const double vectorPrecission = 1e-4d; //For Vector comparisons
+    public const double vectorPrecission = 1e-5d; //For Vector comparisons
 
     private static Transform tempChild = null;
     private static Transform tempParent = null;

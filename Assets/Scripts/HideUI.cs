@@ -10,7 +10,8 @@ public class HideUI : MonoBehaviour
     public string
         modifier,
         modundo,
-        modredo;
+        modredo,
+        modreset;
 
     public UnityStandardAssets.Characters.FirstPerson.FirstPersonController CamControl;
     public bool LockOnly = true;
@@ -51,12 +52,14 @@ public class HideUI : MonoBehaviour
             }
         }
 
-        if (Input.GetButton(modifier))
+        else if (Input.GetButton(modifier))
         {
             if (Input.GetButtonDown(modundo))
                 Facts.undo();
             else if (Input.GetButtonDown(modredo))
                 Facts.redo();
+            else if (Input.GetButtonDown(modreset))
+                Facts.softreset();
         }
         
         /*

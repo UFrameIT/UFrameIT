@@ -234,7 +234,7 @@ public class PointFact : FactWrappedCRTP<PointFact>
     }
 
     public override int[] getDependentFactIds() {
-        return null;
+        return new int[] { }; ;
     }
 
     public override GameObject instantiateDisplay(GameObject prefab, Transform transform) {
@@ -399,6 +399,7 @@ public class RayFact : AbstractLineFactWrappedCRTP<RayFact>
 
     protected override bool EquivalentWrapped(RayFact f1, RayFact f2)
     {
+        // TODO! check for similar(float uncertanty!) Directions
         if (f1.Dir != f2.Dir && f1.Dir != -f2.Dir)
             return false;
 
