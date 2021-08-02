@@ -534,7 +534,7 @@ public class Math3d
     }
 
     //This function returns true if a point is approximately on a line.
-    //The line is regarded infinite.
+    //The line is regarded as being infinite.
     public static bool IsPointApproximatelyOnLine(Vector3 linePoint, Vector3 lineVec, Vector3 point, double precission = Math3d.vectorPrecission)
     {
 
@@ -543,7 +543,17 @@ public class Math3d
 
         double t = Vector3.Dot(linePointToPoint.normalized, lineVec);
 
-        return Math.Abs(t - 1d) < precission || Math.Abs(t) < precission;
+        return Math.Abs(Math.Abs(t) - 1d) < precission || Math.Abs(t) < precission;
+    }
+
+    //This function returns true if two Vector3s are approximately parallel
+    public static bool IsApproximatelyParallel(Vector3 vectorA, Vector3 vectorB, double precission = Math3d.vectorPrecission)
+    {
+        //SqrMagnitude(Abs(vectorA) - Abs(vectorB)) < precission
+        return Math.Pow(Math.Abs(vectorA.x) - Math.Abs(vectorB.x), 2)
+             + Math.Pow(Math.Abs(vectorA.y) - Math.Abs(vectorB.y), 2) 
+             + Math.Pow(Math.Abs(vectorA.z) - Math.Abs(vectorB.z), 2) 
+             < precission;
     }
 
     //This function returns a point which is a projection from a point to a line segment.

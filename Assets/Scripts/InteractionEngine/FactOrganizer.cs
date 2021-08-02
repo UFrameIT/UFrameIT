@@ -109,7 +109,7 @@ public class FactOrganizer: Dictionary<int, Fact>
     }
 
     private void WorkflowAdd(stepnote note)
-    // adds Workflow; updates meta struct; Invokes Events
+    // prunes & adds Workflow; updates meta struct; Invokes Events
     {
         PruneWorkflow();
 
@@ -153,6 +153,13 @@ public class FactOrganizer: Dictionary<int, Fact>
                     this[last.Id].delete();
                     base.Remove(last.Id);
                     MetaInf.Remove(last.Id);
+                }
+                else
+                // update active status
+                {
+                    meta inf = MetaInf[last.Id];
+                    inf.active = !last.creation;
+                    MetaInf[last.Id] = inf;
                 }
             }
 
@@ -231,7 +238,7 @@ public class FactOrganizer: Dictionary<int, Fact>
 
     // TODO: MMT: decide dependencies there (remember virtual deletions in Unity (un-redo)!)
     // TODO? decrease runtime from O(n/2)
-    private bool safe_dependencies(int key, out List<int> dependencies)
+    public bool safe_dependencies(int key, out List<int> dependencies)
     // searches for dependencies of a Fact; returns false if any dependencies are steproots
     // int key: Fact to be deleted
     // out List<int> dependencies: dependencyList

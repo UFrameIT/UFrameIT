@@ -184,7 +184,7 @@ GameObject:
   - component: {fileID: 3394522495515098203}
   - component: {fileID: 3394522495515098196}
   - component: {fileID: 7137147696081341476}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: AngleOuter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -310,7 +310,7 @@ GameObject:
   - component: {fileID: 3394522496185282006}
   - component: {fileID: 3394522496185282007}
   - component: {fileID: 2270583313952035853}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: AngleInner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -431,9 +431,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5781467132517744785}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Angle
-  m_TagString: Untagged
+  m_TagString: Selectable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

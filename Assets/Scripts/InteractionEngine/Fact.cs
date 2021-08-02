@@ -399,8 +399,7 @@ public class RayFact : AbstractLineFactWrappedCRTP<RayFact>
 
     protected override bool EquivalentWrapped(RayFact f1, RayFact f2)
     {
-        // TODO! check for similar(float uncertanty!) Directions
-        if (f1.Dir != f2.Dir && f1.Dir != -f2.Dir)
+        if (!Math3d.IsApproximatelyParallel(f1.Dir, f2.Dir))
             return false;
 
         PointFact p1f1 = (PointFact)Facts[f1.Pid1];
