@@ -7,15 +7,7 @@ using static CommunicationEvents;
 
 public class FactManager : MonoBehaviour
 {
-    private List<int> NextEmpties = new List<int>();
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        NextEmpties.Add(0);
-    }
-
-    //TODO! communicate success
+    //TODO! communicate success/ failure
     public static Fact AddFactIfNotFound(Fact fact, out bool exists, bool samestep)
     {
         return Facts[Facts.Add(fact, out exists, samestep)];
@@ -75,23 +67,9 @@ public class FactManager : MonoBehaviour
         return rayFact;
     }
 
-
     public AngleFact AddAngleFact(string pid1, string pid2, string pid3, bool samestep = false)
     {
         return (AngleFact)AddFactIfNotFound(new AngleFact(pid1, pid2, pid3), out bool obsolete, samestep);
     }
 
-    public int GetFirstEmptyID()
-    {
-        NextEmpties.Sort();
-
-        int id = NextEmpties[0];
-        NextEmpties.RemoveAt(0);
-        if (NextEmpties.Count == 0)
-            NextEmpties.Add(id + 1);
-
-        Debug.Log("place fact at " + id);
-
-        return id;
-    }
 }

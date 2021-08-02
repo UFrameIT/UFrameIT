@@ -84,7 +84,7 @@ public abstract class Fact
 
     public virtual void delete()
     {
-        //TODO: MMT
+        //TODO: MMT: delete over there
     }
 
     public abstract bool Equivalent(Fact f2);
@@ -98,6 +98,20 @@ public abstract class Fact
     protected string generateLetter()
     {
         return ((char)(64 + LabelId++ + 1)).ToString();
+
+        /* Keeping track of free Ids
+        private static List<int> NextEmpties = new List<int>();
+        NextEmpties.Add(LabelId++);
+
+        public int GetFirstEmptyID()
+        {
+            NextEmpties.Sort();
+
+            int id = NextEmpties[0];
+            NextEmpties.RemoveAt(0);
+            if (NextEmpties.Count == 0)
+                NextEmpties.Add(LabelId++);
+        }*/
     }
 }
 
