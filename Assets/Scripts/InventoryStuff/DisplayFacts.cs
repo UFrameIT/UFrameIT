@@ -55,15 +55,19 @@ public class DisplayFacts : MonoBehaviour
     {
         GameObject.Destroy(displayedFacts[fact.URI]);
         displayedFacts.Remove(fact.URI);
+        UpdatePositions();
+    }
+
+    public void UpdatePositions()
+    {
+        int i = 0;
+        foreach (var element in displayedFacts)
+            element.Value.GetComponent<RectTransform>().localPosition = GetPosition(i++);
     }
 
     public void AnimateFact(Fact fact) {
         var factIcon = displayedFacts[fact.URI];
         factIcon.GetComponentInChildren<ImageHintAnimation>().AnimationTrigger();
-    }
-
-    string getLetter(int Id) {
-        return ((Char)(64 + Id + 1)).ToString();
     }
 
     private GameObject CreateDisplay(Transform transform, Fact fact)

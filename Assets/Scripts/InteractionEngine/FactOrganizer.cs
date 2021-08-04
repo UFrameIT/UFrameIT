@@ -7,12 +7,15 @@ using System.Linq;
 //TODO? hide base dict
 //TODO: MMT: move some functionality there
 //TODO: consequent!= samestep != dependent
-//TODO! use URI as key
 
-//PERF: avoid string as key (hash -> colission? -> strcmp[!])
+//PERF: avoid string as key (general: allocations & dict: hash -> colission? -> strcmp[!])
 
+[System.Serializable]
 public class FactOrganizer: Dictionary<string, Fact>
 {
+    // InvokeEvents?
+    private bool invoke;
+
     private Dictionary<string, meta> MetaInf = new Dictionary<string, meta>();
     private List<stepnote> Workflow = new List<stepnote>();
     // notes position in Workflow for un-/redo; the pointed to element is non-acitve
@@ -21,7 +24,7 @@ public class FactOrganizer: Dictionary<string, Fact>
     private int worksteps = 0;
     private int backlog = 0;
     // set if recently been resetted
-    private bool resetted = false;
+    private bool soft_resetted = false;
 
     private struct stepnote
     {
@@ -71,36 +74,33 @@ public class FactOrganizer: Dictionary<string, Fact>
         }
     }
 
-    public FactOrganizer() : base() { }
-
-    public FactOrganizer(IDictionary<string, Fact> dictionary) : base(dictionary) { }
-
-
-    //TODO: PERF: better way than string search? -> use string as key!
-    public bool searchURI(string uri, out string found)
+    public FactOrganizer(bool invoke = false) : base()
     {
-        foreach(var element in this)
-            if (element.Value.URI.Equals(uri))
-            {
-                found = element.Key;
-                return true;
-            }
-
-        found = null;
-        return false;
+        this.invoke = invoke;
     }
 
+    public FactOrganizer(IDictionary<string, Fact> dictionary, bool invoke = false) : base(dictionary)
+    {
+        this.invoke = invoke;
+    }
+
+
     //TODO? MMT? PERF: O(n), every Fact-insertion
-    private bool FindEquivalent(Fact search, out Fact found)
+    private bool FindEquivalent(Fact search, out string found, out bool exact)
     // Looks for existent facts (found) which are very similar to prposed fact (search)
     // does not check active state
     {
+        if (exact = this.ContainsKey(search.URI))
+        {
+            found = search.URI;
+            return true;
+        }
+
         foreach (var entry in this)
         {
-            if (entry.Value.GetType() == search.GetType() &&
-                entry.Value.Equivalent(search))
+            if (entry.Value.Equivalent(search))
             {
-                found = entry.Value;
+                found = entry.Key;
                 return true;
             }
         }
@@ -110,7 +110,7 @@ public class FactOrganizer: Dictionary<string, Fact>
     }
 
     private void WorkflowAdd(stepnote note)
-    // prunes & adds Workflow; updates meta struct; Invokes Events
+    // prunes & adds Workflow; Invokes Events
     {
         PruneWorkflow();
 
@@ -127,18 +127,16 @@ public class FactOrganizer: Dictionary<string, Fact>
         Workflow.Add(note);
         marker = Workflow.Count;
 
-        // update active info
-        meta info = MetaInf[note.Id];
-        info.active = note.creation;
-        MetaInf[note.Id] = info;
-
         InvokeFactEvent(note.creation, note.Id);
     }
 
     private void PruneWorkflow()
     // set current (displayed) state in stone; resets un-redo parameters
     {
-        if (backlog > 0)
+        if (soft_resetted)
+            this.hardreset(false);
+
+        else if (backlog > 0)
         {
             worksteps -= backlog;
             backlog = 0;
@@ -155,13 +153,6 @@ public class FactOrganizer: Dictionary<string, Fact>
                     base.Remove(last.Id);
                     MetaInf.Remove(last.Id);
                 }
-                else
-                // update active status
-                {
-                    meta inf = MetaInf[last.Id];
-                    inf.active = !last.creation;
-                    MetaInf[last.Id] = inf;
-                }
             }
 
             // prune Worklfow down to marker
@@ -172,29 +163,35 @@ public class FactOrganizer: Dictionary<string, Fact>
     public new void Add(string key, Fact value)
     // hide
     {
-        this.Add(value, out bool obsolete);
+        this.Add(value, out _);
     }
 
     public string Add(Fact value, out bool exists, bool samestep = false)
     // also checks for duplicates and active state
     // returns key of actual Fact
     {
-        if (resetted)
-            this.hardreset(false);
-
         string key;
-        if (exists = FindEquivalent(value, out Fact found))
-        {
-            //TODO: MMT: del 'fact' (value) in MMT (alt.: s.TODO in addFact)
 
-            key = found.URI;
-            if (MetaInf[key].active)
+        if (exists = FindEquivalent(value, out key, out bool exact))
+        {
+            if (!exact)
+                // no longer needed
+                value.delete();
+
+            if (MetaInf[key].workflow_id >= marker)
+            // check for zombie-status
+                // protect zombie from beeing pruned
+                MetaInf[key] = new meta(marker, true);
+
+            // zombies are undead!
+            else if (MetaInf[key].active)
+                // desired outcome already achieved
                 return key;
+
         }
         else
+        // brand new Fact
         {
-            //TODO: MMT: alt: insert in MMT if needed here/ on Invoke() (see WorkflowAdd)
-
             key = value.URI;
             base.Add(key, value);
             MetaInf.Add(key, new meta(marker, true));
@@ -212,11 +209,7 @@ public class FactOrganizer: Dictionary<string, Fact>
 
     public bool Remove(Fact value, bool samestep = false)
     {
-        if (!this.ContainsKey(value.URI))
-            return false;
-
-        this.Remove(value.URI, samestep);
-        return true;
+        return this.Remove(value.URI, samestep);
     }
 
     public bool Remove(string key, bool samestep = false)
@@ -250,20 +243,10 @@ public class FactOrganizer: Dictionary<string, Fact>
         int pos = MetaInf[key].workflow_id;
         dependencies.Add(key);
 
-        /* consequent != samestep != dependent
-        // get steproot
-        if (Workflow[pos].samestep)
-            pos = Workflow[pos].steplink;
-
-        // add entire step
-        for (int i = pos; i < Workflow[pos].steplink; i++)
-            dependencies.Add(Workflow[i].Id);
-        pos = Workflow[pos].steplink;
-        */
-
         // accumulate facts that are dependent of dependencies
         for (int i = pos; i < marker; i++)
         {
+            // TODO: consequent != samestep != dependent (want !consequent)
             if (!Workflow[i].creation)
             {
                 // just try
@@ -295,20 +278,23 @@ public class FactOrganizer: Dictionary<string, Fact>
     {
         pos--;
 
-        // check for valid step (implicit reset check)
         if (pos >= marker)
+        // check for valid step (implicit reset check)
             return;
         
         for (int i = pos, stop = Workflow[pos].samestep ? Workflow[pos].steplink : pos;
             i >= stop; i--, samestep = true)
         {
-            WorkflowAdd(new stepnote(Workflow[i].Id, samestep, !Workflow[i].creation, this));
+            if (Workflow[i].creation)
+                Remove(Workflow[i].Id, samestep);
+            else
+                WorkflowAdd(new stepnote(Workflow[i].Id, samestep, true, this));
         }
     }
 
     public void undo()
     {
-        if (resetted)
+        if (soft_resetted)
             fastforward(); // revert softreset
 
         else if (backlog < worksteps) {
@@ -328,7 +314,7 @@ public class FactOrganizer: Dictionary<string, Fact>
 
     public void redo()
     {
-        resetted = false;
+        soft_resetted = false;
 
         if (backlog > 0)
         {
@@ -350,18 +336,19 @@ public class FactOrganizer: Dictionary<string, Fact>
     // Does not Invoke RemoveFactEvent(s)!
     {
         base.Clear();
+        MetaInf.Clear();
         Workflow.Clear();
         marker = 0;
         worksteps = 0;
         backlog = 0;
-        resetted = false;
+        soft_resetted = false;
     }
 
     public void hardreset(bool invoke_event = true)
     {
         foreach(var entry in this)
         {
-            if (invoke_event) //TODO? check if removed
+            if (invoke_event && invoke && MetaInf[entry.Key].active)
                 CommunicationEvents.RemoveFactEvent.Invoke(entry.Value);
             entry.Value.delete();
         }
@@ -370,7 +357,7 @@ public class FactOrganizer: Dictionary<string, Fact>
 
     public void softreset()
     {
-        if (resetted)
+        if (soft_resetted)
         {
             fastforward();
             return;
@@ -381,7 +368,7 @@ public class FactOrganizer: Dictionary<string, Fact>
         while (marker > 0)
             undo();
 
-        resetted = true;
+        soft_resetted = true;
     }
 
     public void fastforward()
@@ -394,19 +381,65 @@ public class FactOrganizer: Dictionary<string, Fact>
     public void store()
     {
         // TODO: save state of all of this?
+        // probably nothing:
+        //      safe class instance somewhere
     }
 
-    public void load()
+    public void load(bool draw_all = true)
+    // call this after assigning a stored instance in an empty world
     {
         // TODO: see issue #58
+
+        foreach (var mett in MetaInf)
+        {
+            // update active info if needed
+            if (mett.Value.active)
+            {
+                meta info = mett.Value;
+                info.active = false;
+                MetaInf[mett.Key] = info;
+            }
+        }
+
+        marker = 0;
+        var stop = backlog;
+        backlog = worksteps;
+
+        if(draw_all)
+            while(backlog > stop)
+                redo();
     }
 
     private void InvokeFactEvent(bool creation, string Id)
     {
-        if (creation)
-            CommunicationEvents.AddFactEvent.Invoke(this[Id]);
-        else
-            CommunicationEvents.RemoveFactEvent.Invoke(this[Id]);
+        // update meta struct
+        meta info = MetaInf[Id];
+        info.active = creation;
+        MetaInf[Id] = info;
+
+        if (invoke)
+            if (creation)
+                CommunicationEvents.AddFactEvent.Invoke(this[Id]);
+            else
+                CommunicationEvents.RemoveFactEvent.Invoke(this[Id]);
+    }
+
+    public bool StaticlySovled(List<Fact> StaticSolution, out List<Fact> MissingElements)
+    // QoL for simple Levels
+    {
+        return DynamiclySolved(StaticSolution, out MissingElements, out _, new FactEquivalentsComparer());
+    }
+
+    //TODO: PERF: see CommunicationEvents.Solution
+    public bool DynamiclySolved(List<Fact> MinimalSolution, out List<Fact> MissingElements, out List<Fact> Solutions, FactComparer FactComparer)
+    {
+        Solutions = this.Values.Where(f => MetaInf[f.URI].active)
+            .Where(active => MinimalSolution.Contains(active, FactComparer.SetSearchRight()))
+            .ToList();
+
+        MissingElements = MinimalSolution.Except(Solutions, FactComparer.SetSearchLeft()).ToList();
+
+        return MissingElements.Count == 0;
     }
 
 }

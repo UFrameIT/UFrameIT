@@ -32,7 +32,7 @@ public class Remover : Gadget
 
         // TODO: ask/warn user to cascade
         var hid = hit.transform.GetComponent<FactObject>().URI;
-        Facts.Remove(hid);
+        LevelFacts.Remove(hid);
     }
   
 }

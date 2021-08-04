@@ -5,6 +5,8 @@ using static CommunicationEvents;
 
 public class Tape : Gadget
 {
+    public float maxHeight = 2.5f;
+
     //Variables for TapeMode distinction
     private bool TapeModeIsFirstPointSelected = false;
     private Fact TapeModeFirstPointSelected = null;
@@ -40,10 +42,10 @@ public class Tape : Gadget
         if (!this.isActiveAndEnabled) return;
         if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
-            Fact tempFact = Facts[hit.transform.GetComponent<FactObject>().URI];
+            Fact tempFact = LevelFacts[hit.transform.GetComponent<FactObject>().URI];
 
             //we can only reach points that are lower than that with the measuring tape
-            if (/*ActiveToolMode == ToolMode.CreateLineMode && */tempFact.Representation.transform.position.y > 2.5f)
+            if (/*ActiveToolMode == ToolMode.CreateLineMode && */tempFact.Representation.transform.position.y > maxHeight)
                 return;
 
             //If first point was already selected AND second point != first point

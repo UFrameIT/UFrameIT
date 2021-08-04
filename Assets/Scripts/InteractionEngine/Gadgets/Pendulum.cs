@@ -45,7 +45,7 @@ public class Pendulum : Gadget
 
         if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
-            PointFact tempFact = Facts[hit.transform.GetComponent<FactObject>().URI] as PointFact;
+            PointFact tempFact = LevelFacts[hit.transform.GetComponent<FactObject>().URI] as PointFact;
 
             //Raycast downwoard
             RaycastHit ground;

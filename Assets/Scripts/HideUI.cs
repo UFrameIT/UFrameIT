@@ -55,11 +55,11 @@ public class HideUI : MonoBehaviour
         else if (Input.GetButton(modifier))
         {
             if (Input.GetButtonDown(modundo))
-                Facts.undo();
+                LevelFacts.undo();
             else if (Input.GetButtonDown(modredo))
-                Facts.redo();
+                LevelFacts.redo();
             else if (Input.GetButtonDown(modreset))
-                Facts.softreset();
+                LevelFacts.softreset();
         }
         
         /*

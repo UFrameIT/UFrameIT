@@ -32,7 +32,6 @@ public class ScrollDetails : MonoBehaviour
     {
         if (cursor == null) cursor = GameObject.FindObjectOfType<WorldCursor>();
 
-        parameterDisplayHint.AddListener(animateScrollParameter);
         ScrollFactHintEvent.AddListener(animateHint);
         NewAssignmentEvent.AddListener(newAssignmentTrigger);
     }
@@ -168,9 +167,7 @@ public class ScrollDetails : MonoBehaviour
             Fact newFact = ParsingDictionary.parseFactDictionary[pushoutFacts[i].getType()].Invoke(pushoutFacts[i]);
             if (newFact != null)
             {
-                FactManager.AddFactIfNotFound(newFact, out bool exists, samestep);
-                if(!exists)
-                    PushoutFactEvent.Invoke(newFact);
+                PushoutFactEvent.Invoke(FactManager.AddFactIfNotFound(newFact, out bool exists, samestep));
             }
             else {
                 Debug.Log("Parsing on pushout-fact returned null -> One of the dependent facts does not exist");
@@ -236,9 +233,9 @@ public class ScrollDetails : MonoBehaviour
 
         if (suitableCompletion != null)
         {
-            if (Facts.ContainsKey(suitableCompletion.assignment.uri))
+            if (LevelFacts.ContainsKey(suitableCompletion.assignment.uri))
             {
-                fact = Facts[suitableCompletion.assignment.uri];
+                fact = LevelFacts[suitableCompletion.assignment.uri];
                 //Animate ScrollParameter
                 scrollParameter.GetComponentInChildren<ImageHintAnimation>().AnimationTrigger();
                 //Animate Fact in FactPanel
@@ -253,9 +250,9 @@ public class ScrollDetails : MonoBehaviour
             var factId = fact.URI;
 
             //If there is an equal existing fact -> Animate that fact AND ScrollParameter
-            if (Facts.ContainsKey(factId))
+            if (LevelFacts.ContainsKey(factId))
             {
-                Fact existingFact = Facts[factId];
+                Fact existingFact = LevelFacts[factId];
 
                 //Animate ScrollParameter
                 scrollParameter.GetComponentInChildren<ImageHintAnimation>().AnimationTrigger();

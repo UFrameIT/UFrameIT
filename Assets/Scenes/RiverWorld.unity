@@ -14372,8 +14372,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca8bc7e0b1ca4384192fec35c8699cd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  snapZoneTop: {fileID: 0}
-  snapZoneBottom: {fileID: 0}
+  minimalSolutionHight: 6
 --- !u!1001 &645585536
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -15844,24 +15843,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 704600771}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &707042057 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7000045644623408183, guid: 8590393c51194934a95cdc2075fc4dec,
-    type: 3}
-  m_PrefabInstance: {fileID: 6999573641241424516}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &707042060
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 707042057}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4298702f3af5da54c9f8d43308ecb160, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &715240475
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -59575,6 +59556,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 75
       objectReference: {fileID: 0}
+    - target: {fileID: 293934904593747527, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 293934904814280933, guid: b996060e27da25c498842defc1996d84,
         type: 3}
       propertyPath: preferredStartScrollName
@@ -59585,10 +59571,20 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 400
       objectReference: {fileID: 0}
+    - target: {fileID: 293934905101627528, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: LevelReset
+      objectReference: {fileID: 0}
+    - target: {fileID: 293934905101627528, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: Restart, Assembly-CSharp
+      objectReference: {fileID: 0}
     - target: {fileID: 293934905101627533, guid: b996060e27da25c498842defc1996d84,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 293934905461160920, guid: b996060e27da25c498842defc1996d84,
         type: 3}
@@ -59734,6 +59730,31 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: FrameITUI
+      objectReference: {fileID: 0}
+    - target: {fileID: 293934906265310054, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: m_text
+      value: Restart Level
+      objectReference: {fileID: 0}
+    - target: {fileID: 293934906265310054, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: m_textAlignment
+      value: 65535
+      objectReference: {fileID: 0}
+    - target: {fileID: 293934906265310054, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: m_TextStyleHashCode
+      value: -1183493901
+      objectReference: {fileID: 0}
+    - target: {fileID: 293934906265310054, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: m_VerticalAlignment
+      value: 512
+      objectReference: {fileID: 0}
+    - target: {fileID: 293934906265310054, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: m_HorizontalAlignment
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 293934906431221846, guid: b996060e27da25c498842defc1996d84,
         type: 3}

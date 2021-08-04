@@ -65,8 +65,8 @@ public class FactSpawner : MonoBehaviour
     {
         LineFact lineFact = ((LineFact)fact);
 
-        PointFact pointFact1 = (Facts[lineFact.Pid1] as PointFact);
-        PointFact pointFact2 = (Facts[lineFact.Pid2] as PointFact);
+        PointFact pointFact1 = (LevelFacts[lineFact.Pid1] as PointFact);
+        PointFact pointFact2 = (LevelFacts[lineFact.Pid2] as PointFact);
         Vector3 point1 = pointFact1.Point;
         Vector3 point2 = pointFact2.Point;
         //Change FactRepresentation to Line
@@ -102,8 +102,8 @@ public class FactSpawner : MonoBehaviour
     {
         RayFact rayFact = ((RayFact)fact);
 
-        PointFact pointFact1 = (Facts[rayFact.Pid1] as PointFact);
-        PointFact pointFact2 = (Facts[rayFact.Pid2] as PointFact);
+        PointFact pointFact1 = (LevelFacts[rayFact.Pid1] as PointFact);
+        PointFact pointFact2 = (LevelFacts[rayFact.Pid2] as PointFact);
 
  
         Vector3 point1 = pointFact1.Point;
@@ -145,9 +145,9 @@ public class FactSpawner : MonoBehaviour
     {
         AngleFact angleFact = (AngleFact)fact;
 
-        Vector3 point1 = (Facts[angleFact.Pid1] as PointFact).Point;
-        Vector3 point2 = (Facts[angleFact.Pid2] as PointFact).Point;
-        Vector3 point3 = (Facts[angleFact.Pid3] as PointFact).Point;
+        Vector3 point1 = (LevelFacts[angleFact.Pid1] as PointFact).Point;
+        Vector3 point2 = (LevelFacts[angleFact.Pid2] as PointFact).Point;
+        Vector3 point3 = (LevelFacts[angleFact.Pid3] as PointFact).Point;
 
         //Length of the Angle relative to the Length of the shortest of the two lines (point2->point1) and (point2->point3)
         float lengthFactor = 0.3f;

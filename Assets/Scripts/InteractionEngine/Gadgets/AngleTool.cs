@@ -49,7 +49,7 @@ public class AngleTool : Gadget
         if (!this.isActiveAndEnabled) return;
         if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
-            PointFact tempFact = (PointFact)Facts[hit.transform.GetComponent<FactObject>().URI];
+            PointFact tempFact = (PointFact)LevelFacts[hit.transform.GetComponent<FactObject>().URI];
 
             //If two points were already selected and now the third point got selected
             if (this.angleModeIsFirstPointSelected && this.angleModeIsSecondPointSelected)
@@ -138,7 +138,7 @@ public class AngleTool : Gadget
         //TODO! PERF O(n)
         //Find the nearest of all potential third points
         PointFact nearestPoint = null;
-        foreach (var entry in Facts)
+        foreach (var entry in LevelFacts)
         {
             Fact fact = entry.Value;
             if (fact is PointFact && fact.URI != angleModeFirstPointSelected.URI && fact.URI != angleModeSecondPointSelected.URI && nearestPoint == null)
