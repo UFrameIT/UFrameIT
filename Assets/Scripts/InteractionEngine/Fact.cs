@@ -6,6 +6,7 @@ using TMPro;
 using static JSONManager;
 using static CommunicationEvents;
 
+
 public class ParsingDictionary {
 
     public static Dictionary<string, Func<Scroll.ScrollFact, Fact>> parseFactDictionary = new Dictionary<string, Func<Scroll.ScrollFact, Fact>>() {
@@ -27,14 +28,24 @@ public class AddFactResponse
     // public string factValUri;
     public string uri;
 
-    public static AddFactResponse sendAdd(string path, string body)
+    public static bool sendAdd(MMTDeclaration mmtDecl, out string uri)
+    {
+        string body = MMTSymbolDeclaration.ToJson(mmtDecl);
+        return sendAdd(CommunicationEvents.ServerAdress + "/fact/add", body, out uri);
+    }
+
+    public static bool sendAdd(string path, string body, out string uri)
     {
         if (!CommunicationEvents.ServerRunning)
         {
             Debug.LogWarning("Server not running");
-            return new AddFactResponse();
+            uri = null;
+            return false;
         }
-        Debug.Log(body);
+
+        if(VerboseURI)
+            Debug.Log("Sending to Server:\n" + body);
+
         //Put constructor parses stringbody to byteArray internally  (goofy workaround)
         UnityWebRequest www = UnityWebRequest.Put(path, body);
         www.method = UnityWebRequest.kHttpVerbPOST;
@@ -49,12 +60,19 @@ public class AddFactResponse
          || www.result == UnityWebRequest.Result.ProtocolError)
         {
             Debug.LogWarning(www.error);
-            return new AddFactResponse();
+            uri = null;
+            return false;
         }
         else
         {
             string answer = www.downloadHandler.text;
-            return JsonUtility.FromJson<AddFactResponse>(answer);
+            AddFactResponse res = JsonUtility.FromJson<AddFactResponse>(answer);
+
+            if (VerboseURI)
+                Debug.Log("Server added Fact:\n" + res.uri);
+
+            uri = res.uri;
+            return true;
         }
     }
 }
@@ -92,6 +110,8 @@ public abstract class Fact
     public virtual void delete()
     {
         //TODO: MMT: delete over there
+        if (VerboseURI)
+            Debug.Log("Server removed Fact:\n" + this.URI);
     }
 
     public abstract bool Equivalent(Fact f2);
@@ -102,6 +122,7 @@ public abstract class Fact
 
     protected abstract string generateLabel(); 
 
+    // TODO: "ID"/ Letter Management
     protected string generateLetter()
     {
         return ((char)(64 + LabelId++ + 1)).ToString();
@@ -231,11 +252,7 @@ public class PointFact : FactWrappedCRTP<PointFact>
 
         //TODO: rework fact list + labeling
         MMTSymbolDeclaration mmtDecl = new MMTSymbolDeclaration(this.Label, tp, df);
-        string body = MMTSymbolDeclaration.ToJson(mmtDecl);
-
-        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add", body);
-        this._URI = res.uri;
-        Debug.Log(this.URI);
+        AddFactResponse.sendAdd(mmtDecl, out this._URI);
     }
 
     public PointFact(float a, float b, float c, string uri, FactOrganizer organizer) : base(organizer)
@@ -327,10 +344,7 @@ public class LineFact : AbstractLineFactWrappedCRTP<LineFact>
 
         //see point label
         MMTValueDeclaration mmtDecl = new MMTValueDeclaration(this.Label, lhs, valueTp, value);
-        string body = MMTDeclaration.ToJson(mmtDecl);
-        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress + "/fact/add", body);
-        this._URI = res.uri;
-        Debug.Log(this.URI);
+        AddFactResponse.sendAdd(mmtDecl, out this._URI);
     }
 
     public static LineFact parseFact(Scroll.ScrollFact fact)
@@ -407,11 +421,7 @@ public class RayFact : AbstractLineFactWrappedCRTP<RayFact>
 
         //TODO: rework fact list + labeling
         MMTSymbolDeclaration mmtDecl = new MMTSymbolDeclaration(this.Label, tp, df);
-        string body = MMTSymbolDeclaration.ToJson(mmtDecl);
-
-        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress + "/fact/add", body);
-        this._URI = res.uri;
-        Debug.Log(this.URI);
+        AddFactResponse.sendAdd(mmtDecl, out this._URI);
     }
 
     public static RayFact parseFact(Scroll.ScrollFact fact)
@@ -491,11 +501,7 @@ public class OnLineFact : FactWrappedCRTP<OnLineFact>
 
         //TODO: rework fact list + labeling
         MMTSymbolDeclaration mmtDecl = new MMTSymbolDeclaration(this.Label, tp, df);
-        string body = MMTSymbolDeclaration.ToJson(mmtDecl);
-
-        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress + "/fact/add", body);
-        this._URI = res.uri;
-        Debug.Log(this.URI);
+        AddFactResponse.sendAdd(mmtDecl, out this._URI);
     }
 
     public OnLineFact(string pid, string rid, string uri, FactOrganizer organizer) : base(organizer)
@@ -591,14 +597,7 @@ public class AngleFact : FactWrappedCRTP<AngleFact>
         else
             mmtDecl = generateNot90DegreeAngleDeclaration(v, p1URI, p2URI, p3URI);
 
-        Debug.Log("angle: " + v);
-
-        string body = MMTDeclaration.ToJson(mmtDecl);
-
-        Debug.Log(body);
-        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add", body);
-        this._URI = res.uri;
-        Debug.Log(this.URI);
+        AddFactResponse.sendAdd(mmtDecl, out this._URI);
     }
 
     public AngleFact(string Pid1, string Pid2, string Pid3, string backendURI, FactOrganizer organizer) : base(organizer)

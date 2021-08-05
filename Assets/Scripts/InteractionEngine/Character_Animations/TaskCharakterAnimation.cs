@@ -75,7 +75,7 @@ public class TaskCharakterAnimation : MonoBehaviour
             if(taskCharacterAddressed && !LelvelVerifiedSolved && checkGameSolved())
             {
                 startHappy();
-                //LelvelVerifiedSolved = true;
+                LelvelVerifiedSolved = true;
             }
 
             return;

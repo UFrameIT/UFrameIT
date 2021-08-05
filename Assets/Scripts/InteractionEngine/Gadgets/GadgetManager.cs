@@ -13,7 +13,6 @@ public class GadgetManager : MonoBehaviour
         CommunicationEvents.ToolModeChangedEvent.AddListener(OnToolModeChanged);
         gadgets = GetComponentsInChildren<Gadget>();
 
-        Debug.Log(gadgets.Length);
         for (int i = 0; i < gadgets.Length; i++)
         {
             gadgets[i].id = i;

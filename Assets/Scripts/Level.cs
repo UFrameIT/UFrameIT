@@ -15,6 +15,7 @@ public class Level : MonoBehaviour
     void Start()
     // Start is called before the first frame update
     {
+        // TODO: do not generate! -> load from somewhere
         PointFact
             buttom = new PointFact(Vector3.zero, Vector3.up, SolutionManager),
             top = new PointFact(Vector3.zero + Vector3.up * minimalSolutionHight, Vector3.up, SolutionManager);

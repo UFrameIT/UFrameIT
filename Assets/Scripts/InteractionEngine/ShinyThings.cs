@@ -276,7 +276,7 @@ public class ShinyThings : MonoBehaviour
                     StopHighlighting();
                 }
                 //After this.timerDuration: Slow Down Fireworks
-                else
+                else if (this.extraHighlight != null)
                 {
                     ParticleSystem main1 = this.extraHighlight.transform.GetChild(0).GetComponent<ParticleSystem>();
                     ParticleSystem main2 = this.extraHighlight.transform.GetChild(1).GetComponent<ParticleSystem>();

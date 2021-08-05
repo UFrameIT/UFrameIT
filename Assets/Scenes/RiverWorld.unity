@@ -3544,6 +3544,7 @@ MonoBehaviour:
   ignoreLayerMask:
     serializedVersion: 2
     m_Bits: 96768
+  maxHeight: 2.5
   Cursor: {fileID: 1324548121420804703}
   lineRenderer: {fileID: 492903072}
   linePreviewMaterial: {fileID: 2100000, guid: a8a7bf60a30970f469a9c9d3ae2de6ef, type: 2}
@@ -59785,6 +59786,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 75
+      objectReference: {fileID: 0}
+    - target: {fileID: 798194300259120277, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 798194300310305303, guid: b996060e27da25c498842defc1996d84,
         type: 3}

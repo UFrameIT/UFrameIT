@@ -122,7 +122,7 @@ public class FactSpawner : MonoBehaviour
         //Get the Line-GameObject as the first Child of the Line-Prefab -> That's the Collider
         var v3T = line.transform.GetChild(0).localScale;
         v3T.x = (point2 - point1).magnitude;
-        Debug.Log(v3T.x);
+
         //For every Coordinate x,y,z we have to devide it by the LocalScale of the Child,
         //because actually the Child should be of this length and not the parent, which is only the Collider
         v3T.x = v3T.x / line.transform.GetChild(0).GetChild(0).localScale.x;
@@ -197,7 +197,6 @@ public class FactSpawner : MonoBehaviour
 
     public void DeleteObject(Fact fact)
     {
-        Debug.Log("delete obj of "+ fact.URI);
         GameObject factRepresentation = fact.Representation;
         GameObject.Destroy(factRepresentation);
     }

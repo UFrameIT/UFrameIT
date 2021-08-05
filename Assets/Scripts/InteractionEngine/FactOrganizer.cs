@@ -133,10 +133,10 @@ public class FactOrganizer: Dictionary<string, Fact>
     private void PruneWorkflow()
     // set current (displayed) state in stone; resets un-redo parameters
     {
-        if (soft_resetted)
-            this.hardreset(false);
+        /*if (soft_resetted)
+            this.hardreset(false); // musn't clear
 
-        else if (backlog > 0)
+        else*/ if (backlog > 0)
         {
             worksteps -= backlog;
             backlog = 0;
@@ -424,10 +424,10 @@ public class FactOrganizer: Dictionary<string, Fact>
                 CommunicationEvents.RemoveFactEvent.Invoke(this[Id]);
     }
 
-    public bool StaticlySovled(List<Fact> StaticSolution, out List<Fact> MissingElements)
+    public bool StaticlySovled(List<Fact> StaticSolution, out List<Fact> MissingElements, out List<Fact> Solutions)
     // QoL for simple Levels
     {
-        return DynamiclySolved(StaticSolution, out MissingElements, out _, new FactEquivalentsComparer());
+        return DynamiclySolved(StaticSolution, out MissingElements, out Solutions, new FactEquivalentsComparer());
     }
 
     //TODO: PERF: see CommunicationEvents.Solution

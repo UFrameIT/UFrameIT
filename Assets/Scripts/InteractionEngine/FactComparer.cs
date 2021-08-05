@@ -44,7 +44,7 @@ class LineFactHightDirectionComparer : FactComparer
     {
         return fact is LineFact && search is LineFact
             && Math3d.IsApproximatelyParallel(((LineFact) fact).Dir, ((LineFact) search).Dir)
-            && ((LineFact) fact).Distance > ((LineFact) search).Distance + Math3d.vectorPrecission;
+            && ((LineFact) fact).Distance + Math3d.vectorPrecission >= ((LineFact) search).Distance;
         // && Mathf.Approximately(((LineFact) x).Distance, ((LineFact) y).Distance);
     }
 }

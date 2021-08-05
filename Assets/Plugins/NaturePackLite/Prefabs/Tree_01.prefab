@@ -109,7 +109,7 @@ GameObject:
   - component: {fileID: 7455726115425455088}
   - component: {fileID: 933372636075482527}
   - component: {fileID: 539717056228735193}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: TopSnapZone
   m_TagString: SnapZone
   m_Icon: {fileID: 0}

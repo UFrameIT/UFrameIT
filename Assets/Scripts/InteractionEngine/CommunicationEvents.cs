@@ -48,12 +48,15 @@ public static class CommunicationEvents
     //------------------------------------------------------------------------------------
     //-------------------------------Global Variables-------------------------------------
 
-    //Global Level-List of Facts
+    // Global Level-List of Facts
     public static FactOrganizer LevelFacts = new FactOrganizer(true);
     public static FactOrganizer SolutionManager = new FactOrganizer(false);
-    //TODO? List<[HashSet<string>, FactComparer]>
+    //TODO? [SolutionManager, List<[HashSet<string>, FactComparer]>]
     public static List<Fact> Solution = new List<Fact>();
 
     public static bool ServerRunning = true;
     public static string ServerAdress = "localhost:8085";
+
+    // Configs
+    public static bool VerboseURI = false;
 }
