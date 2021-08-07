@@ -82,36 +82,55 @@ public abstract class Fact
 {
     public GameObject Representation;
 
-    public string URI { get { return _URI; } }
+    public string Id { get { return _URI; } }
     protected string _URI;
-    public string Label;
+
+    public string Label {
+        get { // in case of renamed dependables
+            return string.IsNullOrEmpty(_CustomLabel) ? 
+                generateLabel() : 
+                _CustomLabel;
+        }
+    }
+    protected string _CustomLabel = null;
+    private int LabelId = 0;
 
     protected FactOrganizer _Facts;
 
-    private static int LabelId = 0;
+    private static int MaxLabelId = 0;
+    private static SortedSet<int> UnusedLabelIds = new SortedSet<int>();
 
     protected Fact(FactOrganizer organizer)
     {
         this._Facts = organizer;
     }
 
+    //TODO: notify about updated dependable Labelnames
     public void rename(string newLabel)
     {
-        this.Label = newLabel;
+        if (_Facts.ContainsLabel(newLabel))
+            return;
+
+        freeLabel();
+        _CustomLabel = newLabel;
     }
 
     //If FactType depends on other Facts, e.g. AngleFacts depend on 3 PointFacts
-    public abstract Boolean hasDependentFacts();
+    public abstract bool hasDependentFacts();
 
     public abstract string[] getDependentFactIds();
 
     public abstract GameObject instantiateDisplay(GameObject prefab, Transform transform);
 
-    public virtual void delete()
+    public virtual void delete(bool keep_clean = true)
     {
         //TODO: MMT: delete over there
+
+        if (keep_clean)
+            freeLabel();
+
         if (VerboseURI)
-            Debug.Log("Server removed Fact:\n" + this.URI);
+            Debug.Log("Server removed Fact:\n" + this.Id);
     }
 
     public abstract bool Equivalent(Fact f2);
@@ -120,26 +139,39 @@ public abstract class Fact
 
     public abstract override int GetHashCode();
 
-    protected abstract string generateLabel(); 
-
-    // TODO: "ID"/ Letter Management
-    protected string generateLetter()
+    // TODO? only get _Fact to freeLabel/
+    public void freeLabel()
     {
-        return ((char)(64 + LabelId++ + 1)).ToString();
-
-        /* Keeping track of free Ids
-        private static List<int> NextEmpties = new List<int>();
-        NextEmpties.Add(LabelId++);
-
-        public int GetFirstEmptyID()
+        if (LabelId > 0)
         {
-            NextEmpties.Sort();
+            UnusedLabelIds.Add(LabelId);
+            // store Label for name-persistance
+            LabelId = -LabelId;
+        }
 
-            int id = NextEmpties[0];
-            NextEmpties.RemoveAt(0);
-            if (NextEmpties.Count == 0)
-                NextEmpties.Add(LabelId++);
-        }*/
+        if (!string.IsNullOrEmpty(_CustomLabel))
+            _CustomLabel = null;
+    }
+
+    protected virtual string generateLabel()
+    {
+        if (LabelId == 0)
+            if (UnusedLabelIds.Count == 0)
+                LabelId = ++MaxLabelId;
+            else
+            {
+                LabelId = UnusedLabelIds.Min;
+                UnusedLabelIds.Remove(LabelId);
+            }
+
+        else if (LabelId < 0)
+        // reload Label if possible
+        {
+            LabelId = -LabelId;
+            UnusedLabelIds.Remove(LabelId);
+        }
+
+        return ((char)(64 + LabelId)).ToString();
     }
 }
 
@@ -186,7 +218,6 @@ public abstract class AbstractLineFact: FactWrappedCRTP<AbstractLineFact>
     {
         this.Pid1 = pid1;
         this.Pid2 = pid2;
-        this.Label = generateLabel();
         PointFact pf1 = _Facts[pid1] as PointFact;
         PointFact pf2 = _Facts[pid2] as PointFact;
         this.Dir = (pf2.Point - pf1.Point).normalized;
@@ -237,7 +268,6 @@ public class PointFact : FactWrappedCRTP<PointFact>
     {
         this.Point = P;
         this.Normal = N;
-        this.Label = generateLabel();
 
         List<MMTTerm> arguments = new List<MMTTerm>
         {
@@ -259,7 +289,6 @@ public class PointFact : FactWrappedCRTP<PointFact>
     {
         this.Point = new Vector3(a, b, c);
         this.Normal = new Vector3(0, 1, 0);
-        this.Label = generateLabel();
         this._URI = uri;
     }
 
@@ -276,11 +305,6 @@ public class PointFact : FactWrappedCRTP<PointFact>
         else {
             return null;
         }
-    }
-
-    protected override string generateLabel()
-    {
-        return generateLetter();
     }
 
     public override Boolean hasDependentFacts() {
@@ -326,8 +350,8 @@ public class LineFact : AbstractLineFactWrappedCRTP<LineFact>
         PointFact pf1 = _Facts[pid1] as PointFact;
         PointFact pf2 = _Facts[pid2] as PointFact;
 
-        string p1URI = pf1.URI;
-        string p2URI = pf2.URI;
+        string p1URI = pf1.Id;
+        string p2URI = pf2.Id;
         float v = (pf1.Point - pf2.Point).magnitude;
 
         MMTTerm lhs =
@@ -406,8 +430,8 @@ public class RayFact : AbstractLineFactWrappedCRTP<RayFact>
         PointFact pf1 = _Facts[pid1] as PointFact;
         PointFact pf2 = _Facts[pid2] as PointFact;
 
-        string p1URI = pf1.URI;
-        string p2URI = pf2.URI;
+        string p1URI = pf1.Id;
+        string p2URI = pf2.Id;
 
         List<MMTTerm> arguments = new List<MMTTerm>
         {
@@ -449,7 +473,6 @@ public class RayFact : AbstractLineFactWrappedCRTP<RayFact>
     public override GameObject instantiateDisplay(GameObject prefab, Transform transform) {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
         obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = this.Label;
-        //obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(Facts2[f.Pid2].Id);
         obj.GetComponent<FactWrapper>().fact = this;
         return obj;
     }
@@ -477,12 +500,11 @@ public class OnLineFact : FactWrappedCRTP<OnLineFact>
     {
         this.Pid = pid;
         this.Rid = rid;
-        this.Label = generateLabel();
 
         PointFact pf = _Facts[pid] as PointFact;
         RayFact rf = _Facts[rid] as RayFact;
-        string pURI = pf.URI;
-        string rURI = rf.URI;
+        string pURI = pf.Id;
+        string rURI = rf.Id;
 
         List<MMTTerm> innerArguments = new List<MMTTerm>
         {
@@ -508,7 +530,6 @@ public class OnLineFact : FactWrappedCRTP<OnLineFact>
     {
         this.Pid = pid;
         this.Rid = rid;
-        this.Label = generateLabel();
         this._URI = uri;
     }
 
@@ -586,12 +607,11 @@ public class AngleFact : FactWrappedCRTP<AngleFact>
         PointFact pf3 = _Facts[pid3] as PointFact;
 
         float v = GetAngle(); // sets is_right_angle
-        this.Label = generateLabel(); //needs is_right_angle
 
         MMTDeclaration mmtDecl;
-        string p1URI = pf1.URI;
-        string p2URI = pf2.URI;
-        string p3URI = pf3.URI;
+        string p1URI = pf1.Id;
+        string p2URI = pf2.Id;
+        string p3URI = pf3.Id;
         if (is_right_angle)
             mmtDecl = generate90DegreeAngleDeclaration(v, p1URI, p2URI, p3URI);
         else
@@ -607,7 +627,6 @@ public class AngleFact : FactWrappedCRTP<AngleFact>
         this.Pid3 = Pid3;
 
         GetAngle();
-        this.Label = generateLabel();
 
         this._URI = backendURI;
     }

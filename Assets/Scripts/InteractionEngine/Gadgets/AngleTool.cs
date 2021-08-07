@@ -56,9 +56,9 @@ public class AngleTool : Gadget
             {
                 //Create AngleFact
                 //Check if new Point is equal to one of the previous points -> if true -> cancel
-                if (!(this.angleModeFirstPointSelected.URI == tempFact.URI || this.angleModeSecondPointSelected.URI == tempFact.URI))
+                if (!(this.angleModeFirstPointSelected.Id == tempFact.Id || this.angleModeSecondPointSelected.Id == tempFact.Id))
                 {
-                    FactManager.AddAngleFact(((PointFact)this.angleModeFirstPointSelected).URI, ((PointFact)this.angleModeSecondPointSelected).URI, ((PointFact)tempFact).URI);
+                    FactManager.AddAngleFact(((PointFact)this.angleModeFirstPointSelected).Id, ((PointFact)this.angleModeSecondPointSelected).Id, ((PointFact)tempFact).Id);
                 }
 
                 ResetGadget();
@@ -67,7 +67,7 @@ public class AngleTool : Gadget
             else if (this.angleModeIsFirstPointSelected && !this.angleModeIsSecondPointSelected)
             {
                 //Check if the 2 selected points are the same: If not
-                if (this.angleModeFirstPointSelected.URI != tempFact.URI)
+                if (this.angleModeFirstPointSelected.Id != tempFact.Id)
                 {
                     this.angleModeIsSecondPointSelected = true;
                     this.angleModeSecondPointSelected = tempFact;
@@ -135,32 +135,8 @@ public class AngleTool : Gadget
 
     public void UpdateCurveDrawing(Vector3 currentPosition)
     {
-        //TODO! PERF O(n)
-        //Find the nearest of all potential third points
-        PointFact nearestPoint = null;
-        foreach (var entry in LevelFacts)
-        {
-            Fact fact = entry.Value;
-            if (fact is PointFact && fact.URI != angleModeFirstPointSelected.URI && fact.URI != angleModeSecondPointSelected.URI && nearestPoint == null)
-                nearestPoint = (PointFact)fact;
-            else if (fact is PointFact && fact.URI != angleModeFirstPointSelected.URI && fact.URI != angleModeSecondPointSelected.URI && (nearestPoint.Point - currentPosition).magnitude > (((PointFact)fact).Point - currentPosition).magnitude)
-                nearestPoint = (PointFact)fact;
-        }
-
-        Vector3 startPoint = new Vector3(0, 0, 0);
-
-        if (nearestPoint != null)
-        {
-            Vector3 planePoint = Vector3.ProjectOnPlane(currentPosition, Vector3.Cross((nearestPoint.Point - angleMiddlePoint), (curveEndPoint - angleMiddlePoint)));
-
-            //Determine the Start-Point for the nearest third-point
-            startPoint = angleMiddlePoint + curveRadius * (planePoint - angleMiddlePoint).normalized;
-        }
-        else
-        {
-            //Determine the Start-Point
-            startPoint = angleMiddlePoint + curveRadius * (currentPosition - angleMiddlePoint).normalized;
-        }
+        //Determine the Start-Point
+        Vector3 startPoint = angleMiddlePoint + curveRadius * (currentPosition - angleMiddlePoint).normalized;
 
         //Determine the Center of Start-Point and End-Point 
         Vector3 tempCenterPoint = Vector3.Lerp(startPoint, curveEndPoint, 0.5f);

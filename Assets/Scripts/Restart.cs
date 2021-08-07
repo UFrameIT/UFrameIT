@@ -6,7 +6,6 @@ public class Restart : MonoBehaviour
     public void LevelReset()
     {
         CommunicationEvents.LevelReset.Invoke(); // currently unused
-        Level.solved = false; // needed since static
 
         // delete Facts at Server
         CommunicationEvents.LevelFacts.hardreset(false);

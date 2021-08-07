@@ -23,14 +23,14 @@ public class Level : MonoBehaviour
         SolutionManager.Add(buttom, out _);
         SolutionManager.Add(top, out _, true);
 
-        LineFact target = new LineFact(buttom.URI, top.URI, SolutionManager);
+        LineFact target = new LineFact(buttom.Id, top.Id, SolutionManager);
         Solution.Add(SolutionManager[SolutionManager.Add(target, out _, true)]);
     }
 
     public static bool gameSolved()
     {
         solved =
-            LevelFacts.DynamiclySolved(Solution, out _, out List<Fact> hits, new LineFactHightDirectionComparer());
+            LevelFacts.DynamiclySolved(Solution, out _, out List<Fact> hits, FactComparer: new LineFactHightDirectionComparer());
 
         if (solved)
             foreach (var hit in hits)

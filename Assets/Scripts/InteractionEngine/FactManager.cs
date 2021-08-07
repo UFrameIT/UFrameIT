@@ -50,7 +50,7 @@ public class FactManager : MonoBehaviour
         {
             if (Math3d.IsPointApproximatelyOnLine(rayP1.Point, rayFact.Dir, hit.transform.position))
             {
-                AddOnLineFact(hit.transform.gameObject.GetComponent<FactObject>().URI, rayFact.URI, true);
+                AddOnLineFact(hit.transform.gameObject.GetComponent<FactObject>().URI, rayFact.Id, true);
             }
         }
 
@@ -61,8 +61,8 @@ public class FactManager : MonoBehaviour
             AddHitIfOnLine(hit);
 
         // for good measure
-        AddOnLineFact(rayFact.Pid1, rayFact.URI, true);
-        AddOnLineFact(rayFact.Pid2, rayFact.URI, true);
+        AddOnLineFact(rayFact.Pid1, rayFact.Id, true);
+        AddOnLineFact(rayFact.Pid2, rayFact.Id, true);
 
         return rayFact;
     }

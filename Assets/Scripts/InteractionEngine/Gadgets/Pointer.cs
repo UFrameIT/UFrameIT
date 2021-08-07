@@ -28,7 +28,7 @@ public class Pointer : Gadget
     {
 
         if (!this.isActiveAndEnabled) return;
-        var pid = FactManager.AddPointFact(hit).URI;
+        var pid = FactManager.AddPointFact(hit).Id;
 
         if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Ray"))
         {

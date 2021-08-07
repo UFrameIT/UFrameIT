@@ -65,7 +65,7 @@ public class LotTool : Gadget
             Vector3 LotPoint = Math3d.ProjectPointOnLine(hit.point, this.LotModeLineSelected.Dir, this.LotModeIntersectionPoint.Point);
 
             //TODO: which normal?
-            CreateRayAndAngles(this.LotModeIntersectionPoint.URI, FactManager.AddPointFact(LotPoint, hit.normal).URI, true);
+            CreateRayAndAngles(this.LotModeIntersectionPoint.Id, FactManager.AddPointFact(LotPoint, hit.normal).Id, true);
             this.ResetGadget();
         }
 
@@ -85,12 +85,12 @@ public class LotTool : Gadget
 
             //TODO: test Facts existance
             //add Facts
-            var intersectionId = FactManager.AddPointFact(intersectionPoint, this.LotModeLineHit.normal).URI;
+            var intersectionId = FactManager.AddPointFact(intersectionPoint, this.LotModeLineHit.normal).Id;
 
             if(this.LotModeLineSelected is RayFact) //Add OnLineFact only on Ray not Line
-                FactManager.AddOnLineFact(intersectionId, this.LotModeLineSelected.URI, true);
+                FactManager.AddOnLineFact(intersectionId, this.LotModeLineSelected.Id, true);
 
-            CreateRayAndAngles(intersectionId, tempFact.URI, true);
+            CreateRayAndAngles(intersectionId, tempFact.Id, true);
             this.ResetGadget();
         }
 

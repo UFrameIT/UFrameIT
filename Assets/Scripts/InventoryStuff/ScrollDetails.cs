@@ -145,7 +145,7 @@ public class ScrollDetails : MonoBehaviour
             if (tempFact != null)
             {
                 listEntry.fact = new Scroll.UriReference(this.scroll.requiredFacts[i].@ref.uri);
-                listEntry.assignment = new JSONManager.OMS(tempFact.URI);
+                listEntry.assignment = new JSONManager.OMS(tempFact.Id);
                 assignmentList.Add(listEntry);
             }
         }
@@ -218,7 +218,7 @@ public class ScrollDetails : MonoBehaviour
                 if (currentFact != null && currentFact.hasDependentFacts())
                 {
                     //Hint available for abstract-problem uri
-                    hintUris.Add(currentFact.URI);
+                    hintUris.Add(currentFact.Id);
                     LatestRenderedHints.Add(currentFact);
                 }
             }
@@ -244,10 +244,10 @@ public class ScrollDetails : MonoBehaviour
                 fact.Representation.GetComponentInChildren<MeshRendererHintAnimation>().AnimationTrigger();
             }
         }
-        else if (LatestRenderedHints.Exists(x => x.URI.Equals(scrollParameterUri)))
+        else if (LatestRenderedHints.Exists(x => x.Id.Equals(scrollParameterUri)))
         {
-            fact = LatestRenderedHints.Find(x => x.URI.Equals(scrollParameterUri));
-            var factId = fact.URI;
+            fact = LatestRenderedHints.Find(x => x.Id.Equals(scrollParameterUri));
+            var factId = fact.Id;
 
             //If there is an equal existing fact -> Animate that fact AND ScrollParameter
             if (LevelFacts.ContainsKey(factId))

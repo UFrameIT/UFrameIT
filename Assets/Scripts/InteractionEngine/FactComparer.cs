@@ -6,7 +6,7 @@ public abstract class FactComparer : EqualityComparer<Fact>
 {
     protected bool search_righthanded;
 
-    protected abstract bool Compare (Fact search, Fact fact);
+    protected abstract bool Compare (Fact solution, Fact fact);
 
     public FactComparer SetSearchRight()
     {
@@ -26,25 +26,25 @@ public abstract class FactComparer : EqualityComparer<Fact>
 
     public override int GetHashCode(Fact obj)
     {
-        return 0; //obj.GetHashCode();
+        return obj.GetType().GetHashCode();
     }
 }
 
 public class FactEquivalentsComparer : FactComparer
 {
-    protected override bool Compare (Fact search, Fact fact)
+    protected override bool Compare (Fact solution, Fact fact)
     {
-        return search.Equivalent(fact);
+        return solution.Equivalent(fact);
     }
 }
 
 class LineFactHightDirectionComparer : FactComparer
 {
-    protected override bool Compare (Fact search, Fact fact)
+    protected override bool Compare (Fact solution, Fact fact)
     {
-        return fact is LineFact && search is LineFact
-            && Math3d.IsApproximatelyParallel(((LineFact) fact).Dir, ((LineFact) search).Dir)
-            && ((LineFact) fact).Distance + Math3d.vectorPrecission >= ((LineFact) search).Distance;
+        return fact is LineFact && solution is LineFact
+            && Math3d.IsApproximatelyParallel(((LineFact) fact).Dir, ((LineFact) solution).Dir)
+            && ((LineFact) fact).Distance + Math3d.vectorPrecission >= ((LineFact) solution).Distance;
         // && Mathf.Approximately(((LineFact) x).Distance, ((LineFact) y).Distance);
     }
 }

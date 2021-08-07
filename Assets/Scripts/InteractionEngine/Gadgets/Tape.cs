@@ -49,10 +49,10 @@ public class Tape : Gadget
                 return;
 
             //If first point was already selected AND second point != first point
-            if (this.TapeModeIsFirstPointSelected && this.TapeModeFirstPointSelected.URI != tempFact.URI)
+            if (this.TapeModeIsFirstPointSelected && this.TapeModeFirstPointSelected.Id != tempFact.Id)
             {
                 //Create LineFact
-                FactManager.AddLineFact(this.TapeModeFirstPointSelected.URI, tempFact.URI);
+                FactManager.AddLineFact(this.TapeModeFirstPointSelected.Id, tempFact.Id);
 
                 this.ResetGadget();
             }
@@ -77,8 +77,8 @@ public class Tape : Gadget
                 if (Physics.Raycast(hit.transform.gameObject.transform.position - Vector3.down * 2, Vector3.down, out downHit))
                 {
                     var idA = downHit.transform.gameObject.GetComponent<FactObject>().URI;
-                    var idB = this.TapeModeFirstPointSelected.URI;
-                    var idC = FactManager.AddPointFact(hit).URI;
+                    var idB = this.TapeModeFirstPointSelected.Id;
+                    var idC = FactManager.AddPointFact(hit).Id;
                     //Create LineFact
                     FactManager.AddAngleFact(idA, idB, idC, true);
 

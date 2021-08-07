@@ -31,6 +31,8 @@ public class TaskCharakterAnimation : MonoBehaviour
     private float happyTime = 7.5f;
 
     private static bool playerInTalkingZone = false;
+
+    // TODO: Level Reset doesn't reset this?
     private static bool taskCharacterAddressed = false;
 
 

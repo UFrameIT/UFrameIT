@@ -4,18 +4,15 @@ using UnityEngine;
 using System.Linq;
 
 //TODO? PERF? (often inserts) SortedDict <-> Dict (often reads)
-//TODO? hide base dict
 //TODO: MMT: move some functionality there
 //TODO: consequent!= samestep != dependent
 
 //PERF: avoid string as key (general: allocations & dict: hash -> colission? -> strcmp[!])
 
 [System.Serializable]
-public class FactOrganizer: Dictionary<string, Fact>
+public class FactOrganizer
 {
-    // InvokeEvents?
-    private bool invoke;
-
+    private Dictionary<string, Fact> FactDict;
     private Dictionary<string, meta> MetaInf = new Dictionary<string, meta>();
     private List<stepnote> Workflow = new List<stepnote>();
     // notes position in Workflow for un-/redo; the pointed to element is non-acitve
@@ -25,6 +22,8 @@ public class FactOrganizer: Dictionary<string, Fact>
     private int backlog = 0;
     // set if recently been resetted
     private bool soft_resetted = false;
+    // InvokeEvents?
+    private bool invoke;
 
     private struct stepnote
     {
@@ -52,7 +51,7 @@ public class FactOrganizer: Dictionary<string, Fact>
                 this.steplink = prev.samestep ? prev.steplink : that.marker - 1;
             }
             else
-            // steproot sets steplink after itself (end of steptail)
+                // steproot sets steplink after itself (end of steptail)
                 this.steplink = that.marker + 1;
 
         }
@@ -74,29 +73,49 @@ public class FactOrganizer: Dictionary<string, Fact>
         }
     }
 
-    public FactOrganizer(bool invoke = false) : base()
+    public FactOrganizer(bool invoke = false)
     {
+        FactDict = new Dictionary<string, Fact>();
         this.invoke = invoke;
     }
 
-    public FactOrganizer(IDictionary<string, Fact> dictionary, bool invoke = false) : base(dictionary)
+    public FactOrganizer(IDictionary<string, Fact> dictionary, bool invoke = false)
     {
+        FactDict = new Dictionary<string, Fact>(dictionary);
         this.invoke = invoke;
     }
 
+    public Fact this[string id]
+    {
+        get{ return FactDict[id]; }
+    }
+
+    public bool ContainsKey(string id)
+    {
+        return FactDict.ContainsKey(id);
+    }
+
+    public bool ContainsLabel(string label)
+    {
+        if (string.IsNullOrEmpty(label))
+            return false;
+
+        var hit = FactDict.FirstOrDefault(e => e.Value.Label == label);
+        return !hit.Equals(System.Activator.CreateInstance(hit.GetType()));
+    }
 
     //TODO? MMT? PERF: O(n), every Fact-insertion
     private bool FindEquivalent(Fact search, out string found, out bool exact)
     // Looks for existent facts (found) which are very similar to prposed fact (search)
     // does not check active state
     {
-        if (exact = this.ContainsKey(search.URI))
+        if (exact = FactDict.ContainsKey(search.Id))
         {
-            found = search.URI;
+            found = search.Id;
             return true;
         }
 
-        foreach (var entry in this)
+        foreach (var entry in FactDict)
         {
             if (entry.Value.Equivalent(search))
             {
@@ -150,7 +169,7 @@ public class FactOrganizer: Dictionary<string, Fact>
                 // remove for good, if original creation gets pruned
                 {
                     this[last.Id].delete();
-                    base.Remove(last.Id);
+                    FactDict.Remove(last.Id);
                     MetaInf.Remove(last.Id);
                 }
             }
@@ -158,12 +177,6 @@ public class FactOrganizer: Dictionary<string, Fact>
             // prune Worklfow down to marker
             Workflow.RemoveRange(marker, Workflow.Count - marker);
         }
-    }
-
-    public new void Add(string key, Fact value)
-    // hide
-    {
-        this.Add(value, out _);
     }
 
     public string Add(Fact value, out bool exists, bool samestep = false)
@@ -192,8 +205,8 @@ public class FactOrganizer: Dictionary<string, Fact>
         else
         // brand new Fact
         {
-            key = value.URI;
-            base.Add(key, value);
+            key = value.Id;
+            FactDict.Add(key, value);
             MetaInf.Add(key, new meta(marker, true));
         }
 
@@ -201,21 +214,15 @@ public class FactOrganizer: Dictionary<string, Fact>
         return key;
     }
 
-    public new bool Remove(string key)
-    // hide
-    {
-        return this.Remove(key, false);
-    }
-
     public bool Remove(Fact value, bool samestep = false)
     {
-        return this.Remove(value.URI, samestep);
+        return this.Remove(value.Id, samestep);
     }
 
     public bool Remove(string key, bool samestep = false)
     //no reset check needed (impossible state)
     {
-        if (!base.ContainsKey(key))
+        if (!FactDict.ContainsKey(key))
             return false;
 
         //TODO: see issue #58
@@ -332,10 +339,10 @@ public class FactOrganizer: Dictionary<string, Fact>
         }
     }
 
-    public new void Clear()
+    public void Clear()
     // Does not Invoke RemoveFactEvent(s)!
     {
-        base.Clear();
+        FactDict.Clear();
         MetaInf.Clear();
         Workflow.Clear();
         marker = 0;
@@ -346,7 +353,7 @@ public class FactOrganizer: Dictionary<string, Fact>
 
     public void hardreset(bool invoke_event = true)
     {
-        foreach(var entry in this)
+        foreach(var entry in FactDict)
         {
             if (invoke_event && invoke && MetaInf[entry.Key].active)
                 CommunicationEvents.RemoveFactEvent.Invoke(entry.Value);
@@ -389,6 +396,7 @@ public class FactOrganizer: Dictionary<string, Fact>
     // call this after assigning a stored instance in an empty world
     {
         // TODO: see issue #58
+        // TODO: communication with MMT
 
         foreach (var mett in MetaInf)
         {
@@ -422,6 +430,9 @@ public class FactOrganizer: Dictionary<string, Fact>
                 CommunicationEvents.AddFactEvent.Invoke(this[Id]);
             else
                 CommunicationEvents.RemoveFactEvent.Invoke(this[Id]);
+
+        if (!creation)
+            FactDict[Id].freeLabel();
     }
 
     public bool StaticlySovled(List<Fact> StaticSolution, out List<Fact> MissingElements, out List<Fact> Solutions)
@@ -433,7 +444,7 @@ public class FactOrganizer: Dictionary<string, Fact>
     //TODO: PERF: see CommunicationEvents.Solution
     public bool DynamiclySolved(List<Fact> MinimalSolution, out List<Fact> MissingElements, out List<Fact> Solutions, FactComparer FactComparer)
     {
-        Solutions = this.Values.Where(f => MetaInf[f.URI].active)
+        Solutions = FactDict.Values.Where(f => MetaInf[f.Id].active)
             .Where(active => MinimalSolution.Contains(active, FactComparer.SetSearchRight()))
             .ToList();
 

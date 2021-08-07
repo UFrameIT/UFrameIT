@@ -56,7 +56,7 @@ public class FactSpawner : MonoBehaviour
         point.transform.position = fact.Point;
         point.transform.up = fact.Normal;
         point.GetComponentInChildren<TextMeshPro>().text = fact.Label;
-        point.GetComponent<FactObject>().URI = fact.URI;
+        point.GetComponent<FactObject>().URI = fact.Id;
         fact.Representation = point;
         return fact;
     }
@@ -92,7 +92,7 @@ public class FactSpawner : MonoBehaviour
         //line.GetComponentInChildren<TextMeshPro>().text = letter;
         line.GetComponentInChildren<TextMeshPro>().text = pointFact1.Label + pointFact2.Label;
         line.GetComponentInChildren<TextMeshPro>().text += " = " + Math.Round((point1-point2).magnitude, 2) + " m";
-        line.GetComponentInChildren<FactObject>().URI = lineFact.URI;
+        line.GetComponentInChildren<FactObject>().URI = lineFact.Id;
         lineFact.Representation = line;
         return lineFact;
 
@@ -134,7 +134,7 @@ public class FactSpawner : MonoBehaviour
         line.transform.GetChild(0).rotation = Quaternion.FromToRotation(Vector3.right, point2 - point1);
 
         line.GetComponentInChildren<TextMeshPro>().text = rayFact.Label;
-        line.GetComponentInChildren<FactObject>().URI = rayFact.URI;
+        line.GetComponentInChildren<FactObject>().URI = rayFact.Id;
 
         rayFact.Representation = line;
         return rayFact;
@@ -190,7 +190,7 @@ public class FactSpawner : MonoBehaviour
         foreach (CircleSegmentGenerator c in segments)
             c.setAngle(angleValue);
 
-        angle.GetComponentInChildren<FactObject>().URI = angleFact.URI;
+        angle.GetComponentInChildren<FactObject>().URI = angleFact.Id;
         angleFact.Representation = angle;
         return angleFact;
     }

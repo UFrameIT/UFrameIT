@@ -43,10 +43,10 @@ public class LineTool : Gadget
             Fact tempFact = LevelFacts[hit.transform.GetComponent<FactObject>().URI];
 
             //If first point was already selected AND second point != first point
-            if (this.LineModeIsFirstPointSelected && this.LineModeFirstPointSelected.URI != tempFact.URI)
+            if (this.LineModeIsFirstPointSelected && this.LineModeFirstPointSelected.Id != tempFact.Id)
             {
                 //Create LineFact
-                FactManager.AddRayFact(this.LineModeFirstPointSelected.URI, tempFact.URI);
+                FactManager.AddRayFact(this.LineModeFirstPointSelected.Id, tempFact.Id);
 
                 this.ResetGadget();
             }
@@ -72,8 +72,8 @@ public class LineTool : Gadget
                 {
                     //Create LineFact
                     var idA = downHit.transform.gameObject.GetComponent<FactObject>().URI;
-                    var idB = this.LineModeFirstPointSelected.URI;
-                    FactManager.AddAngleFact(idA, idB, FactManager.AddPointFact(hit).URI);
+                    var idB = this.LineModeFirstPointSelected.Id;
+                    FactManager.AddAngleFact(idA, idB, FactManager.AddPointFact(hit).Id);
 
                     this.ResetGadget();
                 }
