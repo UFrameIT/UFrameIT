@@ -38,10 +38,16 @@ public class ShinyThings : MonoBehaviour
     // Start is called before the first frame update
     public void Start()
     {
-        if (Cursor == null) Cursor = GetComponent<WorldCursor>();
-        if (directionalLight == null) directionalLight = FindObjectOfType<Light>().gameObject;
-        CommunicationEvents.PushoutFactEvent.AddListener(StartPushoutFactHighlighting);
+        if (Cursor == null) 
+            Cursor = GetComponent<WorldCursor>();
+
+        if (directionalLight == null)
+            directionalLight = FindObjectOfType<Light>().gameObject;
+
+        CommunicationEvents.PushoutFactEvent.AddListener(HighlightFact);
         CommunicationEvents.PushoutFactFailEvent.AddListener(StartPushoutFactFailHighlighting);
+        CommunicationEvents.AnimateExistingFactEvent.AddListener(HighlightWithFireworks);
+
         speedSlowDown = timerDurationEnd * 10;
         lightColor = directionalLight.GetComponent<Light>().color;
 
@@ -181,9 +187,18 @@ public class ShinyThings : MonoBehaviour
         }
     }
 
-    public void StartPushoutFactHighlighting(Fact startFact) {
-
+    public void HighlightWithFireworks(Fact fact)
+    {
         GameObject fireworksRepresentation = (GameObject)Resources.Load("Prefabs/Fireworks_Animation", typeof(GameObject));
+
+        this.extraHighlight = GameObject.Instantiate(fireworksRepresentation);
+        this.extraHighlight.transform.position = fact.Representation.transform.position;
+
+        HighlightFact(fact);
+    }
+
+    public void HighlightFact(Fact startFact) {
+
         highlightedPushoutFact = startFact;
 
         if (typeof(PointFact).IsInstanceOfType(highlightedPushoutFact))
@@ -191,23 +206,17 @@ public class ShinyThings : MonoBehaviour
             PointFact fact = (PointFact)highlightedPushoutFact;
             tempMaterial = fact.Representation.transform.GetChild(0).GetComponent<MeshRenderer>().material;
             fact.Representation.transform.GetChild(0).GetComponent<MeshRenderer>().material = pushoutMaterial;
-            this.extraHighlight = GameObject.Instantiate(fireworksRepresentation);
-            this.extraHighlight.transform.position = fact.Representation.transform.position;
         }
         else if (typeof(LineFact).IsInstanceOfType(highlightedPushoutFact))
         {
             LineFact fact = (LineFact)highlightedPushoutFact;
             tempMaterial = fact.Representation.transform.GetChild(0).GetChild(1).GetComponent<MeshRenderer>().material;
             fact.Representation.transform.GetChild(0).GetChild(1).GetComponent<MeshRenderer>().material = pushoutMaterial;
-            this.extraHighlight = GameObject.Instantiate(fireworksRepresentation);
-            this.extraHighlight.transform.position = fact.Representation.transform.position;
         }
         else if (typeof(AngleFact).IsInstanceOfType(highlightedPushoutFact)) {
             AngleFact fact = (AngleFact)highlightedPushoutFact;
             tempMaterial = fact.Representation.transform.GetChild(0).GetComponent<MeshRenderer>().material;
             fact.Representation.transform.GetChild(0).GetComponent<MeshRenderer>().material = pushoutMaterial;
-            this.extraHighlight = GameObject.Instantiate(fireworksRepresentation);
-            this.extraHighlight.transform.position = fact.Representation.transform.position;
         }
 
         //Activate Timer
@@ -216,7 +225,7 @@ public class ShinyThings : MonoBehaviour
         this.timerActive = true;
     }
 
-    public void StopPushoutFactHighlighting() {
+    public void StopHighlighting() {
 
         if (typeof(PointFact).IsInstanceOfType(highlightedPushoutFact))
         {
@@ -234,8 +243,11 @@ public class ShinyThings : MonoBehaviour
             fact.Representation.transform.GetChild(0).GetComponent<MeshRenderer>().material = tempMaterial;
         }
 
-        GameObject.Destroy(this.extraHighlight);
-        this.extraHighlight = null;
+        if (this.extraHighlight != null)
+        {
+            GameObject.Destroy(this.extraHighlight);
+            this.extraHighlight = null;
+        }
 
         //Event for the happy Task-Charakter
         CommunicationEvents.PushoutFactEndEvent.Invoke(null);
@@ -261,10 +273,10 @@ public class ShinyThings : MonoBehaviour
                 {
                     this.timerActive = false;
                     this.timer = 0;
-                    StopPushoutFactHighlighting();
+                    StopHighlighting();
                 }
                 //After this.timerDuration: Slow Down Fireworks
-                else
+                else if (this.extraHighlight != null)
                 {
                     ParticleSystem main1 = this.extraHighlight.transform.GetChild(0).GetComponent<ParticleSystem>();
                     ParticleSystem main2 = this.extraHighlight.transform.GetChild(1).GetComponent<ParticleSystem>();

@@ -35,7 +35,6 @@ public class ScrollDetails : MonoBehaviour
     {
         if (cursor == null) cursor = GameObject.FindObjectOfType<WorldCursor>();
 
-        parameterDisplayHint.AddListener(animateScrollParameter);
         ScrollFactHintEvent.AddListener(animateHint);
         NewAssignmentEvent.AddListener(newAssignmentTrigger);
     }
@@ -118,13 +117,14 @@ public class ScrollDetails : MonoBehaviour
         UnityWebRequest www = UnityWebRequest.Put(ServerAdress + endpoint, body);
         www.method = UnityWebRequest.kHttpVerbPOST;
         www.SetRequestHeader("Content-Type", "application/json");
-        var async = www.Send();
+        var async = www.SendWebRequest();
         while (!async.isDone) {
             //Non blocking wait for one frame, for letting the game do other things
             yield return null;
         }
 
-        if (www.isNetworkError || www.isHttpError)
+        if (www.result == UnityWebRequest.Result.ConnectionError 
+         || www.result == UnityWebRequest.Result.ProtocolError)
         {
             Debug.Log(www.error);
             currentMmtAnswer = null;
@@ -149,7 +149,7 @@ public class ScrollDetails : MonoBehaviour
             if (tempFact != null)
             {
                 listEntry.fact = new Scroll.UriReference(this.scroll.requiredFacts[i].@ref.uri);
-                listEntry.assignment = new JSONManager.OMS(tempFact.backendURI);
+                listEntry.assignment = new JSONManager.OMS(tempFact.Id);
                 assignmentList.Add(listEntry);
             }
         }
@@ -165,16 +165,13 @@ public class ScrollDetails : MonoBehaviour
         if(pushoutFacts.Count == 0)
             PushoutFactFailEvent.Invoke(null);
 
-        for (int i = 0; i < pushoutFacts.Count; i++)
+        bool samestep = false;
+        for (int i = 0; i < pushoutFacts.Count; i++, samestep = true)
         {
             Fact newFact = ParsingDictionary.parseFactDictionary[pushoutFacts[i].getType()].Invoke(pushoutFacts[i]);
             if (newFact != null)
             {
-                int id = factManager.GetFirstEmptyID();
-                newFact.Id = id;
-                Facts.Insert(id, newFact);
-                AddFactEvent.Invoke(newFact);
-                PushoutFactEvent.Invoke(newFact);
+                PushoutFactEvent.Invoke(FactManager.AddFactIfNotFound(newFact, out bool exists, samestep));
             }
             else {
                 Debug.Log("Parsing on pushout-fact returned null -> One of the dependent facts does not exist");
@@ -238,7 +235,7 @@ public class ScrollDetails : MonoBehaviour
                 if (currentFact != null && currentFact.hasDependentFacts())
                 {
                     //Hint available for abstract-problem uri
-                    hintUris.Add(currentFact.backendURI);
+                    hintUris.Add(currentFact.Id);
                     LatestRenderedHints.Add(currentFact);
                 }
             }
@@ -253,9 +250,9 @@ public class ScrollDetails : MonoBehaviour
 
         if (suitableCompletion != null)
         {
-            fact = Facts.Find(x => x.backendURI.Equals(suitableCompletion.assignment.uri));
-            if (fact != null)
+            if (LevelFacts.ContainsKey(suitableCompletion.assignment.uri))
             {
+                fact = LevelFacts[suitableCompletion.assignment.uri];
                 //Animate ScrollParameter
                 scrollParameter.GetComponentInChildren<ImageHintAnimation>().AnimationTrigger();
                 //Animate Fact in FactPanel
@@ -265,14 +262,15 @@ public class ScrollDetails : MonoBehaviour
                     fact.Representation.GetComponentInChildren<MeshRendererHintAnimation>().AnimationTrigger();
             }
         }
-        else if (LatestRenderedHints.Exists(x => x.backendURI.Equals(scrollParameterUri))) {
-            fact = LatestRenderedHints.Find(x => x.backendURI.Equals(scrollParameterUri));
+        else if (LatestRenderedHints.Exists(x => x.Id.Equals(scrollParameterUri)))
+        {
+            fact = LatestRenderedHints.Find(x => x.Id.Equals(scrollParameterUri));
+            var factId = fact.Id;
 
             //If there is an equal existing fact -> Animate that fact AND ScrollParameter
-            //Equal is true, if there exists a fact of the same type and with the same dependent facts
-            if (Facts.Exists(x => x.Equals(fact)))
+            if (LevelFacts.ContainsKey(factId))
             {
-                Fact existingFact = Facts.Find(x => x.Equals(fact));
+                Fact existingFact = LevelFacts[factId];
 
                 //Animate ScrollParameter
                 scrollParameter.GetComponentInChildren<ImageHintAnimation>().AnimationTrigger();

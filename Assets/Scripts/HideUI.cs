@@ -1,12 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using static CommunicationEvents;
 
 public class HideUI : MonoBehaviour
 {
 
     public KeyCode Key = KeyCode.F1;
     //public KeyCode ScreenshotKey = KeyCode.F2;
+
+    public string
+        modifier,
+        modundo,
+        modredo,
+        modreset;
 
     public UnityStandardAssets.Characters.FirstPerson.FirstPersonController CamControl;
     public bool LockOnly = true;
@@ -17,9 +22,9 @@ public class HideUI : MonoBehaviour
     {
         if (!LockOnly)
         {
-            if(UICanvas==null)
+            if (UICanvas == null)
                 UICanvas = GetComponentInChildren<Canvas>();
-            bool camActive  = !UICanvas.enabled;
+            bool camActive = !UICanvas.enabled;
             CamControl.enabled = camActive;
             CursorRenderer.enabled = camActive;
         }
@@ -31,7 +36,6 @@ public class HideUI : MonoBehaviour
     {
         if (Input.GetKeyDown(Key))
         {
-
             if (LockOnly)
             {
                 CamControl.enabled = !CamControl.enabled;
@@ -46,9 +50,18 @@ public class HideUI : MonoBehaviour
                 CamControl.enabled = camActive;
                 CursorRenderer.enabled = camActive;
             }
-
-
         }
+
+        else if (Input.GetButton(modifier))
+        {
+            if (Input.GetButtonDown(modundo))
+                LevelFacts.undo();
+            else if (Input.GetButtonDown(modredo))
+                LevelFacts.redo();
+            else if (Input.GetButtonDown(modreset))
+                LevelFacts.softreset();
+        }
+        
         /*
         //Todo before capturing: Make directories "UFrameIT-Screenshots/Unity_ScreenCapture" in project folder
         else if (Input.GetKeyDown(ScreenshotKey)) {

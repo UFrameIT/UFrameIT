@@ -26,11 +26,13 @@ public class TaskCharakterAnimation : MonoBehaviour
     private float rotationTime = 2;
     private bool happy = false;
 
-    private bool happyAnimationDone = false;
+    private bool LelvelVerifiedSolved = false;
     private float happyTimer = 0;
     private float happyTime = 7.5f;
 
     private static bool playerInTalkingZone = false;
+
+    // TODO: Level Reset doesn't reset this?
     private static bool taskCharacterAddressed = false;
 
 
@@ -72,10 +74,10 @@ public class TaskCharakterAnimation : MonoBehaviour
             //Face walkAroundObject to Player (but only on y-Axis, so ignore x-and z-axis)
             currentTransform.LookAt(new Vector3(player.transform.position.x, currentTransform.position.y, player.transform.position.z));
 
-            if(checkGameSolved() && taskCharacterAddressed && !happyAnimationDone)
+            if(taskCharacterAddressed && !LelvelVerifiedSolved && checkGameSolved())
             {
                 startHappy();
-                happyAnimationDone = true;
+                LelvelVerifiedSolved = true;
             }
 
             return;

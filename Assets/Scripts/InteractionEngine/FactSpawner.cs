@@ -8,7 +8,7 @@ using static GlobalSettings;
 public class FactSpawner : MonoBehaviour
 {
     private GameObject FactRepresentation;
-    private Camera camera;
+    //private Camera camera;
 
     void Start()
     {
@@ -21,7 +21,7 @@ public class FactSpawner : MonoBehaviour
         //Default FactRepresenation = Sphere-Prefab for Points
         this.FactRepresentation = (GameObject) Resources.Load("Prefabs/Sphere", typeof(GameObject));
 
-        camera = Camera.main;
+        //camera = Camera.main;
 
     }
 
@@ -55,9 +55,8 @@ public class FactSpawner : MonoBehaviour
         GameObject point = GameObject.Instantiate(FactRepresentation);
         point.transform.position = fact.Point;
         point.transform.up = fact.Normal;
-        string letter = ((Char)(64+fact.Id+1)).ToString();
-        point.GetComponentInChildren<TextMeshPro>().text = letter;
-        point.GetComponent<FactObject>().Id = fact.Id;
+        point.GetComponentInChildren<TextMeshPro>().text = fact.Label;
+        point.GetComponent<FactObject>().URI = fact.Id;
         fact.Representation = point;
         return fact;
     }
@@ -66,8 +65,8 @@ public class FactSpawner : MonoBehaviour
     {
         LineFact lineFact = ((LineFact)fact);
 
-        PointFact pointFact1 = (Facts[lineFact.Pid1] as PointFact);
-        PointFact pointFact2 = (Facts[lineFact.Pid2] as PointFact);
+        PointFact pointFact1 = (LevelFacts[lineFact.Pid1] as PointFact);
+        PointFact pointFact2 = (LevelFacts[lineFact.Pid2] as PointFact);
         Vector3 point1 = pointFact1.Point;
         Vector3 point2 = pointFact2.Point;
         //Change FactRepresentation to Line
@@ -91,9 +90,9 @@ public class FactSpawner : MonoBehaviour
 
         //string letter = ((Char)(64 + lineFact.Id + 1)).ToString();
         //line.GetComponentInChildren<TextMeshPro>().text = letter;
-        line.GetComponentInChildren<TextMeshPro>().text = ((Char)(64 + pointFact1.Id + 1)).ToString() + ((Char)(64 + pointFact2.Id + 1)).ToString();
+        line.GetComponentInChildren<TextMeshPro>().text = pointFact1.Label + pointFact2.Label;
         line.GetComponentInChildren<TextMeshPro>().text += " = " + Math.Round((point1-point2).magnitude, 2) + " m";
-        line.GetComponentInChildren<FactObject>().Id = lineFact.Id;
+        line.GetComponentInChildren<FactObject>().URI = lineFact.Id;
         lineFact.Representation = line;
         return lineFact;
 
@@ -103,8 +102,8 @@ public class FactSpawner : MonoBehaviour
     {
         RayFact rayFact = ((RayFact)fact);
 
-        PointFact pointFact1 = (Facts[rayFact.Pid1] as PointFact);
-        PointFact pointFact2 = (Facts[rayFact.Pid2] as PointFact);
+        PointFact pointFact1 = (LevelFacts[rayFact.Pid1] as PointFact);
+        PointFact pointFact2 = (LevelFacts[rayFact.Pid2] as PointFact);
 
  
         Vector3 point1 = pointFact1.Point;
@@ -114,8 +113,8 @@ public class FactSpawner : MonoBehaviour
         point1 -= dir * 100;
         point2 += dir * 100;
 
-         //Change FactRepresentation to Line
-         this.FactRepresentation = (GameObject)Resources.Load("Prefabs/Ray", typeof(GameObject));
+        //Change FactRepresentation to Line
+        this.FactRepresentation = (GameObject)Resources.Load("Prefabs/Ray", typeof(GameObject));
         GameObject line = GameObject.Instantiate(FactRepresentation);
         //Place the Line in the centre of the two points
         line.transform.position = Vector3.Lerp(point1, point2, 0.5f);
@@ -123,7 +122,7 @@ public class FactSpawner : MonoBehaviour
         //Get the Line-GameObject as the first Child of the Line-Prefab -> That's the Collider
         var v3T = line.transform.GetChild(0).localScale;
         v3T.x = (point2 - point1).magnitude;
-        Debug.Log(v3T.x);
+
         //For every Coordinate x,y,z we have to devide it by the LocalScale of the Child,
         //because actually the Child should be of this length and not the parent, which is only the Collider
         v3T.x = v3T.x / line.transform.GetChild(0).GetChild(0).localScale.x;
@@ -134,10 +133,9 @@ public class FactSpawner : MonoBehaviour
         line.transform.GetChild(0).localScale = v3T;
         line.transform.GetChild(0).rotation = Quaternion.FromToRotation(Vector3.right, point2 - point1);
 
-        string letter = ((Char)(64 + rayFact.Id + 1)).ToString();
-        line.GetComponentInChildren<TextMeshPro>().text = letter;
-     
-        line.GetComponentInChildren<FactObject>().Id = rayFact.Id;
+        line.GetComponentInChildren<TextMeshPro>().text = rayFact.Label;
+        line.GetComponentInChildren<FactObject>().URI = rayFact.Id;
+
         rayFact.Representation = line;
         return rayFact;
     }
@@ -147,9 +145,9 @@ public class FactSpawner : MonoBehaviour
     {
         AngleFact angleFact = (AngleFact)fact;
 
-        Vector3 point1 = (Facts[angleFact.Pid1] as PointFact).Point;
-        Vector3 point2 = (Facts[angleFact.Pid2] as PointFact).Point;
-        Vector3 point3 = (Facts[angleFact.Pid3] as PointFact).Point;
+        Vector3 point1 = (LevelFacts[angleFact.Pid1] as PointFact).Point;
+        Vector3 point2 = (LevelFacts[angleFact.Pid2] as PointFact).Point;
+        Vector3 point3 = (LevelFacts[angleFact.Pid3] as PointFact).Point;
 
         //Length of the Angle relative to the Length of the shortest of the two lines (point2->point1) and (point2->point3)
         float lengthFactor = 0.3f;
@@ -192,14 +190,13 @@ public class FactSpawner : MonoBehaviour
         foreach (CircleSegmentGenerator c in segments)
             c.setAngle(angleValue);
 
-        angle.GetComponentInChildren<FactObject>().Id = angleFact.Id;
+        angle.GetComponentInChildren<FactObject>().URI = angleFact.Id;
         angleFact.Representation = angle;
         return angleFact;
     }
 
     public void DeleteObject(Fact fact)
     {
-        Debug.Log("delete obj of "+ fact.Id);
         GameObject factRepresentation = fact.Representation;
         GameObject.Destroy(factRepresentation);
     }

@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 
 public class Gadget : MonoBehaviour
@@ -14,10 +12,12 @@ public class Gadget : MonoBehaviour
 
     void Awake()
     {
-        if (FactManager == null) FactManager = GameObject.FindObjectOfType<FactManager>();
+        if (FactManager == null)
+            FactManager = GameObject.FindObjectOfType<FactManager>();
+
         CommunicationEvents.TriggerEvent.AddListener(OnHit);
 
     }
 
-    public virtual void OnHit(RaycastHit hit){}
+    public virtual void OnHit(RaycastHit hit) { }
 }

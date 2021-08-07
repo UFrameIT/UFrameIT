@@ -10,8 +10,10 @@ using static GadgetManager;
 public class WorldCursor : MonoBehaviour
 {
     public RaycastHit Hit;
+    public string deactivateSnapKey;
     private Camera Cam;
     private int layerMask;
+    public LayerMask snapLayerMask;
 
     private void Awake()
     {
@@ -70,33 +72,28 @@ public class WorldCursor : MonoBehaviour
         Ray ray = Cam.ScreenPointToRay(Input.mousePosition);
         RaycastHit tempHit;
 
-        if(Physics.Raycast(ray, out tempHit, 30f, this.layerMask)){
+        int rayCastMask;
+        if (Input.GetButton(this.deactivateSnapKey))
+            rayCastMask = this.layerMask & ~this.snapLayerMask.value;
+        else
+            rayCastMask = this.layerMask;
+
+        if (Physics.Raycast(ray, out tempHit, 30f, rayCastMask)){
 
             this.Hit = tempHit;
             // Debug.Log(Hit.transform.tag);
-            if (Hit.collider.transform.CompareTag("SnapZone"))
+            if ((Hit.collider.transform.CompareTag("SnapZone") || Hit.collider.transform.CompareTag("Selectable")) 
+                && !Input.GetButton(this.deactivateSnapKey))
             {
-                if(Hit.collider.gameObject.layer == LayerMask.NameToLayer("Ray")){
+                if(Hit.collider.gameObject.layer == LayerMask.NameToLayer("Ray")
+                    || Hit.collider.gameObject.layer == LayerMask.NameToLayer("Line"))
+                {
+                    var id = Hit.collider.gameObject.GetComponent<FactObject>().URI;
+                    AbstractLineFact lineFact = CommunicationEvents.LevelFacts[id] as AbstractLineFact;
+                    PointFact p1 =  CommunicationEvents.LevelFacts[lineFact.Pid1] as PointFact;
 
-                    int id = Hit.collider.gameObject.GetComponent<FactObject>().Id;
-                    RayFact lineFact = CommunicationEvents.Facts.Find((x => x.Id == id)) as RayFact;
-                    PointFact p1 =  CommunicationEvents.Facts.Find((x => x.Id == lineFact.Pid1)) as PointFact;
-                    PointFact p2 = CommunicationEvents.Facts.Find((x => x.Id == lineFact.Pid2)) as PointFact;
-
-                    Vector3 lineDir = p2.Point - p1.Point;
-                    Plane plane = new Plane(lineDir, Hit.point);
-
-                    Ray intersectionRay = new Ray(p1.Point, lineDir );
-
-                    if(plane.Raycast(intersectionRay, out float enter)){
-
-                        Hit.point = p1.Point + lineDir.normalized * enter;
-                    }
-                    else Debug.LogError("something wrong with linesnapzone");
+                    Hit.point = Math3d.ProjectPointOnLine(p1.Point, lineFact.Dir, Hit.point);
                     CheckMouseButtons(true,true);
-
-
-
                 }
                 else
                 {
@@ -105,7 +102,6 @@ public class WorldCursor : MonoBehaviour
                     CheckMouseButtons(true);
                 }
 
-            
                 transform.position = Hit.point;
                 transform.up = Hit.normal;
 
@@ -124,7 +120,7 @@ public class WorldCursor : MonoBehaviour
             this.Hit = new RaycastHit();
             var dist = 10f;
             if (tempHit.transform!=null)
-            dist = (Camera.main.transform.position - tempHit.transform.position).magnitude;
+                dist = (Camera.main.transform.position - tempHit.transform.position).magnitude;
             transform.position = Cam.ScreenToWorldPoint(Input.mousePosition + new Vector3(0,0,1) *dist);
             transform.up = -Cam.transform.forward;
         }
@@ -141,8 +137,8 @@ public class WorldCursor : MonoBehaviour
             {
                 CommunicationEvents.TriggerEvent.Invoke(Hit);
             }
-            else if(GadgetManager.activeGadget.GetType() == typeof(Pointer)){
-                if(!onLine)Hit.collider.enabled = false;
+            else{
+                //if(!onLine) Hit.collider.enabled = false;
                 CommunicationEvents.TriggerEvent.Invoke(Hit);
             //    CommunicationEvents.SnapEvent.Invoke(Hit);
             }

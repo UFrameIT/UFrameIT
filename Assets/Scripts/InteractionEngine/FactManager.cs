@@ -4,221 +4,72 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using static CommunicationEvents;
+
 public class FactManager : MonoBehaviour
 {
-    public GameObject SmartMenu;
-    private List<int> NextEmpties = new List<int>();
-
-
-
-    // Start is called before the first frame update
-    void Start()
+    //TODO! communicate success/ failure
+    public static Fact AddFactIfNotFound(Fact fact, out bool exists, bool samestep)
     {
-
-        //  CommunicationEvents.SnapEvent.AddListener(Rocket);
-
-        //We dont want to have this here anymore...
-        //CommunicationEvents.RemoveFactEvent.AddListener(DeleteFact);
-
-        NextEmpties.Add(0);
-
+        return LevelFacts[LevelFacts.Add(fact, out exists, samestep)];
     }
 
-
-
-
-
-    // Update is called once per frame
-    void Update()
+    public PointFact AddPointFact(RaycastHit hit, bool samestep = false)
     {
-
+        return (PointFact) AddFactIfNotFound(new PointFact(hit.point, hit.normal, LevelFacts), out bool obsolete, samestep);
     }
 
-    //TODO: change the return find....
-    public PointFact AddPointFact(RaycastHit hit, int id)
+    public PointFact AddPointFact(Vector3 point, Vector3 normal, bool samestep = false)
     {
-        Facts.Insert(id, new PointFact(id, hit.point, hit.normal));
-        return Facts.Find(x => x.Id == id) as PointFact;
+        return (PointFact) AddFactIfNotFound(new PointFact(point, normal, LevelFacts), out bool obsolete, samestep);
     }
 
-    public LineFact AddLineFact(int pid1, int pid2, int id)
+    public OnLineFact AddOnLineFact(string pid, string lid, bool samestep = false)
     {
-        Facts.Insert(id, new LineFact(id, pid1, pid2));
-
-        return Facts.Find(x => x.Id == id) as LineFact;
+        return (OnLineFact)AddFactIfNotFound(new OnLineFact(pid, lid, LevelFacts), out bool obsolete, samestep);
     }
-    public List<Fact> AddRayFact(int pid1, int pid2, int id)
+
+    public LineFact AddLineFact(string pid1, string pid2, bool samestep = false)
     {
-        Facts.Insert(id, new RayFact(id, pid1, pid2));
+        return (LineFact)AddFactIfNotFound(new LineFact(pid1, pid2, LevelFacts), out bool obsolete, samestep);
+    }
 
-        var oLid1 = GetFirstEmptyID();
-        Facts.Insert(oLid1, new OnLineFact(oLid1, pid1, id));
-        var oLid2 = GetFirstEmptyID();
-        Facts.Insert(oLid2, new OnLineFact(oLid2, pid2, id));
+    public RayFact AddRayFact(string pid1, string pid2, bool samestep = false)
+    {
+        RayFact rayFact = (RayFact)AddFactIfNotFound(new RayFact(pid1, pid2, LevelFacts), out bool exists, samestep);
+        if (exists)
+            return rayFact;
 
-        var p1 = Facts.Find(x => x.Id == pid1);
-        var p2 = Facts.Find(x => x.Id == pid2);
+        //Add all PointFacts on Ray as OnLineFacts
+        PointFact rayP1 = (PointFact)LevelFacts[rayFact.Pid1];
+        PointFact rayP2 = (PointFact)LevelFacts[rayFact.Pid2];
+        int layerMask = LayerMask.GetMask("Point");
+        RaycastHit[] hitsA = Physics.RaycastAll(rayP1.Point,  rayFact.Dir, Mathf.Infinity, layerMask);
+        RaycastHit[] hitsB = Physics.RaycastAll(rayP2.Point, -rayFact.Dir, Mathf.Infinity, layerMask);
 
-        Vector3 dir = p2.Representation.transform.position - p1.Representation.transform.position;
-
-    
-
-        // Bit shift the index of the layer Point to get a bit mask
-        int layerMask = 1 << LayerMask.NameToLayer("Point");
-        // This casts rays only against colliders in layer 8
-
-
-        RaycastHit[] hits;
-        hits = Physics.RaycastAll(p1.Representation.transform.position - dir * 1000, dir, Mathf.Infinity, layerMask);
-
-        Debug.Log(hits.Length + " hits");
-        for (int i = 0; i < hits.Length; i++)
+        void AddHitIfOnLine(RaycastHit hit)
         {
-            RaycastHit hit = hits[i];
-
-            bool exists = false;
-
-            foreach (Fact fact in Facts)
+            if (Math3d.IsPointApproximatelyOnLine(rayP1.Point, rayFact.Dir, hit.transform.position))
             {
-                if (typeof(OnLineFact).IsInstanceOfType(fact))
-                {
-                    OnLineFact oLFact = (OnLineFact)fact;
-                    if ((oLFact.Rid == id && oLFact.Pid == hit.transform.gameObject.GetComponent<FactObject>().Id))
-                    {
-                        exists = true;
-                        break;
-                    }
-                }
+                AddOnLineFact(hit.transform.gameObject.GetComponent<FactObject>().URI, rayFact.Id, true);
             }
-
-
-            if (!exists)
-            {
-                var anotherOLid = GetFirstEmptyID();
-                var olF = new OnLineFact(anotherOLid, hit.transform.gameObject.GetComponent<FactObject>().Id, id);
-                Facts.Insert(anotherOLid, olF);
-            }
-
-
         }
 
-        List<Fact> returnedFacts = new List<Fact>();
-        returnedFacts.Add(Facts.Find(x => x.Id == id) as RayFact);
-        returnedFacts.Add(Facts.Find(x => x.Id == oLid1) as OnLineFact);
-        returnedFacts.Add(Facts.Find(x => x.Id == oLid2) as OnLineFact);
-        return returnedFacts;
+        foreach (RaycastHit hit in hitsA)
+            AddHitIfOnLine(hit);
+
+        foreach (RaycastHit hit in hitsB)
+            AddHitIfOnLine(hit);
+
+        // for good measure
+        AddOnLineFact(rayFact.Pid1, rayFact.Id, true);
+        AddOnLineFact(rayFact.Pid2, rayFact.Id, true);
+
+        return rayFact;
     }
 
-
-    public AngleFact AddAngleFact(int pid1, int pid2, int pid3, int id)
+    public AngleFact AddAngleFact(string pid1, string pid2, string pid3, bool samestep = false)
     {
-        Facts.Insert(id, new AngleFact(id, pid1, pid2, pid3));
-
-        return Facts.Find(x => x.Id == id) as AngleFact;
+        return (AngleFact)AddFactIfNotFound(new AngleFact(pid1, pid2, pid3, LevelFacts), out bool obsolete, samestep);
     }
-
-    public void DeleteFact(Fact fact)
-    {
-        if (Facts.Contains(fact)) {
-            NextEmpties.Add(fact.Id);
-            //Facts.RemoveAt(fact.Id);
-            Facts.Remove(Facts.Find(x => x.Id == fact.Id));
-            CommunicationEvents.RemoveFactEvent.Invoke(fact);
-        }
-    }
-
-    public int GetFirstEmptyID()
-    {
-
-        /* for (int i = 0; i < Facts.Length; ++i)
-         {
-             if (Facts[i] == "")
-                 return i;
-         }
-         return Facts.Length - 1;*/
-        NextEmpties.Sort();
-
-        int id = NextEmpties[0];
-        NextEmpties.RemoveAt(0);
-        if (NextEmpties.Count == 0)
-            NextEmpties.Add(id + 1);
-
-        Debug.Log("place fact at " + id);
-
-        return id;
-
-
-    }
-
-    public Boolean factAlreadyExists(int[] ids)
-    {
-        if (GadgetManager.activeGadget.GetType() == typeof(Tape)) {
-            foreach (Fact fact in Facts)
-            {
-                if (typeof(LineFact).IsInstanceOfType(fact))
-                {
-                    LineFact line = (LineFact)fact;
-                    if (line.Pid1 == ids[0] && line.Pid2 == ids[1])
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-        else if (GadgetManager.activeGadget.GetType() == typeof(AngleTool))
-        {
-            foreach (Fact fact in Facts)
-            {
-                if (typeof(AngleFact).IsInstanceOfType(fact))
-                {
-                    AngleFact angle = (AngleFact)fact;
-                    if (angle.Pid1 == ids[0] && angle.Pid2 == ids[1] && angle.Pid3 == ids[2])
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-        else
-            return false;
-    }
-
-
-    /*
-    //automatic 90 degree angle construction
-    public void Rocket(RaycastHit hit)
-    {
-
-        int idA, idB, idC;
-
-        //usual point
-        idA = this.GetFirstEmptyID();
-        CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(hit, idA));
-
-        //second point
-        idB = this.GetFirstEmptyID();
-        var shiftedHit = hit;
-        var playerPos = Camera.main.transform.position;
-        playerPos.y = hit.point.y;
-        shiftedHit.point = playerPos;
-        CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(shiftedHit, idB));
-
-        //third point with unknown height
-        idC = this.GetFirstEmptyID();
-        var skyHit = hit;
-        skyHit.point += Vector3.up * 20;
-        CommunicationEvents.AddFactEvent.Invoke(this.AddPointFact(skyHit, idC));
-
-        //lines
-        CommunicationEvents.AddFactEvent.Invoke(this.AddLineFact(idA, idB, this.GetFirstEmptyID()));
-        //lines
-        CommunicationEvents.AddFactEvent.Invoke(this.AddLineFact(idA, idC, this.GetFirstEmptyID()));
-
-        //90degree angle
-        CommunicationEvents.AddFactEvent.Invoke(this.AddAngleFact(idB, idA, idC, GetFirstEmptyID()));
-    }
-    */
 
 }

@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 using UnityEngine.Networking;
 
 public class DisplayScrolls : MonoBehaviour
@@ -36,10 +36,10 @@ public class DisplayScrolls : MonoBehaviour
         return new Vector3(x_Start + (X_Pacece_Between_Items * (i % number_of_Column)), y_Start + (-y_Pacece_Between_Items * (i / number_of_Column)), 0f);
     }
 
-  /*  [System.Serializable]
-    class ScrollArrayWrapper {
-        public Scroll[] Scrolls;
-    };*/
+    /*  [System.Serializable]
+      class ScrollArrayWrapper {
+          public Scroll[] Scrolls;
+      };*/
 
     // Start is called before the first frame update
     void Start()
@@ -57,27 +57,33 @@ public class DisplayScrolls : MonoBehaviour
 
     }
 
-    IEnumerator getScrollsfromServer() {
+    IEnumerator getScrollsfromServer()
+    {
         //Try /scroll/listAll endpoint when scroll/list is not working
         UnityWebRequest request = UnityWebRequest.Get(CommunicationEvents.ServerAdress + "/scroll/list");
         //Postman-Echo-Mock
         //UnityWebRequest request = UnityWebRequest.Get("https://019a8ea5-843a-498b-8d0c-778669aef987.mock.pstmn.io/get");
 
-        for (int i = 0; i < this.tryScrollListTimes; i++) {
+        for (int i = 0; i < this.tryScrollListTimes; i++)
+        {
             request = UnityWebRequest.Get(CommunicationEvents.ServerAdress + "/scroll/list");
             request.method = UnityWebRequest.kHttpVerbGET;
-            yield return request.Send();
-            if (request.isNetworkError || request.isHttpError)
+            yield return request.SendWebRequest();
+
+            if (request.result == UnityWebRequest.Result.ConnectionError
+             || request.result == UnityWebRequest.Result.ProtocolError)
             {
                 Debug.LogWarning(request.error);
-                Debug.Log("GET Scroll/list failed. Attempt: " + (i+1).ToString());
+                Debug.Log("GET Scroll/list failed. Attempt: " + (i + 1).ToString());
             }
-            else {
+            else
+            {
                 break;
             }
         }
 
-        if (request.isNetworkError || request.isHttpError)
+        if (request.result == UnityWebRequest.Result.ConnectionError
+         || request.result == UnityWebRequest.Result.ProtocolError)
         {
             Debug.LogWarning(request.error);
             string jsonString = File.ReadAllText(Application.streamingAssetsPath + "/scrolls.json");
@@ -89,7 +95,7 @@ public class DisplayScrolls : MonoBehaviour
             CommunicationEvents.ServerRunning = true;
             string jsonString = request.downloadHandler.text;
             Debug.Log("JsonString from Server: \n" + jsonString);
-            if(jsonString.Equals("[]"))
+            if (jsonString.Equals("[]"))
                 jsonString = File.ReadAllText(Application.streamingAssetsPath + "/scrolls.json");
             Debug.Log("Used JsonString: \n" + jsonString);
             //scroll display not yet implemented;
@@ -97,7 +103,7 @@ public class DisplayScrolls : MonoBehaviour
             BuildScrolls(jsonString);
         }
     }
-    
+
     void BuildScrolls(string jsonString)
     {
         var scrolls = Scroll.FromJSON(jsonString);
@@ -114,9 +120,9 @@ public class DisplayScrolls : MonoBehaviour
             obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = this.scrolls[i].label;
             ScrollButtons[i] = obj;
         }
-        
+
         Scroll preferredStartScroll = this.scrolls.Find(x => x.label.Equals(preferredStartScrollName));
-        if(preferredStartScroll != null)
+        if (preferredStartScroll != null)
             this.DetailScreen.GetComponent<ScrollDetails>().setScroll(preferredStartScroll);
     }
 }

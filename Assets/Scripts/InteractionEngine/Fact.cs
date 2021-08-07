@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEngine.Networking;
 using TMPro;
 using static JSONManager;
+using static CommunicationEvents;
+
 
 public class ParsingDictionary {
 
@@ -19,50 +21,6 @@ public class ParsingDictionary {
 
 }
 
-public abstract class Fact
-{
-    private int _id;
-    public string Label;
-    public int Id
-    {
-        get { return _id; }
-        set
-        {
-           // if (_id == value) return;
-            _id = value;
-            Label= ((Char)(64 + _id + 1)).ToString();
-        }
-    }
-    public GameObject Representation;
-    public string backendURI;
-
-    public string format(float t)
-    {
-        return t.ToString("0.0000").Replace(',', '.');
-    }
-
-    //If FactType depends on other Facts, e.g. AngleFacts depend on 3 PointFacts
-    public abstract Boolean hasDependentFacts();
-
-    public abstract int[] getDependentFactIds();
-
-    public abstract GameObject instantiateDisplay(GameObject prefab, Transform transform);
-
-    public abstract override bool Equals(System.Object obj);
-
-    public abstract override int GetHashCode();
-
-    public static string getLetter(int Id)
-    {
-        return ((Char)(64 + Id + 1)).ToString();
-    }
-}
-
-public abstract class DirectedFact : Fact
-{
-    public DirectedFact flippedFact;
-}
-
 public class AddFactResponse
 {
     //class to Read AddFact Responses.
@@ -70,14 +28,24 @@ public class AddFactResponse
     // public string factValUri;
     public string uri;
 
-    public static AddFactResponse sendAdd(string path, string body)
+    public static bool sendAdd(MMTDeclaration mmtDecl, out string uri)
+    {
+        string body = MMTSymbolDeclaration.ToJson(mmtDecl);
+        return sendAdd(CommunicationEvents.ServerAdress + "/fact/add", body, out uri);
+    }
+
+    public static bool sendAdd(string path, string body, out string uri)
     {
         if (!CommunicationEvents.ServerRunning)
         {
             Debug.LogWarning("Server not running");
-            return new AddFactResponse();
+            uri = null;
+            return false;
         }
-        Debug.Log(body);
+
+        if(VerboseURI)
+            Debug.Log("Sending to Server:\n" + body);
+
         //Put constructor parses stringbody to byteArray internally  (goofy workaround)
         UnityWebRequest www = UnityWebRequest.Put(path, body);
         www.method = UnityWebRequest.kHttpVerbPOST;
@@ -86,30 +54,218 @@ public class AddFactResponse
 
         //TODO: implement real asynchronous communication ...
         AsyncOperation op = www.SendWebRequest();
-        while (!op.isDone) { }
-        if (www.isNetworkError || www.isHttpError)
+        while (!op.isDone) ;
+
+        if (www.result == UnityWebRequest.Result.ConnectionError
+         || www.result == UnityWebRequest.Result.ProtocolError)
         {
             Debug.LogWarning(www.error);
-            return new AddFactResponse();
+            uri = null;
+            return false;
         }
         else
         {
             string answer = www.downloadHandler.text;
-            return JsonUtility.FromJson<AddFactResponse>(answer);
+            AddFactResponse res = JsonUtility.FromJson<AddFactResponse>(answer);
+
+            if (VerboseURI)
+                Debug.Log("Server added Fact:\n" + res.uri);
+
+            uri = res.uri;
+            return true;
         }
     }
 }
 
+[Serializable]
+public abstract class Fact
+{
+    public GameObject Representation;
+
+    public string Id { get { return _URI; } }
+    protected string _URI;
+
+    public string Label {
+        get { // in case of renamed dependables
+            return string.IsNullOrEmpty(_CustomLabel) ? 
+                generateLabel() : 
+                _CustomLabel;
+        }
+    }
+    protected string _CustomLabel = null;
+    private int LabelId = 0;
+
+    protected FactOrganizer _Facts;
+
+    private static int MaxLabelId = 0;
+    private static SortedSet<int> UnusedLabelIds = new SortedSet<int>();
+
+    protected Fact(FactOrganizer organizer)
+    {
+        this._Facts = organizer;
+    }
+
+    //TODO: notify about updated dependable Labelnames
+    public void rename(string newLabel)
+    {
+        if (_Facts.ContainsLabel(newLabel))
+            return;
+
+        freeLabel();
+        _CustomLabel = newLabel;
+    }
+
+    //If FactType depends on other Facts, e.g. AngleFacts depend on 3 PointFacts
+    public abstract bool hasDependentFacts();
+
+    public abstract string[] getDependentFactIds();
+
+    public abstract GameObject instantiateDisplay(GameObject prefab, Transform transform);
+
+    public virtual void delete(bool keep_clean = true)
+    {
+        //TODO: MMT: delete over there
+
+        if (keep_clean)
+            freeLabel();
+
+        if (VerboseURI)
+            Debug.Log("Server removed Fact:\n" + this.Id);
+    }
+
+    public abstract bool Equivalent(Fact f2);
+    
+    public abstract bool Equivalent(Fact f1, Fact f2);
+
+    public abstract override int GetHashCode();
+
+    // TODO? only get _Fact to freeLabel/
+    public void freeLabel()
+    {
+        if (LabelId > 0)
+        {
+            UnusedLabelIds.Add(LabelId);
+            // store Label for name-persistance
+            LabelId = -LabelId;
+        }
+
+        if (!string.IsNullOrEmpty(_CustomLabel))
+            _CustomLabel = null;
+    }
+
+    protected virtual string generateLabel()
+    {
+        if (LabelId == 0)
+            if (UnusedLabelIds.Count == 0)
+                LabelId = ++MaxLabelId;
+            else
+            {
+                LabelId = UnusedLabelIds.Min;
+                UnusedLabelIds.Remove(LabelId);
+            }
+
+        else if (LabelId < 0)
+        // reload Label if possible
+        {
+            LabelId = -LabelId;
+            UnusedLabelIds.Remove(LabelId);
+        }
+
+        return ((char)(64 + LabelId)).ToString();
+    }
+}
+
+public abstract class FactWrappedCRTP<T>: Fact where T: FactWrappedCRTP<T>
+{
+    protected FactWrappedCRTP(FactOrganizer organizer) : base(organizer) { }
+
+    public override bool Equivalent(Fact f2)
+    {
+        return Equivalent(this, f2);
+    }
+
+    public override bool Equivalent(Fact f1, Fact f2)
+    {
+        return f1.GetType() == f2.GetType() && EquivalentWrapped((T)f1, (T)f2);
+    }
+
+    protected abstract bool EquivalentWrapped(T f1, T f2);
+}
+
+public abstract class AbstractLineFact: FactWrappedCRTP<AbstractLineFact>
+{
+    //Id's of the 2 Point-Facts that are connected
+    public string Pid1, Pid2;
+    // normalized Direction from Pid1 to Pid2
+    public Vector3 Dir;
+
+
+    //only for temporary Use of LineFacts.
+    //public AbstractLineFact() { }
+
+    public AbstractLineFact(string pid1, string pid2, FactOrganizer organizer): base(organizer)
+    {
+        set_public_members(pid1, pid2);
+    }
+
+    public AbstractLineFact(string pid1, string pid2, string backendURI, FactOrganizer organizer) : base(organizer)
+    {
+        set_public_members(pid1, pid2);
+        this._URI = backendURI;
+    }
+
+    private void set_public_members(string pid1, string pid2)
+    {
+        this.Pid1 = pid1;
+        this.Pid2 = pid2;
+        PointFact pf1 = _Facts[pid1] as PointFact;
+        PointFact pf2 = _Facts[pid2] as PointFact;
+        this.Dir = (pf2.Point - pf1.Point).normalized;
+    }
+
+    public override bool hasDependentFacts()
+    {
+        return true;
+    }
+
+    public override string[] getDependentFactIds()
+    {
+        return new string[] { Pid1, Pid2 };
+    }
+
+    public override int GetHashCode()
+    {
+        return this.Pid1.GetHashCode() ^ this.Pid2.GetHashCode();
+    }
+}
+
+public abstract class AbstractLineFactWrappedCRTP<T>: AbstractLineFact where T: AbstractLineFactWrappedCRTP<T>
+{
+    //only for temporary Use of LineFacts.
+    //public AbstractLineFactWrappedCRTP() { }
+
+    public AbstractLineFactWrappedCRTP (string pid1, string pid2, FactOrganizer organizer) : base(pid1, pid2, organizer) { }
+
+    public AbstractLineFactWrappedCRTP (string pid1, string pid2, string backendURI, FactOrganizer organizer) : base(pid1, pid2, backendURI, organizer) { }
+
+    protected override bool EquivalentWrapped(AbstractLineFact f1, AbstractLineFact f2)
+    {
+        return EquivalentWrapped((T)f1, (T)f2);
+    }
+
+    protected abstract bool EquivalentWrapped(T f1, T f2);
+}
+
+
 //I am not sure if we ever need to attach these to an object, so one script for all for now...
-public class PointFact : Fact
+public class PointFact : FactWrappedCRTP<PointFact>
 {
     public Vector3 Point;
     public Vector3 Normal;
 
 
-    public PointFact(int i, Vector3 P, Vector3 N)
+    public PointFact(Vector3 P, Vector3 N, FactOrganizer organizer) : base(organizer)
     {
-        this.Id = i;
         this.Point = P;
         this.Normal = N;
 
@@ -126,18 +282,14 @@ public class PointFact : Fact
 
         //TODO: rework fact list + labeling
         MMTSymbolDeclaration mmtDecl = new MMTSymbolDeclaration(this.Label, tp, df);
-        string body = MMTSymbolDeclaration.ToJson(mmtDecl);
-
-        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add", body);
-        this.backendURI = res.uri;
-        Debug.Log(this.backendURI);
+        AddFactResponse.sendAdd(mmtDecl, out this._URI);
     }
 
-    public PointFact(float a, float b, float c, string uri)
+    public PointFact(float a, float b, float c, string uri, FactOrganizer organizer) : base(organizer)
     {
         this.Point = new Vector3(a, b, c);
         this.Normal = new Vector3(0, 1, 0);
-        this.backendURI = uri;
+        this._URI = uri;
     }
 
     public static PointFact parseFact(Scroll.ScrollFact fact) {
@@ -148,7 +300,7 @@ public class PointFact : Fact
             float a = (float)((OMF)df.arguments[0]).f;
             float b = (float)((OMF)df.arguments[1]).f;
             float c = (float)((OMF)df.arguments[2]).f;
-            return new PointFact(a, b, c, uri);
+            return new PointFact(a, b, c, uri, LevelFacts);
         }
         else {
             return null;
@@ -159,59 +311,47 @@ public class PointFact : Fact
         return false;
     }
 
-    public override int[] getDependentFactIds() {
-        return null;
+    public override string[] getDependentFactIds() {
+        return new string[] { }; ;
     }
 
     public override GameObject instantiateDisplay(GameObject prefab, Transform transform) {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
-        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(this.Id);
+        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = this.Label;
         obj.GetComponent<FactWrapper>().fact = this;
         return obj;
-    }
-
-    public override bool Equals(System.Object obj)
-    {
-        //Check for null and compare run-time types.
-        if ((obj == null) || !this.GetType().Equals(obj.GetType()))
-        {
-            return false;
-        }
-        else
-        {
-            PointFact p = (PointFact)obj;
-            return this.Point.Equals(p.Point) && this.Normal.Equals(p.Normal);
-        }
     }
 
     public override int GetHashCode()
     {
         return this.Point.GetHashCode() ^ this.Normal.GetHashCode();
     }
+
+    protected override bool EquivalentWrapped(PointFact f1, PointFact f2)
+    {
+        return f1.Point == f2.Point;
+    }
+
 }
 
-public class LineFact : DirectedFact
+public class LineFact : AbstractLineFactWrappedCRTP<LineFact>
 {
-    //Id's of the 2 Point-Facts that are connected
-    public int Pid1, Pid2;
+    public float Distance;
 
-    //only for temporary Use of LineFacts.
-    public LineFact() { }
-
-    public LineFact(int i, int pid1, int pid2)
+    public LineFact(string pid1, string pid2, string backendURI, FactOrganizer organizer) : base(pid1, pid2, backendURI, organizer)
     {
-        this.Id = i;
-        this.Pid1 = pid1;
-        this.Pid2 = pid2;
-        PointFact pf1 = CommunicationEvents.Facts.Find((x => x.Id == pid1)) as PointFact;
-        PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
+        SetDistance();
+    }
 
-        //Label is currently set to Fact.setId
-        //Set Label to StringConcatenation of Points
-        this.Label = pf1.Label + pf2.Label;
+    public LineFact(string pid1, string pid2, FactOrganizer organizer) : base(pid1, pid2, organizer)
+    {
+        SetDistance();
 
-        string p1URI = pf1.backendURI;
-        string p2URI = pf2.backendURI;
+        PointFact pf1 = _Facts[pid1] as PointFact;
+        PointFact pf2 = _Facts[pid2] as PointFact;
+
+        string p1URI = pf1.Id;
+        string p2URI = pf2.Id;
         float v = (pf1.Point - pf2.Point).magnitude;
 
         MMTTerm lhs =
@@ -228,93 +368,70 @@ public class LineFact : DirectedFact
 
         //see point label
         MMTValueDeclaration mmtDecl = new MMTValueDeclaration(this.Label, lhs, valueTp, value);
-        string body = MMTDeclaration.ToJson(mmtDecl);
-        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress + "/fact/add", body);
-        this.backendURI = res.uri;
-        Debug.Log(this.backendURI);
-    }
-
-    public LineFact(int Pid1, int Pid2, string backendURI)
-    {
-        this.Pid1 = Pid1;
-        this.Pid2 = Pid2;
-        this.backendURI = backendURI;
+        AddFactResponse.sendAdd(mmtDecl, out this._URI);
     }
 
     public static LineFact parseFact(Scroll.ScrollFact fact)
     {
-        String uri = fact.@ref.uri;
-        String pointAUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[0]).uri;
-        String pointBUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[1]).uri;
-        if (CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointAUri)) &&
-            CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointBUri)))
-        {
-            int pid1 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointAUri)).Id;
-            int pid2 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointBUri)).Id;
-            return new LineFact(pid1, pid2, uri);
-        }
+        string uri = fact.@ref.uri;
+        string pointAUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[0]).uri;
+        string pointBUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[1]).uri;
+
+        if (LevelFacts.ContainsKey(pointAUri)
+         && LevelFacts.ContainsKey(pointBUri))
+            return new LineFact(pointAUri, pointBUri, uri, LevelFacts);
+
         //If dependent facts do not exist return null
         else {
             return null;
         }
     }
-
-    public override Boolean hasDependentFacts()
+    protected override string generateLabel()
     {
-        return true;
-    }
-
-    public override int[] getDependentFactIds()
-    {
-        return new int[] { Pid1, Pid2 };
+        return "[" + _Facts[Pid1].Label + _Facts[Pid2].Label + "]";
     }
 
     public override GameObject instantiateDisplay(GameObject prefab, Transform transform)
     {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
-        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Pid1].Id);
-        obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Pid2].Id);
+        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = _Facts[this.Pid1].Label;
+        obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = _Facts[this.Pid2].Label;
         obj.GetComponent<FactWrapper>().fact = this;
         return obj;
     }
 
-    public override bool Equals(System.Object obj)
+    protected override bool EquivalentWrapped(LineFact f1, LineFact f2)
     {
-        //Check for null and compare run-time types.
-        if ((obj == null) || !this.GetType().Equals(obj.GetType()))
-        {
-            return false;
-        }
-        else
-        {
-            LineFact l = (LineFact)obj;
-            return this.Pid1.Equals(l.Pid1) && this.Pid2.Equals(l.Pid2);
-        }
+        if ((f1.Pid1 == f2.Pid1 && f1.Pid2 == f2.Pid2))// || 
+            //(f1.Pid1 == f2.Pid2 && f1.Pid2 == f2.Pid1))
+            return true;
+
+        PointFact p1f1 = (PointFact)_Facts[f1.Pid1];
+        PointFact p2f1 = (PointFact)_Facts[f1.Pid2];
+        PointFact p1f2 = (PointFact)_Facts[f2.Pid1];
+        PointFact p2f2 = (PointFact)_Facts[f2.Pid2];
+
+        return (p1f1.Equivalent(p1f2) && p2f1.Equivalent(p2f2))
+            ;//|| (p1f1.Equivalent(p2f2) && p2f1.Equivalent(p1f2));
     }
 
-    public override int GetHashCode()
+    private void SetDistance()
     {
-        return this.Pid1 ^ this.Pid2;
+        this.Distance = Vector3.Distance(((PointFact)_Facts[Pid1]).Point, ((PointFact)_Facts[Pid2]).Point);
     }
 }
 
-public class RayFact : Fact
+public class RayFact : AbstractLineFactWrappedCRTP<RayFact>
 {
-    //Id's of the 2 Point-Facts that are connected
-    public int Pid1, Pid2;
+    public RayFact(string pid1, string pid2, string backendURI, FactOrganizer organizer) : base(pid1, pid2, backendURI, organizer) { }
 
-    //only for temporary Use of LineFacts.
-    public RayFact() { }
-
-    public RayFact(int i, int pid1, int pid2)
+    public RayFact(string pid1, string pid2, FactOrganizer organizer) : base(pid1, pid2, organizer)
     {
-        this.Id = i;
-        this.Pid1 = pid1;
-        this.Pid2 = pid2;
-        PointFact pf1 = CommunicationEvents.Facts.Find((x => x.Id == pid1)) as PointFact;
-        PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
-        string p1URI = pf1.backendURI;
-        string p2URI = pf2.backendURI;
+        PointFact pf1 = _Facts[pid1] as PointFact;
+        PointFact pf2 = _Facts[pid2] as PointFact;
+
+        string p1URI = pf1.Id;
+        string p2URI = pf2.Id;
 
         List<MMTTerm> arguments = new List<MMTTerm>
         {
@@ -328,101 +445,66 @@ public class RayFact : Fact
 
         //TODO: rework fact list + labeling
         MMTSymbolDeclaration mmtDecl = new MMTSymbolDeclaration(this.Label, tp, df);
-        string body = MMTSymbolDeclaration.ToJson(mmtDecl);
-
-        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress + "/fact/add", body);
-        this.backendURI = res.uri;
-        Debug.Log(this.backendURI);
-    }
-
-    public RayFact(int pid1, int pid2, string uri)
-    {
-        this.Pid1 = pid1;
-        this.Pid2 = pid2;
-        this.backendURI = uri;
+        AddFactResponse.sendAdd(mmtDecl, out this._URI);
     }
 
     public static RayFact parseFact(Scroll.ScrollFact fact)
     {
-        String uri = fact.@ref.uri;
+        string uri = fact.@ref.uri;
         if ((OMA)((Scroll.ScrollSymbolFact)fact).df != null)
         {
-            String pointAUri = ((OMS)((OMA)((Scroll.ScrollSymbolFact)fact).df).arguments[0]).uri;
-            String pointBUri = ((OMS)((OMA)((Scroll.ScrollSymbolFact)fact).df).arguments[1]).uri;
-            if (CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointAUri)) &&
-                CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointBUri)))
-            {
-                int pid1 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointAUri)).Id;
-                int pid2 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointBUri)).Id;
-                return new RayFact(pid1, pid2, uri);
-            }
+            string pointAUri = ((OMS)((OMA)((Scroll.ScrollSymbolFact)fact).df).arguments[0]).uri;
+            string pointBUri = ((OMS)((OMA)((Scroll.ScrollSymbolFact)fact).df).arguments[1]).uri;
+
+            if (LevelFacts.ContainsKey(pointAUri)
+             && LevelFacts.ContainsKey(pointBUri))
+                return new RayFact(pointAUri, pointBUri, uri, LevelFacts);
+
             //If dependent facts do not exist return null
-            else
-            {
-                return null;
-            }
         }
-        else {
-            return null;
-        }
+        return null;
     }
 
-    public override Boolean hasDependentFacts()
+    protected override string generateLabel()
     {
-        return true;
-    }
-
-    public override int[] getDependentFactIds()
-    {
-        return new int[] { Pid1, Pid2 };
+        return "–" + _Facts[Pid1].Label + _Facts[Pid2].Label + "–";
     }
 
     public override GameObject instantiateDisplay(GameObject prefab, Transform transform) {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
-        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(this.Id);
-        //obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[f.Pid2].Id);
+        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = this.Label;
         obj.GetComponent<FactWrapper>().fact = this;
         return obj;
     }
 
-    public override bool Equals(System.Object obj)
+    protected override bool EquivalentWrapped(RayFact f1, RayFact f2)
     {
-        //Check for null and compare run-time types.
-        if ((obj == null) || !this.GetType().Equals(obj.GetType()))
-        {
+        if (!Math3d.IsApproximatelyParallel(f1.Dir, f2.Dir))
             return false;
-        }
-        else
-        {
-            RayFact r = (RayFact)obj;
-            return this.Pid1.Equals(r.Pid1) && this.Pid2.Equals(r.Pid2);
-        }
-    }
 
-    public override int GetHashCode()
-    {
-        return this.Pid1 ^ this.Pid2;
+        PointFact p1f1 = (PointFact)_Facts[f1.Pid1];
+        PointFact p1f2 = (PointFact)_Facts[f2.Pid1];
+        PointFact p2f2 = (PointFact)_Facts[f2.Pid2];
+
+        return Math3d.IsPointApproximatelyOnLine(p1f1.Point, f1.Dir, p1f2.Point)
+            && Math3d.IsPointApproximatelyOnLine(p1f1.Point, f1.Dir, p2f2.Point);
     }
 }
 
-
-public class OnLineFact : Fact
+public class OnLineFact : FactWrappedCRTP<OnLineFact>
 {
     //Id's of the Point and the Line it's on
-    public int Pid, Rid;
+    public string Pid, Rid;
 
-    public OnLineFact(int i, int pid, int rid)
+    public OnLineFact(string pid, string rid, FactOrganizer organizer) : base(organizer)
     {
-        this.Id = i;
         this.Pid = pid;
         this.Rid = rid;
-        PointFact pf = CommunicationEvents.Facts.Find((x => x.Id == pid)) as PointFact;
-        RayFact rf = CommunicationEvents.Facts.Find((x => x.Id == rid)) as RayFact;
-        string pURI = pf.backendURI;
-        string rURI = rf.backendURI;
 
-        //Set Label to StringConcatenation of Points
-        this.Label = pf.Label + " ∈ " + rf.Label;
+        PointFact pf = _Facts[pid] as PointFact;
+        RayFact rf = _Facts[rid] as RayFact;
+        string pURI = pf.Id;
+        string rURI = rf.Id;
 
         List<MMTTerm> innerArguments = new List<MMTTerm>
         {
@@ -441,36 +523,33 @@ public class OnLineFact : Fact
 
         //TODO: rework fact list + labeling
         MMTSymbolDeclaration mmtDecl = new MMTSymbolDeclaration(this.Label, tp, df);
-        string body = MMTSymbolDeclaration.ToJson(mmtDecl);
-
-        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress + "/fact/add", body);
-        this.backendURI = res.uri;
-        Debug.Log(this.backendURI);
+        AddFactResponse.sendAdd(mmtDecl, out this._URI);
     }
 
-    public OnLineFact(int pid, int rid, string uri) {
+    public OnLineFact(string pid, string rid, string uri, FactOrganizer organizer) : base(organizer)
+    {
         this.Pid = pid;
         this.Rid = rid;
-        this.backendURI = uri;
+        this._URI = uri;
     }
 
     public static OnLineFact parseFact(Scroll.ScrollFact fact)
     {
-        String uri = fact.@ref.uri;
-        String lineUri = ((OMS)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[0]).uri;
-        String pointUri = ((OMS)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[1]).uri;
-        if (CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(lineUri)) &&
-            CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointUri)))
-        {
-            int pid = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointUri)).Id;
-            int rid = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(lineUri)).Id;
-            return new OnLineFact(pid, rid, uri);
-        }
+        string uri = fact.@ref.uri;
+        string lineUri = ((OMS)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[0]).uri;
+        string pointUri = ((OMS)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[1]).uri;
+
+        if (LevelFacts.ContainsKey(pointUri)
+         && LevelFacts.ContainsKey(lineUri))
+            return new OnLineFact(pointUri, lineUri, uri, LevelFacts);
+
         //If dependent facts do not exist return null
         else
-        {
             return null;
-        }
+    }
+    protected override string generateLabel()
+    {
+        return _Facts[Pid].Label + "∈" + _Facts[Rid].Label;
     }
 
     public override Boolean hasDependentFacts()
@@ -478,149 +557,127 @@ public class OnLineFact : Fact
         return true;
     }
 
-    public override int[] getDependentFactIds()
+    public override string[] getDependentFactIds()
     {
-        return new int[] { Pid, Rid };
+        return new string[] { Pid, Rid };
     }
 
     public override GameObject instantiateDisplay(GameObject prefab, Transform transform)
     {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
-        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Pid].Id);
-        obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Rid].Id);
+        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = _Facts[this.Pid].Label;
+        obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = _Facts[this.Rid].Label;
         obj.GetComponent<FactWrapper>().fact = this;
         return obj;
     }
 
-    public override bool Equals(System.Object obj)
-    {
-        //Check for null and compare run-time types.
-        if ((obj == null) || !this.GetType().Equals(obj.GetType()))
-        {
-            return false;
-        }
-        else
-        {
-            OnLineFact o = (OnLineFact)obj;
-            return this.Pid.Equals(o.Pid) && this.Rid.Equals(o.Rid);
-        }
-    }
-
     public override int GetHashCode()
     {
-        return this.Pid ^ this.Rid;
+        return this.Pid.GetHashCode() ^ this.Rid.GetHashCode();
+    }
+
+    protected override bool EquivalentWrapped(OnLineFact f1, OnLineFact f2)
+    {
+        if (f1.Pid == f2.Pid && f1.Rid == f2.Rid)
+            return true;
+
+        PointFact pf1 = (PointFact)_Facts[f1.Pid];
+        RayFact rf1 = (RayFact)_Facts[f1.Rid];
+        PointFact pf2 = (PointFact)_Facts[f2.Pid];
+        RayFact rf2 = (RayFact)_Facts[f2.Rid];
+
+        return pf1.Equivalent(pf2) && rf1.Equivalent(rf2);
     }
 }
 
-
-public class AngleFact : DirectedFact
+public class AngleFact : FactWrappedCRTP<AngleFact>
 {
     //Id's of the 3 Point-Facts, where Pid2 is the point, where the angle is
-    public int Pid1, Pid2, Pid3;
+    public string Pid1, Pid2, Pid3;
+    public bool is_right_angle;
 
-    //only for temporary Use of AngleFacts
-    public AngleFact() { }
-
-    public AngleFact(int i, int pid1, int pid2, int pid3)
+    public AngleFact(string pid1, string pid2, string pid3, FactOrganizer organizer) : base(organizer)
     {
-        this.Id = i;
         this.Pid1 = pid1;
         this.Pid2 = pid2;
         this.Pid3 = pid3;
-        PointFact pf1 = CommunicationEvents.Facts.Find((x => x.Id == pid1)) as PointFact;
-        PointFact pf2 = CommunicationEvents.Facts.Find((x => x.Id == pid2)) as PointFact;
-        PointFact pf3 = CommunicationEvents.Facts.Find((x => x.Id == pid3)) as PointFact;
 
-        string p1URI = pf1.backendURI;
-        string p2URI = pf2.backendURI;
-        string p3URI = pf3.backendURI;
-        float v = Vector3.Angle((pf1.Point - pf2.Point), (pf3.Point - pf2.Point));
+        PointFact pf1 = _Facts[pid1] as PointFact;
+        PointFact pf2 = _Facts[pid2] as PointFact;
+        PointFact pf3 = _Facts[pid3] as PointFact;
+
+        float v = GetAngle(); // sets is_right_angle
 
         MMTDeclaration mmtDecl;
-
-        if (Mathf.Abs(v - 90.0f) < 0.01)
-        {
-            v = 90.0f;
-            //Label is currently set to Fact.setId
-            //Set Label to StringConcatenation of Points
-            this.Label = "⊾" + pf1.Label + pf2.Label + pf3.Label;
+        string p1URI = pf1.Id;
+        string p2URI = pf2.Id;
+        string p3URI = pf3.Id;
+        if (is_right_angle)
             mmtDecl = generate90DegreeAngleDeclaration(v, p1URI, p2URI, p3URI);
-        }
         else
-        {
-            //Label is currently set to Fact.setId
-            //Set Label to StringConcatenation of Points
-            this.Label = "∠" + pf1.Label + pf2.Label + pf3.Label;
             mmtDecl = generateNot90DegreeAngleDeclaration(v, p1URI, p2URI, p3URI);
-        }
 
-        Debug.Log("angle: " + v);
-
-        string body = MMTDeclaration.ToJson(mmtDecl);
-
-        Debug.Log(body);
-        AddFactResponse res = AddFactResponse.sendAdd(CommunicationEvents.ServerAdress+"/fact/add", body);
-        this.backendURI = res.uri;
-        Debug.Log(this.backendURI);
+        AddFactResponse.sendAdd(mmtDecl, out this._URI);
     }
 
-    public AngleFact(int Pid1, int Pid2, int Pid3, string backendURI)
+    public AngleFact(string Pid1, string Pid2, string Pid3, string backendURI, FactOrganizer organizer) : base(organizer)
     {
         this.Pid1 = Pid1;
         this.Pid2 = Pid2;
         this.Pid3 = Pid3;
-        this.backendURI = backendURI;
+
+        GetAngle();
+
+        this._URI = backendURI;
     }
 
     public static AngleFact parseFact(Scroll.ScrollFact fact)
     {
-        String uri;
-        String pointAUri;
-        String pointBUri;
-        String pointCUri;
-        int pid1;
-        int pid2;
-        int pid3;
+        string uri = fact.@ref.uri;
+        string
+            pointAUri,
+            pointBUri,
+            pointCUri;
 
         //If angle is not a 90Degree-Angle
         if (fact.GetType().Equals(typeof(Scroll.ScrollValueFact)))
         {
-            uri = fact.@ref.uri;
             pointAUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[0]).uri;
             pointBUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[1]).uri;
             pointCUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[2]).uri;
-            //If dependent facts do not exist return null
-            if (!CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointAUri)) |
-                !CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointBUri)) |
-                !CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointCUri)))
-            {
-                return null;
-            }
-
-            pid1 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointAUri)).Id;
-            pid2 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointBUri)).Id;
-            pid3 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointCUri)).Id;
         }
         //If angle is a 90Degree-Angle
         else {
-            uri = fact.@ref.uri;
             pointAUri = ((OMS)((OMA)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[1]).arguments[0]).uri;
             pointBUri = ((OMS)((OMA)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[1]).arguments[1]).uri;
             pointCUri = ((OMS)((OMA)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[1]).arguments[2]).uri;
-            //If dependent facts do not exist return null
-            if (!CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointAUri)) |
-                !CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointBUri)) |
-                !CommunicationEvents.Facts.Exists(x => x.backendURI.Equals(pointCUri)))
-            {
-                return null;
-            }
-
-            pid1 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointAUri)).Id;
-            pid2 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointBUri)).Id;
-            pid3 = CommunicationEvents.Facts.Find(x => x.backendURI.Equals(pointCUri)).Id;
         }
 
-        return new AngleFact(pid1, pid2, pid3, uri);
+        if (LevelFacts.ContainsKey(pointAUri)
+         && LevelFacts.ContainsKey(pointBUri)
+         && LevelFacts.ContainsKey(pointCUri))
+
+            return new AngleFact(pointAUri, pointBUri, pointCUri, uri, LevelFacts);
+
+        else    //If dependent facts do not exist return null
+            return null;
+    }
+
+    protected override string generateLabel()
+    {
+        return (is_right_angle ? "⊾" : "∠") + _Facts[Pid1].Label + _Facts[Pid2].Label + _Facts[Pid3].Label;
+    }
+
+    private float GetAngle()
+    {
+        PointFact pf1 = _Facts[Pid1] as PointFact;
+        PointFact pf2 = _Facts[Pid2] as PointFact;
+        PointFact pf3 = _Facts[Pid3] as PointFact;
+
+        float v = Vector3.Angle((pf1.Point - pf2.Point), (pf3.Point - pf2.Point));
+        this.is_right_angle = Mathf.Abs(v - 90.0f) < 0.01;
+
+        return is_right_angle ? 90f : v;
     }
 
     private MMTDeclaration generate90DegreeAngleDeclaration(float val, string p1URI, string p2URI, string p3URI) {
@@ -637,7 +694,7 @@ public class AngleFact : DirectedFact
                         new OMS(p3URI)
                     }
                 ),
-                new OMF(val)
+                new OMF(val) // 90f
             }
         );
         
@@ -670,37 +727,40 @@ public class AngleFact : DirectedFact
         return true;
     }
 
-    public override int[] getDependentFactIds()
+    public override string[] getDependentFactIds()
     {
-        return new int[] { Pid1, Pid2, Pid3 };
+        return new string[] { Pid1, Pid2, Pid3 };
     }
 
     public override GameObject instantiateDisplay(GameObject prefab, Transform transform) {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
-        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Pid1].Id);
-        obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Pid2].Id);
-        obj.transform.GetChild(2).gameObject.GetComponent<TextMeshProUGUI>().text = "" + getLetter(CommunicationEvents.Facts[this.Pid3].Id);
+        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = _Facts[this.Pid1].Label;
+        obj.transform.GetChild(1).gameObject.GetComponent<TextMeshProUGUI>().text = _Facts[this.Pid2].Label;
+        obj.transform.GetChild(2).gameObject.GetComponent<TextMeshProUGUI>().text = _Facts[this.Pid3].Label;
         obj.GetComponent<FactWrapper>().fact = this;
         return obj;
     }
 
-    public override bool Equals(System.Object obj)
-    {
-        //Check for null and compare run-time types.
-        if ((obj == null) || !this.GetType().Equals(obj.GetType()))
-        {
-            return false;
-        }
-        else
-        {
-            AngleFact a = (AngleFact)obj;
-            return this.Pid1.Equals(a.Pid1) && this.Pid2.Equals(a.Pid2) && this.Pid3.Equals(a.Pid3);
-        }
-    }
-
     public override int GetHashCode()
     {
-        return this.Pid1 ^ this.Pid2 ^ this.Pid3;
+        return this.Pid1.GetHashCode() ^ this.Pid2.GetHashCode() ^ this.Pid3.GetHashCode();
+    }
+
+    protected override bool EquivalentWrapped(AngleFact f1, AngleFact f2)
+    {
+        if ((f1.Pid1 == f2.Pid1 && f1.Pid2 == f2.Pid2 && f1.Pid3 == f2.Pid3))// || 
+            //(f1.Pid1 == f2.Pid3 && f1.Pid2 == f2.Pid2 && f1.Pid3 == f2.Pid1))
+            return true;
+
+        PointFact p1f1 = (PointFact)_Facts[f1.Pid1];
+        PointFact p2f1 = (PointFact)_Facts[f1.Pid2];
+        PointFact p3f1 = (PointFact)_Facts[f1.Pid3];
+        PointFact p1f2 = (PointFact)_Facts[f2.Pid1];
+        PointFact p2f2 = (PointFact)_Facts[f2.Pid2];
+        PointFact p3f2 = (PointFact)_Facts[f2.Pid3];
+
+        return (p1f1.Equivalent(p1f2) && p2f1.Equivalent(p2f2) && p3f1.Equivalent(p3f2))
+            ;//|| (p1f1.Equivalent(p3f2) && p2f1.Equivalent(p2f2) && p1f1.Equivalent(p3f2));
     }
 }
 

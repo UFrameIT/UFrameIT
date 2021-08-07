@@ -43,7 +43,7 @@ namespace LowPolyWater
 
             //Create a vector array for new vertices 
             Vector3[] vertices = new Vector3[triangles.Length];
-            
+
             //Assign vertices to create triangles out of the mesh
             for (int i = 0; i < triangles.Length; i++)
             {
@@ -60,7 +60,7 @@ namespace LowPolyWater
 
             return mf;
         }
-        
+
         void Update()
         {
             GenerateWaves();
@@ -86,7 +86,7 @@ namespace LowPolyWater
                 //Oscilate the wave height via sine to create a wave effect
                 v.y = waveHeight * Mathf.Sin(Time.time * Mathf.PI * 2.0f * waveFrequency
                 + (Mathf.PI * 2.0f * distance));
-                
+
                 //Update the vertex
                 vertices[i] = v;
             }

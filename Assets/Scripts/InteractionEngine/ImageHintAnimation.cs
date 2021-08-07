@@ -9,7 +9,7 @@ public class ImageHintAnimation : MonoBehaviour
 
     private Color animationStartColor;
     private Color animationEndColor;
-    
+
     private float animateDuration;
     private bool animating = false;
     private float timer = 0;
@@ -70,7 +70,8 @@ public class ImageHintAnimation : MonoBehaviour
         imageToChange.color = imageToChangeDefaultColor;
     }
 
-    private void updateAnimationParameters() {
+    private void updateAnimationParameters()
+    {
         animationStartColor = globalSettings.hintAnimationStartColor;
         animationEndColor = globalSettings.hintAnimationEndColor;
         animateDuration = globalSettings.hintAnimationDuration;

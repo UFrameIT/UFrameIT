@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class GadgetManager : MonoBehaviour
@@ -15,8 +13,8 @@ public class GadgetManager : MonoBehaviour
         CommunicationEvents.ToolModeChangedEvent.AddListener(OnToolModeChanged);
         gadgets = GetComponentsInChildren<Gadget>();
 
-        Debug.Log(gadgets.Length);
-        for (int i = 0; i < gadgets.Length; i++) {
+        for (int i = 0; i < gadgets.Length; i++)
+        {
             gadgets[i].id = i;
             //Create Buttons and add them to UI
             CreateButton(gadgets[i]);
@@ -26,7 +24,8 @@ public class GadgetManager : MonoBehaviour
                 gadgets[i].gameObject.SetActive(true);
                 activeGadget = gadgets[i];
             }
-            else {
+            else
+            {
                 gadgets[i].gameObject.SetActive(false);
             }
         }

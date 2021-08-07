@@ -27,10 +27,14 @@ public class AngleTool : Gadget
 
     void Awake()
     {
-        if (FactManager == null) FactManager = GameObject.FindObjectOfType<FactManager>();
-        CommunicationEvents.TriggerEvent.AddListener(OnHit);
-        if (this.Cursor == null) this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
+        if (FactManager == null)
+            FactManager = GameObject.FindObjectOfType<FactManager>();
+
+        if (this.Cursor == null)
+            this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
+
         this.UiName = "Angle Mode";
+        CommunicationEvents.TriggerEvent.AddListener(OnHit);
     }
 
     //Initialize Gadget when enabled AND activated
@@ -45,7 +49,7 @@ public class AngleTool : Gadget
         if (!this.isActiveAndEnabled) return;
         if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
-            PointFact tempFact = (PointFact)Facts[hit.transform.GetComponent<FactObject>().Id];
+            PointFact tempFact = (PointFact)LevelFacts[hit.transform.GetComponent<FactObject>().URI];
 
             //If two points were already selected and now the third point got selected
             if (this.angleModeIsFirstPointSelected && this.angleModeIsSecondPointSelected)
@@ -54,9 +58,7 @@ public class AngleTool : Gadget
                 //Check if new Point is equal to one of the previous points -> if true -> cancel
                 if (!(this.angleModeFirstPointSelected.Id == tempFact.Id || this.angleModeSecondPointSelected.Id == tempFact.Id))
                 {
-                    //Check if exactly the same angle already exists
-                    if (!FactManager.factAlreadyExists(new int[] { ((PointFact)this.angleModeFirstPointSelected).Id, ((PointFact)this.angleModeSecondPointSelected).Id, ((PointFact)tempFact).Id }))
-                        CommunicationEvents.AddFactEvent.Invoke(FactManager.AddAngleFact(((PointFact)this.angleModeFirstPointSelected).Id, ((PointFact)this.angleModeSecondPointSelected).Id, ((PointFact)tempFact).Id, FactManager.GetFirstEmptyID()));
+                    FactManager.AddAngleFact(((PointFact)this.angleModeFirstPointSelected).Id, ((PointFact)this.angleModeSecondPointSelected).Id, ((PointFact)tempFact).Id);
                 }
 
                 ResetGadget();
@@ -133,31 +135,8 @@ public class AngleTool : Gadget
 
     public void UpdateCurveDrawing(Vector3 currentPosition)
     {
-
-        //Find the nearest of all potential third points
-        PointFact nearestPoint = null;
-        foreach (Fact fact in Facts)
-        {
-            if (fact is PointFact && fact.Id != angleModeFirstPointSelected.Id && fact.Id != angleModeSecondPointSelected.Id && nearestPoint == null)
-                nearestPoint = (PointFact)fact;
-            else if (fact is PointFact && fact.Id != angleModeFirstPointSelected.Id && fact.Id != angleModeSecondPointSelected.Id && (nearestPoint.Point - currentPosition).magnitude > (((PointFact)fact).Point - currentPosition).magnitude)
-                nearestPoint = (PointFact)fact;
-        }
-
-        Vector3 startPoint = new Vector3(0, 0, 0);
-
-        if (nearestPoint != null)
-        {
-            Vector3 planePoint = Vector3.ProjectOnPlane(currentPosition, Vector3.Cross((nearestPoint.Point - angleMiddlePoint), (curveEndPoint - angleMiddlePoint)));
-
-            //Determine the Start-Point for the nearest third-point
-            startPoint = angleMiddlePoint + curveRadius * (planePoint - angleMiddlePoint).normalized;
-        }
-        else
-        {
-            //Determine the Start-Point
-            startPoint = angleMiddlePoint + curveRadius * (currentPosition - angleMiddlePoint).normalized;
-        }
+        //Determine the Start-Point
+        Vector3 startPoint = angleMiddlePoint + curveRadius * (currentPosition - angleMiddlePoint).normalized;
 
         //Determine the Center of Start-Point and End-Point 
         Vector3 tempCenterPoint = Vector3.Lerp(startPoint, curveEndPoint, 0.5f);

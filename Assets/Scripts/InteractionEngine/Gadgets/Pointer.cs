@@ -9,10 +9,14 @@ public class Pointer : Gadget
 
     void Awake()
     {
-        if (FactManager == null) FactManager = GameObject.FindObjectOfType<FactManager>();
-        CommunicationEvents.TriggerEvent.AddListener(OnHit);
-        if (this.Cursor == null) this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
+        if (FactManager == null)
+            FactManager = GameObject.FindObjectOfType<FactManager>();
+
+        if (this.Cursor == null)
+            this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
+
         this.UiName = "Point Mode";
+        CommunicationEvents.TriggerEvent.AddListener(OnHit);
     }
 
     void OnEnable()
@@ -22,15 +26,13 @@ public class Pointer : Gadget
 
     public override void OnHit(RaycastHit hit)
     {
+
         if (!this.isActiveAndEnabled) return;
-        var pid = FactManager.GetFirstEmptyID();
-        CommunicationEvents.AddFactEvent.Invoke(FactManager.AddPointFact(hit, pid));
+        var pid = FactManager.AddPointFact(hit).Id;
+
         if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Ray"))
         {
-
-            var oLid = FactManager.GetFirstEmptyID();
-            Facts.Insert(oLid, new OnLineFact(oLid, pid, hit.transform.GetComponent<FactObject>().Id));
-            CommunicationEvents.AddFactEvent.Invoke(Facts.Find(x => x.Id == oLid) as OnLineFact);
+            FactManager.AddOnLineFact(pid, hit.transform.GetComponent<FactObject>().URI, true);
         }
     }
   

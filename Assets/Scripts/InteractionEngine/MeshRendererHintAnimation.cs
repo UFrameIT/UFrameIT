@@ -6,7 +6,7 @@ public class MeshRendererHintAnimation : MonoBehaviour
 {
     private MeshRenderer meshRendererToChange;
     private Color meshRendererToChangeDefaultColor;
-    
+
     private Color animationStartColor;
     private Color animationEndColor;
 
@@ -26,13 +26,15 @@ public class MeshRendererHintAnimation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (animating) {
+        if (animating)
+        {
             this.timer += Time.deltaTime;
             Animate();
         }
     }
 
-    public void AnimationTrigger() {
+    public void AnimationTrigger()
+    {
         if (meshRendererToChange != null)
         {
             updateAnimationParameters();
@@ -40,14 +42,16 @@ public class MeshRendererHintAnimation : MonoBehaviour
         }
     }
 
-    private void Animate() {
+    private void Animate()
+    {
         if (timer >= animateDuration)
         {
             animating = false;
             timer = 0;
             meshRendererToChange.material.color = meshRendererToChangeDefaultColor;
         }
-        else {
+        else
+        {
             meshRendererToChange.material.color = Color.Lerp(animationStartColor, animationEndColor, Mathf.PingPong(Time.time, 1));
         }
     }

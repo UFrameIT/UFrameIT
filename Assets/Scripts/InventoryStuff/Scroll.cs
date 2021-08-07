@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
-using System;
-using static JSONManager;
-using JsonSubTypes;
+﻿using JsonSubTypes;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using static JSONManager;
 
 public class Scroll
 {
@@ -70,8 +70,9 @@ public class Scroll
     {
         public MMTTerm tp;
         public MMTTerm df;
-        
-        public override String getType() {
+
+        public override String getType()
+        {
             if (this.tp is OMS)
                 return ((OMS)this.tp).uri;
             else if (this.tp is OMA)
