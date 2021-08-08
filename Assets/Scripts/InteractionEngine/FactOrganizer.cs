@@ -165,7 +165,8 @@ public class FactOrganizer
             {
                 stepnote last = Workflow[i];
 
-                if (MetaInf[last.Id].workflow_id == i)
+                if (last.creation // may be zombie
+                 && MetaInf[last.Id].workflow_id == i)
                 // remove for good, if original creation gets pruned
                 {
                     this[last.Id].delete();
@@ -193,9 +194,14 @@ public class FactOrganizer
 
             if (MetaInf[key].workflow_id >= marker)
             // check for zombie-status
+            {
                 // protect zombie from beeing pruned
+                var zombie = Workflow[MetaInf[key].workflow_id];
+                zombie.creation = false;
+                Workflow[MetaInf[key].workflow_id] = zombie;
+                // set new init location
                 MetaInf[key] = new meta(marker, true);
-
+            }
             // zombies are undead!
             else if (MetaInf[key].active)
                 // desired outcome already achieved

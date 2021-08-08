@@ -12,6 +12,8 @@ public class Restart : MonoBehaviour
         // only when generated! (in Level.cs)
         CommunicationEvents.SolutionManager.hardreset(false);
 
+        Fact.Clear();
+
         SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
     }
 
