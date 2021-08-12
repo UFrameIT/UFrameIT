@@ -1,31 +1,33 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Reflection;
+using System.IO;
+using Newtonsoft.Json;
+using System.Collections;
 using UnityEngine;
 using System.Linq;
+using System;
 
 //TODO? PERF? (often inserts) SortedDict <-> Dict (often reads)
 //TODO: MMT: move some functionality there
 //TODO: consequent!= samestep != dependent
 
 //PERF: avoid string as key (general: allocations & dict: hash -> colission? -> strcmp[!])
-
-[System.Serializable]
 public class FactOrganizer
 {
-    private Dictionary<string, Fact> FactDict;
-    private Dictionary<string, meta> MetaInf = new Dictionary<string, meta>();
-    private List<stepnote> Workflow = new List<stepnote>();
+    protected internal Dictionary<string, Fact> FactDict;
+    protected internal Dictionary<string, meta> MetaInf = new Dictionary<string, meta>();
+    protected internal List<stepnote> Workflow = new List<stepnote>();
     // notes position in Workflow for un-/redo; the pointed to element is non-acitve
-    private int marker = 0;
+    protected internal int marker = 0;
     // backlock logic for convinience
-    private int worksteps = 0;
-    private int backlog = 0;
+    protected internal int worksteps = 0;
+    protected internal int backlog = 0;
     // set if recently been resetted
-    private bool soft_resetted = false;
+    protected internal bool soft_resetted = false;
     // InvokeEvents?
-    private bool invoke;
+    public bool invoke;
 
-    private struct stepnote
+    protected internal struct stepnote
     {
         // Fact.Id
         public string Id;
@@ -57,7 +59,7 @@ public class FactOrganizer
         }
     }
 
-    private struct meta
+    protected internal struct meta
     {
         // TODO? -> public int last_occurence for safe_dependencies
 
@@ -79,15 +81,86 @@ public class FactOrganizer
         this.invoke = invoke;
     }
 
-    public FactOrganizer(IDictionary<string, Fact> dictionary, bool invoke = false)
+    private FactOrganizer(ref FactOrganizer set, PublicFactOrganizer exposed, bool invoke)
     {
-        FactDict = new Dictionary<string, Fact>(dictionary);
+        // TODO: other strategy needed when MMT save/load supported
+        // map old URIs to new ones
+        Dictionary<string, string> old_to_new = new Dictionary<string, string>();
+        // combine T:Fact to Fact
+        Dictionary<string, Fact> old_FactDict = new Dictionary<string, Fact>();
+
+        /*
+        FieldInfo[] finfos = typeof(PublicFactOrganizer).GetFields();
+        foreach(string type in PublicFactOrganizer.WatchedFacts)
+            AddListToDict(
+                finfos.First(x => x.Name.Remove(x.Name.Length-1) == type)
+                .GetValue(exposed)
+                as List<Fact>);
+        */
+        
+        AddListToDict(exposed.PointFacts);
+        AddListToDict(exposed.LineFacts);
+        AddListToDict(exposed.RayFacts);
+        AddListToDict(exposed.AngleFacts);
+        AddListToDict(exposed.OnLineFacts);
+        
+
+        // initiate
         this.invoke = invoke;
+        FactDict = new Dictionary<string, Fact>();
+        set = this;
+
+        // work Workflow
+        foreach (var sn in exposed.Workflow)
+        {
+            if (sn.creation)
+            // Add
+            {
+                Fact add;
+                if (old_to_new.ContainsKey(sn.Id))
+                    add = FactDict[old_to_new[sn.Id]];
+                else
+                {
+                    Fact old_Fact = old_FactDict[sn.Id];
+
+                    // TODO! false customLabel
+                    add = old_Fact.GetType()
+                        .GetConstructor(new Type[] { old_Fact.GetType(), old_to_new.GetType(), typeof(FactOrganizer) })
+                        .Invoke(new object[] { old_Fact, old_to_new, this })
+                        as Fact;
+
+                    old_to_new.Add(sn.Id, add.Id);
+                }
+
+                Add(add, out _, sn.samestep);
+            }
+            else if(old_to_new.ContainsKey(sn.Id))
+            // Remove
+            {
+                Fact remove = FactDict[old_to_new[sn.Id]];
+                Remove(remove, sn.samestep);
+            }
+        }
+
+        // set un-redo state
+        while (this.backlog < exposed.backlog)
+            undo();
+
+        this.soft_resetted = exposed.soft_resetted;
+
+
+        // === local functions ===
+
+        void AddListToDict<T>(List<T> list) where T:Fact
+        {
+            foreach (T ft in list)
+                old_FactDict.Add(ft.Id, ft);
+        }
     }
 
     public Fact this[string id]
     {
-        get{ return FactDict[id]; }
+        get { return FactDict[id]; }
     }
 
     public bool ContainsKey(string id)
@@ -165,7 +238,8 @@ public class FactOrganizer
             {
                 stepnote last = Workflow[i];
 
-                if (MetaInf[last.Id].workflow_id == i)
+                if (last.creation // may be zombie
+                 && MetaInf[last.Id].workflow_id == i)
                 // remove for good, if original creation gets pruned
                 {
                     this[last.Id].delete();
@@ -193,9 +267,14 @@ public class FactOrganizer
 
             if (MetaInf[key].workflow_id >= marker)
             // check for zombie-status
+            {
                 // protect zombie from beeing pruned
+                var zombie = Workflow[MetaInf[key].workflow_id];
+                zombie.creation = false;
+                Workflow[MetaInf[key].workflow_id] = zombie;
+                // set new init location
                 MetaInf[key] = new meta(marker, true);
-
+            }
             // zombies are undead!
             else if (MetaInf[key].active)
                 // desired outcome already achieved
@@ -385,15 +464,27 @@ public class FactOrganizer
             redo();
     }
 
-    public void store()
+    public void store(string name, bool use_type_subfolder = true)
     {
-        // TODO: save state of all of this?
-        // probably nothing:
-        //      safe class instance somewhere
+        string path = CommunicationEvents.CreatePathToFile(out _, name, "JSON", use_type_subfolder ? typeof(FactOrganizer) : null);
+
+        // note: max depth for "this" is 2, since Fact has non-serilazible member, that is not yet ignored (see Fact.[JasonIgnore] and JSONManager.WriteToJsonFile)
+        // using public dummy class to circumvent deserialiation JsonInheritanceProblem (see todos @PublicFactOrganizer)
+        JSONManager.WriteToJsonFile(path, new PublicFactOrganizer(this), 0);
+    }
+
+    public static void load(ref FactOrganizer set, bool draw, string name, bool use_type_subfolder = true, bool reset_Fact = false)
+    {
+        string path = CommunicationEvents.CreatePathToFile(out _, name, "JSON", use_type_subfolder ? typeof(FactOrganizer) : null);
+        PublicFactOrganizer de_json = JSONManager.ReadFromJsonFile<PublicFactOrganizer>(path);
+        new FactOrganizer(ref set, de_json, draw);
+
+        if (reset_Fact)
+            Fact.Clear();
     }
 
     public void load(bool draw_all = true)
-    // call this after assigning a stored instance in an empty world
+    // call this after assigning a stored instance in an empty world, that was not drawn
     {
         // TODO: see issue #58
         // TODO: communication with MMT
@@ -431,8 +522,11 @@ public class FactOrganizer
             else
                 CommunicationEvents.RemoveFactEvent.Invoke(this[Id]);
 
-        if (!creation)
-            FactDict[Id].freeLabel();
+        if (creation)
+        // undo freeLabel()
+            _ = FactDict[Id].Label;
+        else
+            FactDict[Id].freeAutoLabel();
     }
 
     public bool StaticlySovled(List<Fact> StaticSolution, out List<Fact> MissingElements, out List<Fact> Solutions)
@@ -453,4 +547,140 @@ public class FactOrganizer
         return MissingElements.Count == 0;
     }
 
+}
+
+
+// TODO? PERF? SE? JsonInheritanceProblem: scrap this hardwired class and implement dynamic approach with JsonConverter (see: JSONManager.JsonInheritenceConverter)
+public class PublicFactOrganizer : FactOrganizer
+// public class exposing all protected members of FactOrganizer for JSON conversion
+{
+    // TODO? check once if those are all with reflection
+    protected internal static List<string> WatchedFacts = new List<string>(new string[] {
+        "PointFact",
+        "LineFact",
+        "RayFact",
+        "OnLineFact",
+        "AngleFact"
+    });
+
+    public List<PointFact> PointFacts = new List<PointFact>();
+    public List<LineFact> LineFacts = new List<LineFact>();
+    public List<RayFact> RayFacts = new List<RayFact>();
+    public List<OnLineFact> OnLineFacts = new List<OnLineFact>();
+    public List<AngleFact> AngleFacts = new List<AngleFact>();
+
+    public new Dictionary<string, meta> MetaInf = new Dictionary<string, meta>();
+    public new List<stepnote> Workflow = new List<stepnote>();
+    // notes position in Workflow for un-/redo; the pointed to element is non-acitve
+    public new int marker = 0;
+    // backlock logic for convinience
+    public new int worksteps = 0;
+    public new int backlog = 0;
+    // set if recently been resetted
+    public new bool soft_resetted = false;
+    // InvokeEvents?
+    public new bool invoke;
+
+    public new struct stepnote
+    {
+        // Fact.Id
+        public string Id;
+        // true if this Fact has been created in the same step as the last one
+        //      steproot[false] (=> steptail[true])*
+        public bool samestep;
+        // reference to steproot/ after steptail-end
+        public int steplink;
+        // distincts creation and deletion
+        public bool creation;
+
+        public stepnote(string Id, bool samestep, int steplink, bool creation)
+        {
+            this.Id = Id;
+            this.samestep = samestep;
+            this.steplink = steplink;
+            this.creation = creation;
+        }
+
+        /*public stepnote(string Id, bool samestep, bool creation, PublicFactOrganizer that)
+        {
+            this.Id = Id;
+            this.samestep = samestep;
+            this.creation = creation;
+
+            if (samestep)
+            // steplink = !first_steptail ? previous.steplink : steproot
+            {
+                stepnote prev = that.Workflow[that.marker - 1];
+                this.steplink = prev.samestep ? prev.steplink : that.marker - 1;
+            }
+            else
+                // steproot sets steplink after itself (end of steptail)
+                this.steplink = that.marker + 1;
+
+        }*/
+    }
+
+    public new struct meta
+    {
+        // TODO? -> public int last_occurence for safe_dependencies
+
+        // reference to first occurrence in Workflow
+        public int workflow_id;
+        // keeps track wether Fact is currently in Scene
+        public bool active;
+
+        public meta(int workflow_id, bool active)
+        {
+            this.workflow_id = workflow_id;
+            this.active = active;
+        }
+    }
+
+    public PublicFactOrganizer()
+    {
+        FactDict = new Dictionary<string, Fact>();
+        this.invoke = false;
+    }
+
+    protected internal PublicFactOrganizer(FactOrganizer expose)
+    {
+        // expose all non-abstract members
+        marker = expose.marker;
+        worksteps = expose.worksteps;
+        backlog = expose.backlog;
+        soft_resetted = expose.soft_resetted;
+        invoke = expose.invoke;
+
+        foreach (var sn in expose.Workflow)
+            Workflow.Add(new stepnote(sn.Id, sn.samestep, sn.steplink, sn.creation));
+
+        foreach (var mt in expose.MetaInf)
+            MetaInf.Add(mt.Key, new meta(mt.Value.workflow_id, mt.Value.active));
+
+        // expose and deserialize all abstract members
+        foreach (var fc in expose.FactDict.Values)
+        // keys are Fact.Id
+        {
+            switch (fc.GetType().Name)
+            {
+                case "PointFact":
+                    PointFacts.Add(fc as PointFact);
+                    break;
+                case "LineFact":
+                    LineFacts.Add(fc as LineFact);
+                    break;
+                case "RayFact":
+                    RayFacts.Add(fc as RayFact);
+                    break;
+                case "OnLineFact":
+                    OnLineFacts.Add(fc as OnLineFact);
+                    break;
+                case "AngleFact":
+                    AngleFacts.Add(fc as AngleFact);
+                    break;
+                default:
+                    throw new System.NotImplementedException();
+            }
+        }
+    }
 }

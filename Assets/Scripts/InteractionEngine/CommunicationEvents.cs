@@ -59,4 +59,35 @@ public static class CommunicationEvents
 
     // Configs
     public static bool VerboseURI = false;
+
+    // TODO! avoid tree traversel with name
+    public static string CreatePathToFile(out bool file_exists,  string name, string format = null, Type type = null)
+    {
+        string ending = ".dat";
+        if(!string.IsNullOrEmpty(format))
+            switch (format)
+            {
+                case "JSON":
+                    ending = ".JSON";
+                    break;
+                default:
+                    break;
+            }
+
+        string path = Application.persistentDataPath;
+        if (type != null)
+        {
+            if (typeof(FactOrganizer).IsAssignableFrom(type))
+                path = System.IO.Path.Combine(path, "FactStateMachines");
+            else
+                { }
+
+            System.IO.Directory.CreateDirectory(path);
+        }
+
+        path = System.IO.Path.Combine(path, name + ending);
+        file_exists = System.IO.File.Exists(path);
+
+        return path;
+    }
 }

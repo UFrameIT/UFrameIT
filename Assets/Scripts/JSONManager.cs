@@ -1,10 +1,13 @@
-﻿using System;
-using JsonSubTypes;
+﻿using System.Collections.Generic;
+using System.Reflection;
+using System.IO;
+using System;
+using System.Linq;
 using Newtonsoft.Json;
+using JsonSubTypes;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-
+using Newtonsoft.Json.Linq;
 
 public class MMTURICollection
 {
@@ -77,7 +80,6 @@ public static class JSONManager
         }
     }
 
-
     public class OMF : MMTTerm
     {
         [JsonProperty("float")]
@@ -148,4 +150,168 @@ public static class JSONManager
         }
     }
 
+
+    // TODO? /// <para>If there are public properties/variables that you do not want written to the file, decorate them with the [JsonIgnore] attribute.</para>
+
+    /// <summary>
+    /// Writes the given object instance to a Json file, recursively to set depth, including all members.
+    /// <para>Object type must have a parameterless constructor.</para>
+    /// <para>Only All properties and variables will be written to the file. These can be any type though, even other non-abstract classes.</para>
+    /// </summary>
+    /// <param name="filePath">The file path to write the object instance to.</param>
+    /// <param name="objectToWrite">The object instance to write to the file.</param>
+    /// <param name="max_depth">The depth recursion will occur. Default = 0.</param>
+    public static void WriteToJsonFile(string filePath, object objectToWrite, int max_depth = 0)
+    {
+        int current_depth = 0;
+
+        // This tells your serializer that multiple references are okay.
+        var settings = new JsonSerializerSettings();
+        settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+
+        BindingFlags bindFlags =
+            BindingFlags.Instance |
+            BindingFlags.Public |
+            BindingFlags.NonPublic |
+            BindingFlags.Static;
+
+        TextWriter writer = null;
+        try
+        {
+            string payload = RecursiveStep(objectToWrite);
+            writer = new StreamWriter(filePath);
+            writer.Write(payload);
+        }
+        finally
+        {
+            if (writer != null)
+                writer.Close();
+        }
+
+
+        // ======= local methods ======= 
+        // TODO? more stable depths (see next todo)
+        // TODO? respect IgnoreJson tags
+
+        string RecursiveStep<S>(S objectToWrite) where S : new()
+        {
+            string json;
+
+            if (current_depth >= max_depth 
+             || Type.GetTypeCode(objectToWrite.GetType()) != TypeCode.Object
+             || objectToWrite == null)
+                json = JsonConvert.SerializeObject(objectToWrite, settings/*, new JsonInheritenceConverter<object>()*/);
+            else
+            {
+                current_depth++;
+                json = IntrusiveRecursiveJsonGenerator(objectToWrite);
+                current_depth--;
+            }
+
+            return json;
+        }
+
+        string IntrusiveRecursiveJsonGenerator<S>(S objectToWrite) where S : new()
+        // private convention? more like private suggestion!
+        {
+            bool is_enum = IsEnumerableType(objectToWrite.GetType());
+
+            string json = is_enum ? "[" : "{";
+            foreach (object field in is_enum ? (objectToWrite as IEnumerable) : objectToWrite.GetType().GetFields(bindFlags))
+            {
+                object not_so_private;
+                if (is_enum)
+                {
+                    not_so_private = field;
+                }
+                else
+                {
+                    not_so_private = ((FieldInfo)field).GetValue(objectToWrite);
+                    json += ((FieldInfo)field).Name + ":";
+                }
+
+                json += RecursiveStep(not_so_private);
+
+                json += ",";
+            }
+            json = json.TrimEnd(',') + (is_enum ? "]" : "}");
+
+            return json;
+
+
+            // ======= local methods ======= 
+
+            bool IsEnumerableType(Type type)
+            {
+                if (type.IsInterface && type.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                    return true;
+
+                foreach (Type intType in type.GetInterfaces())
+                {
+                    if (intType.IsGenericType
+                        && intType.GetGenericTypeDefinition() == typeof(IEnumerable<>))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Reads an object instance from an Json file.
+    /// <para>Object type must have a parameterless constructor.</para>
+    /// </summary>
+    /// <typeparam name="T">The type of object to read from the file.</typeparam>
+    /// <param name="filePath">The file path to read the object instance from.</param>
+    /// <returns>Returns a new instance of the object read from the Json file.</returns>
+    public static T ReadFromJsonFile<T>(string filePath) where T : new()
+    {
+        TextReader reader = null;
+        try
+        {
+            reader = new StreamReader(filePath);
+            var fileContents = reader.ReadToEnd();
+            return JsonConvert.DeserializeObject<T>(fileContents/*, new JsonInheritenceConverter<object>()*/);
+        }
+        finally
+        {
+            if (reader != null)
+                reader.Close();
+        }
+    }
+
+    // tutorial @https://www.codeproject.com/Articles/1201466/Working-with-JSON-in-Csharp-VB#data_structure_types
+    // unused
+    // TODO: check for actual type in ReadJson
+    // TODO: avoid self-referencing-loop-error in WriteJson
+    public sealed class JsonInheritenceConverter<T> : JsonConverter
+    {
+        public override bool CanConvert(Type objectType)
+        {
+            return typeof(T).IsAssignableFrom(objectType);
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            JObject jo = JObject.Load(reader);
+            var element = jo.Properties().First();
+            return element.Value.ToObject(Type.GetType(element.Name));
+        }
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {            
+            if (value == null)
+            {
+                serializer.Serialize(writer, null);
+                return;
+            }
+
+            writer.WriteStartObject();
+            writer.WritePropertyName(value.GetType().FullName);
+            serializer.Serialize(writer, value);
+            writer.WriteEndObject();
+        }
+    }
 }

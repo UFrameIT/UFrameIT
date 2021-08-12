@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using static CommunicationEvents;
 
 public class HideUI : MonoBehaviour
@@ -11,7 +12,9 @@ public class HideUI : MonoBehaviour
         modifier,
         modundo,
         modredo,
-        modreset;
+        modreset,
+        modsave,
+        modload;
 
     public UnityStandardAssets.Characters.FirstPerson.FirstPersonController CamControl;
     public bool LockOnly = true;
@@ -60,6 +63,13 @@ public class HideUI : MonoBehaviour
                 LevelFacts.redo();
             else if (Input.GetButtonDown(modreset))
                 LevelFacts.softreset();
+            else if (Input.GetButtonDown(modsave))
+                LevelFacts.store(SceneManager.GetActiveScene().name);
+            else if (Input.GetButtonDown(modload))
+            {
+                LevelFacts.hardreset();
+                FactOrganizer.load(ref LevelFacts, true, SceneManager.GetActiveScene().name);
+            }
         }
         
         /*

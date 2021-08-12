@@ -22,6 +22,9 @@ public class ScrollDetails : MonoBehaviour
 
     public string currentMmtAnswer;
 
+    public bool dynamicScrollDescriptionsActive = true;
+    public bool automaticHintGenerationActive = true;
+
     public Vector3 GetPosition(int i)
     {
         return new Vector3(x_Start, y_Start + i * (-y_Paece_Between_Items), 0f);
@@ -87,7 +90,8 @@ public class ScrollDetails : MonoBehaviour
     }
 
     public void newAssignmentTrigger() {
-        StartCoroutine(newAssignment());
+        if(this.automaticHintGenerationActive || this.dynamicScrollDescriptionsActive)
+            StartCoroutine(newAssignment());
     }
 
     IEnumerator newAssignment()
@@ -192,27 +196,40 @@ public class ScrollDetails : MonoBehaviour
         //Update Scroll, process data for later hints and update Uri-List for which hints are available
         hintUris = processRenderedScroll(scrollDynamicInfo.rendered, hintUris);
 
-        //Show that Hint is available for ScrollParameter
-        HintAvailableEvent.Invoke(hintUris);
+        if (this.automaticHintGenerationActive)
+        {
+            //Show that Hint is available for ScrollParameter
+            HintAvailableEvent.Invoke(hintUris);
+        }
     }
 
     public List<string> processRenderedScroll(Scroll rendered, List<string> hintUris)
     {
         Transform scroll = gameObject.transform.GetChild(1).transform;
 
-        //Update scroll-description
-        scroll.GetChild(0).GetComponent<TextMeshProUGUI>().text = rendered.description;
+        if (this.dynamicScrollDescriptionsActive)
+        {
+            //Update scroll-description
+            scroll.GetChild(0).GetComponent<TextMeshProUGUI>().text = rendered.description;
+        }
 
         for (int i = 0; i < rendered.requiredFacts.Count; i++)
         {
-            //Update ScrollParameter label
             var obj = ParameterDisplays.Find(x => x.transform.GetChild(0).GetComponent<RenderedScrollFact>().factUri.Equals(rendered.requiredFacts[i].@ref.uri));
-            obj.transform.GetChild(0).GetComponent<RenderedScrollFact>().Label = rendered.requiredFacts[i].label;
+
+            if (this.dynamicScrollDescriptionsActive)
+            {
+                //Update ScrollParameter label
+                obj.transform.GetChild(0).GetComponent<RenderedScrollFact>().Label = rendered.requiredFacts[i].label;
+            }
 
             //Check Hint Informations
             //If ScrollFact is assigned -> No Hint
             if (obj.transform.GetChild(0).GetComponent<DropHandling>().currentFact == null) {
                 Fact currentFact = ParsingDictionary.parseFactDictionary[rendered.requiredFacts[i].getType()].Invoke(rendered.requiredFacts[i]);
+                //If currentFact could be parsed: this fact maybe not yet exists in the global fact-list but there must be a fact
+                // of the same type and the same dependent facts in the fact-list, otherwise currentFact could not have been parsed
+
                 //If the fact could not be parsed -> Therefore not all dependent Facts exist -> No Hint
                 //AND if fact has no dependent facts -> No Hint
                 if (currentFact != null && currentFact.hasDependentFacts())
@@ -240,8 +257,9 @@ public class ScrollDetails : MonoBehaviour
                 scrollParameter.GetComponentInChildren<ImageHintAnimation>().AnimationTrigger();
                 //Animate Fact in FactPanel
                 AnimateExistingFactEvent.Invoke(fact);
-                //Animate factRepresentation in game
-                fact.Representation.GetComponentInChildren<MeshRendererHintAnimation>().AnimationTrigger();
+                //Animate factRepresentation in game, if fact has a Representation (e.g. OnLineFact has no Representation)
+                if(fact.Representation != null)
+                    fact.Representation.GetComponentInChildren<MeshRendererHintAnimation>().AnimationTrigger();
             }
         }
         else if (LatestRenderedHints.Exists(x => x.Id.Equals(scrollParameterUri)))
@@ -258,8 +276,8 @@ public class ScrollDetails : MonoBehaviour
                 scrollParameter.GetComponentInChildren<ImageHintAnimation>().AnimationTrigger();
                 //Animate Fact in FactPanel
                 AnimateExistingFactEvent.Invoke(existingFact);
-                //Animate factRepresentation in game if Fact has a Representation
-                if(existingFact.Representation != null)
+                //Animate factRepresentation in game if Fact has a Representation (e.g. OnLineFact has no Representation)
+                if (existingFact.Representation != null)
                     existingFact.Representation.GetComponentInChildren<MeshRendererHintAnimation>().AnimationTrigger();
             }
             //If not -> Generate a Fact-Representation with such dependent facts

@@ -15,22 +15,22 @@ public class FactManager : MonoBehaviour
 
     public PointFact AddPointFact(RaycastHit hit, bool samestep = false)
     {
-        return (PointFact) AddFactIfNotFound(new PointFact(hit.point, hit.normal, LevelFacts), out bool obsolete, samestep);
+        return (PointFact) AddFactIfNotFound(new PointFact(hit.point, hit.normal, LevelFacts), out _, samestep);
     }
 
     public PointFact AddPointFact(Vector3 point, Vector3 normal, bool samestep = false)
     {
-        return (PointFact) AddFactIfNotFound(new PointFact(point, normal, LevelFacts), out bool obsolete, samestep);
+        return (PointFact) AddFactIfNotFound(new PointFact(point, normal, LevelFacts), out _, samestep);
     }
 
     public OnLineFact AddOnLineFact(string pid, string lid, bool samestep = false)
     {
-        return (OnLineFact)AddFactIfNotFound(new OnLineFact(pid, lid, LevelFacts), out bool obsolete, samestep);
+        return (OnLineFact)AddFactIfNotFound(new OnLineFact(pid, lid, LevelFacts), out _, samestep);
     }
 
     public LineFact AddLineFact(string pid1, string pid2, bool samestep = false)
     {
-        return (LineFact)AddFactIfNotFound(new LineFact(pid1, pid2, LevelFacts), out bool obsolete, samestep);
+        return (LineFact)AddFactIfNotFound(new LineFact(pid1, pid2, LevelFacts), out _, samestep);
     }
 
     public RayFact AddRayFact(string pid1, string pid2, bool samestep = false)
@@ -69,7 +69,7 @@ public class FactManager : MonoBehaviour
 
     public AngleFact AddAngleFact(string pid1, string pid2, string pid3, bool samestep = false)
     {
-        return (AngleFact)AddFactIfNotFound(new AngleFact(pid1, pid2, pid3, LevelFacts), out bool obsolete, samestep);
+        return (AngleFact)AddFactIfNotFound(new AngleFact(pid1, pid2, pid3, LevelFacts), out _, samestep);
     }
 
 }

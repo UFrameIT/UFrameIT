@@ -9,8 +9,6 @@ public class Level : MonoBehaviour
     //Solving game parameters
     public int minimalSolutionHight;
 
-    public static bool solved = false;
-
 
     void Start()
     // Start is called before the first frame update
@@ -25,11 +23,12 @@ public class Level : MonoBehaviour
 
         LineFact target = new LineFact(buttom.Id, top.Id, SolutionManager);
         Solution.Add(SolutionManager[SolutionManager.Add(target, out _, true)]);
+        Fact.Clear();
     }
 
     public static bool gameSolved()
     {
-        solved =
+        bool solved =
             LevelFacts.DynamiclySolved(Solution, out _, out List<Fact> hits, FactComparer: new LineFactHightDirectionComparer());
 
         if (solved)

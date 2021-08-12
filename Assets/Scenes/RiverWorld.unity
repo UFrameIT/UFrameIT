@@ -18018,6 +18018,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 800121727}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &802019337 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4661435515762455780, guid: e289bf5debb17f6459818c207d781953,
+    type: 3}
+  m_PrefabInstance: {fileID: 224606875}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &804378691
 GameObject:
   m_ObjectHideFlags: 0
@@ -23482,7 +23488,7 @@ PrefabInstance:
     - target: {fileID: 2222111361404534124, guid: 88f2fd29f58b9734683512546acec310,
         type: 3}
       propertyPath: m_Name
-      value: WalkAroundTree
+      value: DonTWalkAroundThisTree
       objectReference: {fileID: 0}
     - target: {fileID: 2222111361405018444, guid: 88f2fd29f58b9734683512546acec310,
         type: 3}
@@ -37122,12 +37128,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4385080170327957909, guid: ff62b58c5a9ea164fa8ddf8038e10cd1,
     type: 3}
   m_PrefabInstance: {fileID: 1738591202}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1747050947 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2222111361404534124, guid: 88f2fd29f58b9734683512546acec310,
-    type: 3}
-  m_PrefabInstance: {fileID: 1038096501}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1749781951
 PrefabInstance:
@@ -59594,8 +59594,18 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 293934905664952486, guid: b996060e27da25c498842defc1996d84,
         type: 3}
+      propertyPath: modload
+      value: mod+load
+      objectReference: {fileID: 0}
+    - target: {fileID: 293934905664952486, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
       propertyPath: modredo
       value: mod+redo
+      objectReference: {fileID: 0}
+    - target: {fileID: 293934905664952486, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: modsave
+      value: mod+save
       objectReference: {fileID: 0}
     - target: {fileID: 293934905664952486, guid: b996060e27da25c498842defc1996d84,
         type: 3}
@@ -61544,7 +61554,7 @@ PrefabInstance:
         type: 3}
       propertyPath: walkAroundObject
       value: 
-      objectReference: {fileID: 1747050947}
+      objectReference: {fileID: 802019337}
     - target: {fileID: 6999573641170124239, guid: 8590393c51194934a95cdc2075fc4dec,
         type: 3}
       propertyPath: radiusAroundObject
