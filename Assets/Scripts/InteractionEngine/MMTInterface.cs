@@ -1,8 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.ComponentModel;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Diagnostics;
 using UnityEngine;
 
 public class MMTInterface : MonoBehaviour
@@ -12,7 +8,7 @@ public class MMTInterface : MonoBehaviour
 
     // Start is called before the first frame update
 
-    
+
     void Start()
     {
         //Start the mmt.bat for carrying out http-Requests
@@ -27,9 +23,9 @@ public class MMTInterface : MonoBehaviour
         mmtServerProcess = Process.Start(mmtServerProcessInfo);
         */
 
-     //   CommunicationEvents.AddPointEvent.AddListener(AddFactToMMT);
-      //  CommunicationEvents.RemoveEvent.AddListener(RemoveFactFromMMT);   
-        
+        //   CommunicationEvents.AddPointEvent.AddListener(AddFactToMMT);
+        //  CommunicationEvents.RemoveEvent.AddListener(RemoveFactFromMMT);   
+
 
     }
     /*
@@ -44,5 +40,5 @@ public class MMTInterface : MonoBehaviour
         UnityEngine.Debug.Log("remove fact"+ id);
     }
     */
- 
+
 }

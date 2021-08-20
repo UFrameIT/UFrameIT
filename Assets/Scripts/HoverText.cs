@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class HoverText : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
@@ -24,5 +22,5 @@ public class HoverText : MonoBehaviour, IPointerEnterHandler, IPointerExitHandle
         TextTransform.gameObject.SetActive(false);
     }
 
- 
+
 }

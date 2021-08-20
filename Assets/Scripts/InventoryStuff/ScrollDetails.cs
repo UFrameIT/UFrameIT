@@ -22,6 +22,9 @@ public class ScrollDetails : MonoBehaviour
 
     public string currentMmtAnswer;
 
+    public bool dynamicScrollDescriptionsActive = true;
+    public bool automaticHintGenerationActive = true;
+
     public Vector3 GetPosition(int i)
     {
         return new Vector3(x_Start, y_Start + i * (-y_Paece_Between_Items), 0f);
@@ -32,7 +35,6 @@ public class ScrollDetails : MonoBehaviour
     {
         if (cursor == null) cursor = GameObject.FindObjectOfType<WorldCursor>();
 
-        parameterDisplayHint.AddListener(animateScrollParameter);
         ScrollFactHintEvent.AddListener(animateHint);
         NewAssignmentEvent.AddListener(newAssignmentTrigger);
     }
@@ -88,7 +90,8 @@ public class ScrollDetails : MonoBehaviour
     }
 
     public void newAssignmentTrigger() {
-        StartCoroutine(newAssignment());
+        if(this.automaticHintGenerationActive || this.dynamicScrollDescriptionsActive)
+            StartCoroutine(newAssignment());
     }
 
     IEnumerator newAssignment()
@@ -114,13 +117,14 @@ public class ScrollDetails : MonoBehaviour
         UnityWebRequest www = UnityWebRequest.Put(ServerAdress + endpoint, body);
         www.method = UnityWebRequest.kHttpVerbPOST;
         www.SetRequestHeader("Content-Type", "application/json");
-        var async = www.Send();
+        var async = www.SendWebRequest();
         while (!async.isDone) {
             //Non blocking wait for one frame, for letting the game do other things
             yield return null;
         }
 
-        if (www.isNetworkError || www.isHttpError)
+        if (www.result == UnityWebRequest.Result.ConnectionError 
+         || www.result == UnityWebRequest.Result.ProtocolError)
         {
             Debug.Log(www.error);
             currentMmtAnswer = null;
@@ -145,7 +149,7 @@ public class ScrollDetails : MonoBehaviour
             if (tempFact != null)
             {
                 listEntry.fact = new Scroll.UriReference(this.scroll.requiredFacts[i].@ref.uri);
-                listEntry.assignment = new JSONManager.OMS(tempFact.backendURI);
+                listEntry.assignment = new JSONManager.OMS(tempFact.Id);
                 assignmentList.Add(listEntry);
             }
         }
@@ -161,16 +165,13 @@ public class ScrollDetails : MonoBehaviour
         if(pushoutFacts.Count == 0)
             PushoutFactFailEvent.Invoke(null);
 
-        for (int i = 0; i < pushoutFacts.Count; i++)
+        bool samestep = false;
+        for (int i = 0; i < pushoutFacts.Count; i++, samestep = true)
         {
             Fact newFact = ParsingDictionary.parseFactDictionary[pushoutFacts[i].getType()].Invoke(pushoutFacts[i]);
             if (newFact != null)
             {
-                int id = factManager.GetFirstEmptyID();
-                newFact.Id = id;
-                Facts.Insert(id, newFact);
-                AddFactEvent.Invoke(newFact);
-                PushoutFactEvent.Invoke(newFact);
+                PushoutFactEvent.Invoke(FactManager.AddFactIfNotFound(newFact, out bool exists, samestep));
             }
             else {
                 Debug.Log("Parsing on pushout-fact returned null -> One of the dependent facts does not exist");
@@ -195,33 +196,46 @@ public class ScrollDetails : MonoBehaviour
         //Update Scroll, process data for later hints and update Uri-List for which hints are available
         hintUris = processRenderedScroll(scrollDynamicInfo.rendered, hintUris);
 
-        //Show that Hint is available for ScrollParameter
-        HintAvailableEvent.Invoke(hintUris);
+        if (this.automaticHintGenerationActive)
+        {
+            //Show that Hint is available for ScrollParameter
+            HintAvailableEvent.Invoke(hintUris);
+        }
     }
 
     public List<string> processRenderedScroll(Scroll rendered, List<string> hintUris)
     {
         Transform scroll = gameObject.transform.GetChild(1).transform;
 
-        //Update scroll-description
-        scroll.GetChild(0).GetComponent<TextMeshProUGUI>().text = rendered.description;
+        if (this.dynamicScrollDescriptionsActive)
+        {
+            //Update scroll-description
+            scroll.GetChild(0).GetComponent<TextMeshProUGUI>().text = rendered.description;
+        }
 
         for (int i = 0; i < rendered.requiredFacts.Count; i++)
         {
-            //Update ScrollParameter label
             var obj = ParameterDisplays.Find(x => x.transform.GetChild(0).GetComponent<RenderedScrollFact>().factUri.Equals(rendered.requiredFacts[i].@ref.uri));
-            obj.transform.GetChild(0).GetComponent<RenderedScrollFact>().Label = rendered.requiredFacts[i].label;
+
+            if (this.dynamicScrollDescriptionsActive)
+            {
+                //Update ScrollParameter label
+                obj.transform.GetChild(0).GetComponent<RenderedScrollFact>().Label = rendered.requiredFacts[i].label;
+            }
 
             //Check Hint Informations
             //If ScrollFact is assigned -> No Hint
             if (obj.transform.GetChild(0).GetComponent<DropHandling>().currentFact == null) {
                 Fact currentFact = ParsingDictionary.parseFactDictionary[rendered.requiredFacts[i].getType()].Invoke(rendered.requiredFacts[i]);
+                //If currentFact could be parsed: this fact maybe not yet exists in the global fact-list but there must be a fact
+                // of the same type and the same dependent facts in the fact-list, otherwise currentFact could not have been parsed
+
                 //If the fact could not be parsed -> Therefore not all dependent Facts exist -> No Hint
                 //AND if fact has no dependent facts -> No Hint
                 if (currentFact != null && currentFact.hasDependentFacts())
                 {
                     //Hint available for abstract-problem uri
-                    hintUris.Add(currentFact.backendURI);
+                    hintUris.Add(currentFact.Id);
                     LatestRenderedHints.Add(currentFact);
                 }
             }
@@ -236,31 +250,34 @@ public class ScrollDetails : MonoBehaviour
 
         if (suitableCompletion != null)
         {
-            fact = Facts.Find(x => x.backendURI.Equals(suitableCompletion.assignment.uri));
-            if (fact != null)
+            if (LevelFacts.ContainsKey(suitableCompletion.assignment.uri))
             {
+                fact = LevelFacts[suitableCompletion.assignment.uri];
                 //Animate ScrollParameter
                 scrollParameter.GetComponentInChildren<ImageHintAnimation>().AnimationTrigger();
                 //Animate Fact in FactPanel
                 AnimateExistingFactEvent.Invoke(fact);
-                //Animate factRepresentation in game
-                fact.Representation.GetComponentInChildren<MeshRendererHintAnimation>().AnimationTrigger();
+                //Animate factRepresentation in game, if fact has a Representation (e.g. OnLineFact has no Representation)
+                if(fact.Representation != null)
+                    fact.Representation.GetComponentInChildren<MeshRendererHintAnimation>().AnimationTrigger();
             }
         }
-        else if (LatestRenderedHints.Exists(x => x.backendURI.Equals(scrollParameterUri))) {
-            fact = LatestRenderedHints.Find(x => x.backendURI.Equals(scrollParameterUri));
+        else if (LatestRenderedHints.Exists(x => x.Id.Equals(scrollParameterUri)))
+        {
+            fact = LatestRenderedHints.Find(x => x.Id.Equals(scrollParameterUri));
+            var factId = fact.Id;
 
             //If there is an equal existing fact -> Animate that fact AND ScrollParameter
-            if (Facts.Exists(x => x.Equals(fact)))
+            if (LevelFacts.ContainsKey(factId))
             {
-                Fact existingFact = Facts.Find(x => x.Equals(fact));
+                Fact existingFact = LevelFacts[factId];
 
                 //Animate ScrollParameter
                 scrollParameter.GetComponentInChildren<ImageHintAnimation>().AnimationTrigger();
                 //Animate Fact in FactPanel
                 AnimateExistingFactEvent.Invoke(existingFact);
-                //Animate factRepresentation in game if Fact has a Representation
-                if(existingFact.Representation != null)
+                //Animate factRepresentation in game if Fact has a Representation (e.g. OnLineFact has no Representation)
+                if (existingFact.Representation != null)
                     existingFact.Representation.GetComponentInChildren<MeshRendererHintAnimation>().AnimationTrigger();
             }
             //If not -> Generate a Fact-Representation with such dependent facts

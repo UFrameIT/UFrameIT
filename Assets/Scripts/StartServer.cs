@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections;
 using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -8,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class StartServer : MonoBehaviour
 {
-   [SerializeField]
+    [SerializeField]
     TMPro.TextMeshProUGUI WaitingText;
 
     public static Process process;
@@ -24,7 +22,7 @@ public class StartServer : MonoBehaviour
     void PrepareGame()
     {
         WaitingText.text = "Press any key to start the game";
-        CommunicationEvents.ServerRunning= true;
+        CommunicationEvents.ServerRunning = true;
         UnityEngine.Debug.Log("server fin");
 
     }
@@ -32,7 +30,7 @@ public class StartServer : MonoBehaviour
     IEnumerator ServerRoutine1()
     {
 
-        string command = "\"" + Application.streamingAssetsPath + "\"/start.BAT "+ "\""   +  Application.streamingAssetsPath + "\"" ;
+        string command = "\"" + Application.streamingAssetsPath + "\"/start.BAT " + "\"" + Application.streamingAssetsPath + "\"";
         command = command.Replace("/", @"\");
         command = "\"" + command + "\"";
         UnityEngine.Debug.Log(command);
@@ -44,15 +42,16 @@ public class StartServer : MonoBehaviour
         if (cmd)
         {
             processInfo = new ProcessStartInfo("cmd.exe", "/C " + command);
-         //   processInfo.CreateNoWindow = false;
-          //  processInfo.UseShellExecute = true;
+            //   processInfo.CreateNoWindow = false;
+            //  processInfo.UseShellExecute = true;
 
             process = Process.Start(processInfo);
-        }else
-        /*
-        */
-        Process.Start("powershell.exe", command);
-   
+        }
+        else
+            /*
+            */
+            Process.Start("powershell.exe", command);
+
 
 
 
@@ -80,18 +79,20 @@ public class StartServer : MonoBehaviour
 
     IEnumerator ServerRoutine()
     {
-        UnityWebRequest request = UnityWebRequest.Get(CommunicationEvents.ServerAdress+"/scroll/list");
+        UnityWebRequest request = UnityWebRequest.Get(CommunicationEvents.ServerAdress + "/scroll/list");
         yield return request.SendWebRequest();
-        if (request.isNetworkError || request.isHttpError)
+
+        if (request.result == UnityWebRequest.Result.ConnectionError
+         || request.result == UnityWebRequest.Result.ProtocolError)
         {
-            UnityEngine.Debug.Log("no running server "+ request.error);
+            UnityEngine.Debug.Log("no running server " + request.error);
 
 
-#if!UNITY_WEBGL
-            
-//#if UNITY_STANDALONE_LINUX
-//#elif UNITY_STANDALONE_OSX
-//#else
+#if !UNITY_WEBGL
+
+            //#if UNITY_STANDALONE_LINUX
+            //#elif UNITY_STANDALONE_OSX
+            //#else
             processInfo = new ProcessStartInfo();
             processInfo.FileName = "java";
             processInfo.Arguments = @"-jar " + Application.streamingAssetsPath + "/frameit.jar" + " -bind :8085 -archive-root " + Application.streamingAssetsPath + "/archives";
@@ -100,16 +101,17 @@ public class StartServer : MonoBehaviour
             processInfo.CreateNoWindow = true;
 
             process = Process.Start(processInfo);
-//#endif
+            //#endif
             yield return null;
 #endif
             while (true)
             {
-                request = UnityWebRequest.Get(CommunicationEvents.ServerAdress+"/scroll/list");
+                request = UnityWebRequest.Get(CommunicationEvents.ServerAdress + "/scroll/list");
                 yield return request.SendWebRequest();
-                if (request.isNetworkError || request.isHttpError)
+                if (request.result == UnityWebRequest.Result.ConnectionError
+                 || request.result == UnityWebRequest.Result.ProtocolError)
                 {
-                   // UnityEngine.Debug.Log("no running server");
+                    // UnityEngine.Debug.Log("no running server");
                 }
                 else
                 {
@@ -141,9 +143,9 @@ public class StartServer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(CommunicationEvents.ServerRunning && Input.anyKey)
+        if (CommunicationEvents.ServerRunning && Input.anyKey)
         {
-             SceneManager.LoadScene(1);
+            SceneManager.LoadScene(1);
         }
 
         //if(!ServerRunning) UnityEngine.Debug.Log("waiting " + ServerRunning);

@@ -40,23 +40,34 @@ public class DisplayFacts : MonoBehaviour
         number_of_Column = Mathf.Max(1, (int)(rect.rect.width / prefab_Point.GetComponent<RectTransform>().rect.width) - 1);
 
         AddFactEvent.AddListener(AddFact);
+        RemoveFactEvent.AddListener(RemoveFact);
         AnimateExistingFactEvent.AddListener(AnimateFact);
     }
 
     public void AddFact(Fact fact) {
-        int fid = fact.Id;
+        var fid = fact.Id;
         var obj = CreateDisplay(transform, fact);
-        obj.GetComponent<RectTransform>().localPosition = GetPosition(fid);
-        displayedFacts.Add(fact.backendURI, obj);
+        obj.GetComponent<RectTransform>().localPosition = GetPosition(displayedFacts.Count);
+        displayedFacts.Add(fact.Id, obj);
+    }
+
+    public void RemoveFact(Fact fact)
+    {
+        GameObject.Destroy(displayedFacts[fact.Id]);
+        displayedFacts.Remove(fact.Id);
+        UpdatePositions();
+    }
+
+    public void UpdatePositions()
+    {
+        int i = 0;
+        foreach (var element in displayedFacts)
+            element.Value.GetComponent<RectTransform>().localPosition = GetPosition(i++);
     }
 
     public void AnimateFact(Fact fact) {
-        var factIcon = displayedFacts[fact.backendURI];
+        var factIcon = displayedFacts[fact.Id];
         factIcon.GetComponentInChildren<ImageHintAnimation>().AnimationTrigger();
-    }
-
-    string getLetter(int Id) {
-        return ((Char)(64 + Id + 1)).ToString();
     }
 
     private GameObject CreateDisplay(Transform transform, Fact fact)

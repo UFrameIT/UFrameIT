@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+﻿using UnityEngine;
 
 public class ToolModeText : MonoBehaviour
 {
@@ -12,7 +9,8 @@ public class ToolModeText : MonoBehaviour
         CommunicationEvents.ToolModeChangedEvent.AddListener(OnToolModeChanged);
     }
 
-    void OnToolModeChanged(int id) {
+    void OnToolModeChanged(int id)
+    {
 
         //When ToolMode changes: Change Text of active gadget
         gameObject.GetComponentInChildren<UnityEngine.UI.Text>().text = GadgetManager.gadgets[id].UiName;

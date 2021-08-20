@@ -1,6 +1,6 @@
-﻿using TMPro;
+﻿using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
-using System.Collections.Generic;
 using static CommunicationEvents;
 
 public class RenderedScrollFact : MonoBehaviour
@@ -29,18 +29,21 @@ public class RenderedScrollFact : MonoBehaviour
         HintAvailableEvent.AddListener(OnHintAvailable);
     }
 
-    public void OnClickHintButton() {
+    public void OnClickHintButton()
+    {
         ScrollFactHintEvent.Invoke(this.ScrollParameterObject, factUri);
     }
 
-    public void OnHintAvailable(List<string> uris) {
+    public void OnHintAvailable(List<string> uris)
+    {
         GameObject hintButton = ScrollParameterObject.transform.GetChild(2).gameObject;
 
         if (uris.Contains(factUri))
         {
             hintButton.SetActive(true);
         }
-        else {
+        else
+        {
             hintButton.SetActive(false);
         }
     }
