@@ -16,6 +16,9 @@ public class Tape : Gadget
     private List<Vector3> linePositions = new List<Vector3>();
     public Material linePreviewMaterial;
 
+    //creatormode variable
+    public static bool creatormodeON = false; 
+
     void Awake()
     {
         if (FactManager == null) FactManager = GameObject.FindObjectOfType<FactManager>();
@@ -39,7 +42,7 @@ public class Tape : Gadget
             Fact tempFact = Facts[hit.transform.GetComponent<FactObject>().Id];
 
             //we can only reach points that are lower than that with the measuring tape
-            if (/*ActiveToolMode == ToolMode.CreateLineMode && */tempFact.Representation.transform.position.y > 2.5f)
+            if (/*ActiveToolMode == ToolMode.CreateLineMode && */tempFact.Representation.transform.position.y > 2.5f && creatormodeON == false)
                 return;
 
             //If first point was already selected AND second point != first point

@@ -38,11 +38,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ext.nunit": {
-<<<<<<< HEAD
-      "version": "1.0.5",
-=======
       "version": "1.0.6",
->>>>>>> master
       "depth": 1,
       "source": "registry",
       "dependencies": {},
@@ -90,11 +86,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.purchasing": {
-<<<<<<< HEAD
-      "version": "2.1.1",
-=======
       "version": "2.2.1",
->>>>>>> master
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -110,19 +102,11 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.test-framework": {
-<<<<<<< HEAD
-      "version": "1.1.19",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.ext.nunit": "1.0.5",
-=======
       "version": "1.1.20",
       "depth": 0,
       "source": "registry",
       "dependencies": {
         "com.unity.ext.nunit": "1.0.6",
->>>>>>> master
         "com.unity.modules.imgui": "1.0.0",
         "com.unity.modules.jsonserialize": "1.0.0"
       },
@@ -154,11 +138,7 @@
       }
     },
     "com.unity.xr.legacyinputhelpers": {
-<<<<<<< HEAD
-      "version": "2.1.6",
-=======
       "version": "2.1.7",
->>>>>>> master
       "depth": 0,
       "source": "registry",
       "dependencies": {

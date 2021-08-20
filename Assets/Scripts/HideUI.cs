@@ -22,6 +22,7 @@ public class HideUI : MonoBehaviour
             bool camActive  = !UICanvas.enabled;
             CamControl.enabled = camActive;
             CursorRenderer.enabled = camActive;
+            Debug.Log("camactive = " + camActive.ToString());
         }
 
     }

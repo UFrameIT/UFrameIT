@@ -20,10 +20,17 @@ public class CharacterDialog : MonoBehaviour
     private bool textReseted = true;
     //If gameSucceeded -> Disable Talking with TaskCharacter
     private bool gameSucceeded = false;
+    // choose talking key
+    public KeyCode Key = KeyCode.F1;
+    // parent gameobject where script is listed as a component
+    public GameObject continueText;
 
     // Start is called before the first frame update
     void Start()
     {
+        // initialize "press key to talk"-text
+        continueText.GetComponent<TMP_Text>().text = "Press " + Key.ToString() + "-Key for Talking!";
+
         CommunicationEvents.gameSucceededEvent.AddListener(StartGameSucceededSentence);
         CommunicationEvents.gameNotSucceededEvent.AddListener(StopGameSucceededSentence);
         //Type first sentence
@@ -35,7 +42,7 @@ public class CharacterDialog : MonoBehaviour
     {
         TypeFkt();
 
-        if(!gameSucceeded && Input.GetKeyDown(KeyCode.C) && TaskCharakterAnimation.getPlayerInTalkingZone())
+        if(!gameSucceeded && Input.GetKeyDown(Key) && TaskCharakterAnimation.getPlayerInTalkingZone())
         {
             //Type Next sentence if player is in the talkinZone around the TaskCharacter AND the player typed the return-Key
             NextSentence();

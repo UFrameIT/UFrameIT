@@ -4,20 +4,32 @@ using UnityEngine;
 
 public class Problemobject : MonoBehaviour
 { 
-    public GameObject scrollobject;
-    public TaskCharakterAnimation taskcharakter;
-    public GameObject successReaction;
-    public GameObject failureReaction;
-    public GameObject myPrefab;
+    public Fact problemFact; // which kind of fact should be calculated
+    public Fact goAroundPoint; // Pointfact the NPC should spawn and go around
+    public List<Scroll> neededScrolls; //  scrolls needed for solving the problem
+    public string[] neededGadgets; // gadgets needed for solving the problem
+    public string npcProblemText; // text shown while talking to npc
+    public string npcSuccessText; // text shown when successfully solving the problem
+    public string npcFailureText; // text shown at failure
+    // public GameObject scrollobject;
+    public GameObject taskCharakter;
+    public TaskCharakterAnimation taskcharakter; // npc
+    public GameObject successReaction; // gamereaction at success (e.g. fireworks)
+    public GameObject failureReaction; // gamereaction at failure (e.g. rain)
+    public GameObject npcSuccessReaction; // npc reaction at success (e.g. circlerun)
+    // public GameObject myPrefab;
 
+
+    //public Problemobject()
+    //{
+
+    //}
 
     // Start is called before the first frame update
     void Start()
     {
         //successReaction = (GameObject)Resources.Load("Prefabs/Fireworks_Animation", typeof(GameObject));
 
-        CreateSnapZones(scrollobject);
-        Debug.Log("snapzones are created");
 
     }
 
@@ -28,7 +40,7 @@ public class Problemobject : MonoBehaviour
     }
 
     // Creating snap zones for the input tree
-    void CreateSnapZones(GameObject tree)
+    /*void CreateSnapZones(GameObject tree)
     {
         //float treeHeight = tree.GetComponent<Collider>().bounds.size.y;
         //Idee: maintree prefab erstellen mit maßen des eingegebenen trees -> alten tree löschen (Destroy(Gameobject)) -> prefab umbenennen in ursprünglichen tree
@@ -53,10 +65,10 @@ public class Problemobject : MonoBehaviour
         problemtree.name = name;
         problemtree.transform.position = new Vector3(xWert, yWert, zWert);
         problemtree.transform.localScale = new Vector3(xScale, yScale, zScale);
+    }*/
 
-        
-
-
+    void CreateProblem()
+    {
 
     }
 

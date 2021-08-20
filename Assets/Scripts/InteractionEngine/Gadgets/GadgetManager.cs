@@ -15,7 +15,10 @@ public class GadgetManager : MonoBehaviour
         CommunicationEvents.ToolModeChangedEvent.AddListener(OnToolModeChanged);
         gadgets = GetComponentsInChildren<Gadget>();
 
-        Debug.Log(gadgets.Length);
+        // debug whether new gadget is already in list
+        Debug.Log("gadgets sind " + gadgets);
+
+        Debug.Log("Anzahl der Gadgets" + gadgets.Length);
         for (int i = 0; i < gadgets.Length; i++) {
             gadgets[i].id = i;
             //Create Buttons and add them to UI

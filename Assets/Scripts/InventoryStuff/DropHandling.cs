@@ -9,9 +9,9 @@ public class DropHandling : MonoBehaviour, IDropHandler, IPointerClickHandler
     public void OnDrop(PointerEventData eventData){
         
         var scrollFact = gameObject.GetComponent<RenderedScrollFact>();
-        Debug.Log(eventData.pointerDrag.GetComponent<FactWrapper>().fact.Label+ " was dropped on "
-            + gameObject.name+ " " +scrollFact.ID + "/" +
-            ScrollDetails.ParameterDisplays.Count+" label: "+scrollFact.Label);
+        //Debug.Log(eventData.pointerDrag.GetComponent<FactWrapper>().fact.Label+ " was dropped on "
+            //+ gameObject.name+ " " +scrollFact.ID + "/" +
+            //ScrollDetails.ParameterDisplays.Count+" label: "+scrollFact.Label);
         
         Destroy(current);
 
