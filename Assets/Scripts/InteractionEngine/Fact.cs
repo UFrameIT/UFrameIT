@@ -388,7 +388,7 @@ public class PointFact : FactWrappedCRTP<PointFact>
     }
 
     public override string[] getDependentFactIds() {
-        return new string[] { }; ;
+        return new string[] { };
     }
 
     public override GameObject instantiateDisplay(GameObject prefab, Transform transform) {
@@ -405,7 +405,7 @@ public class PointFact : FactWrappedCRTP<PointFact>
 
     protected override bool EquivalentWrapped(PointFact f1, PointFact f2)
     {
-        return f1.Point == f2.Point;
+        return Math3d.IsApproximatelyEqual(f1.Point, f2.Point);
     }
 
 }

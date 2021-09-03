@@ -7,7 +7,6 @@ using UnityEngine;
 using System.Linq;
 using System;
 
-//TODO? PERF? (often inserts) SortedDict <-> Dict (often reads)
 //TODO: MMT: move some functionality there
 //TODO: consequent!= samestep != dependent
 
@@ -545,6 +544,38 @@ public class FactOrganizer
         MissingElements = MinimalSolution.Except(Solutions, FactComparer.SetSearchLeft()).ToList();
 
         return MissingElements.Count == 0;
+    }
+
+    //TODO: repair
+    public bool DynamiclySolvedEXP(
+        (FactOrganizer solutionorganizer, List<(HashSet<string> subsolution, FactComparer comparer)> validationsets) MinimalSolution,
+        out List<List<string>> MissingElements,
+        out List<List<string>> Solutions)
+    {
+        MissingElements = new List<List<string>>();
+        Solutions = new List<List<string>>();
+
+        int MissingElementsCount = 0;
+        var activeList = FactDict.Values.Where(f => MetaInf[f.Id].active);
+
+        foreach (var ValidationSet in MinimalSolution.validationsets)
+        {
+            var part_minimal = 
+                ValidationSet.subsolution.Select(URI => MinimalSolution.solutionorganizer[URI]);
+
+            var part_solution =
+                activeList.Where(active => part_minimal.Contains(active, ValidationSet.comparer.SetSearchRight()));
+
+            var part_missing =
+                part_minimal.Except(part_solution, ValidationSet.comparer.SetSearchLeft());
+
+            Solutions.Add(part_solution.Select(fact => fact.Id).ToList());
+            MissingElements.Add(part_missing.Select(fact => fact.Id).ToList());
+
+            MissingElementsCount += part_missing.Count();
+        }
+
+        return MissingElementsCount == 0;
     }
 
 }

@@ -556,6 +556,12 @@ public class Math3d
              < precission;
     }
 
+    //This function returns true if two Vector3s are approximately Equal
+    public static bool IsApproximatelyEqual(Vector3 vectorA, Vector3 vectorB, double precission = Math3d.vectorPrecission)
+    {
+        return (vectorA - vectorB).sqrMagnitude < precission;
+    }
+
     //This function returns a point which is a projection from a point to a line segment.
     //If the projected point lies outside of the line segment, the projected point will 
     //be clamped to the appropriate line edge.

@@ -24,16 +24,28 @@ public class Level : MonoBehaviour
         LineFact target = new LineFact(buttom.Id, top.Id, SolutionManager);
         Solution.Add(SolutionManager[SolutionManager.Add(target, out _, true)]);
         Fact.Clear();
+
+        SolutionSet = (SolutionManager,
+            new List<(HashSet<string>, FactComparer)> 
+            { (new HashSet<string> { target.Id, buttom.Id }, new LineFactHightDirectionComparer()) });
     }
 
     public static bool gameSolved()
     {
         bool solved =
             LevelFacts.DynamiclySolved(Solution, out _, out List<Fact> hits, FactComparer: new LineFactHightDirectionComparer());
+        bool solvedEXP =
+            LevelFacts.DynamiclySolvedEXP(SolutionSet, out _, out List<List<string>> hitsEXP);
+
 
         if (solved)
             foreach (var hit in hits)
                 AnimateExistingFactEvent.Invoke(hit);
+
+        if (solvedEXP)
+            foreach (var hitlist in hitsEXP)
+                foreach(var hit in hitlist)
+                    AnimateExistingFactEvent.Invoke(LevelFacts[hit]);
 
         return solved;
     }

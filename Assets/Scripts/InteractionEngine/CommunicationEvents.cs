@@ -54,6 +54,8 @@ public static class CommunicationEvents
     //TODO? [SolutionManager, List<[HashSet<string>, FactComparer]>]
     public static List<Fact> Solution = new List<Fact>();
 
+    public static (FactOrganizer, List<(HashSet<string>, FactComparer)>) SolutionSet;
+
     public static bool ServerRunning = true;
     public static string ServerAdress = "localhost:8085";
 
