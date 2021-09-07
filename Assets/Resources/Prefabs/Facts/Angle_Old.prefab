@@ -324,7 +324,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4650993679089994826}
   m_Layer: 12
-  m_Name: Angle
+  m_Name: Angle_Old
   m_TagString: Selectable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -23,6 +23,9 @@ public class HideUI : MonoBehaviour
 
     void Start()
     {
+        //TODO: make Loader do this
+        GlobalStatic.LoadInitStage(true);
+
         if (!LockOnly)
         {
             if (UICanvas == null)
@@ -58,17 +61,16 @@ public class HideUI : MonoBehaviour
         else if (Input.GetButton(modifier))
         {
             if (Input.GetButtonDown(modundo))
-                LevelFacts.undo();
+                GlobalStatic.stage.factState.undo();
             else if (Input.GetButtonDown(modredo))
-                LevelFacts.redo();
+                GlobalStatic.stage.factState.redo();
             else if (Input.GetButtonDown(modreset))
-                LevelFacts.softreset();
+                GlobalStatic.stage.factState.softreset();
             else if (Input.GetButtonDown(modsave))
-                LevelFacts.store(SceneManager.GetActiveScene().name);
-            else if (Input.GetButtonDown(modload))
-            {
-                LevelFacts.hardreset();
-                FactOrganizer.load(ref LevelFacts, true, SceneManager.GetActiveScene().name);
+                GlobalStatic.stage.store();
+            else if (Input.GetButtonDown(modload)) {
+                GlobalStatic.stage.factState.hardreset();
+                GlobalStatic.LoadInitStage(GlobalStatic.stage.name, !GlobalStatic.stage.use_install_folder);
             }
         }
         

@@ -11,4 +11,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Release/TreeWorld_Release_02.unity
     guid: 9b8063e1ae3c04045b13e20d1ccc73d0
+  - enabled: 1
+    path: Assets/Scenes/LoadingScene.unity
+    guid: 103e8987ec80e544eb5d6dd1daa6a6c0
+  - enabled: 1
+    path: Assets/Scenes/RiverWorld.unity
+    guid: d8bb1056a00f4744eb285ed21840b6ce
+  - enabled: 1
+    path: Assets/Scenes/MainMenue.unity
+    guid: 4aac33ac7893f094695103325725f1ef
   m_configObjects: {}

@@ -47,14 +47,8 @@ public static class CommunicationEvents
 
     //------------------------------------------------------------------------------------
     //-------------------------------Global Variables-------------------------------------
+    // TODO! move to GlobalStatic/Behaviour
 
-    // Global Level-List of Facts
-    public static FactOrganizer LevelFacts = new FactOrganizer(true);
-    public static FactOrganizer SolutionManager = new FactOrganizer(false);
-    //TODO? [SolutionManager, List<[HashSet<string>, FactComparer]>]
-    public static List<Fact> Solution = new List<Fact>();
-
-    public static (FactOrganizer, List<(HashSet<string>, FactComparer)>) SolutionSet;
 
     public static bool ServerRunning = true;
     public static string ServerAdress = "localhost:8085";
@@ -62,10 +56,25 @@ public static class CommunicationEvents
     // Configs
     public static bool VerboseURI = false;
 
-    // TODO! avoid tree traversel with name
-    public static string CreatePathToFile(out bool file_exists,  string name, string format = null, Type type = null)
+    public enum Directories
     {
-        string ending = ".dat";
+        Stages,
+        FactStateMachines,
+        ValidationSets
+    }
+
+    public static string CreateHierarchiePath(List<Directories> hierarchie, string prefix = "", string postfix = "")
+    {
+        foreach (var dir in hierarchie)
+            prefix = System.IO.Path.Combine(prefix, dir.ToString());
+
+        return System.IO.Path.Combine(prefix, postfix);
+    }
+
+    // TODO! avoid tree traversel with name
+    public static string CreatePathToFile(out bool file_exists,  string name, string format = null, List<Directories> hierarchie = null, bool use_install_folder = false)
+    {
+        string ending = "";
         if(!string.IsNullOrEmpty(format))
             switch (format)
             {
@@ -76,14 +85,10 @@ public static class CommunicationEvents
                     break;
             }
 
-        string path = Application.persistentDataPath;
-        if (type != null)
+        string path = use_install_folder ? Application.dataPath : Application.persistentDataPath;
+        if (hierarchie != null)
         {
-            if (typeof(FactOrganizer).IsAssignableFrom(type))
-                path = System.IO.Path.Combine(path, "FactStateMachines");
-            else
-                { }
-
+            path = CreateHierarchiePath(hierarchie, path);
             System.IO.Directory.CreateDirectory(path);
         }
 

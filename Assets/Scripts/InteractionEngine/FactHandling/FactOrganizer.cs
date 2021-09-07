@@ -6,6 +6,7 @@ using System.Collections;
 using UnityEngine;
 using System.Linq;
 using System;
+using static CommunicationEvents;
 
 //TODO: MMT: move some functionality there
 //TODO: consequent!= samestep != dependent
@@ -25,6 +26,9 @@ public class FactOrganizer
     protected internal bool soft_resetted = false;
     // InvokeEvents?
     public bool invoke;
+
+    private static List<Directories>
+        hierState = new List<Directories> { Directories.FactStateMachines };
 
     protected internal struct stepnote
     {
@@ -80,7 +84,7 @@ public class FactOrganizer
         this.invoke = invoke;
     }
 
-    private FactOrganizer(ref FactOrganizer set, PublicFactOrganizer exposed, bool invoke)
+    private static void FactOrganizerFromPublic(ref FactOrganizer set, PublicFactOrganizer exposed, bool invoke)
     {
         // TODO: other strategy needed when MMT save/load supported
         // map old URIs to new ones
@@ -102,12 +106,11 @@ public class FactOrganizer
         AddListToDict(exposed.RayFacts);
         AddListToDict(exposed.AngleFacts);
         AddListToDict(exposed.OnLineFacts);
-        
+
 
         // initiate
-        this.invoke = invoke;
-        FactDict = new Dictionary<string, Fact>();
-        set = this;
+        set.invoke = invoke;
+        set.FactDict = new Dictionary<string, Fact>();
 
         // work Workflow
         foreach (var sn in exposed.Workflow)
@@ -117,7 +120,7 @@ public class FactOrganizer
             {
                 Fact add;
                 if (old_to_new.ContainsKey(sn.Id))
-                    add = FactDict[old_to_new[sn.Id]];
+                    add = set.FactDict[old_to_new[sn.Id]];
                 else
                 {
                     Fact old_Fact = old_FactDict[sn.Id];
@@ -125,27 +128,27 @@ public class FactOrganizer
                     // TODO! false customLabel
                     add = old_Fact.GetType()
                         .GetConstructor(new Type[] { old_Fact.GetType(), old_to_new.GetType(), typeof(FactOrganizer) })
-                        .Invoke(new object[] { old_Fact, old_to_new, this })
+                        .Invoke(new object[] { old_Fact, old_to_new, set })
                         as Fact;
 
                     old_to_new.Add(sn.Id, add.Id);
                 }
 
-                Add(add, out _, sn.samestep);
+                set.Add(add, out _, sn.samestep);
             }
             else if(old_to_new.ContainsKey(sn.Id))
             // Remove
             {
-                Fact remove = FactDict[old_to_new[sn.Id]];
-                Remove(remove, sn.samestep);
+                Fact remove = set.FactDict[old_to_new[sn.Id]];
+                set.Remove(remove, sn.samestep);
             }
         }
 
         // set un-redo state
-        while (this.backlog < exposed.backlog)
-            undo();
+        while (set.backlog < exposed.backlog)
+            set.undo();
 
-        this.soft_resetted = exposed.soft_resetted;
+        set.soft_resetted = exposed.soft_resetted;
 
 
         // === local functions ===
@@ -256,6 +259,7 @@ public class FactOrganizer
     // also checks for duplicates and active state
     // returns key of actual Fact
     {
+        soft_resetted = false;
         string key;
 
         if (exists = FindEquivalent(value, out key, out bool exact))
@@ -463,39 +467,52 @@ public class FactOrganizer
             redo();
     }
 
-    public void store(string name, bool use_type_subfolder = true)
+    public void store(string name, List<Directories> hierarchie = null, bool use_install_folder = false)
     {
-        string path = CommunicationEvents.CreatePathToFile(out _, name, "JSON", use_type_subfolder ? typeof(FactOrganizer) : null);
+        hierarchie ??= new List<Directories>();
+        hierarchie.AddRange(hierState.AsEnumerable());
+
+        string path = CreatePathToFile(out _, name, "JSON", hierarchie, use_install_folder);
+        hierarchie.RemoveRange(hierarchie.Count - hierState.Count, hierState.Count);
 
         // note: max depth for "this" is 2, since Fact has non-serilazible member, that is not yet ignored (see Fact.[JasonIgnore] and JSONManager.WriteToJsonFile)
         // using public dummy class to circumvent deserialiation JsonInheritanceProblem (see todos @PublicFactOrganizer)
         JSONManager.WriteToJsonFile(path, new PublicFactOrganizer(this), 0);
     }
 
-    public static void load(ref FactOrganizer set, bool draw, string name, bool use_type_subfolder = true, bool reset_Fact = false)
+    public static bool load(ref FactOrganizer set, bool draw, string name, List<Directories> hierarchie = null, bool use_install_folder = false, bool reset_Fact = false)
     {
-        string path = CommunicationEvents.CreatePathToFile(out _, name, "JSON", use_type_subfolder ? typeof(FactOrganizer) : null);
+        hierarchie ??= new List<Directories>();
+        hierarchie.AddRange(hierState.AsEnumerable());
+
+        string path = CreatePathToFile(out bool loadable, name, "JSON", hierarchie, use_install_folder);
+        hierarchie.RemoveRange(hierarchie.Count - hierState.Count, hierState.Count);
+        if (!loadable)
+            return false;
+
         PublicFactOrganizer de_json = JSONManager.ReadFromJsonFile<PublicFactOrganizer>(path);
-        new FactOrganizer(ref set, de_json, draw);
+        FactOrganizerFromPublic(ref set, de_json, draw);
 
         if (reset_Fact)
             Fact.Clear();
+
+        return true;
     }
 
-    public void load(bool draw_all = true)
+    public void Draw(bool draw_all = true)
     // call this after assigning a stored instance in an empty world, that was not drawn
     {
         // TODO: see issue #58
         // TODO: communication with MMT
 
-        foreach (var mett in MetaInf)
+        foreach (var key in FactDict.Keys)
         {
             // update active info if needed
-            if (mett.Value.active)
+            meta info = MetaInf[key];
+            if (info.active)
             {
-                meta info = mett.Value;
                 info.active = false;
-                MetaInf[mett.Key] = info;
+                MetaInf[key] = info;
             }
         }
 
@@ -506,6 +523,15 @@ public class FactOrganizer
         if(draw_all)
             while(backlog > stop)
                 redo();
+    }
+
+    public void Undraw(bool force_invoke = false)
+    {
+        foreach (var entry in FactDict)
+        {
+            if (force_invoke || (invoke && MetaInf[entry.Key].active))
+                CommunicationEvents.RemoveFactEvent.Invoke(entry.Value);
+        }
     }
 
     private void InvokeFactEvent(bool creation, string Id)
@@ -548,7 +574,7 @@ public class FactOrganizer
 
     //TODO: repair
     public bool DynamiclySolvedEXP(
-        (FactOrganizer solutionorganizer, List<(HashSet<string> subsolution, FactComparer comparer)> validationsets) MinimalSolution,
+        SolutionOrganizer MinimalSolution,
         out List<List<string>> MissingElements,
         out List<List<string>> Solutions)
     {
@@ -558,16 +584,16 @@ public class FactOrganizer
         int MissingElementsCount = 0;
         var activeList = FactDict.Values.Where(f => MetaInf[f.Id].active);
 
-        foreach (var ValidationSet in MinimalSolution.validationsets)
+        foreach (var ValidationSet in MinimalSolution.ValidationSet)
         {
             var part_minimal = 
-                ValidationSet.subsolution.Select(URI => MinimalSolution.solutionorganizer[URI]);
+                ValidationSet.MasterIDs.Select(URI => MinimalSolution[URI]);
 
             var part_solution =
-                activeList.Where(active => part_minimal.Contains(active, ValidationSet.comparer.SetSearchRight()));
+                activeList.Where(active => part_minimal.Contains(active, ValidationSet.Comparer.SetSearchRight()));
 
             var part_missing =
-                part_minimal.Except(part_solution, ValidationSet.comparer.SetSearchLeft());
+                part_minimal.Except(part_solution, ValidationSet.Comparer.SetSearchLeft());
 
             Solutions.Add(part_solution.Select(fact => fact.Id).ToList());
             MissingElements.Add(part_missing.Select(fact => fact.Id).ToList());

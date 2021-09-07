@@ -40,7 +40,7 @@ public class LineTool : Gadget
         if (!this.isActiveAndEnabled) return;
         if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
-            Fact tempFact = LevelFacts[hit.transform.GetComponent<FactObject>().URI];
+            Fact tempFact = GlobalStatic.stage.factState[hit.transform.GetComponent<FactObject>().URI];
 
             //If first point was already selected AND second point != first point
             if (this.LineModeIsFirstPointSelected && this.LineModeFirstPointSelected.Id != tempFact.Id)

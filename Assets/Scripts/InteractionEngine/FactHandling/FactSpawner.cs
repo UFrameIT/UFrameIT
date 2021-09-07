@@ -3,10 +3,16 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using static CommunicationEvents;
-using static GlobalSettings;
+using static GlobalBehaviour;
 
 public class FactSpawner : MonoBehaviour
 {
+    public GameObject
+        Sphere,
+        Line,
+        Ray,
+        Angle;
+
     private GameObject FactRepresentation;
     //private Camera camera;
 
@@ -19,7 +25,7 @@ public class FactSpawner : MonoBehaviour
         AnimateNonExistingFactEvent.AddListener(animateNonExistingFactTrigger);
 
         //Default FactRepresenation = Sphere-Prefab for Points
-        this.FactRepresentation = (GameObject) Resources.Load("Prefabs/Sphere", typeof(GameObject));
+        this.FactRepresentation = Sphere;
 
         //camera = Camera.main;
 
@@ -50,7 +56,7 @@ public class FactSpawner : MonoBehaviour
     public Fact SpawnPoint(Fact pointFact)
     {
         PointFact fact = ((PointFact)pointFact);
-        this.FactRepresentation = (GameObject)Resources.Load("Prefabs/Sphere", typeof(GameObject));
+        this.FactRepresentation = Sphere;
      
         GameObject point = GameObject.Instantiate(FactRepresentation);
         point.transform.position = fact.Point;
@@ -65,12 +71,12 @@ public class FactSpawner : MonoBehaviour
     {
         LineFact lineFact = ((LineFact)fact);
 
-        PointFact pointFact1 = (LevelFacts[lineFact.Pid1] as PointFact);
-        PointFact pointFact2 = (LevelFacts[lineFact.Pid2] as PointFact);
+        PointFact pointFact1 = (GlobalStatic.stage.factState[lineFact.Pid1] as PointFact);
+        PointFact pointFact2 = (GlobalStatic.stage.factState[lineFact.Pid2] as PointFact);
         Vector3 point1 = pointFact1.Point;
         Vector3 point2 = pointFact2.Point;
         //Change FactRepresentation to Line
-        this.FactRepresentation = (GameObject)Resources.Load("Prefabs/Line", typeof(GameObject));
+        this.FactRepresentation = Line;
         GameObject line = GameObject.Instantiate(FactRepresentation);
         //Place the Line in the centre of the two points
         line.transform.position = Vector3.Lerp(point1, point2, 0.5f);
@@ -102,8 +108,8 @@ public class FactSpawner : MonoBehaviour
     {
         RayFact rayFact = ((RayFact)fact);
 
-        PointFact pointFact1 = (LevelFacts[rayFact.Pid1] as PointFact);
-        PointFact pointFact2 = (LevelFacts[rayFact.Pid2] as PointFact);
+        PointFact pointFact1 = (GlobalStatic.stage.factState[rayFact.Pid1] as PointFact);
+        PointFact pointFact2 = (GlobalStatic.stage.factState[rayFact.Pid2] as PointFact);
 
  
         Vector3 point1 = pointFact1.Point;
@@ -114,7 +120,7 @@ public class FactSpawner : MonoBehaviour
         point2 += dir * 100;
 
         //Change FactRepresentation to Line
-        this.FactRepresentation = (GameObject)Resources.Load("Prefabs/Ray", typeof(GameObject));
+        this.FactRepresentation = Ray;
         GameObject line = GameObject.Instantiate(FactRepresentation);
         //Place the Line in the centre of the two points
         line.transform.position = Vector3.Lerp(point1, point2, 0.5f);
@@ -145,9 +151,9 @@ public class FactSpawner : MonoBehaviour
     {
         AngleFact angleFact = (AngleFact)fact;
 
-        Vector3 point1 = (LevelFacts[angleFact.Pid1] as PointFact).Point;
-        Vector3 point2 = (LevelFacts[angleFact.Pid2] as PointFact).Point;
-        Vector3 point3 = (LevelFacts[angleFact.Pid3] as PointFact).Point;
+        Vector3 point1 = (GlobalStatic.stage.factState[angleFact.Pid1] as PointFact).Point;
+        Vector3 point2 = (GlobalStatic.stage.factState[angleFact.Pid2] as PointFact).Point;
+        Vector3 point3 = (GlobalStatic.stage.factState[angleFact.Pid3] as PointFact).Point;
 
         //Length of the Angle relative to the Length of the shortest of the two lines (point2->point1) and (point2->point3)
         float lengthFactor = 0.3f;
@@ -159,7 +165,7 @@ public class FactSpawner : MonoBehaviour
             length = lengthFactor * (point1 - point2).magnitude;
 
         //Change FactRepresentation to Angle
-        this.FactRepresentation = (GameObject)Resources.Load("Prefabs/Angle", typeof(GameObject));
+        this.FactRepresentation = Angle;
         GameObject angle = GameObject.Instantiate(FactRepresentation);
 
         //Calculate Angle:
@@ -212,7 +218,7 @@ public class FactSpawner : MonoBehaviour
             MeshRendererHintAnimation animator = returnedFact.Representation.GetComponentInChildren<MeshRendererHintAnimation>();
             animator.AnimationTrigger();
 
-            yield return new WaitForSeconds(globalSettings.hintAnimationDuration);
+            yield return new WaitForSeconds(GlobalBehaviour.hintAnimationDuration);
 
             GameObject.Destroy(returnedFact.Representation);
         }

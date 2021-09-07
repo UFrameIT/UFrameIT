@@ -4,6 +4,7 @@ using UnityEngine.UI;
 public class GadgetManager : MonoBehaviour
 {
     public GameObject GadgetUI;
+    public GameObject GadgetButton;
     public static Gadget activeGadget;
     public static Gadget[] gadgets;
 
@@ -36,7 +37,7 @@ public class GadgetManager : MonoBehaviour
 
     public void CreateButton(Gadget gadget)
     {
-        var button = GameObject.Instantiate(Resources.Load("Prefabs/GadgetButton") as GameObject);
+        var button = GameObject.Instantiate(GadgetButton);
         button.GetComponent<Image>().sprite = gadget.Sprite;
         button.transform.SetParent(GadgetUI.transform);
 

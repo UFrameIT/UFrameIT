@@ -42,7 +42,7 @@ public class Tape : Gadget
         if (!this.isActiveAndEnabled) return;
         if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
-            Fact tempFact = LevelFacts[hit.transform.GetComponent<FactObject>().URI];
+            Fact tempFact = GlobalStatic.stage.factState[hit.transform.GetComponent<FactObject>().URI];
 
             //we can only reach points that are lower than that with the measuring tape
             if (/*ActiveToolMode == ToolMode.CreateLineMode && */tempFact.Representation.transform.position.y > maxHeight)
