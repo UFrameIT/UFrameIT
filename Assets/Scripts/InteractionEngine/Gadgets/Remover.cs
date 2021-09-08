@@ -32,7 +32,7 @@ public class Remover : Gadget
 
         // TODO: ask/warn user to cascade
         var hid = hit.transform.GetComponent<FactObject>().URI;
-        GlobalStatic.stage.factState.Remove(hid);
+        StageStatic.stage.factState.Remove(hid);
     }
   
 }

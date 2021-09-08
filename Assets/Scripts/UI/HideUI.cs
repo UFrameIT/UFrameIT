@@ -19,13 +19,10 @@ public class HideUI : MonoBehaviour
     public UnityStandardAssets.Characters.FirstPerson.FirstPersonController CamControl;
     public bool LockOnly = true;
     public MeshRenderer CursorRenderer;
-    public Canvas UICanvas;
+    internal Canvas UICanvas;
 
     void Start()
     {
-        //TODO: make Loader do this
-        GlobalStatic.LoadInitStage(true);
-
         if (!LockOnly)
         {
             if (UICanvas == null)
@@ -49,28 +46,26 @@ public class HideUI : MonoBehaviour
             }
             else
             {
-                //  Rect.localScale = Vector3.one * ((Rect.localScale.x + 1) % 2);
-                //bool camActive = Rect.localScale.x != 1;
-                bool camActive = UICanvas.enabled;
+                CamControl.enabled = UICanvas.enabled;
+                CursorRenderer.enabled = UICanvas.enabled;
+
                 UICanvas.enabled = !UICanvas.enabled;
-                CamControl.enabled = camActive;
-                CursorRenderer.enabled = camActive;
             }
         }
 
         else if (Input.GetButton(modifier))
         {
             if (Input.GetButtonDown(modundo))
-                GlobalStatic.stage.factState.undo();
+                StageStatic.stage.factState.undo();
             else if (Input.GetButtonDown(modredo))
-                GlobalStatic.stage.factState.redo();
+                StageStatic.stage.factState.redo();
             else if (Input.GetButtonDown(modreset))
-                GlobalStatic.stage.factState.softreset();
+                StageStatic.stage.factState.softreset();
             else if (Input.GetButtonDown(modsave))
-                GlobalStatic.stage.store();
+                StageStatic.stage.store();
             else if (Input.GetButtonDown(modload)) {
-                GlobalStatic.stage.factState.hardreset();
-                GlobalStatic.LoadInitStage(GlobalStatic.stage.name, !GlobalStatic.stage.use_install_folder);
+                StageStatic.stage.factState.hardreset();
+                StageStatic.LoadInitStage(StageStatic.stage.name, !StageStatic.stage.use_install_folder);
             }
         }
         

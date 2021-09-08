@@ -32,6 +32,18 @@ public class Stage
 
     public Stage() { }
 
+    public Stage(int number, string name, string description, string scene, bool local = true)
+    {
+        this.number = number;
+        this.name = name;
+        this.description = description;
+        this.scene = scene;
+        this.use_install_folder = !local;
+
+        solution = new SolutionOrganizer();
+        factState = new FactOrganizer();
+    }
+
     public void SetMode(bool create)
     {
         if (create == creatorMode)
@@ -69,14 +81,14 @@ public class Stage
         {
             string path = CreatePathToFile(out bool exists, name, "JSON", hierarchie, use_install_folder);
             //TODO: if exists
+            hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
             JSONManager.WriteToJsonFile(path, this, 0);
+            hierarchie.AddRange(hierStage.AsEnumerable());
 
             solution.store(name, hierarchie, use_install_folder);
-        } else
-        {
-            factState.store(name, hierarchie, false);
         }
-
+        
+        factState.store(name, hierarchie, false);
 
         hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
     }

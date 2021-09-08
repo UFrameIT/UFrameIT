@@ -14,9 +14,9 @@ public class Level : MonoBehaviour
     public static bool gameSolved()
     {
         bool solved =
-            GlobalStatic.stage.factState.DynamiclySolved(GlobalStatic.stage.solution.getMasterFactsByIndex(0), out _, out List<Fact> hits, FactComparer: GlobalStatic.stage.solution.ValidationSet[0].Comparer);
+            StageStatic.stage.factState.DynamiclySolved(StageStatic.stage.solution.getMasterFactsByIndex(0), out _, out List<Fact> hits, FactComparer: StageStatic.stage.solution.ValidationSet[0].Comparer);
         bool solvedEXP =
-            GlobalStatic.stage.factState.DynamiclySolvedEXP(GlobalStatic.stage.solution, out _, out List<List<string>> hitsEXP);
+            StageStatic.stage.factState.DynamiclySolvedEXP(StageStatic.stage.solution, out _, out List<List<string>> hitsEXP);
 
 
         if (solved)
@@ -26,7 +26,7 @@ public class Level : MonoBehaviour
         if (solvedEXP)
             foreach (var hitlist in hitsEXP)
                 foreach(var hit in hitlist)
-                    AnimateExistingFactEvent.Invoke(GlobalStatic.stage.factState[hit]);
+                    AnimateExistingFactEvent.Invoke(StageStatic.stage.factState[hit]);
 
         return solved;
     }

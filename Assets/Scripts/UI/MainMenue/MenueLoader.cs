@@ -5,95 +5,46 @@ using UnityEngine;
 
 public class MenueLoader : MonoBehaviour
 {
-    public UnityEngine.UI.Slider slider;
-    public UnityEngine.UI.Scrollbar scroll;
-    public GameObject Entry;
-    public GameObject EntryBuffer;
+    public UnityEngine.UI.ScrollRect scroll;
+    public GameObject Pages;
 
-    private MenueBarSlider selector;
-    private int mode;
+    protected static int mode = 0;
+    private int mode_last = 0;
 
-    private List<string> mode_string = new List<string>
+    public void SetMode(int select)
     {
-        "official",
-        "local",
-    };
-
-    void Start()
-    {
-        selector = slider.GetComponent<MenueBarSlider>();
-        mode = -1;
-        Clear();
-    }
-
-    void Update()
-    {
-        if (mode == selector.last_active_slot)
+        if (!gameObject.activeSelf)
             return;
 
-        mode = selector.last_active_slot;
-        GlobalStatic.SetStage("", mode == 1);
-        GlobalStatic.ShallowLoadStages();
+        switch (select)
+        {
+            case 0:
+            case 1:
+                break;
 
-        Dictionary<string, Stage> dict = mode == 0 ? GlobalStatic.StageOfficial : GlobalStatic.StageLocal;
-        ListButtons(dict);
+            case 2:
+                if (mode == select) {
+                    SetMode(mode_last);
+                    return;
+                }
+                break;
+        }
 
-        scroll.numberOfSteps = dict.Count;
-        scroll.value = 1f;
+        Clear();
+
+        mode_last = mode;
+        mode = select;
+
+        Pages.transform.GetChild(select).gameObject.SetActive(true);
     }
 
     private void Clear()
     {
-        for (int i = 0; i < gameObject.transform.childCount; i++)
-            Destroy(gameObject.transform.GetChild(i).gameObject);
+        for (int i = 0; i < Pages.transform.childCount; i++)
+            Pages.transform.GetChild(i).gameObject.SetActive(false);
     }
 
-    private void Default()
-    {
-        Instantiate(Entry).transform.SetParent(gameObject.transform, false);
-        Instantiate(EntryBuffer).transform.SetParent(gameObject.transform, false);
-    }
 
-    private void ListButtons(Dictionary<string, Stage> dict)
-    {
-        Clear();
 
-        if (dict.Count == 0)
-        {
-            Default();
-            return;
-        }
 
-        Instantiate(EntryBuffer).transform.SetParent(gameObject.transform, false);
-
-        var list = mode == 0 ?
-            dict.Values.OrderByDescending((v) => v.number) :
-            dict.Values.OrderBy((v) => v.number);
-
-        Destroy(gameObject.transform.GetChild(0));
-
-        foreach(var stage in list)
-        {
-            GameObject prefab = Instantiate(Entry);
-
-            prefab.transform.SetParent(gameObject.transform, false);
-            prefab.transform.SetAsFirstSibling();
-
-            var bar = prefab.transform.GetChild(0);
-            WriteInChildText(bar.GetChild(0).gameObject, stage.number.ToString());
-            WriteInChildText(bar.GetChild(1).gameObject, stage.name);
-            WriteInChildText(bar.GetChild(2).gameObject, stage.description);
-
-            // TODO: handle unable to load
-            prefab.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate { Loader.LoadStage(stage.name, mode == 1); });
-        }
-
-        void WriteInChildText(GameObject entry, string content)
-        {
-            if (content == null)
-                return;
-
-            entry.transform.GetChild(0).gameObject.GetComponent<TMPro.TextMeshProUGUI>().text = content;
-        }
-    }
 }

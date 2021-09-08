@@ -376,7 +376,7 @@ public class PointFact : FactWrappedCRTP<PointFact>
             float a = (float)((OMF)df.arguments[0]).f;
             float b = (float)((OMF)df.arguments[1]).f;
             float c = (float)((OMF)df.arguments[2]).f;
-            return new PointFact(a, b, c, uri, GlobalStatic.stage.factState);
+            return new PointFact(a, b, c, uri, StageStatic.stage.factState);
         }
         else {
             return null;
@@ -469,9 +469,9 @@ public class LineFact : AbstractLineFactWrappedCRTP<LineFact>
         string pointAUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[0]).uri;
         string pointBUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[1]).uri;
 
-        if (GlobalStatic.stage.factState.ContainsKey(pointAUri)
-         && GlobalStatic.stage.factState.ContainsKey(pointBUri))
-            return new LineFact(pointAUri, pointBUri, uri, GlobalStatic.stage.factState);
+        if (StageStatic.stage.factState.ContainsKey(pointAUri)
+         && StageStatic.stage.factState.ContainsKey(pointBUri))
+            return new LineFact(pointAUri, pointBUri, uri, StageStatic.stage.factState);
 
         //If dependent facts do not exist return null
         else {
@@ -562,9 +562,9 @@ public class RayFact : AbstractLineFactWrappedCRTP<RayFact>
             string pointAUri = ((OMS)((OMA)((Scroll.ScrollSymbolFact)fact).df).arguments[0]).uri;
             string pointBUri = ((OMS)((OMA)((Scroll.ScrollSymbolFact)fact).df).arguments[1]).uri;
 
-            if (GlobalStatic.stage.factState.ContainsKey(pointAUri)
-             && GlobalStatic.stage.factState.ContainsKey(pointBUri))
-                return new RayFact(pointAUri, pointBUri, uri, GlobalStatic.stage.factState);
+            if (StageStatic.stage.factState.ContainsKey(pointAUri)
+             && StageStatic.stage.factState.ContainsKey(pointBUri))
+                return new RayFact(pointAUri, pointBUri, uri, StageStatic.stage.factState);
 
             //If dependent facts do not exist return null
         }
@@ -661,9 +661,9 @@ public class OnLineFact : FactWrappedCRTP<OnLineFact>
         string lineUri = ((OMS)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[0]).uri;
         string pointUri = ((OMS)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[1]).uri;
 
-        if (GlobalStatic.stage.factState.ContainsKey(pointUri)
-         && GlobalStatic.stage.factState.ContainsKey(lineUri))
-            return new OnLineFact(pointUri, lineUri, uri, GlobalStatic.stage.factState);
+        if (StageStatic.stage.factState.ContainsKey(pointUri)
+         && StageStatic.stage.factState.ContainsKey(lineUri))
+            return new OnLineFact(pointUri, lineUri, uri, StageStatic.stage.factState);
 
         //If dependent facts do not exist return null
         else
@@ -794,11 +794,11 @@ public class AngleFact : FactWrappedCRTP<AngleFact>
             pointCUri = ((OMS)((OMA)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[1]).arguments[2]).uri;
         }
 
-        if (GlobalStatic.stage.factState.ContainsKey(pointAUri)
-         && GlobalStatic.stage.factState.ContainsKey(pointBUri)
-         && GlobalStatic.stage.factState.ContainsKey(pointCUri))
+        if (StageStatic.stage.factState.ContainsKey(pointAUri)
+         && StageStatic.stage.factState.ContainsKey(pointBUri)
+         && StageStatic.stage.factState.ContainsKey(pointCUri))
 
-            return new AngleFact(pointAUri, pointBUri, pointCUri, uri, GlobalStatic.stage.factState);
+            return new AngleFact(pointAUri, pointBUri, pointCUri, uri, StageStatic.stage.factState);
 
         else    //If dependent facts do not exist return null
             return null;

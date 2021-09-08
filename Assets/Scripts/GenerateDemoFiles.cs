@@ -21,37 +21,36 @@ public class GenerateDemoFiles
         demo.name = "TechDemo A";
         demo.scene = "RiverWorld";
         demo.description = "Improvised Level\n(Loadable)";
-        demo.creatorMode = true;
         demo.use_install_folder = true;
         demo.hierarchie = new List<Directories> { /*Directories.Stages*/ };
 
         demo.factState = new FactOrganizer(true);
         demo.solution = new SolutionOrganizer(false);
 
-        GlobalStatic.StageOfficial = new Dictionary<string, Stage>
+        StageStatic.StageOfficial = new Dictionary<string, Stage>
         {
             { demo.name, demo },
         };
-        GlobalStatic.SetStage(demo.name, false);
+        StageStatic.SetStage(demo.name, false);
 
         // Populate Solution
         PointFact
-            buttom = new PointFact(Vector3.zero, Vector3.up, GlobalStatic.stage.solution),
-            top = new PointFact(Vector3.zero + Vector3.up * minimalSolutionHight, Vector3.up, GlobalStatic.stage.solution);
+            buttom = new PointFact(Vector3.zero, Vector3.up, StageStatic.stage.solution),
+            top = new PointFact(Vector3.zero + Vector3.up * minimalSolutionHight, Vector3.up, StageStatic.stage.solution);
 
-        GlobalStatic.stage.solution.Add(buttom, out _);
-        GlobalStatic.stage.solution.Add(top, out _, true);
+        StageStatic.stage.solution.Add(buttom, out _);
+        StageStatic.stage.solution.Add(top, out _, true);
 
-        LineFact target = new LineFact(buttom.Id, top.Id, GlobalStatic.stage.solution);
-        var target_Id = GlobalStatic.stage.solution.Add(target, out _, true);
+        LineFact target = new LineFact(buttom.Id, top.Id, StageStatic.stage.solution);
+        var target_Id = StageStatic.stage.solution.Add(target, out _, true);
         Fact.Clear();
 
         // Set Solution
-        GlobalStatic.stage.solution.ValidationSet =
+        StageStatic.stage.solution.ValidationSet =
             new List<(HashSet<string>, FactComparer)>
             { (new HashSet<string> { target_Id }, new LineFactHightDirectionComparer()) };
 
         // Save
-        GlobalStatic.stage.store();
+        StageStatic.stage.store();
     }
 }

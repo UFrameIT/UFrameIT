@@ -6,7 +6,7 @@ public class Restart : MonoBehaviour
     public void LevelReset()
     {
         Loader.UnloadStage();
-        Loader.LoadStage(GlobalStatic.stage.name, !GlobalStatic.stage.use_install_folder, false);
+        Loader.LoadStage(StageStatic.stage.name, !StageStatic.stage.use_install_folder, false);
     }
 
     public void LoadMainMenue()

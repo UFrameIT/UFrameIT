@@ -49,7 +49,7 @@ public class AngleTool : Gadget
         if (!this.isActiveAndEnabled) return;
         if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
-            PointFact tempFact = (PointFact)GlobalStatic.stage.factState[hit.transform.GetComponent<FactObject>().URI];
+            PointFact tempFact = (PointFact)StageStatic.stage.factState[hit.transform.GetComponent<FactObject>().URI];
 
             //If two points were already selected and now the third point got selected
             if (this.angleModeIsFirstPointSelected && this.angleModeIsSecondPointSelected)

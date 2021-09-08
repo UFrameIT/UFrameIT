@@ -53,14 +53,14 @@ public class SolutionOrganizer : FactOrganizer
         }
 
 
-        FactOrganizer save = GlobalStatic.stage.factState;
-        GlobalStatic.stage.factState = new SolutionOrganizer(false) as FactOrganizer;
+        FactOrganizer save = StageStatic.stage.factState;
+        StageStatic.stage.factState = new SolutionOrganizer(false) as FactOrganizer;
 
-        loadable = FactOrganizer.load(ref GlobalStatic.stage.factState, draw, name + endingSol, hierarchie, reset_Fact);
+        loadable = FactOrganizer.load(ref StageStatic.stage.factState, draw, name + endingSol, hierarchie, use_install_folder, reset_Fact);
         if (loadable)
-            set = (SolutionOrganizer) GlobalStatic.stage.factState;
+            set = (SolutionOrganizer) StageStatic.stage.factState;
 
-        GlobalStatic.stage.factState = save;
+        StageStatic.stage.factState = save;
         hierarchie.RemoveRange(hierarchie.Count - hierVal.Count, hierVal.Count);
         if (!loadable)
             return false;

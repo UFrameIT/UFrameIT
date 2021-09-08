@@ -71,8 +71,8 @@ public class FactSpawner : MonoBehaviour
     {
         LineFact lineFact = ((LineFact)fact);
 
-        PointFact pointFact1 = (GlobalStatic.stage.factState[lineFact.Pid1] as PointFact);
-        PointFact pointFact2 = (GlobalStatic.stage.factState[lineFact.Pid2] as PointFact);
+        PointFact pointFact1 = (StageStatic.stage.factState[lineFact.Pid1] as PointFact);
+        PointFact pointFact2 = (StageStatic.stage.factState[lineFact.Pid2] as PointFact);
         Vector3 point1 = pointFact1.Point;
         Vector3 point2 = pointFact2.Point;
         //Change FactRepresentation to Line
@@ -108,8 +108,8 @@ public class FactSpawner : MonoBehaviour
     {
         RayFact rayFact = ((RayFact)fact);
 
-        PointFact pointFact1 = (GlobalStatic.stage.factState[rayFact.Pid1] as PointFact);
-        PointFact pointFact2 = (GlobalStatic.stage.factState[rayFact.Pid2] as PointFact);
+        PointFact pointFact1 = (StageStatic.stage.factState[rayFact.Pid1] as PointFact);
+        PointFact pointFact2 = (StageStatic.stage.factState[rayFact.Pid2] as PointFact);
 
  
         Vector3 point1 = pointFact1.Point;
@@ -151,9 +151,9 @@ public class FactSpawner : MonoBehaviour
     {
         AngleFact angleFact = (AngleFact)fact;
 
-        Vector3 point1 = (GlobalStatic.stage.factState[angleFact.Pid1] as PointFact).Point;
-        Vector3 point2 = (GlobalStatic.stage.factState[angleFact.Pid2] as PointFact).Point;
-        Vector3 point3 = (GlobalStatic.stage.factState[angleFact.Pid3] as PointFact).Point;
+        Vector3 point1 = (StageStatic.stage.factState[angleFact.Pid1] as PointFact).Point;
+        Vector3 point2 = (StageStatic.stage.factState[angleFact.Pid2] as PointFact).Point;
+        Vector3 point3 = (StageStatic.stage.factState[angleFact.Pid3] as PointFact).Point;
 
         //Length of the Angle relative to the Length of the shortest of the two lines (point2->point1) and (point2->point3)
         float lengthFactor = 0.3f;

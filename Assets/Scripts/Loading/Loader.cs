@@ -26,17 +26,18 @@ public static class Loader
 
     public static void UnloadStage()
     {
-        GlobalStatic.stage.factState.hardreset(false);
-        GlobalStatic.stage.solution.hardreset(false);
+        StageStatic.stage.factState.hardreset(false);
+        StageStatic.stage.solution.hardreset(false);
+        StageStatic.devel = false;
         Fact.Clear();
     }
 
     public static bool LoadStage(string name, bool local, bool restore_session = true)
     {
-        if (!GlobalStatic.LoadInitStage(name, local, restore_session))
+        if (!StageStatic.LoadInitStage(name, local, restore_session))
             return false;
 
-        LoadScene(GlobalStatic.stage.scene);
+        LoadScene(StageStatic.stage.scene);
         return true;
     }
 
