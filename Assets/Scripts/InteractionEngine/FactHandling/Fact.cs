@@ -100,34 +100,32 @@ public abstract class Fact
         set { rename(value); }
     }
     public bool hasCustomLabel {
-        get;
-        private set;
+        get { return LabelId < 0; }
     }
     protected string _CustomLabel = null;
-    private int LabelId = 0;
+
+    // property for JSON to set AFTER label
+    public int LabelId { get; set; }
 
     protected FactOrganizer _Facts;
-
-    private static int MaxLabelId = 0;
-    private static SortedSet<int> UnusedLabelIds = new SortedSet<int>();
 
     protected Fact()
     // 0 parameter constructor for Json
     {
         this._Facts = new FactOrganizer();
-        hasCustomLabel = false;
+        LabelId = 0;
     }
 
     protected Fact(FactOrganizer organizer)
     {
         this._Facts = organizer;
-        hasCustomLabel = false;
+        LabelId = 0;
     }
 
     protected Fact(Fact fact, FactOrganizer organizer)
     {
         this._Facts = organizer;
-        hasCustomLabel = fact.hasCustomLabel;
+        LabelId = fact.LabelId;
 
         if (hasCustomLabel)
             _CustomLabel = fact.Label;
@@ -143,7 +141,6 @@ public abstract class Fact
         {
             generateLabel();
             _CustomLabel = null;
-            hasCustomLabel = false;
             return true;
         }
         else
@@ -154,7 +151,6 @@ public abstract class Fact
 
             freeAutoLabel();
             _CustomLabel = newLabel;
-            hasCustomLabel = true;
 
             return true;
         }
@@ -166,12 +162,6 @@ public abstract class Fact
     public abstract string[] getDependentFactIds();
 
     public abstract GameObject instantiateDisplay(GameObject prefab, Transform transform);
-
-    public static void Clear()
-    {
-        MaxLabelId = 0;
-        UnusedLabelIds.Clear();
-    }
 
     public virtual void delete(bool keep_clean = true)
     {
@@ -192,18 +182,18 @@ public abstract class Fact
 
     protected virtual string generateLabel()
     {
+        if (LabelId < 0)
+        // reload Label if possible
+            LabelId = _Facts.UnusedLabelIds.Remove(-LabelId) ? -LabelId : 0;
+
         if (LabelId == 0)
-            if (UnusedLabelIds.Count == 0)
-                LabelId = ++MaxLabelId;
+            if (_Facts.UnusedLabelIds.Count == 0)
+                LabelId = ++_Facts.MaxLabelId;
             else
             {
-                LabelId = UnusedLabelIds.Min;
-                UnusedLabelIds.Remove(LabelId);
+                LabelId = _Facts.UnusedLabelIds.Min;
+                _Facts.UnusedLabelIds.Remove(LabelId);
             }
-
-        else if (LabelId < 0)
-        // reload Label if possible
-            LabelId = UnusedLabelIds.Remove(-LabelId) ? -LabelId : 0;
 
         return ((char)(64 + LabelId)).ToString();
     }
@@ -213,7 +203,7 @@ public abstract class Fact
     {
         if (LabelId > 0)
         {
-            UnusedLabelIds.Add(LabelId);
+            _Facts.UnusedLabelIds.Add(LabelId);
             // store Label for name-persistance
             LabelId = -LabelId;
         }

@@ -24,15 +24,7 @@ public static class Loader
         }
     }
 
-    public static void UnloadStage()
-    {
-        StageStatic.stage.factState.hardreset(false);
-        StageStatic.stage.solution.hardreset(false);
-        StageStatic.devel = false;
-        Fact.Clear();
-    }
-
-    public static bool LoadStage(string name, bool local, bool restore_session = true)
+    public static bool LoadStage(string name, bool local, bool restore_session)
     {
         if (!StageStatic.LoadInitStage(name, local, restore_session))
             return false;

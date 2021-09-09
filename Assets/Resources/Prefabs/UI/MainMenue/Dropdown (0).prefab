@@ -336,6 +336,21 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1961016420929613563, guid: 31ed0703f3e0ffe45ba1ecb37f3d3733,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1961016420929613563, guid: 31ed0703f3e0ffe45ba1ecb37f3d3733,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1961016420929613563, guid: 31ed0703f3e0ffe45ba1ecb37f3d3733,
+        type: 3}
+      propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8502556052740004320, guid: 31ed0703f3e0ffe45ba1ecb37f3d3733,
         type: 3}
       propertyPath: m_Pivot.x
@@ -445,6 +460,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: DrpEntry (0)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8502556052740004326, guid: 31ed0703f3e0ffe45ba1ecb37f3d3733,
+        type: 3}
+      propertyPath: m_ChildForceExpandHeight
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 31ed0703f3e0ffe45ba1ecb37f3d3733, type: 3}

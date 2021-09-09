@@ -5,7 +5,7 @@ using static StageStatic;
 
 public class StageBehaviour : MonoBehaviour
 {
-    void Awake()
+    void Start()
     {
         StageStatic.LoadInitStage(true, gameObject);
     }

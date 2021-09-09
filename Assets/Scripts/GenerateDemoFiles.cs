@@ -43,7 +43,6 @@ public class GenerateDemoFiles
 
         LineFact target = new LineFact(buttom.Id, top.Id, StageStatic.stage.solution);
         var target_Id = StageStatic.stage.solution.Add(target, out _, true);
-        Fact.Clear();
 
         // Set Solution
         StageStatic.stage.solution.ValidationSet =

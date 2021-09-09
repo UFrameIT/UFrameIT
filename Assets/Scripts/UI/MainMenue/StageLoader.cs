@@ -8,7 +8,6 @@ public class StageLoader : MenueLoader
 {
     public GameObject StageList;
     public GameObject Entry;
-    public GameObject EntryBuffer;
 
     protected bool local = false;
 
@@ -54,9 +53,7 @@ public class StageLoader : MenueLoader
     private void Default()
     {
         var def = Instantiate(Entry);
-        var buf = Instantiate(EntryBuffer);
         def.transform.SetParent(StageList.transform, false);
-        buf.transform.SetParent(StageList.transform, false);
 
         string message = local ? NoLocal : NoOfficial;
         WriteInChildText(def.transform.GetChild(2).gameObject, message);
@@ -69,8 +66,6 @@ public class StageLoader : MenueLoader
             Default();
             return;
         }
-
-        Instantiate(EntryBuffer).transform.SetParent(StageList.transform, false);
 
         var list = local ?
             dict.Values.OrderBy((v) => v.number) :
@@ -88,7 +83,7 @@ public class StageLoader : MenueLoader
             WriteInChildText(prefab.transform.GetChild(2).gameObject, stage.description);
 
             // TODO: handle unable to load
-            prefab.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate { Loader.LoadStage(stage.name, mode == 1); });
+            prefab.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate { Loader.LoadStage(stage.name, mode == 1, true); });
         }
     }
 

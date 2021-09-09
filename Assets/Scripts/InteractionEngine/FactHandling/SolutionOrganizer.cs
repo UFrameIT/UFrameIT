@@ -40,7 +40,7 @@ public class SolutionOrganizer : FactOrganizer
         hierarchie.RemoveRange(hierarchie.Count - hierVal.Count, hierVal.Count);
     }
 
-    public static bool load(ref SolutionOrganizer set, bool draw, string name, List<Directories> hierarchie = null, bool use_install_folder = false, bool reset_Fact = false)
+    public static bool load(ref SolutionOrganizer set, bool draw, string name, List<Directories> hierarchie = null, bool use_install_folder = false)
     {
         hierarchie ??= new List<Directories>();
         hierarchie.AddRange(hierVal.AsEnumerable());
@@ -56,7 +56,7 @@ public class SolutionOrganizer : FactOrganizer
         FactOrganizer save = StageStatic.stage.factState;
         StageStatic.stage.factState = new SolutionOrganizer(false) as FactOrganizer;
 
-        loadable = FactOrganizer.load(ref StageStatic.stage.factState, draw, name + endingSol, hierarchie, use_install_folder, reset_Fact);
+        loadable = FactOrganizer.load(ref StageStatic.stage.factState, draw, name + endingSol, hierarchie, use_install_folder);
         if (loadable)
             set = (SolutionOrganizer) StageStatic.stage.factState;
 

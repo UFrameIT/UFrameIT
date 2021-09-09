@@ -26,6 +26,11 @@ public class FactOrganizer
     protected internal bool soft_resetted = false;
     // InvokeEvents?
     public bool invoke;
+    // TODO? SE: better seperation
+    // Label Managment; Communicates with Facts
+    protected internal int MaxLabelId = 0;
+    protected internal SortedSet<int> UnusedLabelIds = new SortedSet<int>();
+
 
     private static List<Directories>
         hierState = new List<Directories> { Directories.FactStateMachines };
@@ -110,6 +115,8 @@ public class FactOrganizer
 
         // initiate
         set.invoke = invoke;
+        set.MaxLabelId = exposed.MaxLabelId;
+        set.UnusedLabelIds = exposed.UnusedLabelIds;
         set.FactDict = new Dictionary<string, Fact>();
 
         // work Workflow
@@ -125,7 +132,6 @@ public class FactOrganizer
                 {
                     Fact old_Fact = old_FactDict[sn.Id];
 
-                    // TODO! false customLabel
                     add = old_Fact.GetType()
                         .GetConstructor(new Type[] { old_Fact.GetType(), old_to_new.GetType(), typeof(FactOrganizer) })
                         .Invoke(new object[] { old_Fact, old_to_new, set })
@@ -480,7 +486,7 @@ public class FactOrganizer
         JSONManager.WriteToJsonFile(path, new PublicFactOrganizer(this), 0);
     }
 
-    public static bool load(ref FactOrganizer set, bool draw, string name, List<Directories> hierarchie = null, bool use_install_folder = false, bool reset_Fact = false)
+    public static bool load(ref FactOrganizer set, bool draw, string name, List<Directories> hierarchie = null, bool use_install_folder = false)
     {
         hierarchie ??= new List<Directories>();
         hierarchie.AddRange(hierState.AsEnumerable());
@@ -493,13 +499,10 @@ public class FactOrganizer
         PublicFactOrganizer de_json = JSONManager.ReadFromJsonFile<PublicFactOrganizer>(path);
         FactOrganizerFromPublic(ref set, de_json, draw);
 
-        if (reset_Fact)
-            Fact.Clear();
-
         return true;
     }
 
-    public void Draw(bool draw_all = true)
+    public void Draw(bool draw_all = false)
     // call this after assigning a stored instance in an empty world, that was not drawn
     {
         // TODO: see issue #58
@@ -517,12 +520,11 @@ public class FactOrganizer
         }
 
         marker = 0;
-        var stop = backlog;
+        var stop = draw_all ? worksteps : backlog;
         backlog = worksteps;
 
-        if(draw_all)
-            while(backlog > stop)
-                redo();
+        while(backlog > stop)
+            redo();
     }
 
     public void Undraw(bool force_invoke = false)
@@ -637,6 +639,10 @@ public class PublicFactOrganizer : FactOrganizer
     public new bool soft_resetted = false;
     // InvokeEvents?
     public new bool invoke;
+    // TODO? SE: better seperation
+    // Label Managment; Communicates with Facts
+    public new int MaxLabelId = 0;
+    public new SortedSet<int> UnusedLabelIds = new SortedSet<int>();
 
     public new struct stepnote
     {
@@ -707,6 +713,8 @@ public class PublicFactOrganizer : FactOrganizer
         backlog = expose.backlog;
         soft_resetted = expose.soft_resetted;
         invoke = expose.invoke;
+        MaxLabelId = expose.MaxLabelId;
+        UnusedLabelIds = expose.UnusedLabelIds;
 
         foreach (var sn in expose.Workflow)
             Workflow.Add(new stepnote(sn.Id, sn.samestep, sn.steplink, sn.creation));

@@ -135,7 +135,7 @@ public static class StageStatic
         return true;
     }
 
-    public static bool LoadInitStage(bool restore_session = true, GameObject gameObject = null)
+    public static bool LoadInitStage(bool restore_session, GameObject gameObject = null)
     {
         if (current_name == null || current_name.Length == 0 || !stage.DeepLoad())
             return false;

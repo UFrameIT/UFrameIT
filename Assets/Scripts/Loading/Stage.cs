@@ -58,13 +58,13 @@ public class Stage
 
             factState = solution as FactOrganizer;
             factState.invoke = true;
-            factState.Draw(true);
+            factState.Draw();
         }
         else
         {
             solution = factState as SolutionOrganizer;
             solution.invoke = false;
-            factState.Undraw(true);
+            factState.Undraw();
 
             factState = hiddenState;
             factState.Draw();
@@ -152,13 +152,13 @@ public class Stage
         bool loadable;
 
         solution ??= new SolutionOrganizer(false);
-        loadable = SolutionOrganizer.load(ref solution, false, name, hierarchie, use_install_folder, true);
+        loadable = SolutionOrganizer.load(ref solution, false, name, hierarchie, use_install_folder);
         if (!loadable)
             return false;
 
 
         factState ??= new FactOrganizer(false);
-        loadable = FactOrganizer.load(ref factState, false, name, hierarchie, false, false);
+        loadable = FactOrganizer.load(ref factState, false, name, hierarchie, false);
 
         hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
         return true;

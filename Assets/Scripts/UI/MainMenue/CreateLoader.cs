@@ -43,7 +43,7 @@ public class CreateLoader : MenueLoader
 
                 if (0 == string.Compare(name, name.Length - world.Length, world, 0, world.Length))
                 {
-                    Scenes.Add(scene.path);
+                    Scenes.Add(name);
                     Worlds.Add(new TMPro.TMP_Dropdown.OptionData(name));
                 }
             }
