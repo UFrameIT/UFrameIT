@@ -10,12 +10,18 @@ public class Stage
 {
     public int number = -1;
 
+    public string category = null;
     public string name = null;
     public string description = null;
     public string scene = null;
 
     public bool use_install_folder = false;
     public List<Directories> hierarchie = null;
+
+    [JsonIgnore]
+    public bool completed_once { get { return time_record != null && time_record.Count > 0; } }
+    public float time = 0;
+    public List<float> time_record = null;
 
     [JsonIgnore]
     public SolutionOrganizer solution = null;
@@ -201,6 +207,27 @@ public class Stage
         }
 
         return ret;
+    }
+
+    public bool CheckSolved()
+    {
+        float time_s = Time.time;
+        bool solved =
+            StageStatic.stage.factState.DynamiclySolved(solution, out _, out List<List<string>> hits);
+
+        if (solved)
+            foreach (var hitlist in hits)
+                foreach (var hit in hitlist)
+                    AnimateExistingFactEvent.Invoke(factState[hit]);
+
+        if (solved && time > 0)
+        {
+            time = time_s - time;
+            time_record.Add(time);
+            store();
+        }
+
+        return solved;
     }
 
 }

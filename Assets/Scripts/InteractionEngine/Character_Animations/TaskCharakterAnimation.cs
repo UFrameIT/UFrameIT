@@ -165,7 +165,7 @@ public class TaskCharakterAnimation : MonoBehaviour
 
     public bool checkGameSolved()
     {
-        return Level.gameSolved();
+        return StageStatic.stage.CheckSolved();
     }
 
     public void startHappy()

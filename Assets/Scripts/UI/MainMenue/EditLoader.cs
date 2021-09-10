@@ -37,6 +37,11 @@ public class EditLoader : CreateLoader
 
     public void Delete()
     {
+        if (original_stage.use_install_folder)
+        {
+            Error(-2);
+            return;
+        }
         //Reset();
         //TODO: ask user
         _Delete();
@@ -82,6 +87,12 @@ public class EditLoader : CreateLoader
 
     public void Save()
     {
+        if (original_stage.use_install_folder)
+        {
+            Error(-2);
+            return;
+        }
+
         if (!_Save())
             return;
 
@@ -90,6 +101,12 @@ public class EditLoader : CreateLoader
 
     public void Edit()
     {
+        if (original_stage.use_install_folder)
+        {
+            Error(-2);
+            return;
+        }
+
         _Save();
 
         StageStatic.SetStage(name, true);

@@ -15,4 +15,13 @@ public static class GameObjectExtensions
                 UpdateTagActive(child, tag, enable);
         }
     }
+
+    public static GameObject GetNthChild(this GameObject root, List<int> pos)
+    {
+        GameObject ret = root;
+        foreach (var i in pos)
+            ret = ret.transform.GetChild(i).gameObject;
+
+        return ret;
+    }
 }

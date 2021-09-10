@@ -40,11 +40,4 @@ public abstract class ListLoader<T> : MenueLoader
 
     protected abstract void ListButtonsWrapped(List<T> list);
 
-    protected void WriteInChildText(GameObject entry, string content)
-    {
-        if (content == null)
-            return;
-
-        entry.transform.GetChild(0).gameObject.GetComponent<TMPro.TextMeshProUGUI>().text = content;
-    }
 }

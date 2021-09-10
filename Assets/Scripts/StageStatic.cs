@@ -99,7 +99,7 @@ public static class StageStatic
 
         error = (error << 1) + (!Worlds.Contains(scene) ? 1 : 0);
         error = (error << 1) + (false ? 1 : 0);
-        error = (error << 1) + (name.Length == 0 || ContainsKey(name, true) ? 1 : 0);
+        error = (error << 1) + (name.Length == 0 || ContainsKey(name, true) || ContainsKey(name, false) ? 1 : 0);
         error = (error << 1) + (ContainsNumber(id, true) ? 1 : 0);
 
         return error;
@@ -202,9 +202,13 @@ public static class StageStatic
         {
             stage.factState.invoke = true;
             stage.factState.Draw();
+            stage.time = -1;
         }
         else
+        {
             stage.factState = new FactOrganizer(true);
+            stage.time = devel ? -1 : Time.time;
+        }
 
         gameObject.UpdateTagActive("DevelopingMode", devel);
         SetMode(stage.creatorMode ? Mode.Create : Mode.Play);

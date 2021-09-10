@@ -557,53 +557,53 @@ public class FactOrganizer
             FactDict[Id].freeAutoLabel();
     }
 
-    public bool StaticlySovled(List<Fact> StaticSolution, out List<Fact> MissingElements, out List<Fact> Solutions)
-    // QoL for simple Levels
-    {
-        return DynamiclySolved(StaticSolution, out MissingElements, out Solutions, new FactEquivalentsComparer());
-    }
-
-    //TODO: PERF: see CommunicationEvents.Solution
-    public bool DynamiclySolved(List<Fact> MinimalSolution, out List<Fact> MissingElements, out List<Fact> Solutions, FactComparer FactComparer)
-    {
-        Solutions = FactDict.Values.Where(f => MetaInf[f.Id].active)
-            .Where(active => MinimalSolution.Contains(active, FactComparer.SetSearchRight()))
-            .ToList();
-
-        MissingElements = MinimalSolution.Except(Solutions, FactComparer.SetSearchLeft()).ToList();
-
-        return MissingElements.Count == 0;
-    }
-
-    //TODO: repair
-    public bool DynamiclySolvedEXP(
+    public bool DynamiclySolved(
         SolutionOrganizer MinimalSolution,
         out List<List<string>> MissingElements,
         out List<List<string>> Solutions)
     {
         MissingElements = new List<List<string>>();
-        Solutions = new List<List<string>>();
+        // need to work not on ref/out
+        List<List<string>> Solution_L = new List<List<string>>();
 
         int MissingElementsCount = 0;
         var activeList = FactDict.Values.Where(f => MetaInf[f.Id].active);
 
         foreach (var ValidationSet in MinimalSolution.ValidationSet)
         {
+            // check by MasterIds
+            // ALL Masters must relate
             var part_minimal = 
                 ValidationSet.MasterIDs.Select(URI => MinimalSolution[URI]);
 
             var part_solution =
-                activeList.Where(active => part_minimal.Contains(active, ValidationSet.Comparer.SetSearchRight()));
-
+                activeList.Where(active => part_minimal.Contains(active, ValidationSet.Comparer.SetSearchRight()))
+                .ToList(); // needed for some reason
+            
             var part_missing =
                 part_minimal.Except(part_solution, ValidationSet.Comparer.SetSearchLeft());
 
-            Solutions.Add(part_solution.Select(fact => fact.Id).ToList());
+            // SolutionIndex may include current index
+            Solution_L.Add(part_solution.Select(fact => fact.Id).ToList());
             MissingElements.Add(part_missing.Select(fact => fact.Id).ToList());
-
             MissingElementsCount += part_missing.Count();
+
+            // check by previous solutions
+            // at least ONE member must relate
+            var part_consequential_minimal =
+                ValidationSet.SolutionIndex.Select(i => Solution_L[i]) // Select by Index
+                .SelectMany(i => i) // Flatten structure
+                .Select(URI => MinimalSolution[URI]); // Get Facts
+
+            var part_consequential_solution =
+                activeList.Where(active => part_consequential_minimal.Contains(active, ValidationSet.Comparer.SetSearchRight()));
+
+            Solution_L.Last().Concat(part_consequential_solution.Select(fact => fact.Id).ToList());
+            MissingElementsCount += Convert.ToInt32(
+                part_consequential_solution.Count() == 0 && part_consequential_minimal.Count() != 0);
         }
 
+        Solutions = Solution_L;
         return MissingElementsCount == 0;
     }
 
