@@ -243,6 +243,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3020720017683626808}
     m_Modifications:
+    - target: {fileID: 947958301574655299, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: m_TagString
+      value: DevelopingMode
+      objectReference: {fileID: 0}
     - target: {fileID: 947958302436985159, guid: b996060e27da25c498842defc1996d84,
         type: 3}
       propertyPath: FieldActions.Array.data[0].m_PersistentCalls.m_Calls.Array.data[0].m_Mode

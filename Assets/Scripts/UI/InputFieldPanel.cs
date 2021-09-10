@@ -22,6 +22,9 @@ public class InputFieldPanel : MonoBehaviour
 
     public void Fix()
     {
+        if (input == null || output == null)
+            Start();
+
         output.text = input.text + " ";
     }
 }

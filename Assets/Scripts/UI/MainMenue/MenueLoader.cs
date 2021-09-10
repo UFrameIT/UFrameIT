@@ -5,28 +5,35 @@ using UnityEngine;
 
 public class MenueLoader : MonoBehaviour
 {
+    public MenueLoader pageMenue;
     public UnityEngine.UI.ScrollRect scroll;
     public GameObject Pages;
 
-    protected static int mode = 0;
+    private int mode = 0;
     private int mode_last = 0;
+
+    protected void Start()
+    {
+        if(scroll != null)
+            scroll.verticalNormalizedPosition = 1f;
+    }
+
+    public void RevertMode()
+    {
+        SetMode(mode_last);
+    }
 
     public void SetMode(int select)
     {
-        if (!gameObject.activeSelf)
-            return;
-
         switch (select)
         {
             case 0:
             case 1:
+            case 2:
                 break;
 
-            case 2:
-                if (mode == select) {
-                    SetMode(mode_last);
-                    return;
-                }
+            case 3:
+                //Pages.transform.GetChild(select).GetComponent<>
                 break;
         }
 
@@ -43,8 +50,5 @@ public class MenueLoader : MonoBehaviour
         for (int i = 0; i < Pages.transform.childCount; i++)
             Pages.transform.GetChild(i).gameObject.SetActive(false);
     }
-
-
-
 
 }

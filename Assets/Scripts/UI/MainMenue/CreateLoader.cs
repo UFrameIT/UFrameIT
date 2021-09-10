@@ -11,16 +11,42 @@ public class CreateLoader : MenueLoader
 
     public GameObject Messenger;
 
-    private const string ending = ".unity";
+    protected int id { 
+        get { return Id.text.Length == 0 ? StageStatic.NextNumber(true) : int.Parse(Id.text); }
+        set { Id.text = value.ToString(); }
+    }
+    protected new string name { 
+        get { return Name.text.Trim(); }
+        set { Name.text = value; }
+    }
+    protected string description { 
+        get { return Description.text; }
+        set { Description.text = value; }
+    }
+    protected string scene { 
+        get { 
+            return WorldDropdown.value < StageStatic.Worlds.Count ?
+                StageStatic.Worlds[WorldDropdown.value] : invalid_world;
+        }
+        set {
+            if (!StageStatic.Worlds.Contains(value)) {
+                //WorldDropdown.AddOptions(new List<string> { invalid_world });
+                WorldDropdown.value = StageStatic.Worlds.Count;
+            } else
+                WorldDropdown.value = StageStatic.Worlds.IndexOf(value);
+        }
+    }
 
-    private List<string> Scenes = new List<string>();
 
-    private void OnEnable()
+    protected string invalid_world = "Invalid";
+
+
+    protected void OnEnable()
     {
         Init();
     }
 
-    private void Start()
+    protected new void Start()
     {
         scroll.verticalScrollbar.numberOfSteps = 0;
         scroll.verticalNormalizedPosition = 1f;
@@ -28,43 +54,25 @@ public class CreateLoader : MenueLoader
 
     public void Init()
     {
-        //TODO? Update list at buildtime
-
-        List<TMPro.TMP_Dropdown.OptionData> Worlds = new List<TMPro.TMP_Dropdown.OptionData>();
-        Scenes.Clear();
-
-        string world = "World";
-        foreach (UnityEditor.EditorBuildSettingsScene scene in UnityEditor.EditorBuildSettings.scenes)
-        {
-            if (scene.enabled)
-            {
-                string name = new System.IO.FileInfo(scene.path).Name;
-                name = name.Substring(0, name.Length - ending.Length);
-
-                if (0 == string.Compare(name, name.Length - world.Length, world, 0, world.Length))
-                {
-                    Scenes.Add(name);
-                    Worlds.Add(new TMPro.TMP_Dropdown.OptionData(name));
-                }
-            }
-        }
-
         WorldDropdown.ClearOptions();
-        WorldDropdown.AddOptions(Worlds);
+        WorldDropdown.AddOptions(StageStatic.Worlds);
     }
 
     public void Create()
     {
         string
-            name = Name.text.Trim(),
-            decr = Description.text.Trim(),
-            scen = Scenes[WorldDropdown.value];
+            scen = StageStatic.Worlds[WorldDropdown.value];
 
-        int id = Id.text.Length == 0 ? StageStatic.NextNumber(true) : int.Parse(Id.text);
-
-        if (StageStatic.LoadNewStage(id, name, decr, scen))
+        int error = StageStatic.LoadNewStage(id, name, description, scen);
+        if (error != 0) {
+            Error(error);
             return;
+        }
+    }
 
+    protected void Error(int error)
+    {
         //TODO: inform failure & why?
+        throw new System.NotImplementedException("handle error");
     }
 }

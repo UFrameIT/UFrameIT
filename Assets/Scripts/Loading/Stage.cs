@@ -44,6 +44,12 @@ public class Stage
         factState = new FactOrganizer();
     }
 
+    public void CopyStates( Stage get)
+    {
+        this.solution = get.solution;
+        this.factState = get.factState;
+    }
+
     public void SetMode(bool create)
     {
         if (create == creatorMode)
@@ -63,8 +69,8 @@ public class Stage
         else
         {
             solution = factState as SolutionOrganizer;
-            solution.invoke = false;
             factState.Undraw();
+            //solution.invoke = false;
 
             factState = hiddenState;
             factState.Draw();
@@ -72,12 +78,17 @@ public class Stage
 
     }
 
+    public void delete()
+    {
+        throw new System.NotImplementedException();
+    }
+
     public void store()
     {
         hierarchie ??= new List<Directories>();
         hierarchie.AddRange(hierStage.AsEnumerable());
 
-        if (creatorMode)
+        if (creatorMode || StageStatic.devel)
         {
             string path = CreatePathToFile(out bool exists, name, "JSON", hierarchie, use_install_folder);
             //TODO: if exists

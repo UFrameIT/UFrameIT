@@ -13,6 +13,12 @@ public static class StageStatic
     public static bool devel = false;
     public static Mode mode;
 
+    public static List<string> Worlds
+    {
+        get { return _Worlds ?? GenerateWorldList(); }
+    }
+    private static List<string> _Worlds = null;
+
     public static Stage stage {
         get {
             return (local_stage ? StageLocal : StageOfficial)[current_name];
@@ -23,7 +29,36 @@ public static class StageStatic
 
             (local_stage ? StageLocal : StageOfficial).Remove(current_name);
             (local_stage ? StageLocal : StageOfficial).Add(current_name, value);
+
+            bool tmp = value.creatorMode;
+            value.creatorMode = true;
+            value.store();
+            value.creatorMode = tmp;
         }
+    }
+
+    // TODO! generate at buildtime
+    private static List<string> GenerateWorldList()
+    {
+        _Worlds = new List<string>();
+
+        string world = "World";
+        string ending = ".unity";
+        foreach (UnityEditor.EditorBuildSettingsScene scene in UnityEditor.EditorBuildSettings.scenes)
+        {
+            if (scene.enabled)
+            {
+                string name = new System.IO.FileInfo(scene.path).Name;
+                name = name.Substring(0, name.Length - ending.Length);
+
+                if (0 == string.Compare(name, name.Length - world.Length, world, 0, world.Length))
+                {
+                    _Worlds.Add(name);
+                }
+            }
+        }
+
+        return _Worlds;
     }
 
     public enum Mode
@@ -58,26 +93,36 @@ public static class StageStatic
 
     }
 
-    public static void WakeUp()
+    public static int Validate(int id, string name, string description, string scene)
     {
-        
+        int error = 0;
+
+        error = (error << 1) + (!Worlds.Contains(scene) ? 1 : 0);
+        error = (error << 1) + (false ? 1 : 0);
+        error = (error << 1) + (name.Length == 0 || ContainsKey(name, true) ? 1 : 0);
+        error = (error << 1) + (ContainsNumber(id, true) ? 1 : 0);
+
+        return error;
     }
 
-    public static bool LoadNewStage(int id, string name, string description, string scene)
+    public static int LoadNewStage(int id, string name, string description, string scene)
     {
-        if (name.Length == 0
-            || ContainsKey(name, true)
-            || ContainsNumber(id, true))
-            return false;
+        int ret = Validate(id, name, description, scene);
+        if (ret != 0)
+            return ret;
 
         stage = new Stage(id, name, description, scene, true);
         stage.creatorMode = true;
         stage.store();
 
-        devel = true;
-        Loader.LoadScene(scene);
+        LoadCreate();
+        return ret;
+    }
 
-        return true;
+    public static void LoadCreate()
+    {
+        devel = true;
+        Loader.LoadScene(stage.scene);
     }
 
     public static int NextNumber(bool local)
@@ -110,10 +155,21 @@ public static class StageStatic
         StageLocal = Stage.Grup(null, false);
     }
 
-    public static void SetStage(string name, bool local = false)
+    public static void SetStage(string name, bool local)
     {
         local_stage = local;
         current_name = name;
+    }
+
+    public static Stage GetStage(string name, bool local)
+    {
+        return (local ? StageLocal : StageOfficial)[name];
+    }
+
+    public static void Delete(Stage stage)
+    {
+        GetStage(stage.name, !stage.use_install_folder).delete();
+        (!stage.use_install_folder ? StageLocal : StageOfficial).Remove(stage.name);
     }
 
     public static bool LoadInitStage(string name, bool local = false, bool restore_session = true, GameObject gameObject = null)
