@@ -56,7 +56,7 @@ public class SolutionOrganizer : FactOrganizer
         FactOrganizer save = StageStatic.stage.factState;
         StageStatic.stage.factState = new SolutionOrganizer(false) as FactOrganizer;
 
-        loadable = FactOrganizer.load(ref StageStatic.stage.factState, draw, name + endingSol, hierarchie, use_install_folder);
+        loadable = FactOrganizer.load(ref StageStatic.stage.factState, draw, name + endingSol, hierarchie, use_install_folder, out Dictionary<string, string> old_to_new);
         if (loadable)
             set = (SolutionOrganizer) StageStatic.stage.factState;
 
@@ -69,10 +69,13 @@ public class SolutionOrganizer : FactOrganizer
         var JsonTmp = JSONManager.ReadFromJsonFile < List<(HashSet<string> MasterIDs, string ComparerString)> > (path);
         foreach (var element in JsonTmp)
         {
+            // Get all FactComparer
             var FactCompTypes = Assembly.GetExecutingAssembly().GetTypes().Where(typeof(FactComparer).IsAssignableFrom);
+            // Select and create FactComparer by name
             var typ = FactCompTypes.First(t => t.Name == element.ComparerString);
             FactComparer Comparer = Activator.CreateInstance(typ) as FactComparer;
-            set.ValidationSet.Add((element.MasterIDs, Comparer));
+            // Parse and add
+            set.ValidationSet.Add((new HashSet<string>(element.MasterIDs.Select(k => old_to_new[k])), Comparer));
         }
 
         return true;

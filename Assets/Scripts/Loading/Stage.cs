@@ -169,7 +169,7 @@ public class Stage
 
 
         factState ??= new FactOrganizer(false);
-        loadable = FactOrganizer.load(ref factState, false, name, hierarchie, false);
+        loadable = FactOrganizer.load(ref factState, false, name, hierarchie, false, out _);
 
         hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
         return true;

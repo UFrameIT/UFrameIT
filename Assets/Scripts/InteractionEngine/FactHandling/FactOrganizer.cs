@@ -89,11 +89,11 @@ public class FactOrganizer
         this.invoke = invoke;
     }
 
-    private static void FactOrganizerFromPublic(ref FactOrganizer set, PublicFactOrganizer exposed, bool invoke)
+    private static void FactOrganizerFromPublic(ref FactOrganizer set, PublicFactOrganizer exposed, bool invoke, out Dictionary<string, string> old_to_new)
     {
         // TODO: other strategy needed when MMT save/load supported
         // map old URIs to new ones
-        Dictionary<string, string> old_to_new = new Dictionary<string, string>();
+        old_to_new = new Dictionary<string, string>();
         // combine T:Fact to Fact
         Dictionary<string, Fact> old_FactDict = new Dictionary<string, Fact>();
 
@@ -486,8 +486,9 @@ public class FactOrganizer
         JSONManager.WriteToJsonFile(path, new PublicFactOrganizer(this), 0);
     }
 
-    public static bool load(ref FactOrganizer set, bool draw, string name, List<Directories> hierarchie = null, bool use_install_folder = false)
+    public static bool load(ref FactOrganizer set, bool draw, string name, List<Directories> hierarchie, bool use_install_folder, out Dictionary<string, string> old_to_new)
     {
+        old_to_new = null;
         hierarchie ??= new List<Directories>();
         hierarchie.AddRange(hierState.AsEnumerable());
 
@@ -497,7 +498,7 @@ public class FactOrganizer
             return false;
 
         PublicFactOrganizer de_json = JSONManager.ReadFromJsonFile<PublicFactOrganizer>(path);
-        FactOrganizerFromPublic(ref set, de_json, draw);
+        FactOrganizerFromPublic(ref set, de_json, draw, out old_to_new);
 
         return true;
     }
