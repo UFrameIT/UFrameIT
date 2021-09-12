@@ -59,8 +59,8 @@ public static class CommunicationEvents
     public enum Directories
     {
         Stages,
+        ValidationSets,
         FactStateMachines,
-        ValidationSets
     }
 
     public static string CreateHierarchiePath(List<Directories> hierarchie, string prefix = "", string postfix = "")

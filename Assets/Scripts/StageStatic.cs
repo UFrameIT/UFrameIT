@@ -7,6 +7,10 @@ public static class StageStatic
 {
     public static Dictionary<string, Stage> StageOfficial;
     public static Dictionary<string, Stage> StageLocal;
+    public static Dictionary<string, int> Category = new Dictionary<string, int> {
+        { "", -1 },
+        { "Demo Category", 0 },
+    };
 
     public static string current_name;
     public static bool local_stage;
@@ -35,6 +39,12 @@ public static class StageStatic
             value.store();
             value.creatorMode = tmp;
         }
+    }
+
+    // TODO: set when encountering an error
+    public static StageErrorStruct error {
+        get;
+        private set;
     }
 
     // TODO! generate at buildtime
@@ -67,6 +77,41 @@ public static class StageStatic
         Create,
     }
 
+    public struct StageErrorStruct
+    {
+        public bool category    { get { return state[0]; } set { state[0] = value; } }
+        public bool id          { get { return state[1]; } set { state[1] = value; } }
+        public bool name        { get { return state[2]; } set { state[2] = value; } }
+        public bool description { get { return state[3]; } set { state[3] = value; } }
+        public bool scene       { get { return state[4]; } set { state[4] = value; } }
+        public bool local       { get { return state[5]; } set { state[5] = value; } }
+        public bool load        { get { return state[6]; } set { state[6] = value; } }
+
+        private bool[] state;
+
+        public bool pass
+        {
+            get { return state.Aggregate(true, (last, next) => last && !next); }
+        }
+
+        public readonly static StageErrorStruct
+            InvalidFolder = new StageErrorStruct(false, false, false, false, false, true, false),
+            NotLoadable   = new StageErrorStruct(false, false, false, false, false, false, true);
+
+        public StageErrorStruct(bool category, bool id, bool name, bool description, bool scene, bool local, bool load)
+        {
+            state = new bool[7];
+
+            this.category = category;
+            this.id = id;
+            this.name = name;
+            this.description = description;
+            this.scene = scene;
+            this.local = local;
+            this.load = load;
+        }
+    }
+
     public static void SetMode(Mode mode, GameObject gameObject = null)
     {
         gameObject ??= new GameObject();
@@ -93,25 +138,26 @@ public static class StageStatic
 
     }
 
-    public static int Validate(int id, string name, string description, string scene)
-    {
-        int error = 0;
-
-        error = (error << 1) + (!Worlds.Contains(scene) ? 1 : 0);
-        error = (error << 1) + (false ? 1 : 0);
-        error = (error << 1) + (name.Length == 0 || ContainsKey(name, true) || ContainsKey(name, false) ? 1 : 0);
-        error = (error << 1) + (ContainsNumber(id, true) ? 1 : 0);
-
-        return error;
+    public static StageErrorStruct Validate(string category, int id, string name, string description, string scene, bool local = true)
+    {   
+        return new StageErrorStruct(
+            category.Length == 0,
+            ContainsNumber(category, id, true),
+            name.Length == 0 || ContainsKey(name, true) || ContainsKey(name, false),
+            false,
+            !Worlds.Contains(scene),
+            local == false,
+            false
+            );
     }
 
-    public static int LoadNewStage(int id, string name, string description, string scene)
+    public static StageErrorStruct LoadNewStage(string category, int id, string name, string description, string scene)
     {
-        int ret = Validate(id, name, description, scene);
-        if (ret != 0)
+        StageErrorStruct ret = Validate(category, id, name, description, scene, true);
+        if (!ret.pass)
             return ret;
 
-        stage = new Stage(id, name, description, scene, true);
+        stage = new Stage(category, id, name, description, scene, true);
         stage.creatorMode = true;
         stage.store();
 
@@ -144,9 +190,12 @@ public static class StageStatic
         return last + 1;
     }
 
-    public static bool ContainsNumber(int i, bool local)
+    public static bool ContainsNumber(string category, int i, bool local)
     {
-        return (local ? StageLocal : StageOfficial).Values.Select(s => s.number).Contains(i);
+        return (local ? StageLocal : StageOfficial).Values
+            .Where(s => s.category == category)
+            .Select(s => s.number)
+            .Contains(i);
     }
 
     public static void ShallowLoadStages()
@@ -168,7 +217,7 @@ public static class StageStatic
 
     public static void Delete(Stage stage)
     {
-        GetStage(stage.name, !stage.use_install_folder).delete();
+        GetStage(stage.name, !stage.use_install_folder).delete(true);
         (!stage.use_install_folder ? StageLocal : StageOfficial).Remove(stage.name);
     }
 
@@ -202,12 +251,12 @@ public static class StageStatic
         {
             stage.factState.invoke = true;
             stage.factState.Draw();
-            stage.time = -1;
+            stage.player_record.time = stage.player_record.time > 0 ? Time.time - stage.player_record.time : -1;
         }
         else
         {
             stage.factState = new FactOrganizer(true);
-            stage.time = devel ? -1 : Time.time;
+            stage.player_record.time = devel ? -1 : Time.time;
         }
 
         gameObject.UpdateTagActive("DevelopingMode", devel);

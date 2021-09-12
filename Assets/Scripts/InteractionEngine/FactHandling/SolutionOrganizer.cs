@@ -13,6 +13,7 @@ public class SolutionOrganizer : FactOrganizer
         endingSol = "_sol",
         endingVal = "_val";
 
+    private string path = null;
     private static List<Directories>
         hierVal = new List<Directories> { Directories.ValidationSets };
 
@@ -80,8 +81,10 @@ public class SolutionOrganizer : FactOrganizer
 
         base.store(name + endingSol, hierarchie, use_install_folder);
 
-        string path = CreatePathToFile(out _, name + endingVal, "JSON", hierarchie, use_install_folder);
+        string path_o = path;
+        path = CreatePathToFile(out _, name + endingVal, "JSON", hierarchie, use_install_folder);
         JSONManager.WriteToJsonFile(path, this.ValidationSet.Select(e => (e.MasterIDs, e.Comparer.ToString())), 0);
+        path = path_o;
 
         hierarchie.RemoveRange(hierarchie.Count - hierVal.Count, hierVal.Count);
     }
@@ -102,9 +105,12 @@ public class SolutionOrganizer : FactOrganizer
         FactOrganizer save = StageStatic.stage.factState;
         StageStatic.stage.factState = new SolutionOrganizer(false) as FactOrganizer;
 
-        loadable = FactOrganizer.load(ref StageStatic.stage.factState, draw, name + endingSol, hierarchie, use_install_folder, out Dictionary<string, string> old_to_new);
+        loadable = FactOrganizer.load(ref StageStatic.stage.player_record.factState, draw, name + endingSol, hierarchie, use_install_folder, out Dictionary<string, string> old_to_new);
         if (loadable)
-            set = (SolutionOrganizer) StageStatic.stage.factState;
+        {
+            set = (SolutionOrganizer)StageStatic.stage.factState;
+            set.path = path;
+        }
 
         StageStatic.stage.factState = save;
         hierarchie.RemoveRange(hierarchie.Count - hierVal.Count, hierVal.Count);
@@ -121,5 +127,10 @@ public class SolutionOrganizer : FactOrganizer
         }
 
         return true;
+    }
+
+    public new void delete()
+    {
+        FactOrganizer.delete(path);
     }
 }

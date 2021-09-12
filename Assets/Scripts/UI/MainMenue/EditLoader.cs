@@ -17,8 +17,9 @@ public class EditLoader : CreateLoader
         original_stage = StageStatic.stage;
 
         if (!original_stage.DeepLoad())
-            Error(-1);
+            Error(StageStatic.StageErrorStruct.NotLoadable);
 
+        category = original_stage.category;
         id = original_stage.number;
         this.name = original_stage.name;
         description= original_stage.description;
@@ -39,7 +40,7 @@ public class EditLoader : CreateLoader
     {
         if (original_stage.use_install_folder)
         {
-            Error(-2);
+            Error(StageStatic.StageErrorStruct.InvalidFolder);
             return;
         }
         //Reset();
@@ -50,14 +51,17 @@ public class EditLoader : CreateLoader
 
     private bool _Clone(bool overwrite)
     {
-        int error = StageStatic.Validate(id, name, description, scene)
-            - (overwrite ? (1 << 1) + 1 : 0);
-        if (error != 0) {
+        var error = StageStatic.Validate(category, id, name, description, scene);
+        if (overwrite && name == original_stage.name) {
+            error.name = false;
+            error.id = false;
+        }
+        if (!error.pass) {
             Error(error);
             return false;
         }
 
-        Stage new_stage = new Stage(id, name, description, scene, true);
+        Stage new_stage = new Stage(category, id, name, description, scene, true);
         new_stage.CopyStates(original_stage);
 
         StageStatic.stage = new_stage;
@@ -89,7 +93,7 @@ public class EditLoader : CreateLoader
     {
         if (original_stage.use_install_folder)
         {
-            Error(-2);
+            Error(StageStatic.StageErrorStruct.InvalidFolder);
             return;
         }
 
@@ -103,7 +107,7 @@ public class EditLoader : CreateLoader
     {
         if (original_stage.use_install_folder)
         {
-            Error(-2);
+            Error(StageStatic.StageErrorStruct.InvalidFolder);
             return;
         }
 

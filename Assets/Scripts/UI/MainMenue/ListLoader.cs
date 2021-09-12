@@ -7,7 +7,7 @@ using UnityEngine;
 public abstract class ListLoader<T> : MenueLoader
 {
     public GameObject List;
-    public GameObject Entry;
+    public GameObject EntryHeader;
 
     protected void OnEnable()
     {

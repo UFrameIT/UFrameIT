@@ -6,7 +6,7 @@ using UnityEngine;
 public class MenueLoader : MonoBehaviour
 {
     public MenueLoader pageMenue;
-    public UnityEngine.UI.ScrollRect scroll;
+    public UnityEngine.UI.ScrollRect scroll = null;
     public GameObject Pages;
 
     private int mode = 0;

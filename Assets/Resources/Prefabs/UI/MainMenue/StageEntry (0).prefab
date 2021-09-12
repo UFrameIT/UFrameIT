@@ -175,7 +175,7 @@ PrefabInstance:
     - target: {fileID: 2190461301067856924, guid: cab09b1cb0c50a5419ee4ffa3897e5cf,
         type: 3}
       propertyPath: m_ChildAlignment
-      value: 3
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2190461301067856924, guid: cab09b1cb0c50a5419ee4ffa3897e5cf,
         type: 3}
@@ -186,6 +186,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Padding.m_Right
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2190461301067856924, guid: cab09b1cb0c50a5419ee4ffa3897e5cf,
+        type: 3}
+      propertyPath: m_Padding.m_Bottom
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2190461301067856924, guid: cab09b1cb0c50a5419ee4ffa3897e5cf,
         type: 3}
@@ -332,6 +337,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4929209569244540757, guid: cab09b1cb0c50a5419ee4ffa3897e5cf,
+        type: 3}
+      propertyPath: m_ChildAlignment
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4929209570368938763, guid: cab09b1cb0c50a5419ee4ffa3897e5cf,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -424,8 +434,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8176252924427856031, guid: cab09b1cb0c50a5419ee4ffa3897e5cf,
         type: 3}
+      propertyPath: m_fontStyle
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8176252924427856031, guid: cab09b1cb0c50a5419ee4ffa3897e5cf,
+        type: 3}
       propertyPath: m_fontSizeBase
       value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 8176252924427856031, guid: cab09b1cb0c50a5419ee4ffa3897e5cf,
+        type: 3}
+      propertyPath: m_enableWordWrapping
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8176252924427856031, guid: cab09b1cb0c50a5419ee4ffa3897e5cf,
+        type: 3}
+      propertyPath: m_HorizontalAlignment
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cab09b1cb0c50a5419ee4ffa3897e5cf, type: 3}
@@ -442,6 +467,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8803042889665911744}
     m_Modifications:
+    - target: {fileID: 2190461301067856924, guid: cab09b1cb0c50a5419ee4ffa3897e5cf,
+        type: 3}
+      propertyPath: m_ChildAlignment
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2190461301067856924, guid: cab09b1cb0c50a5419ee4ffa3897e5cf,
+        type: 3}
+      propertyPath: m_Padding.m_Bottom
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 3456818663524105090, guid: cab09b1cb0c50a5419ee4ffa3897e5cf,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -584,6 +619,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4929209569244540757, guid: cab09b1cb0c50a5419ee4ffa3897e5cf,
         type: 3}
+      propertyPath: m_ChildAlignment
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4929209569244540757, guid: cab09b1cb0c50a5419ee4ffa3897e5cf,
+        type: 3}
       propertyPath: m_ChildControlHeight
       value: 1
       objectReference: {fileID: 0}
@@ -687,6 +727,11 @@ PrefabInstance:
       propertyPath: m_VerticalAlignment
       value: 512
       objectReference: {fileID: 0}
+    - target: {fileID: 8176252924427856031, guid: cab09b1cb0c50a5419ee4ffa3897e5cf,
+        type: 3}
+      propertyPath: m_enableWordWrapping
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cab09b1cb0c50a5419ee4ffa3897e5cf, type: 3}
 --- !u!224 &5988211130494777221 stripped
@@ -711,6 +756,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_PreferredHeight
       value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2190461301067856924, guid: cab09b1cb0c50a5419ee4ffa3897e5cf,
+        type: 3}
+      propertyPath: m_Padding.m_Top
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2190461301067856924, guid: cab09b1cb0c50a5419ee4ffa3897e5cf,
+        type: 3}
+      propertyPath: m_ChildAlignment
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2190461301067856924, guid: cab09b1cb0c50a5419ee4ffa3897e5cf,
+        type: 3}
+      propertyPath: m_Padding.m_Bottom
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2190461301067856924, guid: cab09b1cb0c50a5419ee4ffa3897e5cf,
         type: 3}
@@ -861,6 +921,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4929209569244540757, guid: cab09b1cb0c50a5419ee4ffa3897e5cf,
+        type: 3}
+      propertyPath: m_ChildAlignment
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4929209569244540757, guid: cab09b1cb0c50a5419ee4ffa3897e5cf,
         type: 3}

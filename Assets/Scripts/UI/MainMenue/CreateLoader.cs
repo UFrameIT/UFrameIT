@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CreateLoader : MenueLoader
 {
+    public TMPro.TMP_InputField Category;
     public TMPro.TMP_InputField Id;
     public TMPro.TMP_InputField Name;
     public TMPro.TMP_InputField Description;
@@ -11,6 +12,11 @@ public class CreateLoader : MenueLoader
 
     public GameObject Messenger;
 
+    protected string category
+    {
+        get { return Category.text.Trim(); }
+        set { Category.text = value; }
+    }
     protected int id { 
         get { return Id.text.Length == 0 ? StageStatic.NextNumber(true) : int.Parse(Id.text); }
         set { Id.text = value.ToString(); }
@@ -59,18 +65,15 @@ public class CreateLoader : MenueLoader
     }
 
     public void Create()
-    {
-        string
-            scen = StageStatic.Worlds[WorldDropdown.value];
-
-        int error = StageStatic.LoadNewStage(id, name, description, scen);
-        if (error != 0) {
+    { 
+        var error = StageStatic.LoadNewStage(category, id, name, description, scene);
+        if (!error.pass) {
             Error(error);
             return;
         }
     }
 
-    protected void Error(int error)
+    protected void Error(StageStatic.StageErrorStruct error)
     {
         //TODO: inform failure & why?
         throw new System.NotImplementedException("handle error");

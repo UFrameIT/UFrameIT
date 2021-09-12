@@ -31,7 +31,7 @@ public class FactOrganizer
     protected internal int MaxLabelId = 0;
     protected internal SortedSet<int> UnusedLabelIds = new SortedSet<int>();
 
-
+    private string path = null;
     private static List<Directories>
         hierState = new List<Directories> { Directories.FactStateMachines };
 
@@ -473,17 +473,22 @@ public class FactOrganizer
             redo();
     }
 
-    public void store(string name, List<Directories> hierarchie = null, bool use_install_folder = false)
+    public void store(string name, List<Directories> hierarchie = null, bool use_install_folder = false, bool force_write = true)
     {
         hierarchie ??= new List<Directories>();
         hierarchie.AddRange(hierState.AsEnumerable());
 
-        string path = CreatePathToFile(out _, name, "JSON", hierarchie, use_install_folder);
+        string path_o = path;
+        path = CreatePathToFile(out bool exists, name, "JSON", hierarchie, use_install_folder);
+
         hierarchie.RemoveRange(hierarchie.Count - hierState.Count, hierState.Count);
 
         // note: max depth for "this" is 2, since Fact has non-serilazible member, that is not yet ignored (see Fact.[JasonIgnore] and JSONManager.WriteToJsonFile)
         // using public dummy class to circumvent deserialiation JsonInheritanceProblem (see todos @PublicFactOrganizer)
-        JSONManager.WriteToJsonFile(path, new PublicFactOrganizer(this), 0);
+        if(!exists || force_write)
+            JSONManager.WriteToJsonFile(path, new PublicFactOrganizer(this), 0);
+
+        path = path_o;
     }
 
     public static bool load(ref FactOrganizer set, bool draw, string name, List<Directories> hierarchie, bool use_install_folder, out Dictionary<string, string> old_to_new)
@@ -499,8 +504,26 @@ public class FactOrganizer
 
         PublicFactOrganizer de_json = JSONManager.ReadFromJsonFile<PublicFactOrganizer>(path);
         FactOrganizerFromPublic(ref set, de_json, draw, out old_to_new);
+        set.path = path;
 
         return true;
+    }
+
+    public static void delete(string name, List<Directories> hierarchie, bool use_install_folder)
+    {
+        hierarchie ??= new List<Directories>();
+        hierarchie.AddRange(hierState.AsEnumerable());
+
+        string path = CreatePathToFile(out bool _, name, "JSON", hierarchie, use_install_folder);
+        hierarchie.RemoveRange(hierarchie.Count - hierState.Count, hierState.Count);
+
+        delete(path);
+    }
+
+    public static void delete(string path)
+    {
+        if (File.Exists(path))
+            File.Delete(path);
     }
 
     public void Draw(bool draw_all = false)
