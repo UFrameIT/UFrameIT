@@ -13,6 +13,8 @@ public class StageBehaviour : MonoBehaviour
     private void OnDestroy()
     {
         StageStatic.devel = false;
+        StageStatic.stage.solution.hardreset();
+        StageStatic.stage.factState.hardreset();
     }
 
     public void SetDevel(bool devel)

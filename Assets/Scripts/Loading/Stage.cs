@@ -52,12 +52,46 @@ public class Stage
 
     public Stage()
     {
-        solution = new SolutionOrganizer();
-        player_record = new PlayerRecord(record_name);
-        player_record_list = new Dictionary<string, PlayerRecord>();
+        InitOOP();
     }
 
     public Stage(string category, int number, string name, string description, string scene, bool local = true)
+    {
+        InitFields(category, number, name, description, scene, local);
+        InitOOP();
+    }
+
+    public Stage(Stage get, string category, int number, string name, string description, string scene, bool local = true)
+    {
+        Stage cpy = new Stage();
+        // "DeepCopy" of ref-types, 'cause screw c# and ICloneable
+        load(ref cpy, get.name, null, get.use_install_folder);
+        this.hierarchie = cpy.hierarchie;
+        this.solution = cpy.solution;
+        this.player_record = cpy.player_record;
+        this.player_record_list = cpy.player_record_list;
+
+        InitFields(category, number, name, description, scene, local);
+
+        hierarchie ??= new List<Directories>();
+        hierarchie.AddRange(hierStage.AsEnumerable());
+
+        player_record.load(hierarchie);
+        player_record.name = player_record.name.Replace(get.record_name, record_name);
+        player_record.store(hierarchie, false);
+
+        foreach (var record in player_record_list.Values)
+        {
+            record.load(hierarchie);
+            record.name = record.name.Replace(get.record_name, record_name);
+            record.store(hierarchie, false);
+        }
+
+        hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
+        store(false);
+    }
+
+    public void InitFields(string category, int number, string name, string description, string scene, bool local)
     {
         this.category = category;
         this.number = number;
@@ -65,29 +99,55 @@ public class Stage
         this.description = description;
         this.scene = scene;
         this.use_install_folder = !local;
+    }
 
+    private void InitOOP()
+    {
         solution = new SolutionOrganizer();
         player_record = new PlayerRecord(record_name);
         player_record_list = new Dictionary<string, PlayerRecord>();
     }
 
-    public void CopyStates(Stage get)
+    public void ClearAll()
     {
-        this.solution = get.solution;
-        this.player_record = get.player_record;
-        this.player_record_list = get.player_record_list;
+        ClearSolution();
+        ClearPlay();
+        ClearALLRecords();
     }
 
-    public void deletet_record(PlayerRecord record)
+    public void ClearSolution()
+    {
+        solution.hardreset(false);
+        solution = new SolutionOrganizer();
+    }
+
+    public void ClearPlay()
+    {
+        player_record.factState.hardreset(false);
+        player_record = new PlayerRecord(record_name);
+    }
+
+    public void ClearALLRecords()
+    {
+        foreach (var record in player_record_list.Values)
+            deletet_record(record, false);
+
+        player_record_list = new Dictionary<string, PlayerRecord>();
+    }
+
+    public void deletet_record(PlayerRecord record, bool b_store = true)
     {
         hierarchie ??= new List<Directories>();
         hierarchie.AddRange(hierStage.AsEnumerable());
 
+        if (record.factState != null)
+            record.factState.hardreset();
         record.delete(hierarchie);
         player_record_list.Remove(record.name);
 
         hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
-        store();
+        if(b_store)
+            store();
     }
 
     public bool set_record(PlayerRecord record)
@@ -183,13 +243,13 @@ public class Stage
         hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
     }
 
-    public void store(bool reset = false)
+    public void store(bool reset_player = false)
     {
         hierarchie ??= new List<Directories>();
         hierarchie.AddRange(hierStage.AsEnumerable());
 
         player_record.name = record_name;
-        if (reset)
+        if (reset_player)
             player_record = new PlayerRecord(record_name);
 
         //if (creatorMode || StageStatic.devel)
@@ -320,14 +380,14 @@ public class Stage
 
     public void ResetPlay()
     {
-        player_record = new PlayerRecord(record_name);
+        ClearPlay();
         store(true);
     }
 
     public void ResetSaves()
     {
-        player_record = new PlayerRecord(record_name);
-        player_record_list = new Dictionary<string, PlayerRecord>();
+        ClearPlay();
+        ClearALLRecords();
         store(true);
     }
 
