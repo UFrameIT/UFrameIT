@@ -8552,8 +8552,28 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1491172435906319289, guid: 22a53293eaa728146a6f47093d22ca92,
         type: 3}
+      propertyPath: _StageError.a
+      value: 0.39215687
+      objectReference: {fileID: 0}
+    - target: {fileID: 1491172435906319289, guid: 22a53293eaa728146a6f47093d22ca92,
+        type: 3}
+      propertyPath: _StageError.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1491172435906319289, guid: 22a53293eaa728146a6f47093d22ca92,
+        type: 3}
+      propertyPath: _StageError.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1491172435906319289, guid: 22a53293eaa728146a6f47093d22ca92,
+        type: 3}
+      propertyPath: _StageError.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1491172435906319289, guid: 22a53293eaa728146a6f47093d22ca92,
+        type: 3}
       propertyPath: _StageAccomplished.a
-      value: 0.3882353
+      value: 0.39215687
       objectReference: {fileID: 0}
     - target: {fileID: 1491172435906319289, guid: 22a53293eaa728146a6f47093d22ca92,
         type: 3}
@@ -8598,7 +8618,7 @@ PrefabInstance:
     - target: {fileID: 1491172435906319289, guid: 22a53293eaa728146a6f47093d22ca92,
         type: 3}
       propertyPath: _StageNotYetAccomplished.a
-      value: 0.3882353
+      value: 0.39215687
       objectReference: {fileID: 0}
     - target: {fileID: 1491172435906319289, guid: 22a53293eaa728146a6f47093d22ca92,
         type: 3}

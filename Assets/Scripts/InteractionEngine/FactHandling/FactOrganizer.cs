@@ -342,13 +342,13 @@ public class FactOrganizer
         for (int i = pos; i < marker; i++)
         {
             // TODO: consequent != samestep != dependent (want !consequent)
-            if (!Workflow[i].creation)
+            if (!Workflow[i].creation && Workflow[i].Id != key)
             {
                 // just try
                 if (dependencies.Remove(Workflow[i].Id) && !Workflow[i].samestep)
                     c_unsafe--;
             }
-            else if (0 < this[Workflow[i].Id].getDependentFactIds().Intersect(dependencies).Count())
+            else if (0 < this[Workflow[i].Id].getDependentFactIds().Intersect(dependencies).Count() && Workflow[i].Id != key)
             {
                 dependencies.Add(Workflow[i].Id);
                 if (!Workflow[i].samestep)

@@ -28,7 +28,7 @@ public class CollapsableStage : MonoBehaviour
         header.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate {
             StageStatic.devel = false;
             // TODO: handle unable to load
-            Loader.LoadStage(stage.name, !stage.use_install_folder, false);
+            Loader.LoadStage(stage.name, !stage.use_install_folder, true);
         });
 
         // set explicit edit button
@@ -43,29 +43,39 @@ public class CollapsableStage : MonoBehaviour
 
     public void DrawChildren()
     {
-        var record_list = stage.player_record_list.Values.OrderBy(r => r.time).ToList();
+        var record_list = stage.player_record_list.Values.OrderBy(r => r.seconds).ToList();
         var body = gameObject.GetNthChild(new List<int> { 1 });
         body.DestroyAllChildren();
 
-        for (int i = 0; i < record_list.Count; i++)
+        for (int i = 0, k = 0; i < record_list.Count; i++)
         {
+            var index = record_list[i].name;
+
             GameObject time_entry = Instantiate(TimeEntry);
             time_entry.transform.SetParent(body.transform, false);
 
             PopulateLocalEntryList(time_entry, new List<string> {
-                    (i + 1).ToString(),
+                    stage.player_record_list[index].solved ? (++k).ToString() : "--",
                     "", // hidden
-                    System.TimeSpan.FromSeconds(record_list[i].time).ToString("hh':'mm':'ss") });
+                    System.TimeSpan.FromSeconds(stage.player_record_list[index].seconds).ToString("hh':'mm':'ss") });
 
-            var index = record_list[i].name;
+            // set colour
+            time_entry.GetNthChild(new List<int> { 0, 0 }).GetComponent<UnityEngine.UI.Image>().color =
+                stage.player_record_list[index].solved ? GlobalBehaviour.StageAccomplished : GlobalBehaviour.StageNotYetAccomplished;
+
             // set delete button
             time_entry.GetNthChild(new List<int> { 3, 0 }).GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate {
                 stage.deletet_record(stage.player_record_list[index]);
                 this.Init();
             });
+
             // set clone button
             time_entry.GetNthChild(new List<int> { 4, 0 }).GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate {
-                stage.set_record(stage.player_record_list[index]);
+                if (!stage.set_record(stage.player_record_list[index]))
+                {
+                    this.Init();
+                    return;
+                }
                 StageStatic.devel = false;
                 // TODO: handle unable to load
                 Loader.LoadStage(stage.name, !stage.use_install_folder, true);

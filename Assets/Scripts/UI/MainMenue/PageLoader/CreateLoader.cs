@@ -76,6 +76,33 @@ public class CreateLoader : MenueLoader
     protected void Error(StageStatic.StageErrorStruct error)
     {
         //TODO: inform failure & why?
-        throw new System.NotImplementedException("handle error");
+        if (error.category)
+        {
+            throw new System.NotImplementedException("Invalid Category"); // unused
+        } 
+        if (error.id)
+        {
+            throw new System.NotImplementedException("Id must be unique within a category"); // technichal a lie
+        }
+        if (error.name) // for savegame identification (could be chained with local/category/id)
+        {
+            throw new System.NotImplementedException("Name must be unique");
+        }
+        if (error.description)
+        {
+            throw new System.NotImplementedException("Invalid Description"); // unused
+        }
+        if (error.scene)
+        {
+            throw new System.NotImplementedException("Please select a World");
+        }
+        if (error.local) // keep custom levels custom
+        {
+            throw new System.NotImplementedException("Not allowed to create or change non-local Stages"); 
+        }
+        if (error.load)
+        {
+            throw new System.NotImplementedException("Unknown error: Stage could not be loaded"); // needs work
+        }
     }
 }

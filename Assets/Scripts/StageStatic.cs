@@ -251,12 +251,12 @@ public static class StageStatic
         {
             stage.factState.invoke = true;
             stage.factState.Draw();
-            stage.player_record.time = stage.player_record.time > 0 ? Time.time - stage.player_record.time : -1;
         }
         else
         {
-            stage.factState = new FactOrganizer(true);
-            stage.player_record.time = devel ? -1 : Time.time;
+            stage.ResetPlay();
+            if(devel) // block saving "player" progress
+                stage.player_record.seconds = -1;
         }
 
         gameObject.UpdateTagActive("DevelopingMode", devel);

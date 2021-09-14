@@ -94,13 +94,20 @@ public static class JSONManager
 
     public class MMTDeclaration
     {
+        public string label;
         public static MMTDeclaration FromJson(string json)
         {
             MMTDeclaration mmtDecl = JsonConvert.DeserializeObject<MMTDeclaration>(json);
+            if (mmtDecl.label == null)
+                mmtDecl.label = string.Empty;
+
             return mmtDecl;
         }
         public static string ToJson(MMTDeclaration mmtDecl)
         {
+            if (mmtDecl.label == null)
+                mmtDecl.label = string.Empty;
+
             string json = JsonConvert.SerializeObject(mmtDecl);
             return json;
         }
@@ -112,7 +119,6 @@ public static class JSONManager
     public class MMTSymbolDeclaration : MMTDeclaration
     {
         public string kind = "general";
-        public string label;
         public MMTTerm tp;
         public MMTTerm df;
 
@@ -133,7 +139,6 @@ public static class JSONManager
     public class MMTValueDeclaration : MMTDeclaration
     {
         public string kind = "veq";
-        public string label;
         public MMTTerm lhs;
         public MMTTerm valueTp;
         public MMTTerm value;

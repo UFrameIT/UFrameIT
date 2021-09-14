@@ -62,7 +62,7 @@ public class HideUI : MonoBehaviour
             else if (Input.GetButtonDown(modreset))
                 StageStatic.stage.factState.softreset();
             else if (Input.GetButtonDown(modsave))
-                StageStatic.stage.store();
+                StageStatic.stage.push_record();
             else if (Input.GetButtonDown(modload)) {
                 StageStatic.stage.factState.hardreset();
                 StageStatic.LoadInitStage(StageStatic.stage.name, !StageStatic.stage.use_install_folder);

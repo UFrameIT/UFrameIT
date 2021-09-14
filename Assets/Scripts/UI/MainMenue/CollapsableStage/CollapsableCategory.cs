@@ -18,12 +18,18 @@ public class CollapsableCategory : MonoBehaviour
     {
         var header = gameObject.GetNthChild(new List<int> { 0, 0 });
 
+        // set text init
+        PopulateLocalEntryList(header, new List<string> { "err", category, "" });
+        // set colour err (for now)
+        header.GetNthChild(new List<int> { 0, 0 }).GetComponent<UnityEngine.UI.Image>().color =
+            GlobalBehaviour.StageError;
+
         var p = DrawChildren();
 
-        // set text
-        PopulateLocalEntryList(header, new List<string> { ((int)(p * 100)).ToString() + "%", category, "" });
+        // set text percent
+        PopulateLocalEntryList(header, new List<string> { ((int)(p * 100)).ToString() + "%"});
 
-        // set colour
+        // set colour percent
         header.GetNthChild(new List<int> { 0, 0 }).GetComponent<UnityEngine.UI.Image>().color =
             p * GlobalBehaviour.StageAccomplished + (1 - p) * GlobalBehaviour.StageNotYetAccomplished;
     }

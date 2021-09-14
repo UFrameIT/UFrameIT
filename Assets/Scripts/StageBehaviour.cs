@@ -7,7 +7,7 @@ public class StageBehaviour : MonoBehaviour
 {
     void Start()
     {
-        StageStatic.LoadInitStage(StageStatic.stage.player_record.solved, gameObject);
+        StageStatic.LoadInitStage(true /*StageStatic.stage.player_record.solved*/, gameObject);
     }
 
     private void OnDestroy()

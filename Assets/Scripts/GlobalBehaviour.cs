@@ -10,6 +10,7 @@ public class GlobalBehaviour : MonoBehaviour
 
     public static Color StageAccomplished;
     public static Color StageNotYetAccomplished;
+    public static Color StageError;
 
     [SerializeField]
     private Color _hintAnimationStartColor;
@@ -22,6 +23,8 @@ public class GlobalBehaviour : MonoBehaviour
     private Color _StageAccomplished;
     [SerializeField]
     private Color _StageNotYetAccomplished;
+    [SerializeField]
+    private Color _StageError;
 
     void Awake()
     {
@@ -33,6 +36,7 @@ public class GlobalBehaviour : MonoBehaviour
 
         StageAccomplished = _StageAccomplished;
         StageNotYetAccomplished = _StageNotYetAccomplished;
+        StageError = _StageError;
 
 
         StageStatic.ShallowLoadStages();

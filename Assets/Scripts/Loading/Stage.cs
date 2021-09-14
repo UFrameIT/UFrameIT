@@ -92,14 +92,50 @@ public class Stage
 
     public bool set_record(PlayerRecord record)
     {
-        if (record != null && !player_record_list.ContainsKey(record.name))
-            return false;
+        hierarchie ??= new List<Directories>();
+        hierarchie.AddRange(hierStage.AsEnumerable());
 
-        player_record = record == null ? new PlayerRecord(record_name) : record;
+        if (record != null)
+            if(!player_record_list.ContainsKey(record.name))
+                return false;
+            else if (!record.load(hierarchie))
+            {
+                deletet_record(record);
+                hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
+                return false;
+            }
+
+        player_record = record == null ? new PlayerRecord(record_name) : record.Clone(hierarchie);
+        player_record.name = record_name;
+
+        hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
 
         store(false);
 
         return true;
+    }
+
+    public void push_record(double seconds_s = -1)
+    {
+        hierarchie ??= new List<Directories>();
+        hierarchie.AddRange(hierStage.AsEnumerable());
+
+        if (seconds_s == -1)
+            seconds_s = Time.timeSinceLevelLoadAsDouble;
+        player_record.seconds += seconds_s;
+
+        var push = player_record.Clone(hierarchie);
+
+        hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
+
+        int i = 0;
+        push.name = record_name + "_" + i.ToString();
+        for (; player_record_list.ContainsKey(push.name); i++)
+            push.name = record_name + "_" + i.ToString();
+
+        player_record_list.Add(push.name, push);
+
+        store(false);
     }
 
     public void SetMode(bool create)
@@ -152,6 +188,7 @@ public class Stage
         hierarchie ??= new List<Directories>();
         hierarchie.AddRange(hierStage.AsEnumerable());
 
+        player_record.name = record_name;
         if (reset)
             player_record = new PlayerRecord(record_name);
 
@@ -170,10 +207,10 @@ public class Stage
         }
 
         if (player_record != null)
-            player_record.store(hierarchie);
+            player_record.store(hierarchie, true);
 
         foreach (var track in player_record_list)
-            track.Value.store(hierarchie);
+            track.Value.store(hierarchie, false);
 
         hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
     }
@@ -214,7 +251,8 @@ public class Stage
 
         set.hierarchie ??= new List<Directories>();
         set.hierarchie.AddRange(hierStage.AsEnumerable());
-        set.player_record.load(set.hierarchie);
+        if (!set.player_record.load(set.hierarchie))
+            set.player_record = new PlayerRecord(set.record_name);
         set.hierarchie.RemoveRange(set.hierarchie.Count - hierStage.Count, hierStage.Count);
 
         return true;
@@ -295,7 +333,7 @@ public class Stage
 
     public bool CheckSolved()
     {
-        float time_s = Time.time;
+        double time_s = Time.timeSinceLevelLoadAsDouble;
         bool solved =
             factState.DynamiclySolved(solution, out _, out List<List<string>> hits);
 
@@ -304,21 +342,11 @@ public class Stage
                 foreach (var hit in hitlist)
                     AnimateExistingFactEvent.Invoke(factState[hit]);
 
-        if (solved && player_record.time > 0)
+        if (solved && player_record.seconds > 0)
         {
             player_record.solved = solved;
-            player_record.time = time_s - player_record.time;
-
-            int i = 0;
-            player_record.name = record_name + "_" + i.ToString();
-            for (; player_record_list.ContainsKey(player_record.name); i++)
-                player_record.name = record_name + "_" + i.ToString();
-
-            player_record_list.Add(player_record.name, player_record);
-
-            var old = player_record;
-            store(true);
-            player_record = old;
+            push_record(time_s);
+            store(true); // reset player_record
         }
 
         return solved;
@@ -330,7 +358,7 @@ public class PlayerRecord
 {
     public bool solved = false;
     public long date = System.DateTime.Now.ToBinary();
-    public float time = 0;
+    public double seconds = 0;
 
     [JsonIgnore]
     public FactOrganizer factState = null;
@@ -346,13 +374,13 @@ public class PlayerRecord
         factState = new FactOrganizer();
     }
 
-    public void store(List<Directories> hierarchie)
+    public void store(List<Directories> hierarchie, bool force_write)
     {
         hierarchie ??= new List<Directories>();
         hierarchie.AddRange(hierStage.AsEnumerable());
 
         if (factState != null)
-            factState.store(name, hierarchie, false, false);
+            factState.store(name, hierarchie, false, force_write);
 
         hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
     }
@@ -381,5 +409,21 @@ public class PlayerRecord
         FactOrganizer.delete(name, hierarchie, false);
 
         hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
+    }
+
+    public PlayerRecord Clone(List<Directories> hierarchie)
+    {
+        this.store(hierarchie, true);
+
+        hierarchie ??= new List<Directories>();
+        hierarchie.AddRange(hierStage.AsEnumerable());
+
+        var ret = new PlayerRecord(this.name);
+        ret.solved = this.solved;
+        ret.seconds = this.seconds;
+        ret.load(hierarchie);
+
+        hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
+        return ret;
     }
 }
