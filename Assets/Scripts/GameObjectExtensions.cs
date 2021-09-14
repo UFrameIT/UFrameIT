@@ -16,6 +16,12 @@ public static class GameObjectExtensions
         }
     }
 
+    public static void DestroyAllChildren(this GameObject root)
+    {
+        for (int i = 0; i < root.transform.childCount; i++)
+            GameObject.Destroy(root.transform.GetChild(i).gameObject);
+    }
+
     public static GameObject GetNthChild(this GameObject root, List<int> pos)
     {
         GameObject ret = root;

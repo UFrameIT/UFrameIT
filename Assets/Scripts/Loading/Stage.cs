@@ -20,8 +20,8 @@ public class Stage
 
     [JsonIgnore]
     //TODO? update color if changed
-    public bool completed_once { get { return player_record_list != null && player_record_list.Aggregate(false, (last, next) => last || next.solved); } }
-    public List<PlayerRecord> player_record_list = null;
+    public bool completed_once { get { return player_record_list != null && player_record_list.Aggregate(false, (last, next) => last || next.Value.solved); } }
+    public Dictionary<string, PlayerRecord> player_record_list = null;
 
     [JsonIgnore]
     public SolutionOrganizer solution = null;
@@ -50,7 +50,12 @@ public class Stage
 
     private FactOrganizer hiddenState;
 
-    public Stage() { }
+    public Stage()
+    {
+        solution = new SolutionOrganizer();
+        player_record = new PlayerRecord(record_name);
+        player_record_list = new Dictionary<string, PlayerRecord>();
+    }
 
     public Stage(string category, int number, string name, string description, string scene, bool local = true)
     {
@@ -63,7 +68,7 @@ public class Stage
 
         solution = new SolutionOrganizer();
         player_record = new PlayerRecord(record_name);
-        player_record_list = new List<PlayerRecord>();
+        player_record_list = new Dictionary<string, PlayerRecord>();
     }
 
     public void CopyStates(Stage get)
@@ -79,7 +84,7 @@ public class Stage
         hierarchie.AddRange(hierStage.AsEnumerable());
 
         record.delete(hierarchie);
-        player_record_list.Remove(record);
+        player_record_list.Remove(record.name);
 
         hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
         store();
@@ -87,7 +92,7 @@ public class Stage
 
     public bool set_record(PlayerRecord record)
     {
-        if (record != null && !player_record_list.Contains(record))
+        if (record != null && !player_record_list.ContainsKey(record.name))
             return false;
 
         player_record = record == null ? new PlayerRecord(record_name) : record;
@@ -127,14 +132,19 @@ public class Stage
 
     public void delete(bool player_record_too)
     {
+        hierarchie ??= new List<Directories>();
+        hierarchie.AddRange(hierStage.AsEnumerable());
+
         solution.delete();
         player_record.delete(hierarchie);
         if (player_record_too)
             foreach (var r in player_record_list)
-                r.delete(hierarchie);
+                r.Value.delete(hierarchie);
 
         if (File.Exists(path))
             File.Delete(path);
+
+        hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
     }
 
     public void store(bool reset = false)
@@ -155,7 +165,7 @@ public class Stage
             path = path_o;
 
             hierarchie.AddRange(hierStage.AsEnumerable());
-            if(solution != null)
+            if(solution != null && solution.ValidationSet.Count > 0 && !solution.ValidationSet.Aggregate(false, (last, next) => last || next.IsEmpty()))
                 solution.store(name, hierarchie, use_install_folder);
         }
 
@@ -163,7 +173,7 @@ public class Stage
             player_record.store(hierarchie);
 
         foreach (var track in player_record_list)
-            track.store(hierarchie);
+            track.Value.store(hierarchie);
 
         hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
     }
@@ -200,6 +210,7 @@ public class Stage
             return false;
 
         set = JSONManager.ReadFromJsonFile<Stage>(path);
+        set.path = path;
 
         set.hierarchie ??= new List<Directories>();
         set.hierarchie.AddRange(hierStage.AsEnumerable());
@@ -216,13 +227,9 @@ public class Stage
 
         string path = CreatePathToFile(out bool loadable, name, "JSON", hierarchie, use_install_folder);
         hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
-        if (!loadable)
-            return false;
 
-        set = JSONManager.ReadFromJsonFile<Stage>(path);
-        set.path = path;
-        set.hierarchie = hierarchie;
-        set.use_install_folder = use_install_folder;
+        if (!loadable || !ShallowLoad(ref set, path))
+            return false;
 
         return true;
     }
@@ -273,8 +280,16 @@ public class Stage
         return ret;
     }
 
-    public void Reset()
+    public void ResetPlay()
     {
+        player_record = new PlayerRecord(record_name);
+        store(true);
+    }
+
+    public void ResetSaves()
+    {
+        player_record = new PlayerRecord(record_name);
+        player_record_list = new Dictionary<string, PlayerRecord>();
         store(true);
     }
 
@@ -294,13 +309,12 @@ public class Stage
             player_record.solved = solved;
             player_record.time = time_s - player_record.time;
 
-            var pr = player_record_list.FirstOrDefault();
-            int i = pr == null ? 1 : pr.name_nr;
-            for (; player_record_list.Exists(p => p.name_nr == i); i++) ;
+            int i = 0;
             player_record.name = record_name + "_" + i.ToString();
+            for (; player_record_list.ContainsKey(player_record.name); i++)
+                player_record.name = record_name + "_" + i.ToString();
 
-            player_record_list.Add(player_record);
-            player_record_list = player_record_list.OrderBy(p => p.time).ToList();
+            player_record_list.Add(player_record.name, player_record);
 
             var old = player_record;
             store(true);
@@ -315,13 +329,12 @@ public class Stage
 public class PlayerRecord
 {
     public bool solved = false;
-    public float date = Time.time; // TODO: correct?
+    public long date = System.DateTime.Now.ToBinary();
     public float time = 0;
 
     [JsonIgnore]
     public FactOrganizer factState = null;
     public string name = null;
-    public int name_nr = 1;
 
     private static List<Directories>
         hierStage = new List<Directories> { /*Directories.FactStateMachines*/ };

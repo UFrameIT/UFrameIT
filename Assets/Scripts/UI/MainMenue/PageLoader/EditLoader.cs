@@ -63,6 +63,8 @@ public class EditLoader : CreateLoader
 
         Stage new_stage = new Stage(category, id, name, description, scene, true);
         new_stage.CopyStates(original_stage);
+        if(!overwrite)
+            new_stage.ResetSaves();
 
         StageStatic.stage = new_stage;
         return true;

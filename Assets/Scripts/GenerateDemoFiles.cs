@@ -16,17 +16,17 @@ public class GenerateDemoFiles
         float minimalSolutionHight = 6;
 
         // Generate Stage
+        // TODO? use constructor
         Stage demo = new Stage();
         demo.number = 0;
+        demo.category = "Demo Category";
         demo.name = "TechDemo A";
         demo.scene = "RiverWorld";
         demo.description = "Improvised Level\n(Loadable)";
         demo.use_install_folder = true;
         demo.hierarchie = new List<Directories> { /*Directories.Stages*/ };
 
-        demo.factState = new FactOrganizer(true);
-        demo.solution = new SolutionOrganizer(false);
-
+        // needed to generate facts
         StageStatic.StageOfficial = new Dictionary<string, Stage>
         {
             { demo.name, demo },

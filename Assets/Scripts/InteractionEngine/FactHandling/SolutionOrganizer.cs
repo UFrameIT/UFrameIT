@@ -13,7 +13,7 @@ public class SolutionOrganizer : FactOrganizer
         endingSol = "_sol",
         endingVal = "_val";
 
-    private string path = null;
+    private string path_Val = null;
     private static List<Directories>
         hierVal = new List<Directories> { Directories.ValidationSets };
 
@@ -62,6 +62,11 @@ public class SolutionOrganizer : FactOrganizer
             if (Comparer != null)
                 this.Comparer = Comparer;
         }
+
+        public bool IsEmpty()
+        {
+            return MasterIDs.Count == 0 && SolutionIndex.Count == 0;
+        }
     }
 
     public SolutionOrganizer(bool invoke = false): base(invoke)
@@ -81,10 +86,10 @@ public class SolutionOrganizer : FactOrganizer
 
         base.store(name + endingSol, hierarchie, use_install_folder);
 
-        string path_o = path;
-        path = CreatePathToFile(out _, name + endingVal, "JSON", hierarchie, use_install_folder);
-        JSONManager.WriteToJsonFile(path, this.ValidationSet.Select(e => (e.MasterIDs, e.Comparer.ToString())), 0);
-        path = path_o;
+        string path_o = path_Val;
+        path_Val = CreatePathToFile(out _, name + endingVal, "JSON", hierarchie, use_install_folder);
+        JSONManager.WriteToJsonFile(path_Val, this.ValidationSet, 0);
+        path_Val = path_o;
 
         hierarchie.RemoveRange(hierarchie.Count - hierVal.Count, hierVal.Count);
     }
@@ -105,11 +110,13 @@ public class SolutionOrganizer : FactOrganizer
         FactOrganizer save = StageStatic.stage.factState;
         StageStatic.stage.factState = new SolutionOrganizer(false) as FactOrganizer;
 
-        loadable = FactOrganizer.load(ref StageStatic.stage.player_record.factState, draw, name + endingSol, hierarchie, use_install_folder, out Dictionary<string, string> old_to_new);
+        loadable = FactOrganizer.load(ref StageStatic.stage.player_record.factState
+            , draw, name + endingSol, hierarchie, use_install_folder, out Dictionary<string, string> old_to_new);
+
         if (loadable)
         {
             set = (SolutionOrganizer)StageStatic.stage.factState;
-            set.path = path;
+            set.path_Val = path;
         }
 
         StageStatic.stage.factState = save;
@@ -122,7 +129,7 @@ public class SolutionOrganizer : FactOrganizer
         foreach (var element in JsonTmp)
         // Parse and add
         {
-            element.MasterIDs.Select(k => old_to_new[k]);
+            element.MasterIDs = new HashSet<string>(element.MasterIDs.Select(k => old_to_new[k]));
             set.ValidationSet.Add(element);
         }
 
@@ -131,6 +138,8 @@ public class SolutionOrganizer : FactOrganizer
 
     public new void delete()
     {
-        FactOrganizer.delete(path);
+        base.delete();
+        if (System.IO.File.Exists(path_Val))
+            System.IO.File.Delete(path_Val);
     }
 }

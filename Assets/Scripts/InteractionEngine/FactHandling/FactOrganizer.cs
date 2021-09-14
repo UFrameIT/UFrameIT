@@ -526,6 +526,11 @@ public class FactOrganizer
             File.Delete(path);
     }
 
+    public void delete()
+    {
+        delete(path);
+    }
+
     public void Draw(bool draw_all = false)
     // call this after assigning a stored instance in an empty world, that was not drawn
     {

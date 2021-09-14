@@ -633,6 +633,41 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -13.065
       objectReference: {fileID: 0}
+    - target: {fileID: 4043698117328085968, guid: 59f7a79ac29f866409b5e8c706608c90,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4043698117328085968, guid: 59f7a79ac29f866409b5e8c706608c90,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4043698117328085968, guid: 59f7a79ac29f866409b5e8c706608c90,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 6153207595148985677}
+    - target: {fileID: 4043698117328085968, guid: 59f7a79ac29f866409b5e8c706608c90,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4043698117328085968, guid: 59f7a79ac29f866409b5e8c706608c90,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SetActive
+      objectReference: {fileID: 0}
+    - target: {fileID: 4043698117328085968, guid: 59f7a79ac29f866409b5e8c706608c90,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: UnityEngine.GameObject, UnityEngine
+      objectReference: {fileID: 0}
+    - target: {fileID: 4043698117328085968, guid: 59f7a79ac29f866409b5e8c706608c90,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
+      objectReference: {fileID: 0}
     - target: {fileID: 4498381424378036452, guid: 59f7a79ac29f866409b5e8c706608c90,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -860,6 +895,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 59f7a79ac29f866409b5e8c706608c90, type: 3}
+--- !u!1 &6153207595148985677 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2501937192852105333, guid: 59f7a79ac29f866409b5e8c706608c90,
+    type: 3}
+  m_PrefabInstance: {fileID: 8636847635352710456}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &6153207595148985676 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2501937192852105332, guid: 59f7a79ac29f866409b5e8c706608c90,

@@ -24,8 +24,7 @@ public abstract class ListLoader<T> : MenueLoader
 
     protected virtual void Clear()
     {
-        for (int i = 0; i < List.transform.childCount; i++)
-            Destroy(List.transform.GetChild(i).gameObject);
+        List.DestroyAllChildren();
     }
 
     protected abstract void Default();

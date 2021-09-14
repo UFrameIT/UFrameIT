@@ -5,7 +5,7 @@ public class Restart : MonoBehaviour
 {
     public void LevelReset()
     {
-        StageStatic.stage.Reset();
+        StageStatic.stage.ResetPlay();
         Loader.LoadStage(StageStatic.stage.name, !StageStatic.stage.use_install_folder, false);
     }
 

@@ -8,8 +8,34 @@ public class GlobalBehaviour : MonoBehaviour
     public static Color hintAnimationEndColor;
     public static float hintAnimationDuration;
 
+    public static Color StageAccomplished;
+    public static Color StageNotYetAccomplished;
+
+    [SerializeField]
+    private Color _hintAnimationStartColor;
+    [SerializeField]
+    private Color _hintAnimationEndColor;
+    [SerializeField]
+    private float _hintAnimationDuration;
+
+    [SerializeField]
+    private Color _StageAccomplished;
+    [SerializeField]
+    private Color _StageNotYetAccomplished;
+
     void Awake()
     {
+        //GenerateDemoFiles.GenerateAll();
+
+        hintAnimationStartColor = _hintAnimationStartColor;
+        hintAnimationEndColor = _hintAnimationEndColor;
+        hintAnimationDuration = _hintAnimationDuration;
+
+        StageAccomplished = _StageAccomplished;
+        StageNotYetAccomplished = _StageNotYetAccomplished;
+
+
         StageStatic.ShallowLoadStages();
+        //DontDestroyOnLoad(gameObject);
     }
 }
