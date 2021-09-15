@@ -599,13 +599,19 @@ public class FactOrganizer
 
         foreach (var ValidationSet in MinimalSolution.ValidationSet)
         {
+            // List to relato to. Either all active facts or those defined in RelationIndex if not empty
+            var relateList = ValidationSet.RelationIndex.Count == 0 ? activeList :
+                ValidationSet.RelationIndex.Select(i => Solution_L[i]) // Select by Index
+                .SelectMany(i => i) // Flatten structure
+                .Select(URI => this[URI]); // Get Facts
+
             // check by MasterIds
             // ALL Masters must relate
             var part_minimal = 
                 ValidationSet.MasterIDs.Select(URI => MinimalSolution[URI]);
 
             var part_solution =
-                activeList.Where(active => part_minimal.Contains(active, ValidationSet.Comparer.SetSearchRight()))
+                relateList.Where(active => part_minimal.Contains(active, ValidationSet.Comparer.SetSearchRight()))
                 .ToList(); // needed for some reason
             
             var part_missing =
@@ -621,12 +627,12 @@ public class FactOrganizer
             var part_consequential_minimal =
                 ValidationSet.SolutionIndex.Select(i => Solution_L[i]) // Select by Index
                 .SelectMany(i => i) // Flatten structure
-                .Select(URI => MinimalSolution[URI]); // Get Facts
+                .Select(URI => this[URI]); // Get Facts
 
             var part_consequential_solution =
-                activeList.Where(active => part_consequential_minimal.Contains(active, ValidationSet.Comparer.SetSearchRight()));
+                relateList.Where(active => part_consequential_minimal.Contains(active, ValidationSet.Comparer.SetSearchRight()));
 
-            Solution_L.Last().Concat(part_consequential_solution.Select(fact => fact.Id).ToList());
+            Solution_L.Last().AddRange(part_consequential_solution.Select(fact => fact.Id).ToList());
             MissingElementsCount += Convert.ToInt32(
                 part_consequential_solution.Count() == 0 && part_consequential_minimal.Count() != 0);
         }

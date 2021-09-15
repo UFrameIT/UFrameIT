@@ -47,7 +47,7 @@ public class GenerateDemoFiles
         // Set Solution
         StageStatic.stage.solution.ValidationSet =
             new List<SolutionOrganizer.SubSolution>
-            { new SolutionOrganizer.SubSolution(new HashSet<string> { target_Id }, null, new LineFactHightDirectionComparer()) };
+            { new SolutionOrganizer.SubSolution(new HashSet<string> { target_Id }, null, null, new LineFactHightDirectionComparer()) };
 
         // Save
         StageStatic.stage.store();

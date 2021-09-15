@@ -28,6 +28,12 @@ public class SolutionOrganizer : FactOrganizer
         //
         //  List<int> SolutionIndex: int{[],[0, SolutionOrganizer.ValidationSet.IndexOf(this) - 2]}
         //      marks LevelFacts found as solution in a previous entry
+        //      to relate from in addition to MasterIDs
+        //      or none if empty
+        //
+        //  List<int> RelationIndex: int{[],[0, SolutionOrganizer.ValidationSet.IndexOf(this) - 2]}
+        //      marks LevelFacts found as solution in a previous entry
+        //      to relate to instead of all facts
         //      or none if empty
         //
         //  Comparer FactComparer:
@@ -35,6 +41,7 @@ public class SolutionOrganizer : FactOrganizer
 
         public HashSet<string> MasterIDs = new HashSet<string>();
         public List<int> SolutionIndex = new List<int>();
+        public List<int> RelationIndex = new List<int>();
         [JsonIgnore]
         public FactComparer Comparer = new FactEquivalentsComparer();
 
@@ -51,13 +58,16 @@ public class SolutionOrganizer : FactOrganizer
 
         public SubSolution() { }
 
-        public SubSolution(HashSet<string> MasterIDs, List<int> SolutionIndex, FactComparer Comparer)
+        public SubSolution(HashSet<string> MasterIDs, List<int> SolutionIndex, List<int> RelationIndex, FactComparer Comparer)
         {
             if (MasterIDs != null)
                 this.MasterIDs = MasterIDs;
 
             if (SolutionIndex != null)
                 this.SolutionIndex = SolutionIndex;
+
+            if (RelationIndex != null)
+                this.RelationIndex = RelationIndex;
 
             if (Comparer != null)
                 this.Comparer = Comparer;

@@ -63,13 +63,13 @@ public class Stage
 
     public Stage(Stage get, string category, int number, string name, string description, string scene, bool local = true)
     {
+        InitOOP();
         Stage cpy = new Stage();
         // "DeepCopy" of ref-types, 'cause screw c# and ICloneable
         load(ref cpy, get.name, null, get.use_install_folder);
         this.hierarchie = cpy.hierarchie;
         this.solution = cpy.solution;
         this.player_record = cpy.player_record;
-        this.player_record_list = cpy.player_record_list;
 
         InitFields(category, number, name, description, scene, local);
 
@@ -80,11 +80,13 @@ public class Stage
         player_record.name = player_record.name.Replace(get.record_name, record_name);
         player_record.store(hierarchie, false);
 
-        foreach (var record in player_record_list.Values)
+        //this.player_record_list = cpy.player_record_list;
+        foreach (var record in cpy.player_record_list.Values)
         {
             record.load(hierarchie);
             record.name = record.name.Replace(get.record_name, record_name);
             record.store(hierarchie, false);
+            player_record_list.Add(record.name, record);
         }
 
         hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
@@ -129,7 +131,7 @@ public class Stage
 
     public void ClearALLRecords()
     {
-        foreach (var record in player_record_list.Values)
+        foreach (var record in player_record_list.Values.ToList())
             deletet_record(record, false);
 
         player_record_list = new Dictionary<string, PlayerRecord>();
@@ -175,8 +177,18 @@ public class Stage
         return true;
     }
 
-    public void push_record(double seconds_s = -1)
+    public void push_record(double seconds_s = -1, bool force_push = false)
     {
+        if(!force_push && StageStatic.devel && creatorMode)
+        // store solution space
+        {
+            SetMode(false);
+            store(false);
+            //push_record(seconds_s, false);
+            SetMode(true);
+            return;
+        }
+
         hierarchie ??= new List<Directories>();
         hierarchie.AddRange(hierStage.AsEnumerable());
 
@@ -279,24 +291,14 @@ public class Stage
     {
         Stage ret = new Stage();
 
-        hierarchie ??= new List<Directories>();
-        hierarchie.AddRange(hierStage.AsEnumerable());
-
         bool loadable = ShallowLoad(ref ret, name, hierarchie, use_install_folder);
         if (!loadable)
-        {
-            hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
             return false;
-        }
 
         loadable = ret.DeepLoad();
         if (!loadable)
-        {
-            hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
             return false;
-        }
 
-        hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
         set = ret;
         return true;
     }
@@ -394,6 +396,7 @@ public class Stage
     public bool CheckSolved()
     {
         double time_s = Time.timeSinceLevelLoadAsDouble;
+
         bool solved =
             factState.DynamiclySolved(solution, out _, out List<List<string>> hits);
 
@@ -404,9 +407,10 @@ public class Stage
 
         if (solved && player_record.seconds > 0)
         {
-            player_record.solved = solved;
+            player_record.solved = true;
             push_record(time_s);
             store(true); // reset player_record
+            player_record.solved = false;
         }
 
         return solved;

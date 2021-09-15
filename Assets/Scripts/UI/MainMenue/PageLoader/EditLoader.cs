@@ -52,9 +52,11 @@ public class EditLoader : CreateLoader
     private bool _Clone(bool overwrite)
     {
         var error = StageStatic.Validate(category, id, name, description, scene);
-        if (overwrite && name == original_stage.name) {
-            error.name = false;
-            error.id = false;
+        if (overwrite) {
+            if(name == original_stage.name)
+                error.name = false;
+            if(id == original_stage.number)
+                error.id = false;
         }
         if (!error.pass) {
             Error(error);
