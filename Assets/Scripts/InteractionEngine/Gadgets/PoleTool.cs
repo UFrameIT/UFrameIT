@@ -3,22 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 using static CommunicationEvents;
 
-public class Pendulum : Gadget
+public class PoleTool : Gadget
     //Acts as a Pendulum starting at a Point
 {
     //Attributes for simulating the drawing of a line
-    private bool lineDrawingActivated;
     public LayerMask LayerPendulumHits;
     public LineRenderer lineRenderer;
     private List<Vector3> linePositions = new List<Vector3>();
     public Material linePreviewMaterial;
 
+    public float poleHeight = 1f;
+    public float maxHeight;
+
     new void Awake()
     {
         base.Awake();
-        this.UiName = "Pendulum";
+        UiName = "PoleTool";
         if (MaxRange == 0)
-            MaxRange = GlobalBehaviour.GadgetLaserDistance;
+            MaxRange = GlobalBehaviour.GadgetPhysicalDistance;
+        if (maxHeight == 0)
+            maxHeight = 0.1f;
     }
 
     new void OnEnable()
@@ -36,26 +40,30 @@ public class Pendulum : Gadget
     public override void OnHit(RaycastHit hit)
     {
 
-        if (!this.isActiveAndEnabled) return;
+        if (!this.isActiveAndEnabled ||
+            !Physics.Raycast(Cursor.transform.position + Vector3.up * (float)Math3d.vectorPrecission,
+                Vector3.down, maxHeight + (float)Math3d.vectorPrecission, LayerMask.GetMask(new string[]{"Default", "Tree"})))
+            return;
+
+        UpdateLineDrawing();
 
         if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
-            PointFact tempFact = StageStatic.stage.factState[hit.transform.GetComponent<FactObject>().URI] as PointFact;
-
-            //Raycast downwoard
-            RaycastHit ground;
-            if(Physics.Raycast(tempFact.Point, Vector3.down, out ground, Mathf.Infinity, this.LayerPendulumHits.value))
-            {
-                FactManager.AddPointFact(ground);
-            }
+            var pid2 = FactManager.AddPointFact(linePositions[1], Vector3.up).Id;
+            FactManager.AddLineFact(hit.transform.gameObject.GetComponent<FactObject>().URI, pid2, true);
+        }
+        else
+        {
+            FactManager.AddPointFact(hit);
         }
     }
+
     void Update()
     {
         if (!this.isActiveAndEnabled)
             return;
 
-        if (this.lineDrawingActivated)
+        if (lineRenderer.enabled)
             UpdateLineDrawing();
     }
 
@@ -72,8 +80,6 @@ public class Pendulum : Gadget
 
         lineRenderer.startWidth = 0.095f;
         lineRenderer.endWidth = 0.095f;
-        //Set LineDrawing activated
-        this.lineDrawingActivated = true;
 
         //initiate linePositions-Array
         linePositions.Add(this.Cursor.transform.position);
@@ -87,12 +93,11 @@ public class Pendulum : Gadget
     {
         this.linePositions[0] = this.Cursor.transform.position;
 
-        //Raycast downwoard
-        RaycastHit ground;
-        if (Physics.Raycast(this.linePositions[0], Vector3.down, out ground, Mathf.Infinity, this.LayerPendulumHits.value))
-            this.linePositions[1] = ground.point;
+        //Raycast upwoard
+        if (Physics.Raycast(this.linePositions[0], Vector3.up, out RaycastHit ceiling, poleHeight, this.LayerPendulumHits.value))
+            this.linePositions[1] = ceiling.point;
         else
-            this.linePositions[1] = this.linePositions[0];
+            this.linePositions[1] = this.linePositions[0] + Vector3.up * poleHeight;
 
         this.lineRenderer.SetPosition(0, this.linePositions[0]);
         this.lineRenderer.SetPosition(1, this.linePositions[1]);
@@ -103,7 +108,6 @@ public class Pendulum : Gadget
     {
         this.lineRenderer.positionCount = 0;
         this.linePositions = new List<Vector3>();
-        this.lineDrawingActivated = false;
         this.lineRenderer.enabled = false;
     }
 

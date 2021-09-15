@@ -12,28 +12,27 @@ public class Tape : Gadget
     private Fact TapeModeFirstPointSelected = null;
 
     //Attributes for simulating the drawing of a line
-    private bool lineDrawingActivated;
-    public WorldCursor Cursor;
     public LineRenderer lineRenderer;
     private List<Vector3> linePositions = new List<Vector3>();
     public Material linePreviewMaterial;
 
-    void Awake()
+    new void Awake()
     {
-        if (FactManager == null)
-            FactManager = GameObject.FindObjectOfType<FactManager>();
-
-        if (this.Cursor == null)
-            this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
-
+        base.Awake();
         this.UiName = "Distance Mode";
-        CommunicationEvents.TriggerEvent.AddListener(OnHit);
+        if (MaxRange == 0)
+            MaxRange = GlobalBehaviour.GadgetPhysicalDistance;
     }
 
     //Initialize Gadget when enabled AND activated
-    void OnEnable()
+    new void OnEnable()
     {
-        this.Cursor.setLayerMask(~this.ignoreLayerMask.value);
+        base.OnEnable();
+        this.ResetGadget();
+    }
+
+    void OnDisable()
+    {
         this.ResetGadget();
     }
 
@@ -71,9 +70,7 @@ public class Tape : Gadget
         {
             if (this.TapeModeIsFirstPointSelected)
             {
-
                 RaycastHit downHit;
-
                 if (Physics.Raycast(hit.transform.gameObject.transform.position - Vector3.down * 2, Vector3.down, out downHit))
                 {
                     var idA = downHit.transform.gameObject.GetComponent<FactObject>().URI;
@@ -102,7 +99,7 @@ public class Tape : Gadget
     void Update()
     {
         if (!this.isActiveAndEnabled) return;
-        if (this.lineDrawingActivated)
+        if (lineRenderer.enabled)
             UpdateLineDrawing();
     }
 
@@ -115,13 +112,12 @@ public class Tape : Gadget
 
     private void ActivateLineDrawing()
     {
+        this.lineRenderer.enabled = true;
         this.lineRenderer.positionCount = 2;
         this.lineRenderer.material = this.linePreviewMaterial;
 
         lineRenderer.startWidth = 0.095f;
         lineRenderer.endWidth = 0.095f;
-        //Set LineDrawing activated
-        this.lineDrawingActivated = true;
         //Add the position of the Fact for the start of the Line
         linePositions.Add(this.TapeModeFirstPointSelected.Representation.transform.position);
         //The second point is the same point at the moment
@@ -144,6 +140,6 @@ public class Tape : Gadget
     {
         this.lineRenderer.positionCount = 0;
         this.linePositions = new List<Vector3>();
-        this.lineDrawingActivated = false;
+        this.lineRenderer.enabled = false;
     }
 }

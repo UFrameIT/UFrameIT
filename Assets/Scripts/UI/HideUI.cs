@@ -46,6 +46,7 @@ public class HideUI : MonoBehaviour
             }
             else
             {
+                Cursor.visible = !UICanvas.enabled;
                 CamControl.enabled = UICanvas.enabled;
                 CursorRenderer.enabled = UICanvas.enabled;
 

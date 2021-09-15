@@ -139,6 +139,21 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3020720017683626808}
     m_Modifications:
+    - target: {fileID: 3020977177096787177, guid: 70debc1e3ad46f441b522025e854184d,
+        type: 3}
+      propertyPath: m_FovKick.Camera
+      value: 
+      objectReference: {fileID: 6729715606156841934}
+    - target: {fileID: 3020977177096787177, guid: 70debc1e3ad46f441b522025e854184d,
+        type: 3}
+      propertyPath: m_MouseLook.XSensitivity
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3020977177096787177, guid: 70debc1e3ad46f441b522025e854184d,
+        type: 3}
+      propertyPath: m_MouseLook.YSensitivity
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 3020977177102835977, guid: 70debc1e3ad46f441b522025e854184d,
         type: 3}
       propertyPath: m_Name
@@ -230,6 +245,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 05ec5cf00ca181d45a42ba1870e148c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!20 &6729715606156841934 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 4891211944630835841, guid: 70debc1e3ad46f441b522025e854184d,
+    type: 3}
+  m_PrefabInstance: {fileID: 2199396992344377679}
+  m_PrefabAsset: {fileID: 0}
 --- !u!23 &1008004642071067124 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 1403140702898548923, guid: 70debc1e3ad46f441b522025e854184d,

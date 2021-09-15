@@ -141,8 +141,6 @@ public class ShinyThings : MonoBehaviour
                 var oldCol = selectionRenderer.material.color;
                 oldCol.a = .25f;
                 selectionRenderer.material.color = oldCol;
-                //Unhide Mouse cursor
-                UnityEngine.Cursor.visible = true;
             }
         }
     }
@@ -157,10 +155,6 @@ public class ShinyThings : MonoBehaviour
             var oldCol = selectionRenderer.material.color;
             oldCol.a = .75f;
             selectionRenderer.material.color = oldCol;
-
-            //Hide Mouse cursor
-           UnityEngine.Cursor.visible = false;
-
         }
     }
 

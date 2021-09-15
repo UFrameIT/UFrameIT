@@ -16,27 +16,22 @@ public class LotTool : Gadget
 
     //Attributes for simulating the drawing of a line
     private bool lineDrawingActivated;
-    public WorldCursor Cursor;
     public LineRenderer lineRenderer;
     private List<Vector3> linePositions = new List<Vector3>();
     public Material linePreviewMaterial;
 
-    void Awake()
+    new void Awake()
     {
-        if (FactManager == null)
-            FactManager = GameObject.FindObjectOfType<FactManager>();
-
-        if (this.Cursor == null)
-            this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
-
+        base.Awake();
         this.UiName = "Lot Mode";
-        CommunicationEvents.TriggerEvent.AddListener(OnHit);
+        if (MaxRange == 0)
+            MaxRange = GlobalBehaviour.GadgetLaserDistance;
     }
 
     //Initialize Gadget when enabled AND activated
-    void OnEnable()
+    new void OnEnable()
     {
-        this.Cursor.setLayerMask(~this.ignoreLayerMask.value);
+        base.OnEnable();
         this.ResetGadget();
     }
 
@@ -144,6 +139,7 @@ public class LotTool : Gadget
 
     private void ActivateLineDrawing()
     {
+        this.lineRenderer.enabled = true;
         this.lineRenderer.positionCount = 3;
         this.lineRenderer.material = this.linePreviewMaterial;
 
@@ -189,5 +185,6 @@ public class LotTool : Gadget
         this.lineRenderer.positionCount = 0;
         this.linePositions = new List<Vector3>();
         this.lineDrawingActivated = false;
+        this.lineRenderer.enabled = false;
     }
 }

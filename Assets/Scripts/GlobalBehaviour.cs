@@ -12,6 +12,9 @@ public class GlobalBehaviour : MonoBehaviour
     public static Color StageNotYetAccomplished;
     public static Color StageError;
 
+    public static float GadgetLaserDistance = 30f;
+    public static float GadgetPhysicalDistance = 2.5f;
+
     [SerializeField]
     private Color _hintAnimationStartColor;
     [SerializeField]
@@ -26,6 +29,11 @@ public class GlobalBehaviour : MonoBehaviour
     [SerializeField]
     private Color _StageError;
 
+    [SerializeField]
+    private float _GadgetLaserDistance = 30f;
+    [SerializeField]
+    private float _GadgetPhysicalDistance = 2.5f;
+
     void Awake()
     {
         //GenerateDemoFiles.GenerateAll();
@@ -37,6 +45,9 @@ public class GlobalBehaviour : MonoBehaviour
         StageAccomplished = _StageAccomplished;
         StageNotYetAccomplished = _StageNotYetAccomplished;
         StageError = _StageError;
+
+        GadgetLaserDistance = _GadgetLaserDistance;
+        GadgetPhysicalDistance = _GadgetPhysicalDistance;
 
 
         StageStatic.ShallowLoadStages();

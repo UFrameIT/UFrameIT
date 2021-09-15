@@ -4,19 +4,29 @@
 public class Gadget : MonoBehaviour
 {
 
-    public int id;
-    public string UiName;
+    public int id = -1;
+    public string UiName = "Name Not Set";
     public Sprite Sprite;
     public FactManager FactManager;
     public LayerMask ignoreLayerMask;
+    public WorldCursor Cursor;
+    public float MaxRange;
 
-    void Awake()
+    protected void Awake()
     {
         if (FactManager == null)
             FactManager = GameObject.FindObjectOfType<FactManager>();
 
-        CommunicationEvents.TriggerEvent.AddListener(OnHit);
+        if (Cursor == null)
+            Cursor = GameObject.FindObjectOfType<WorldCursor>();
 
+        CommunicationEvents.TriggerEvent.AddListener(OnHit);
+    }
+
+    protected void OnEnable()
+    {
+        this.Cursor.setLayerMask(~this.ignoreLayerMask.value);
+        Cursor.MaxRange = MaxRange;
     }
 
     public virtual void OnHit(RaycastHit hit) { }
