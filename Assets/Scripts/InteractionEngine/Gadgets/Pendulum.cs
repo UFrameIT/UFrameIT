@@ -9,26 +9,21 @@ public class Pendulum : Gadget
     //Attributes for simulating the drawing of a line
     private bool lineDrawingActivated;
     public LayerMask LayerPendulumHits;
-    public WorldCursor Cursor;
     public LineRenderer lineRenderer;
     private List<Vector3> linePositions = new List<Vector3>();
     public Material linePreviewMaterial;
 
-    void Awake()
+    new void Awake()
     {
-        if (FactManager == null)
-            FactManager = GameObject.FindObjectOfType<FactManager>();
-
-        if (this.Cursor == null)
-            this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
-
+        base.Awake();
         this.UiName = "Pendulum";
-        CommunicationEvents.TriggerEvent.AddListener(OnHit);
+        if (MaxRange == 0)
+            MaxRange = GlobalBehaviour.GadgetLaserDistance;
     }
 
-    void OnEnable()
+    new void OnEnable()
     {
-        this.Cursor.setLayerMask(~this.ignoreLayerMask.value);
+        base.OnEnable();
         this.ResetGadget();
         ActivateLineDrawing();
     }
@@ -45,7 +40,7 @@ public class Pendulum : Gadget
 
         if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
-            PointFact tempFact = LevelFacts[hit.transform.GetComponent<FactObject>().URI] as PointFact;
+            PointFact tempFact = StageStatic.stage.factState[hit.transform.GetComponent<FactObject>().URI] as PointFact;
 
             //Raycast downwoard
             RaycastHit ground;
@@ -71,6 +66,7 @@ public class Pendulum : Gadget
 
     private void ActivateLineDrawing()
     {
+        this.lineRenderer.enabled = true;
         this.lineRenderer.positionCount = 2;
         this.lineRenderer.material = this.linePreviewMaterial;
 
@@ -108,6 +104,7 @@ public class Pendulum : Gadget
         this.lineRenderer.positionCount = 0;
         this.linePositions = new List<Vector3>();
         this.lineDrawingActivated = false;
+        this.lineRenderer.enabled = false;
     }
 
 }

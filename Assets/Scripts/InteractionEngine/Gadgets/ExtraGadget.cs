@@ -2,23 +2,16 @@
 
 public class ExtraGadget : Gadget
 {
-    public WorldCursor Cursor;
-
-    void Awake()
+    new void Awake()
     {
-        if (FactManager == null)
-            FactManager = GameObject.FindObjectOfType<FactManager>();
-
-        if (this.Cursor == null)
-            this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
-
-        this.UiName = "Extra Mode";
-        CommunicationEvents.TriggerEvent.AddListener(OnHit);
+        base.Awake();
+        UiName = "Extra Mode";
+        MaxRange = GlobalBehaviour.GadgetPhysicalDistance;
     }
 
-    void OnEnable()
+    new void OnEnable()
     {
-        this.Cursor.setLayerMask(~this.ignoreLayerMask.value);
+        base.OnEnable();
     }
 
     public override void OnHit(RaycastHit hit)

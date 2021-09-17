@@ -7,6 +7,8 @@ TagManager:
   - ToolModeDisplay
   - Selectable
   - SnapZone
+  - CreatorMode
+  - DevelopingMode
   layers:
   - Default
   - TransparentFX

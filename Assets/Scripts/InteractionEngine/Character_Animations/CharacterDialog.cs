@@ -8,6 +8,7 @@ public class CharacterDialog : MonoBehaviour
 {
     public TextMeshPro textDisplay;
     public TextMeshPro textHint;
+    public TaskCharakterAnimation CharakterAnimation;
     public string[] sentences;
     private int sentenceIndex;
     private int letterIndex = 0;
@@ -35,12 +36,12 @@ public class CharacterDialog : MonoBehaviour
     {
         TypeFkt();
 
-        if(!gameSucceeded && Input.GetKeyDown(KeyCode.C) && TaskCharakterAnimation.getPlayerInTalkingZone())
+        if(!gameSucceeded && Input.GetKeyDown(KeyCode.C) && CharakterAnimation.getPlayerInTalkingZone())
         {
             //Type Next sentence if player is in the talkinZone around the TaskCharacter AND the player typed the return-Key
             NextSentence();
         }
-        else if (!gameSucceeded && !TaskCharakterAnimation.getPlayerInTalkingZone() && !textReseted)
+        else if (!gameSucceeded && !CharakterAnimation.getPlayerInTalkingZone() && !textReseted)
         {
             //Reset Sentence if Player is out of range of the TaskCharacter and it's not already reseted
             ResetSentence();
@@ -77,7 +78,7 @@ public class CharacterDialog : MonoBehaviour
         //-2 because the last sentence is only for SucceededPushout-Purposes
         if (sentenceIndex < sentences.Length - 2)
         {
-            TaskCharakterAnimation.setTaskCharacterAddressed(true);
+            CharakterAnimation.setTaskCharacterAddressed(true);
             sentenceIndex++;
             letterIndex = 0;
             typingActive = true;
@@ -96,7 +97,7 @@ public class CharacterDialog : MonoBehaviour
     }
 
     public void ResetSentence() {
-        TaskCharakterAnimation.setTaskCharacterAddressed(false);
+        CharakterAnimation.setTaskCharacterAddressed(false);
         sentenceIndex = 0;
         letterIndex = 0;
         typingActive = true;
