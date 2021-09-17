@@ -5,16 +5,13 @@ public class Restart : MonoBehaviour
 {
     public void LevelReset()
     {
-        CommunicationEvents.LevelReset.Invoke(); // currently unused
+        StageStatic.stage.ResetPlay();
+        Loader.LoadStage(StageStatic.stage.name, !StageStatic.stage.use_install_folder, false);
+    }
 
-        // delete Facts at Server
-        CommunicationEvents.LevelFacts.hardreset(false);
-        // only when generated! (in Level.cs)
-        CommunicationEvents.SolutionManager.hardreset(false);
-
-        Fact.Clear();
-
-        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+    public void LoadMainMenue()
+    {
+        SceneManager.LoadScene("MainMenue");
     }
 
     public void LoadStartScreen()

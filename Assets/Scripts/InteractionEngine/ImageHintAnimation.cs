@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using static GlobalSettings;
+using static GlobalBehaviour;
 
 public class ImageHintAnimation : MonoBehaviour
 {
@@ -72,8 +72,8 @@ public class ImageHintAnimation : MonoBehaviour
 
     private void updateAnimationParameters()
     {
-        animationStartColor = globalSettings.hintAnimationStartColor;
-        animationEndColor = globalSettings.hintAnimationEndColor;
-        animateDuration = globalSettings.hintAnimationDuration;
+        animationStartColor = GlobalBehaviour.hintAnimationStartColor;
+        animationEndColor = GlobalBehaviour.hintAnimationEndColor;
+        animateDuration = GlobalBehaviour.hintAnimationDuration;
     }
 }

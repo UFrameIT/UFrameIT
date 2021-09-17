@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-using static GlobalSettings;
+using static GlobalBehaviour;
 
 [RequireComponent(typeof(MeshRenderer))]
 public class MeshRendererHintAnimation : MonoBehaviour
@@ -58,8 +58,8 @@ public class MeshRendererHintAnimation : MonoBehaviour
 
     private void updateAnimationParameters()
     {
-        animationStartColor = globalSettings.hintAnimationStartColor;
-        animationEndColor = globalSettings.hintAnimationEndColor;
-        animateDuration = globalSettings.hintAnimationDuration;
+        animationStartColor = GlobalBehaviour.hintAnimationStartColor;
+        animationEndColor = GlobalBehaviour.hintAnimationEndColor;
+        animateDuration = GlobalBehaviour.hintAnimationDuration;
     }
 }

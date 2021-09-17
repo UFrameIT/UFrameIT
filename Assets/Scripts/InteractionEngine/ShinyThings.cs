@@ -34,6 +34,9 @@ public class ShinyThings : MonoBehaviour
     private float speedSlowDown;
     public Material pushoutMaterial;
     private Material tempMaterial;
+    public GameObject
+        Fireworks_Animation,
+        RainPrefab;
 
     // Start is called before the first frame update
     public void Start()
@@ -138,8 +141,6 @@ public class ShinyThings : MonoBehaviour
                 var oldCol = selectionRenderer.material.color;
                 oldCol.a = .25f;
                 selectionRenderer.material.color = oldCol;
-                //Unhide Mouse cursor
-                UnityEngine.Cursor.visible = true;
             }
         }
     }
@@ -154,10 +155,6 @@ public class ShinyThings : MonoBehaviour
             var oldCol = selectionRenderer.material.color;
             oldCol.a = .75f;
             selectionRenderer.material.color = oldCol;
-
-            //Hide Mouse cursor
-           UnityEngine.Cursor.visible = false;
-
         }
     }
 
@@ -189,7 +186,7 @@ public class ShinyThings : MonoBehaviour
 
     public void HighlightWithFireworks(Fact fact)
     {
-        GameObject fireworksRepresentation = (GameObject)Resources.Load("Prefabs/Fireworks_Animation", typeof(GameObject));
+        GameObject fireworksRepresentation = Fireworks_Animation;
 
         this.extraHighlight = GameObject.Instantiate(fireworksRepresentation);
         this.extraHighlight.transform.position = fact.Representation.transform.position;
@@ -307,7 +304,7 @@ public class ShinyThings : MonoBehaviour
                 //Rain-Animation starts
                 if (!factAnimationActive)
                 {
-                    GameObject RainRepresentation = (GameObject)Resources.Load("Prefabs/Rainmaker/RainPrefab", typeof(GameObject));
+                    GameObject RainRepresentation = RainPrefab;
                     RainRepresentation.transform.position = new Vector3(0, 40, 0);
                     this.extraHighlight = GameObject.Instantiate(RainRepresentation);
                     factAnimationActive = true;

@@ -250,9 +250,9 @@ public class ScrollDetails : MonoBehaviour
 
         if (suitableCompletion != null)
         {
-            if (LevelFacts.ContainsKey(suitableCompletion.assignment.uri))
+            if (StageStatic.stage.factState.ContainsKey(suitableCompletion.assignment.uri))
             {
-                fact = LevelFacts[suitableCompletion.assignment.uri];
+                fact = StageStatic.stage.factState[suitableCompletion.assignment.uri];
                 //Animate ScrollParameter
                 scrollParameter.GetComponentInChildren<ImageHintAnimation>().AnimationTrigger();
                 //Animate Fact in FactPanel
@@ -268,9 +268,9 @@ public class ScrollDetails : MonoBehaviour
             var factId = fact.Id;
 
             //If there is an equal existing fact -> Animate that fact AND ScrollParameter
-            if (LevelFacts.ContainsKey(factId))
+            if (StageStatic.stage.factState.ContainsKey(factId))
             {
-                Fact existingFact = LevelFacts[factId];
+                Fact existingFact = StageStatic.stage.factState[factId];
 
                 //Animate ScrollParameter
                 scrollParameter.GetComponentInChildren<ImageHintAnimation>().AnimationTrigger();

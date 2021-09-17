@@ -47,16 +47,54 @@ public static class CommunicationEvents
 
     //------------------------------------------------------------------------------------
     //-------------------------------Global Variables-------------------------------------
+    // TODO! move to GlobalStatic/Behaviour
 
-    // Global Level-List of Facts
-    public static FactOrganizer LevelFacts = new FactOrganizer(true);
-    public static FactOrganizer SolutionManager = new FactOrganizer(false);
-    //TODO? [SolutionManager, List<[HashSet<string>, FactComparer]>]
-    public static List<Fact> Solution = new List<Fact>();
 
     public static bool ServerRunning = true;
     public static string ServerAdress = "localhost:8085";
 
     // Configs
     public static bool VerboseURI = false;
+
+    public enum Directories
+    {
+        Stages,
+        ValidationSets,
+        FactStateMachines,
+    }
+
+    public static string CreateHierarchiePath(List<Directories> hierarchie, string prefix = "", string postfix = "")
+    {
+        foreach (var dir in hierarchie)
+            prefix = System.IO.Path.Combine(prefix, dir.ToString());
+
+        return System.IO.Path.Combine(prefix, postfix);
+    }
+
+    // TODO! avoid tree traversel with name
+    public static string CreatePathToFile(out bool file_exists,  string name, string format = null, List<Directories> hierarchie = null, bool use_install_folder = false)
+    {
+        string ending = "";
+        if(!string.IsNullOrEmpty(format))
+            switch (format)
+            {
+                case "JSON":
+                    ending = ".JSON";
+                    break;
+                default:
+                    break;
+            }
+
+        string path = use_install_folder ? Application.dataPath : Application.persistentDataPath;
+        if (hierarchie != null)
+        {
+            path = CreateHierarchiePath(hierarchie, path);
+            System.IO.Directory.CreateDirectory(path);
+        }
+
+        path = System.IO.Path.Combine(path, name + ending);
+        file_exists = System.IO.File.Exists(path);
+
+        return path;
+    }
 }

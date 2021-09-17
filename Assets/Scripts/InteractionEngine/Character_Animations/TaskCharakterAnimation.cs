@@ -30,10 +30,8 @@ public class TaskCharakterAnimation : MonoBehaviour
     private float happyTimer = 0;
     private float happyTime = 7.5f;
 
-    private static bool playerInTalkingZone = false;
-
-    // TODO: Level Reset doesn't reset this?
-    private static bool taskCharacterAddressed = false;
+    private bool playerInTalkingZone = false;
+    private bool taskCharacterAddressed = false;
 
 
     // Start is called before the first frame update
@@ -82,6 +80,7 @@ public class TaskCharakterAnimation : MonoBehaviour
                 startHappy();
                 LelvelVerifiedSolved = true;
             }
+            taskCharacterAddressed = false;
 
             return;
         }
@@ -168,7 +167,7 @@ public class TaskCharakterAnimation : MonoBehaviour
 
     public bool checkGameSolved()
     {
-        return Level.gameSolved();
+        return StageStatic.stage.CheckSolved();
     }
 
     public void startHappy()
@@ -203,23 +202,23 @@ public class TaskCharakterAnimation : MonoBehaviour
     }
 
     //Static Method for CharacterDialog
-    public static bool getPlayerInTalkingZone() {
+    public bool getPlayerInTalkingZone() {
         return playerInTalkingZone;
     }
 
     //Static Method for CharacterDialog
-    public static void setPlayerInTalkingZone(bool value) {
+    public void setPlayerInTalkingZone(bool value) {
         playerInTalkingZone = value;
     }
 
     //Static Method for CharacterDialog
-    public static bool getTaskCharacterAddressed()
+    public bool getTaskCharacterAddressed()
     {
         return taskCharacterAddressed;
     }
 
     //Static Method for CharacterDialog
-    public static void setTaskCharacterAddressed(bool value)
+    public void setTaskCharacterAddressed(bool value)
     {
         taskCharacterAddressed = value;
     }
