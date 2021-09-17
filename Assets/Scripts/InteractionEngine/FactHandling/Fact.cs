@@ -163,12 +163,6 @@ public abstract class Fact
 
     public abstract GameObject instantiateDisplay(GameObject prefab, Transform transform);
 
-    public static void Clear()
-    {
-        MaxLabelId = 0;
-        UnusedLabelIds.Clear();
-    }
-
     public virtual void delete(bool keep_clean = true)
     {
         //TODO: MMT: delete over there

@@ -9,15 +9,9 @@ public class Restart : MonoBehaviour
         Loader.LoadStage(StageStatic.stage.name, !StageStatic.stage.use_install_folder, false);
     }
 
-<<<<<<< HEAD
-        Fact.Clear();
-
-        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
-=======
     public void LoadMainMenue()
     {
         SceneManager.LoadScene("MainMenue");
->>>>>>> MaZiFAU
     }
 
     public void LoadStartScreen()
