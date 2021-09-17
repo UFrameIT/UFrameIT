@@ -313,8 +313,8 @@ public class Stage
 
         set.hierarchie ??= new List<Directories>();
         set.hierarchie.AddRange(hierStage.AsEnumerable());
-        if (!set.player_record.load(set.hierarchie))
-            set.player_record = new PlayerRecord(set.record_name);
+        //if (!set.player_record.load(set.hierarchie))
+        //    set.player_record = new PlayerRecord(set.record_name);
         set.hierarchie.RemoveRange(set.hierarchie.Count - hierStage.Count, hierStage.Count);
 
         return true;
