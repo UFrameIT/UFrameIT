@@ -368,7 +368,7 @@ public class MenuScript : MonoBehaviour
     private GameObject GetChildByName(GameObject parent, string name)
     {
         GameObject goal;
-        int childrenLength = parent.transform.GetChildCount();
+        int childrenLength = parent.transform.childCount;
         for(int i = 0; i<childrenLength; i++)
         {
             if(parent.transform.GetChild(i).gameObject.name == name)
