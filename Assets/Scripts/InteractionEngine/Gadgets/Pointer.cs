@@ -5,23 +5,12 @@ using static CommunicationEvents;
 
 public class Pointer : Gadget
 {
-    public WorldCursor Cursor;
-
-    void Awake()
+    new void Awake()
     {
-        if (FactManager == null)
-            FactManager = GameObject.FindObjectOfType<FactManager>();
-
-        if (this.Cursor == null)
-            this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
-
+        base.Awake();
         this.UiName = "Point Mode";
-        CommunicationEvents.TriggerEvent.AddListener(OnHit);
-    }
-
-    void OnEnable()
-    {
-        this.Cursor.setLayerMask(~this.ignoreLayerMask.value);
+        if (MaxRange == 0)
+            MaxRange = GlobalBehaviour.GadgetLaserDistance;
     }
 
     public override void OnHit(RaycastHit hit)

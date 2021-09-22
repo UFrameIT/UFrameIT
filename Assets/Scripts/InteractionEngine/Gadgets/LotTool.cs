@@ -16,27 +16,22 @@ public class LotTool : Gadget
 
     //Attributes for simulating the drawing of a line
     private bool lineDrawingActivated;
-    public WorldCursor Cursor;
     public LineRenderer lineRenderer;
     private List<Vector3> linePositions = new List<Vector3>();
     public Material linePreviewMaterial;
 
-    void Awake()
+    new void Awake()
     {
-        if (FactManager == null)
-            FactManager = GameObject.FindObjectOfType<FactManager>();
-
-        if (this.Cursor == null)
-            this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
-
+        base.Awake();
         this.UiName = "Lot Mode";
-        CommunicationEvents.TriggerEvent.AddListener(OnHit);
+        if (MaxRange == 0)
+            MaxRange = GlobalBehaviour.GadgetLaserDistance;
     }
 
     //Initialize Gadget when enabled AND activated
-    void OnEnable()
+    new void OnEnable()
     {
-        this.Cursor.setLayerMask(~this.ignoreLayerMask.value);
+        base.OnEnable();
         this.ResetGadget();
     }
 
@@ -72,7 +67,7 @@ public class LotTool : Gadget
         //If baseline already selected and point selected
         else if (this.LotModeIsLineSelected && !this.LotModeIsPointSelected && hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
-            PointFact tempFact = LevelFacts[hit.transform.GetComponent<FactObject>().URI] as PointFact;
+            PointFact tempFact = StageStatic.stage.factState[hit.transform.GetComponent<FactObject>().URI] as PointFact;
 
             Vector3 intersectionPoint = Math3d.ProjectPointOnLine(this.LotModeLinePointA.Point, this.LotModeLineSelected.Dir, tempFact.Point);
 
@@ -99,12 +94,12 @@ public class LotTool : Gadget
             && (hit.transform.gameObject.layer == LayerMask.NameToLayer("Ray")
             || hit.transform.gameObject.layer == LayerMask.NameToLayer("Line")))
         {
-            Fact tempFact = LevelFacts[hit.transform.GetComponent<FactObject>().URI];
+            Fact tempFact = StageStatic.stage.factState[hit.transform.GetComponent<FactObject>().URI];
 
             //Activate LineDrawing for preview
             this.LotModeIsLineSelected = true;
             this.LotModeLineSelected = tempFact as AbstractLineFact;
-            this.LotModeLinePointA = (PointFact) LevelFacts[this.LotModeLineSelected.Pid1];
+            this.LotModeLinePointA = (PointFact) StageStatic.stage.factState[this.LotModeLineSelected.Pid1];
             this.LotModeLineHit = hit;
             this.ActivateLineDrawing();
         }
@@ -144,6 +139,7 @@ public class LotTool : Gadget
 
     private void ActivateLineDrawing()
     {
+        this.lineRenderer.enabled = true;
         this.lineRenderer.positionCount = 3;
         this.lineRenderer.material = this.linePreviewMaterial;
 
@@ -189,5 +185,6 @@ public class LotTool : Gadget
         this.lineRenderer.positionCount = 0;
         this.linePositions = new List<Vector3>();
         this.lineDrawingActivated = false;
+        this.lineRenderer.enabled = false;
     }
 }

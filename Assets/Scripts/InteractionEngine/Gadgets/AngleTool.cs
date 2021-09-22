@@ -14,7 +14,6 @@ public class AngleTool : Gadget
 
     //Attributes for simulating the drawing of a curve
     private bool curveDrawingActivated;
-    public WorldCursor Cursor;
     public LineRenderer lineRenderer;
     private List<Vector3> linePositions = new List<Vector3>();
     public Material anglePreviewMaterial;
@@ -25,22 +24,23 @@ public class AngleTool : Gadget
     private Vector3 angleMiddlePoint;
     private float curveRadius;
 
-    void Awake()
+    new void Awake()
     {
-        if (FactManager == null)
-            FactManager = GameObject.FindObjectOfType<FactManager>();
-
-        if (this.Cursor == null)
-            this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
-
-        this.UiName = "Angle Mode";
-        CommunicationEvents.TriggerEvent.AddListener(OnHit);
+        base.Awake();
+        UiName = "Angle Mode";
+        if(MaxRange == 0)
+            MaxRange = GlobalBehaviour.GadgetLaserDistance;
     }
 
     //Initialize Gadget when enabled AND activated
-    void OnEnable()
+    new void OnEnable()
     {
-        this.Cursor.setLayerMask(~this.ignoreLayerMask.value);
+        base.OnEnable();
+        this.ResetGadget();
+    }
+
+    void OnDisable()
+    {
         this.ResetGadget();
     }
 
@@ -49,7 +49,7 @@ public class AngleTool : Gadget
         if (!this.isActiveAndEnabled) return;
         if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
-            PointFact tempFact = (PointFact)LevelFacts[hit.transform.GetComponent<FactObject>().URI];
+            PointFact tempFact = (PointFact)StageStatic.stage.factState[hit.transform.GetComponent<FactObject>().URI];
 
             //If two points were already selected and now the third point got selected
             if (this.angleModeIsFirstPointSelected && this.angleModeIsSecondPointSelected)
@@ -116,6 +116,7 @@ public class AngleTool : Gadget
     //Expect a LineFact here, where Line.Pid2 will be the Basis-Point of the angle
     public void ActivateCurveDrawing()
     {
+        this.lineRenderer.enabled = true;
         //In AngleMode with 3 Points we want to draw nearly a rectangle so we add a startPoint and an Endpoint to this preview
         this.lineRenderer.positionCount = curveDrawingVertexCount + 2;
         this.lineRenderer.material = this.anglePreviewMaterial;
@@ -167,6 +168,7 @@ public class AngleTool : Gadget
         this.lineRenderer.positionCount = 0;
         this.linePositions = new List<Vector3>();
         this.curveDrawingActivated = false;
+        this.lineRenderer.enabled = false;
     }
 
 }

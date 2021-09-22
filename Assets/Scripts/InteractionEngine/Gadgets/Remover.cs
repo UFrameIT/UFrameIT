@@ -5,23 +5,12 @@ using static CommunicationEvents;
 
 public class Remover : Gadget
 {
-    public WorldCursor Cursor;
-
-    void Awake()
+    new void Awake()
     {
-        if (FactManager == null)
-            FactManager = GameObject.FindObjectOfType<FactManager>();
-
-        if (this.Cursor == null)
-            this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
-
+        base.Awake();
         this.UiName = "Remove Mode";
-        CommunicationEvents.TriggerEvent.AddListener(OnHit);
-    }
-
-    void OnEnable()
-    {
-        this.Cursor.setLayerMask(~this.ignoreLayerMask.value);
+        if (MaxRange == 0)
+            MaxRange = GlobalBehaviour.GadgetLaserDistance;
     }
 
     public override void OnHit(RaycastHit hit)
@@ -32,7 +21,6 @@ public class Remover : Gadget
 
         // TODO: ask/warn user to cascade
         var hid = hit.transform.GetComponent<FactObject>().URI;
-        LevelFacts.Remove(hid);
+        StageStatic.stage.factState.Remove(hid);
     }
-  
 }

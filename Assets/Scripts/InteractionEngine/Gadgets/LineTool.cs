@@ -11,27 +11,27 @@ public class LineTool : Gadget
 
     //Attributes for simulating the drawing of a line
     private bool lineDrawingActivated;
-    public WorldCursor Cursor;
     public LineRenderer lineRenderer;
     private List<Vector3> linePositions = new List<Vector3>();
     public Material linePreviewMaterial;
 
-    void Awake()
+    new void Awake()
     {
-        if (FactManager == null)
-            FactManager = GameObject.FindObjectOfType<FactManager>();
-
-        if (this.Cursor == null)
-            this.Cursor = GameObject.FindObjectOfType<WorldCursor>();
-
-        this.UiName = "Line Mode";
-        CommunicationEvents.TriggerEvent.AddListener(OnHit);
+        base.Awake();
+        UiName = "Line Mode";
+        if (MaxRange == 0)
+            MaxRange = GlobalBehaviour.GadgetLaserDistance;
     }
 
     //Initialize Gadget when enabled AND activated
-    void OnEnable()
+    new void OnEnable()
     {
-        this.Cursor.setLayerMask(~this.ignoreLayerMask.value);
+        base.OnEnable();
+        this.ResetGadget();
+    }
+
+    void OnDisable()
+    {
         this.ResetGadget();
     }
 
@@ -40,7 +40,7 @@ public class LineTool : Gadget
         if (!this.isActiveAndEnabled) return;
         if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
-            Fact tempFact = LevelFacts[hit.transform.GetComponent<FactObject>().URI];
+            Fact tempFact = StageStatic.stage.factState[hit.transform.GetComponent<FactObject>().URI];
 
             //If first point was already selected AND second point != first point
             if (this.LineModeIsFirstPointSelected && this.LineModeFirstPointSelected.Id != tempFact.Id)
@@ -109,6 +109,7 @@ public class LineTool : Gadget
 
     private void ActivateLineDrawing()
     {
+        this.lineRenderer.enabled = true;
         this.lineRenderer.positionCount = 2;
         this.lineRenderer.material = this.linePreviewMaterial;
 
@@ -139,5 +140,6 @@ public class LineTool : Gadget
         this.lineRenderer.positionCount = 0;
         this.linePositions = new List<Vector3>();
         this.lineDrawingActivated = false;
+        this.lineRenderer.enabled = false;
     }
 }
