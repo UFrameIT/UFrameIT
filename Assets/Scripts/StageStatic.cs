@@ -35,10 +35,7 @@ public static class StageStatic
             (local_stage ? StageLocal : StageOfficial).Remove(current_name);
             (local_stage ? StageLocal : StageOfficial).Add(current_name, value);
 
-            bool tmp = value.creatorMode;
-            value.creatorMode = true;
             value.store();
-            value.creatorMode = tmp;
         }
     }
 
