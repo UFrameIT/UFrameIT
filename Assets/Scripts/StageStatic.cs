@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 using UnityEngine;
 
 public static class StageStatic
@@ -50,6 +51,9 @@ public static class StageStatic
     // TODO! generate at buildtime
     private static List<string> GenerateWorldList()
     {
+
+#if UNITY_EDITOR
+
         _Worlds = new List<string>();
 
         string world = "World";
@@ -67,6 +71,10 @@ public static class StageStatic
                 }
             }
         }
+#else
+        _Worlds = new List<string> {"TreeWorld", "RiverWorld"};
+        Debug.Log("WorldList might be incomplete or incorrect!");
+#endif
 
         return _Worlds;
     }
