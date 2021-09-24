@@ -274,8 +274,9 @@ public class Stage
             path = path_o;
 
             hierarchie.AddRange(hierStage.AsEnumerable());
-            if(solution != null && solution.ValidationSet.Count > 0 && !solution.ValidationSet.Aggregate(false, (last, next) => last || next.IsEmpty()))
-                solution.store(name, hierarchie, use_install_folder);
+            if(solution != null)
+                solution.store(name, hierarchie, use_install_folder,
+                    overwrite: solution.ValidationSet.Count > 0 && !solution.ValidationSet.Aggregate(false, (last, next) => last || next.IsEmpty()));
         }
 
         if (player_record != null)

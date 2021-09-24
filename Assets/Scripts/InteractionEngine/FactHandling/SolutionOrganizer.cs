@@ -89,7 +89,7 @@ public class SolutionOrganizer : FactOrganizer
         return ValidationSet[i].MasterIDs.Select(id => this[id]).ToList();
     }
 
-    public new void store(string name, List<Directories> hierarchie = null, bool use_install_folder = false)
+    public new void store(string name, List<Directories> hierarchie = null, bool use_install_folder = false, bool overwrite = true)
     {
         hierarchie ??= new List<Directories>();
         hierarchie.AddRange(hierVal.AsEnumerable());
@@ -97,11 +97,17 @@ public class SolutionOrganizer : FactOrganizer
         base.store(name + endingSol, hierarchie, use_install_folder);
 
         string path_o = path_Val;
-        path_Val = CreatePathToFile(out _, name + endingVal, "JSON", hierarchie, use_install_folder);
+        path_Val = CreatePathToFile(out bool exists, name + endingVal, "JSON", hierarchie, use_install_folder);
+        hierarchie.RemoveRange(hierarchie.Count - hierVal.Count, hierVal.Count);
+
+        if (exists && !overwrite)
+        {
+            path_Val = path_o;
+            return;
+        }
+
         JSONManager.WriteToJsonFile(path_Val, this.ValidationSet, 0);
         path_Val = path_o;
-
-        hierarchie.RemoveRange(hierarchie.Count - hierVal.Count, hierVal.Count);
     }
 
     public static bool load(ref SolutionOrganizer set, bool draw, string name, List<Directories> hierarchie = null, bool use_install_folder = false)
