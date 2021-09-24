@@ -93,7 +93,7 @@ public abstract class Fact
     // should be called once a constructor call
     public string Label {
         get { // in case of renamed dependables
-            return hasCustomLabel ?
+            return hasCustomLabel && _CustomLabel != null ?
                 _CustomLabel :
                 generateLabel();
         }
