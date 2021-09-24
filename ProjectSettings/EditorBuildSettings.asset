@@ -5,7 +5,7 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Menues/StartScreen.unity
     guid: 80736d45fa76e1b488eab0eb8650ff3d
   - enabled: 0
@@ -23,4 +23,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Worlds/TreeWorld.unity
     guid: 8c44c18165442d84d96027a49ff22f5b
+  - enabled: 1
+    path: Assets/Scenes/Test/Andr_Start.unity
+    guid: c3be63d0c0f7690438b4f0c722d3b9b3
+  - enabled: 1
+    path: Assets/Scenes/Test/Andr_TreeWorld.unity
+    guid: 3d6d5fbda85aee34a963a6f0d441dcf1
   m_configObjects: {}

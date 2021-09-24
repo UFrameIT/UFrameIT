@@ -51,8 +51,11 @@ public static class CommunicationEvents
 
 
     public static bool ServerRunning = true;
-    public static string ServerAdress = "localhost:8085";
-
+    public static string ServerPortDefault = "8085";
+    public static string ServerAdress = "http://localhost:8085"; //need "http://" 
+    public static string ServerAddress1 = "localhost:8085";
+    public static string ServerAddress2 = "10.231.4.95:8085";
+	
     // Configs
     public static bool VerboseURI = false;
 

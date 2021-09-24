@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System;
 using UnityEngine;
 #if UNITY_EDITOR
@@ -13,7 +14,8 @@ namespace UnityStandardAssets.Utility
         // Use this for initialization
         private void OnEnable()
         {
-#if UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8 || UNITY_TIZEN
+//*
+#if UNITY_IPHONE || UNITY_ANDROID || UNITY_WP8 || UNITY_TIZEN 
 			var renderers = FindObjectsOfType<Renderer>();
 			Debug.Log (renderers.Length+" renderers");
 			var oldMaterials = new List<Material>();
@@ -62,6 +64,7 @@ namespace UnityStandardAssets.Utility
 				Debug.Log (oldMaterials[n].name+" ("+oldMaterials[n].shader.name+")"+" replaced with "+newMaterials[n].name+" ("+newMaterials[n].shader.name+")");
 			}
 #endif
+//*/
         }
 
 
