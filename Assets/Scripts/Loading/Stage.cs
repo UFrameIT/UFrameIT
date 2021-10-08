@@ -158,14 +158,20 @@ public class Stage
         hierarchie.AddRange(hierStage.AsEnumerable());
 
         if (record != null)
-            if(!player_record_list.ContainsKey(record.name))
+        {
+            if (!player_record_list.ContainsKey(record.name))
+            {
+                hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
                 return false;
+            }
+
             else if (!record.load(hierarchie))
             {
                 deletet_record(record);
                 hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
                 return false;
             }
+        }
 
         player_record = record == null ? new PlayerRecord(record_name) : record.Clone(hierarchie);
         player_record.name = record_name;
@@ -276,7 +282,7 @@ public class Stage
             hierarchie.AddRange(hierStage.AsEnumerable());
             if(solution != null)
                 solution.store(name, hierarchie, use_install_folder,
-                    overwrite: solution.ValidationSet.Count > 0 && !solution.ValidationSet.Aggregate(false, (last, next) => last || next.IsEmpty()));
+                    overwrite: solution.ValidationSet.Count > 0 && !solution.ValidationSet.Aggregate(true, (last, next) => last && next.IsEmpty()));
         }
 
         if (player_record != null)
@@ -458,11 +464,11 @@ public class PlayerRecord
 
         factState = new FactOrganizer(false);
         bool loadable = FactOrganizer.load(ref factState, false, name, hierarchie, false, out _);
+        hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
         if (!loadable) {
             return false;
         }
 
-        hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);
         return true;
     }
 
