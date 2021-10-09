@@ -22,7 +22,7 @@ public static class GameObjectExtensions
             GameObject.Destroy(root.transform.GetChild(i).gameObject);
     }
 
-    public static GameObject GetNthChild(this GameObject root, List<int> pos)
+    public static GameObject GetNthChild(this GameObject root, IEnumerable<int> pos)
     {
         GameObject ret = root;
         foreach (var i in pos)

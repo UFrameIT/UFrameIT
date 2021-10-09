@@ -185,7 +185,7 @@ public class Stage
 
     public void push_record(double seconds_s = -1, bool force_push = false)
     {
-        if(!force_push && StageStatic.devel && creatorMode)
+        if(!force_push && StageStatic.mode == StageStatic.Mode.Create && creatorMode)
         // store solution space
         {
             SetMode(false);

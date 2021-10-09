@@ -12,17 +12,12 @@ public class StageBehaviour : MonoBehaviour
 
     private void OnDestroy()
     {
-        StageStatic.devel = false;
+        StageStatic.SetMode(Mode.Play); // no Mode.Create
         StageStatic.stage.solution.hardreset();
         StageStatic.stage.factState.hardreset();
     }
 
-    public void SetDevel(bool devel)
-    {
-        StageStatic.devel = devel;
-        gameObject.UpdateTagActive("DevelopingMode", devel);
-    }
-
+    // needed as endpoint for unity buttons
     public void SetMode(bool create)
     {
         SetMode(create ? Mode.Create : Mode.Play);
