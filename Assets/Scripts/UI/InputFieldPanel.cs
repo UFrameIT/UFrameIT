@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// Just adds a " " to the end of <see cref="TMPro"/> input-field-text-box. <br/>
+/// This fixes some graphical glitches, occuring when typing a [newline].
+/// </summary>
 public class InputFieldPanel : MonoBehaviour
 {
     private TMPro.TextMeshProUGUI output;
     private TMPro.TMP_InputField input;
-    private string newline;
 
     void Start()
     {

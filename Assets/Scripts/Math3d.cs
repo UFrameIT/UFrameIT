@@ -739,8 +739,7 @@ public class Math3d
         //of the triangle defined by the 3 points.
         //We could use LineLineIntersection instead of ClosestPointsOnTwoLines but due to rounding errors 
         //this sometimes doesn't work.
-        Vector3 temp;
-        ClosestPointsOnTwoLines(out planePoint, out temp, middleAB, middleABtoC, middleAC, middleACtoB);
+        ClosestPointsOnTwoLines(out planePoint, out _, middleAB, middleABtoC, middleAC, middleACtoB);
     }
 
     //Returns the forward vector of a quaternion
@@ -813,18 +812,15 @@ public class Math3d
         childPosition = Vector3.zero;
 
         //set the parent start transform
-        tempParent.rotation = startParentRotation;
-        tempParent.position = startParentPosition;
+        tempParent.SetPositionAndRotation(startParentPosition, startParentRotation);
         tempParent.localScale = Vector3.one; //to prevent scale wandering
 
         //set the child start transform
-        tempChild.rotation = startChildRotation;
-        tempChild.position = startChildPosition;
+        tempChild.SetPositionAndRotation(startChildPosition, startChildRotation);
         tempChild.localScale = Vector3.one; //to prevent scale wandering
 
         //translate and rotate the child by moving the parent
-        tempParent.rotation = parentRotation;
-        tempParent.position = parentPosition;
+        tempParent.SetPositionAndRotation(parentPosition, parentRotation);
 
         //get the child transform
         childRotation = tempChild.rotation;
@@ -859,9 +855,7 @@ public class Math3d
     //Convert a position, direction, and normal vector to a transform
     public static void VectorsToTransform(ref GameObject gameObjectInOut, Vector3 positionVector, Vector3 directionVector, Vector3 normalVector)
     {
-
-        gameObjectInOut.transform.position = positionVector;
-        gameObjectInOut.transform.rotation = Quaternion.LookRotation(directionVector, normalVector);
+        gameObjectInOut.transform.SetPositionAndRotation(positionVector, Quaternion.LookRotation(directionVector, normalVector));
     }
 
     //This function finds out on which side of a line segment the point is located.

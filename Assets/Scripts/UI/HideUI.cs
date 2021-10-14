@@ -6,7 +6,7 @@ public class HideUI : MonoBehaviour
 {
 
     public KeyCode Key = KeyCode.F1;
-    //public KeyCode ScreenshotKey = KeyCode.F2;
+    //public KeyCode ScreenshotKey = KeyCode.F12;
 
     public string
         modifier,

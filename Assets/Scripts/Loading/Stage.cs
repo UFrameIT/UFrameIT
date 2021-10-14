@@ -432,11 +432,7 @@ public class Stage
     /// - <see cref="ShallowLoad(ref Stage, string, List<Directories>, bool)"/>
     /// - <see cref="DeepLoad"/>
     /// </summary>
-    /// <param name="set">see <see cref="ShallowLoad(ref Stage, string, List<Directories>, bool)"/></param>
-    /// <param name="name">see <see cref="ShallowLoad(ref Stage, string, List<Directories>, bool)"/></param>
-    /// <param name="hierarchie">see <see cref="ShallowLoad(ref Stage, string, List<Directories>, bool)"/></param>
-    /// <param name="use_install_folder">see <see cref="ShallowLoad(ref Stage, string, List<Directories>, bool)"/></param>
-    /// <returns><see langword="true"/> iff succeeded</returns>
+    /// \copydetails ShallowLoad(ref Stage, string, List<Directories>, bool)
     public static bool load(ref Stage set, string name, List<Directories> hierarchie = null, bool use_install_folder = false)
     {
         Stage ret = new Stage();
@@ -523,7 +519,7 @@ public class Stage
     }
 
     /// <summary>
-    /// Looks for saved <see cref="Stage">Stages</see> in parametised directories.
+    /// Looks for saved <see cref="Stage">Stages</see> in parametised directories and calls on them <see cref="ShallowLoad(ref Stage, string)"/>.
     /// </summary>
     /// <param name="hierarchie">see <see cref="hierarchie"/> //TODO? Interface</param>
     /// <param name="use_install_folder">see <see cref="use_install_folder"/></param>
@@ -694,9 +690,11 @@ public class PlayerRecord
         hierarchie ??= new List<Directories>();
         hierarchie.AddRange(hierStage.AsEnumerable());
 
-        var ret = new PlayerRecord(this.name);
-        ret.solved = this.solved;
-        ret.seconds = this.seconds;
+        var ret = new PlayerRecord(this.name)
+        {
+            solved = this.solved,
+            seconds = this.seconds
+        };
         ret.load(hierarchie);
 
         hierarchie.RemoveRange(hierarchie.Count - hierStage.Count, hierStage.Count);

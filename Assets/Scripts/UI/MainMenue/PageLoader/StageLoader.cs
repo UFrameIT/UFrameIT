@@ -17,7 +17,7 @@ public class StageLoader : ListLoader<Stage>
         NoId = "",
         NoStage = "-----",
         NoDescr = "No Entry found, please check directory!",
-        NoLocal = "No local Stage\nClick [+]";
+        NoLocal = "No local Stage\nClick [+] button above";
 
     public override void Init()
     {

@@ -9,7 +9,7 @@ public static class GameObjectExtensions
         for (int i = 0; i < root.transform.childCount; i++)
         {
             GameObject child = root.transform.GetChild(i).gameObject;
-            if (child.tag == tag)
+            if (child.CompareTag(tag))
                 child.SetActive(enable);
             else
                 UpdateTagActive(child, tag, enable);

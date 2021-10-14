@@ -234,8 +234,10 @@ public static class StageStatic
         if (!ret.pass)
             return ret;
 
-        stage = new Stage(category, id, name, description, scene, true);
-        stage.creatorMode = true;
+        stage = new Stage(category, id, name, description, scene, true)
+        {
+            creatorMode = true
+        };
         stage.store();
 
         LoadCreate();
@@ -276,6 +278,13 @@ public static class StageStatic
         return last + 1;
     }
 
+    /// <summary>
+    /// Looks wether an <see cref="Stage.number"/> <paramref name="i"/> exists within a certain <see cref="Stage.category"/> <paramref name="category"/> in local saves (<paramref name="local"/> == <see langword="true"/>) or install path.
+    /// </summary>
+    /// <param name="category">to look in</param>
+    /// <param name="i">to look for</param>
+    /// <param name="local">where to look</param>
+    /// <returns></returns>
     public static bool ContainsNumber(string category, int i, bool local)
     {
         return (local ? StageLocal : StageOfficial).Values
@@ -284,34 +293,59 @@ public static class StageStatic
             .Contains(i);
     }
 
+    /// <summary>
+    /// Looks for and initial loads (see <see cref="Stage.ShallowLoad(ref Stage, string)"/>) <see cref="Stage">Stages</see> in <see cref="local_stage"/> and !<see cref="local_stage"/>.
+    /// </summary>
     public static void ShallowLoadStages()
     {
         StageOfficial = Stage.Grup(null, true);
         StageLocal = Stage.Grup(null, false);
     }
 
+    /// <summary>
+    /// Sets parameters, defining what to load in <see cref="LoadInitStage(bool, GameObject)"/> and <see cref="LoadInitStage(string, bool, bool, GameObject)"/>.
+    /// </summary>
+    /// <param name="name">sets <see cref="current_name"/></param>
+    /// <param name="local">sets <see cref="local_stage"/></param>
     public static void SetStage(string name, bool local)
     {
         local_stage = local;
         current_name = name;
     }
 
+    /// <summary>
+    /// Returns a <see cref="Stage"/> or throws <see cref="Exception"/> if not found.
+    /// </summary>
+    /// <param name="name"><see cref="Stage.name"/></param>
+    /// <param name="local">where to look</param>
+    /// <returns><c>(local ? StageLocal : StageOfficial)[name];</c></returns>
     public static Stage GetStage(string name, bool local)
     {
         return (local ? StageLocal : StageOfficial)[name];
     }
 
+    /// <summary>
+    /// Deletes a <see cref="Stage"/> and all its associated files (including save games).
+    /// <seealso cref="Stage.delete(bool)"/>
+    /// </summary>
+    /// <param name="stage">to be deleted</param>
     public static void Delete(Stage stage)
     {
         GetStage(stage.name, !stage.use_install_folder).delete(true);
         (!stage.use_install_folder ? StageLocal : StageOfficial).Remove(stage.name);
     }
 
+    /// <summary>
+    /// Wrapps <see cref="LoadInitStage(bool, GameObject)"/> with extra parameters.
+    /// Loads and initiates <see cref="Stage"/> defined by <paramref name="name"/> and <paramref name="local"/>.
+    /// </summary>
+    /// <param name="name">sets <see cref="current_name"/> iff succeedes</param>
+    /// <param name="local">sets <see cref="current_name"/> iff succeedes</param>
+    /// <param name="restore_session">wether to restore last (loaded) player session (<see langword="true"/>) or start from scratch (<see langword="false"/>).</param>
+    /// <param name="gameObject">(e.g. UI/ Def_Stage) toggles recursively children with tag "DevelopingMode" to <see cref="mode"/> == <see cref="Mode.Create"/>.</param>
+    /// <returns><see langword="false"/> iff <see cref="Stage"/> defined by <paramref name="name"/> and <paramref name="local"/> could not be *found* or *loaded*.</returns>
     public static bool LoadInitStage(string name, bool local = false, bool restore_session = true, GameObject gameObject = null)
     {
-        if (!ContainsKey(name, local))
-            return false;
-
         bool old_l = local_stage;
         string old_n = current_name;
         SetStage(name, local);
@@ -326,12 +360,16 @@ public static class StageStatic
         return true;
     }
 
+    /// <summary>
+    /// Loads and initiates <see cref="Stage"/> defined by <see cref="current_name"/> and <see cref="local_stage"/>.
+    /// </summary>
+    /// <param name="restore_session">wether to restore last (loaded) player session (<see langword="true"/>) or start from scratch (<see langword="false"/>).</param>
+    /// <param name="gameObject">(e.g. UI/ Def_Stage) toggles recursively children with tag "DevelopingMode" to <see cref="mode"/> == <see cref="Mode.Create"/>.</param>
+    /// <returns><see langword="false"/> iff <see cref="Stage"/> defined by <see cref="current_name"/> and <see cref="local_stage"/> could not be *found* or *loaded*.</returns>
     public static bool LoadInitStage(bool restore_session, GameObject gameObject = null)
     {
-        if (current_name == null || current_name.Length == 0 || !stage.DeepLoad())
+        if (!ContainsKey(current_name, local_stage) || !stage.DeepLoad())
             return false;
-
-        gameObject ??= new GameObject();
 
         if (restore_session)
         {
@@ -345,15 +383,24 @@ public static class StageStatic
                 stage.player_record.seconds = -1;
         }
 
-        gameObject.UpdateTagActive("DevelopingMode", mode == Mode.Create);
+        if(gameObject != null)
+            gameObject.UpdateTagActive("DevelopingMode", mode == Mode.Create);
         SetMode(stage.creatorMode ? Mode.Create : Mode.Play);
         return true;
     }
 
+    /// <summary>
+    /// Wrapps <see cref="ContainsKey(string, bool)"/>; defaulting local to <see cref="local_stage"/>
+    /// </summary>
     public static bool ContainsKey(string key)
     {
         return ContainsKey(key, local_stage);
     }
+
+    /// <summary>
+    /// Looks for a <see cref="Stage"/> <paramref name="key"/> in <see cref="StageLocal"/> (<paramref name="local"/>==<see langword="true"/>) or <see cref="StageOfficial"/> (<paramref name="local"/>==<see langword="false"/>).
+    /// </summary>
+    /// <returns><c>(local ? StageLocal : StageOfficial).ContainsKey(key)</c></returns>
     public static bool ContainsKey(string key, bool local)
     {
         return (local ? StageLocal : StageOfficial).ContainsKey(key);

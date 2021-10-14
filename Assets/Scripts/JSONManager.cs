@@ -171,8 +171,10 @@ public static class JSONManager
         int current_depth = 0;
 
         // This tells your serializer that multiple references are okay.
-        var settings = new JsonSerializerSettings();
-        settings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+        var settings = new JsonSerializerSettings
+        {
+            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+        };
 
         BindingFlags bindFlags =
             BindingFlags.Instance |

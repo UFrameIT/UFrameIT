@@ -93,9 +93,9 @@ class LineFactHightDirectionComparer : FactComparer
     /// \copydoc FactComparer.Compare
     protected override bool Compare (Fact solution, Fact fact)
     {
-        return fact is LineFact && solution is LineFact
-            && Math3d.IsApproximatelyParallel(((LineFact) fact).Dir, ((LineFact) solution).Dir)
-            && ((LineFact) fact).Distance + Math3d.vectorPrecission >= ((LineFact) solution).Distance;
+        return fact is LineFact factLine && solution is LineFact solutionLine
+            && Math3d.IsApproximatelyParallel(factLine.Dir, solutionLine.Dir)
+            && factLine.Distance + Math3d.vectorPrecission >= solutionLine.Distance;
         // && Mathf.Approximately(((LineFact) x).Distance, ((LineFact) y).Distance);
     }
 }

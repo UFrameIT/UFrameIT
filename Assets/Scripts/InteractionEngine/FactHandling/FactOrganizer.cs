@@ -406,7 +406,9 @@ public class FactOrganizer
     public string Add(Fact value, out bool exists, bool samestep = false)
     {
         soft_resetted = false;
+#pragma warning disable IDE0018 // Inlinevariablendeklaration
         string key;
+#pragma warning restore IDE0018 // Inlinevariablendeklaration
 
         if (exists = FindEquivalent(value, out key, out bool exact))
         {
