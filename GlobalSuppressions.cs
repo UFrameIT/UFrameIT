@@ -7,6 +7,7 @@ using System.Diagnostics.CodeAnalysis;
 
 //Global
 [assembly: SuppressMessage("Style", "IDE1006:Benennungsstile", Justification = "<Ausstehend>")]
+[assembly: SuppressMessage("Style", "IDE0090:\"new(...)\" verwenden", Justification = "Unity will fail")]
 
 //Local
 [assembly: SuppressMessage("Style", "IDE0018:Inlinevariablendeklaration", Justification = "Readability", Scope = "member", Target = "~M:Math3d.GetLineSplineIntersections(UnityEngine.Vector2[],UnityEngine.Vector2[])")]

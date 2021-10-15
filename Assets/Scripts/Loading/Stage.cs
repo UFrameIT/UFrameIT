@@ -596,7 +596,7 @@ public class Stage
         {
             player_record.solved = true;
             push_record(time_s);
-            store(true); // reset player_record
+            store(false); // keep player_record
             player_record.solved = false;
         }
 
