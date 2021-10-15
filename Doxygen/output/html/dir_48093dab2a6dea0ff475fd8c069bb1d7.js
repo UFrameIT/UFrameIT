@@ -16,7 +16,9 @@ var dir_48093dab2a6dea0ff475fd8c069bb1d7 =
     [ "FactComparer.cs", "_fact_comparer_8cs.html", [
       [ "FactComparer", "class_fact_comparer.html", "class_fact_comparer" ],
       [ "FactEquivalentsComparer", "class_fact_equivalents_comparer.html", "class_fact_equivalents_comparer" ],
-      [ "LineFactHightDirectionComparer", "class_line_fact_hight_direction_comparer.html", "class_line_fact_hight_direction_comparer" ]
+      [ "LineFactHightDirectionComparer", "class_line_fact_hight_direction_comparer.html", "class_line_fact_hight_direction_comparer" ],
+      [ "LineFactHightComparer", "class_line_fact_hight_comparer.html", "class_line_fact_hight_comparer" ],
+      [ "LineSpanningOverRiverWorldComparer", "class_line_spanning_over_river_world_comparer.html", "class_line_spanning_over_river_world_comparer" ]
     ] ],
     [ "FactManager.cs", "_fact_manager_8cs.html", [
       [ "FactManager", "class_fact_manager.html", "class_fact_manager" ]

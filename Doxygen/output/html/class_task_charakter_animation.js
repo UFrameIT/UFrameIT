@@ -26,6 +26,7 @@ var class_task_charakter_animation =
     [ "rotationUnits", "class_task_charakter_animation.html#ae031722f686338f76b9bc84b3034a2dc", null ],
     [ "standing", "class_task_charakter_animation.html#ab5c1fc8149c11881909c9a060dbc7a4c", null ],
     [ "standingTime", "class_task_charakter_animation.html#a112ccb4e42afd3ac8bebfa2576320991", null ],
+    [ "talkingZoneCapsule", "class_task_charakter_animation.html#a9752905f3c1a5ecfdb7a66e692be736e", null ],
     [ "talkingZoneDistance", "class_task_charakter_animation.html#a01ef893c6af519c973d7a1488542d303", null ],
     [ "taskCharacterAddressed", "class_task_charakter_animation.html#ad04c3cf6cf00321e35a16c4cdeb6b56a", null ],
     [ "timer", "class_task_charakter_animation.html#a7725f6b02e963312f3f61fd4f90c666d", null ],

@@ -13,10 +13,11 @@ var searchData=
   ['representation_10',['Representation',['../class_fact.html#ac78c42d053d145656555d4af4e8a76b9',1,'Fact']]],
   ['requiredfacts_11',['requiredFacts',['../class_scroll.html#a095a93aa67c121b8d9e6dbae0e071f89',1,'Scroll']]],
   ['rid_12',['Rid',['../class_on_line_fact.html#a8ea1d30663b24733566d4001b01ee3e2',1,'OnLineFact']]],
-  ['rotate_13',['rotate',['../class_task_charakter_animation.html#a58a6cfbec47964bece408a6a64a5cc69',1,'TaskCharakterAnimation']]],
-  ['rotationregister_14',['rotationRegister',['../class_math3d.html#a0c3a0bf45773d2c8834e0eeea7eb5bf1',1,'Math3d']]],
-  ['rotationsamplestaken_15',['rotationSamplesTaken',['../class_math3d.html#a64dea2a47f90cd54e9ebe0ea1a8a2433',1,'Math3d']]],
-  ['rotationtime_16',['rotationTime',['../class_task_charakter_animation.html#a78942058c4e3696c36443e217c41f1ee',1,'TaskCharakterAnimation']]],
-  ['rotationunits_17',['rotationUnits',['../class_task_charakter_animation.html#ae031722f686338f76b9bc84b3034a2dc',1,'TaskCharakterAnimation']]],
-  ['rottimeregister_18',['rotTimeRegister',['../class_math3d.html#a909fc243961c61e25fad35a5538003a3',1,'Math3d']]]
+  ['riverwallcollider_13',['RiverWallCollider',['../class_line_spanning_over_river_world_comparer.html#ac054e8f0a38d393efcac9cc5c4dd880c',1,'LineSpanningOverRiverWorldComparer']]],
+  ['rotate_14',['rotate',['../class_task_charakter_animation.html#a58a6cfbec47964bece408a6a64a5cc69',1,'TaskCharakterAnimation']]],
+  ['rotationregister_15',['rotationRegister',['../class_math3d.html#a0c3a0bf45773d2c8834e0eeea7eb5bf1',1,'Math3d']]],
+  ['rotationsamplestaken_16',['rotationSamplesTaken',['../class_math3d.html#a64dea2a47f90cd54e9ebe0ea1a8a2433',1,'Math3d']]],
+  ['rotationtime_17',['rotationTime',['../class_task_charakter_animation.html#a78942058c4e3696c36443e217c41f1ee',1,'TaskCharakterAnimation']]],
+  ['rotationunits_18',['rotationUnits',['../class_task_charakter_animation.html#ae031722f686338f76b9bc84b3034a2dc',1,'TaskCharakterAnimation']]],
+  ['rottimeregister_19',['rotTimeRegister',['../class_math3d.html#a909fc243961c61e25fad35a5538003a3',1,'Math3d']]]
 ];

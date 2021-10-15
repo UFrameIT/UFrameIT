@@ -11,7 +11,9 @@ var hierarchy =
     [ "EqualityComparer", null, [
       [ "FactComparer", "class_fact_comparer.html", [
         [ "FactEquivalentsComparer", "class_fact_equivalents_comparer.html", null ],
-        [ "LineFactHightDirectionComparer", "class_line_fact_hight_direction_comparer.html", null ]
+        [ "LineFactHightComparer", "class_line_fact_hight_comparer.html", null ],
+        [ "LineFactHightDirectionComparer", "class_line_fact_hight_direction_comparer.html", null ],
+        [ "LineSpanningOverRiverWorldComparer", "class_line_spanning_over_river_world_comparer.html", null ]
       ] ]
     ] ],
     [ "Fact", "class_fact.html", [
