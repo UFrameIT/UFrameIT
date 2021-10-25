@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,44 +7,77 @@ using UnityEngine;
 using Newtonsoft.Json;
 using static CommunicationEvents;
 
+/// <summary>
+/// Solution of a <see cref="Stage"/>
+/// </summary>
 public class SolutionOrganizer : FactOrganizer
 {
+    /// @{ <summary> adds to the end of the file name of a </summary>
     private const string
+        /// <summary> SolutionFile (stores <see cref="SolutionOrganizer">this</see>) </summary>
         endingSol = "_sol",
+        /// <summary> ValidationFile (stores <see cref="ValidationSet"/>) </summary>
         endingVal = "_val";
+    /// @}
 
+    /// <summary>
+    /// \copydoc FactOrganizer.path
+    /// Additional value for <see cref="ValidationSet"/>
+    /// </summary>
     private string path_Val = null;
+    /// <summary>
+    /// \copydoc FactOrganizer.hierState
+    /// Additional value for <see cref="ValidationSet"/>
+    /// </summary>
     private static List<Directories>
         hierVal = new List<Directories> { Directories.ValidationSets };
 
+    /// <summary>
+    /// A collection of constrains of which *all* have to be <see langword="true"/>
+    /// <seealso cref="SubSolution"/>
+    /// <seealso cref="FactOrganizer.DynamiclySolved(SolutionOrganizer, out List<List<string>>, out List<List<string>>)"/>
+    /// </summary>
     public List<SubSolution> ValidationSet;
 
+    /// <summary>
+    /// Sits at the heart, but represents only a part of the whole Solution.
+    /// </summary>
     public class SubSolution
     // needs to be public for JSONWriter
     {
-        // Actual solution:
-        //  HashSet<string> MasterIDs: string{SolutionOrganizer.FacDict.Values}
-        //      SolutionFacts to set into relation
-        //
-        //  List<int> SolutionIndex: int{[],[0, SolutionOrganizer.ValidationSet.IndexOf(this) - 2]}
-        //      marks LevelFacts found as solution in a previous entry
-        //      to relate from in addition to MasterIDs
-        //      or none if empty
-        //
-        //  List<int> RelationIndex: int{[],[0, SolutionOrganizer.ValidationSet.IndexOf(this) - 2]}
-        //      marks LevelFacts found as solution in a previous entry
-        //      to relate to instead of all facts
-        //      or none if empty
-        //
-        //  Comparer FactComparer:
-        //      Comparer to relation with between SolutionFacts and LevelFacts
-
+        /// <summary>
+        /// entails <b>{<see cref="FactOrganizer.FactDict">SolutionOrganizer.FacDict.Values</see>}</b> <br/>
+        /// <see cref="FactOrganizer.FactDict">SolutionFacts</see> to relate from.
+        /// </summary>
         public HashSet<string> MasterIDs = new HashSet<string>();
+
+        /// <summary>
+        /// entails <b>{[],[0, <see cref="SolutionOrganizer.ValidationSet"/><c>.IndexOf(<see cref="SubSolution">this</see>)</c> - 2]}</b> <br/>
+        /// Marks LevelFacts (<see cref="StageStatic.stage.factState"/>) found as solution (<see cref="FactOrganizer.DynamiclySolved(SolutionOrganizer, out List<List<string>>, out List<List<string>>)"/>)
+        ///  in a previous entry of <see cref="SolutionOrganizer.ValidationSet"/><br/>
+        /// to relate from *in addition* to <see cref="MasterIDs"/> <br/>
+        /// or _none_ if <c>empty</c>
+        /// </summary>
         public List<int> SolutionIndex = new List<int>();
+
+        /// <summary>
+        /// entails <b>{[],[0, <see cref="SolutionOrganizer.ValidationSet"/><c>.IndexOf(<see cref="SubSolution">this</see>)</c> - 2]}</b> <br/>
+        /// Marks LevelFacts (<see cref="StageStatic.stage.factState"/>) found as solution (<see cref="FactOrganizer.DynamiclySolved(SolutionOrganizer, out List<List<string>>, out List<List<string>>)"/>)
+        ///  in a previous entry of <see cref="SolutionOrganizer.ValidationSet"/><br/>
+        /// to relate to *instead of* all LevelFacts (<see cref="StageStatic.stage.factState"/>) <br/>
+        /// or _none_ if <c>empty</c>
+        /// </summary>
         public List<int> RelationIndex = new List<int>();
+
+        /// <summary>
+        /// Comparer defining relation between <see cref="FactOrganizer.FactDict">SolutionFacts</see> and LevelFacts (<see cref="StageStatic.stage.factState"/>)
+        /// </summary>
         [JsonIgnore]
         public FactComparer Comparer = new FactEquivalentsComparer();
 
+        /// <summary>
+        /// Enables (especially <see cref="JsonConverter"/>) to read and set <see cref="Comparer"/> by its <c>string</c> representation.
+        /// </summary>
         public string ComparerString
         {
             get { return Comparer.ToString(); }
@@ -54,10 +87,24 @@ public class SolutionOrganizer : FactOrganizer
                 Comparer = Activator.CreateInstance(typ) as FactComparer;
             }
         }
-        private static IEnumerable<Type> fact_comparer = Assembly.GetExecutingAssembly().GetTypes().Where(typeof(FactComparer).IsAssignableFrom);
+        /// <summary>
+        /// Collection of <c>string</c> representations of *all* available <see cref="FactComparer"/> to choose from.
+        /// </summary>
+        [JsonIgnore]
+        public static readonly IEnumerable<Type> fact_comparer = Assembly.GetExecutingAssembly().GetTypes().Where(typeof(FactComparer).IsAssignableFrom);
 
+        /// <summary>
+        /// Only used by <see cref="JsonConverter"/> to initiate empty instance.
+        /// </summary>
         public SubSolution() { }
 
+        /// <summary>
+        /// Standard Constructor
+        /// </summary>
+        /// <param name="MasterIDs">sets <see cref="MasterIDs"/> iff not <see langword="null"/></param>
+        /// <param name="SolutionIndex">sets <see cref="SolutionIndex"/> iff not <see langword="null"/></param>
+        /// <param name="RelationIndex">sets <see cref="RelationIndex"/> iff not <see langword="null"/></param>
+        /// <param name="Comparer">sets <see cref="Comparer"/> iff not <see langword="null"/></param>
         public SubSolution(HashSet<string> MasterIDs, List<int> SolutionIndex, List<int> RelationIndex, FactComparer Comparer)
         {
             if (MasterIDs != null)
@@ -73,35 +120,51 @@ public class SolutionOrganizer : FactOrganizer
                 this.Comparer = Comparer;
         }
 
+        /// <summary>
+        /// <see langword="true"/> if there is no solution to be deducted.
+        /// </summary>
+        /// <returns><c>MasterIDs.Count == 0 && SolutionIndex.Count == 0;</c></returns>
         public bool IsEmpty()
         {
             return MasterIDs.Count == 0 && SolutionIndex.Count == 0;
         }
     }
 
+    /// \copydoc FactOrganizer.FactOrganizer(bool)
     public SolutionOrganizer(bool invoke = false): base(invoke)
     {
         ValidationSet = new List<SubSolution>();
     }
 
+    /*
     public List<Fact> getMasterFactsByIndex (int i)
     {
         return ValidationSet[i].MasterIDs.Select(id => this[id]).ToList();
     }
+    */
 
-    public new void store(string name, List<Directories> hierarchie = null, bool use_install_folder = false)
+    /// @{ 
+    /// TODO? move to interface?
+    /// TODO: document
+    public new void store(string name, List<Directories> hierarchie = null, bool use_install_folder = false, bool overwrite = true)
     {
         hierarchie ??= new List<Directories>();
         hierarchie.AddRange(hierVal.AsEnumerable());
 
-        base.store(name + endingSol, hierarchie, use_install_folder);
+        base.store(name + endingSol, hierarchie, use_install_folder, overwrite);
 
         string path_o = path_Val;
-        path_Val = CreatePathToFile(out _, name + endingVal, "JSON", hierarchie, use_install_folder);
+        path_Val = CreatePathToFile(out bool exists, name + endingVal, "JSON", hierarchie, use_install_folder);
+        hierarchie.RemoveRange(hierarchie.Count - hierVal.Count, hierVal.Count);
+
+        if (exists && !overwrite)
+        {
+            path_Val = path_o;
+            return;
+        }
+
         JSONManager.WriteToJsonFile(path_Val, this.ValidationSet, 0);
         path_Val = path_o;
-
-        hierarchie.RemoveRange(hierarchie.Count - hierVal.Count, hierVal.Count);
     }
 
     public static bool load(ref SolutionOrganizer set, bool draw, string name, List<Directories> hierarchie = null, bool use_install_folder = false)
@@ -152,4 +215,5 @@ public class SolutionOrganizer : FactOrganizer
         if (System.IO.File.Exists(path_Val))
             System.IO.File.Delete(path_Val);
     }
+    /// @}
 }

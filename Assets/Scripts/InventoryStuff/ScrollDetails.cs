@@ -160,8 +160,6 @@ public class ScrollDetails : MonoBehaviour
 
     private void readPushout(List<Scroll.ScrollFact> pushoutFacts)
     {
-        FactManager factManager = cursor.GetComponent<FactManager>();
-
         if(pushoutFacts.Count == 0)
             PushoutFactFailEvent.Invoke(null);
 

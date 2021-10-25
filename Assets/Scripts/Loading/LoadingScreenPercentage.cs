@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Attached in the Loading-Screen to <see cref="TMPro"/> object for progress display.
+/// Loads set <see cref="Loader.nextscene"/> and updates progress in <see cref="TMPro.TextMeshProUGUI"/>.
+/// </summary>
 public class LoadingScreenPercentage : MonoBehaviour
 {
     public float maxFrameIncrease = 100f / 100;

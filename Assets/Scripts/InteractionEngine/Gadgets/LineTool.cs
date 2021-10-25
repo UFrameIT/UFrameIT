@@ -63,20 +63,15 @@ public class LineTool : Gadget
         //TODO: check behaviour
         else if (hit.transform.gameObject.CompareTag("SnapZone"))
         {
-            if (this.LineModeIsFirstPointSelected)
+            if (this.LineModeIsFirstPointSelected
+                && Physics.Raycast(hit.transform.gameObject.transform.position - Vector3.down * 2, Vector3.down, out RaycastHit downHit))
             {
+                //Create LineFact
+                var idA = downHit.transform.gameObject.GetComponent<FactObject>().URI;
+                var idB = this.LineModeFirstPointSelected.Id;
+                FactManager.AddAngleFact(idA, idB, FactManager.AddPointFact(hit).Id);
 
-                RaycastHit downHit;
-
-                if (Physics.Raycast(hit.transform.gameObject.transform.position - Vector3.down * 2, Vector3.down, out downHit))
-                {
-                    //Create LineFact
-                    var idA = downHit.transform.gameObject.GetComponent<FactObject>().URI;
-                    var idB = this.LineModeFirstPointSelected.Id;
-                    FactManager.AddAngleFact(idA, idB, FactManager.AddPointFact(hit).Id);
-
-                    this.ResetGadget();
-                }
+                this.ResetGadget();
             }
         }
 

@@ -26,7 +26,7 @@ public class CollapsableStage : MonoBehaviour
 
         // set implicit load button (whole header)
         header.GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate {
-            StageStatic.devel = false;
+            StageStatic.SetMode(StageStatic.Mode.Play);
             // TODO: handle unable to load
             Loader.LoadStage(stage.name, !stage.use_install_folder, true);
         });
@@ -76,7 +76,7 @@ public class CollapsableStage : MonoBehaviour
                     this.Init();
                     return;
                 }
-                StageStatic.devel = false;
+                StageStatic.SetMode(StageStatic.Mode.Play);
                 // TODO: handle unable to load
                 Loader.LoadStage(stage.name, !stage.use_install_folder, true);
             });

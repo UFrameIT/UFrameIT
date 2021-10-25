@@ -143,9 +143,11 @@ public class AngleTool : Gadget
         Vector3 tempCenterPoint = Vector3.Lerp(startPoint, curveEndPoint, 0.5f);
         Vector3 curveMiddlePoint = angleMiddlePoint + curveRadius * (tempCenterPoint - angleMiddlePoint).normalized;
 
-        linePositions = new List<Vector3>();
-        //Start: AngleMiddlePoint -> FirstPoint of Curve
-        linePositions.Add(angleModeSecondPointSelected.Point);
+        linePositions = new List<Vector3>
+        {
+            //Start: AngleMiddlePoint -> FirstPoint of Curve
+            angleModeSecondPointSelected.Point
+        };
 
         for (float ratio = 0; ratio <= 1; ratio += 1.0f / this.curveDrawingVertexCount)
         {

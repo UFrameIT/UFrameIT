@@ -18,7 +18,7 @@ public class CreateLoader : MenueLoader
         set { Category.text = value; }
     }
     protected int id { 
-        get { return Id.text.Length == 0 ? StageStatic.NextNumber(true) : int.Parse(Id.text); }
+        get { return Id.text.Length == 0 ? StageStatic.NextNumber(true, category) : int.Parse(Id.text); }
         set { Id.text = value.ToString(); }
     }
     protected new string name { 
