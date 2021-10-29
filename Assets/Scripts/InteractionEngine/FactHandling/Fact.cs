@@ -9,7 +9,8 @@ using static CommunicationEvents;
 
 
 public class ParsingDictionary {
-
+    //TODO? get rid of this, use reflection? instead, if possible
+    //TODO: docu
     public static Dictionary<string, Func<Scroll.ScrollFact, Fact>> parseFactDictionary = new Dictionary<string, Func<Scroll.ScrollFact, Fact>>() {
         {MMTURIs.Point, PointFact.parseFact},
         {MMTURIs.Metric, LineFact.parseFact},
@@ -22,11 +23,12 @@ public class ParsingDictionary {
 
 }
 
+/// <summary>
+/// class to Read AddFact Responses.
+/// </summary>
+// TODO: docu
 public class AddFactResponse
 {
-    //class to Read AddFact Responses.
-    // public string factUri;
-    // public string factValUri;
     public string uri;
 
     public static bool sendAdd(MMTDeclaration mmtDecl, out string uri)
@@ -78,50 +80,92 @@ public class AddFactResponse
     }
 }
 
-//[Serializable]
+/// <summary>
+/// %Fact representation of Unity; mostly mirrors Facts of MMT.
+/// </summary>
 public abstract class Fact
 {
+    /// <summary>
+    /// Reference to <c>GameObject</c> that represents this Fact in the GameWorld.
+    /// </summary>
+    /// <seealso cref="FactObject"/>
     [JsonIgnore]
     public GameObject Representation;
 
+    /// <value>
+    /// Unique Id. e.g.: MMT URI
+    /// </value>
     public string Id { 
         get { return _URI; }
-        set { if (_URI == null) _URI = value; }
+        set { if (_URI == null) _URI = value; } // needed for JSON
     }
+
+    /// <summary>
+    /// MMT URI
+    /// </summary>
     protected string _URI;
 
-    // should be called once a constructor call
+    /// <value>
+    /// <c>get</c> initiates and subsequently updates a human readable name. <remarks>Should be called once a constructor call to be initiated.</remarks>
+    /// <c>set</c> calls <see cref="rename(string)"/>
+    /// </value>
     public string Label {
         get { // in case of renamed dependables
-            return hasCustomLabel ?
+            return hasCustomLabel && _CustomLabel != null ?
                 _CustomLabel :
                 generateLabel();
         }
         set { rename(value); }
     }
+
+    /// <value>
+    /// Is true if Fact has a custom <see cref="Label"/> which is not <c>null</c> or <c>""</c>.
+    /// </value>
     public bool hasCustomLabel {
         get { return LabelId < 0; }
     }
+    /// <summary>
+    /// Stores custom <see cref="Label"/> if set.
+    /// </summary>
     protected string _CustomLabel = null;
 
-    // property for JSON to set AFTER label
+    /// <summary>
+    /// Counter to organize auto generated <see cref="Label"/>.
+    /// Set to negative, if custom \ref Label is assigned.
+    /// </summary>
+    // property for JSON to set AFTER Label => declare AFTER Label
     public int LabelId { get; set; }
 
+    /// <summary>
+    /// Reference to <see cref="FactOrganizer"/> in which this Fact and all its <see cref="getDependentFactIds">depending Facts</see> are beeing organized.
+    /// </summary>
     protected FactOrganizer _Facts;
 
+    /// <summary>
+    /// Only being used by [JsonReader](https://www.newtonsoft.com/json/help/html/T_Newtonsoft_Json_JsonReader.htm) to initiate empty \ref Fact "Facts".
+    /// <seealso cref="JSONManager"/>
+    /// </summary>
     protected Fact()
-    // 0 parameter constructor for Json
     {
         this._Facts = new FactOrganizer();
         LabelId = 0;
     }
 
+    /// <summary>
+    /// Standard base-constructor.
+    /// </summary>
+    /// <param name="organizer"><see cref="_Facts"/></param>
     protected Fact(FactOrganizer organizer)
     {
         this._Facts = organizer;
         LabelId = 0;
     }
 
+    /// <summary>
+    /// Copies <paramref name="fact"/> by initiating new MMT %Fact.
+    /// </summary>
+    /// <param name="fact">Fact to be copied</param>
+    /// <param name="organizer"><see cref="_Facts"/></param>
     protected Fact(Fact fact, FactOrganizer organizer)
     {
         this._Facts = organizer;
@@ -130,6 +174,13 @@ public abstract class Fact
         if (hasCustomLabel)
             _CustomLabel = fact.Label;
     }
+
+    /// <summary>
+    /// Assignes a custom <see cref="Label"/>, if <paramref name="newLabel"/> is not yet taken;
+    /// or clears custom <see cref="Label"/>.
+    /// </summary>
+    /// <param name="newLabel">To be new <see cref="Label"/>. To reset to auto-generation set to <c>null</c> or <c>""</c>.</param>
+    /// <returns></returns>
 
     //TODO: notify about updated dependable Labelnames for UI
     //TODO: check for colissions with not yet generated names
@@ -156,13 +207,30 @@ public abstract class Fact
         }
     }
 
-    //If FactType depends on other Facts, e.g. AngleFacts depend on 3 PointFacts
+    /// <returns><see langword="true"/> if Fact depends on other \ref Fact "Facts"; equivalent to <see cref="getDependentFactIds"/> returns non empty array</returns>
     public abstract bool hasDependentFacts();
 
+    /// <returns> array of Fact <see cref="Id"> Ids </see> on which this Fact depends.</returns>
+    /// <example><see cref="AngleFact"/> needs 3 <see cref="PointFact"/>s to be defined.</example>
     public abstract string[] getDependentFactIds();
 
+    /// <summary>
+    /// Initiates a <paramref name="prefab"/> at <paramref name="transform"/> e.g. by setting <see cref="Label"/>.
+    /// </summary>
+    /// <remarks>Does not set <see cref="Representation"/>.</remarks>
+    /// <param name="prefab"><c>GameObject</c> Prefab that will represent this Fact</param>
+    /// <param name="transform"><c>Transform</c> where to initiate <paramref name="prefab"/></param>
+    /// <returns></returns>
+
+    // TODO: set Representation here instead of ...
     public abstract GameObject instantiateDisplay(GameObject prefab, Transform transform);
 
+    /// <summary>
+    /// Frees ressources e.g. <see cref="Label"/> and will eventually delete %Fact Server-Side in far-near future when feature is supported.
+    /// </summary>
+    /// <param name="keep_clean">when set to <c>true</c> will upkeep <see cref="Label"/> organization.</param>
+
+    // TODO? replace by ~Fact() { }
     public virtual void delete(bool keep_clean = true)
     {
         //TODO: MMT: delete over there
@@ -174,12 +242,32 @@ public abstract class Fact
             Debug.Log("Server removed Fact:\n" + this.Id);
     }
 
+    /// <summary>
+    /// Compares \ref Fact "this" against <paramref name="f2"/>.
+    /// </summary>
+    /// <param name="f2">Fact to compare to</param>
+    /// <returns><c>true</c> if <paramref name="f2"/> is semantical very similar to \ref Fact "this"</returns>
     public abstract bool Equivalent(Fact f2);
-    
+
+    /// <summary>
+    /// Compares <paramref name="f1"/> against <paramref name="f2"/>.
+    /// </summary>
+    /// <param name="f1">Fact to compare to</param>
+    /// <param name="f2">Fact to compare to</param>
+    /// <returns><c>true</c> if <paramref name="f2"/> is semantical very similar to <paramref name="f1"/></returns>
     public abstract bool Equivalent(Fact f1, Fact f2);
 
+    /// <summary>
+    /// canonical
+    /// </summary>
+    /// <returns>unique-ish Hash</returns>
     public abstract override int GetHashCode();
 
+    /// <summary>
+    /// auto-generates <see cref="Label"/> using generation variable(s) e.g. <see cref="LabelId"/>;
+    /// if custom <see cref="Label"/> is set, tries to restore original generated <see cref="Label"/> **without** resetting <see cref="_CustomLabel"/>. If original <see cref="Label"/> is already taken, a new one will be generated.
+    /// </summary>
+    /// <returns>auto-generated <see cref="Label"/></returns>
     protected virtual string generateLabel()
     {
         if (LabelId < 0)
@@ -198,6 +286,20 @@ public abstract class Fact
         return ((char)(64 + LabelId)).ToString();
     }
 
+    /// <summary>
+    /// Parses <see cref="Scroll.ScrollFact"/> to actual Fact
+    /// </summary>
+    /// <param name="fact">instance to be parsed</param>
+    /// <returns>parsed Fact</returns>
+    public static Fact parseFact(Scroll.ScrollFact fact)
+    {
+        return null;
+    }
+
+    /// <summary>
+    /// Tells <see cref="_Facts"/> that \ref Fact "this" no longer uses auto-generated <see cref="Label"/>, but remembers current generation variable(s).
+    /// </summary>
+
     // TODO? only get _Fact to freeLabel/
     public /*protected internal*/ void freeAutoLabel()
     {
@@ -210,38 +312,56 @@ public abstract class Fact
     }
 }
 
+/// <summary>
+/// Implements CRTP for <see cref="Fact"/>; Escalates constructors;
+/// </summary>
+/// <typeparam name="T">class, which inherits from FactWrappedCRTP</typeparam>
 public abstract class FactWrappedCRTP<T>: Fact where T: FactWrappedCRTP<T>
 {
+    /// <summary>\copydoc Fact.Fact()</summary>
     protected FactWrappedCRTP() : base() { }
 
+    /// <summary>\copydoc Fact.Fact(FactOrganizer)</summary>
     protected FactWrappedCRTP(FactOrganizer organizer) : base(organizer) { }
 
+    /// <summary>\copydoc Fact.Fact(Fact, FactOrganizer)</summary>
     protected FactWrappedCRTP(FactWrappedCRTP<T> fact, FactOrganizer organizer) : base(fact, organizer) { }
 
+    /// \copydoc Fact.Equivalent(Fact)
     public override bool Equivalent(Fact f2)
     {
         return Equivalent(this, f2);
     }
 
+    /// \copydoc Fact.Equivalent(Fact, Fact)
     public override bool Equivalent(Fact f1, Fact f2)
     {
         return f1.GetType() == f2.GetType() && EquivalentWrapped((T)f1, (T)f2);
     }
 
+    /// <summary>CRTP step of <see cref="Equivalent(Fact)"/> and <see cref="Equivalent(Fact, Fact)"/></summary>
     protected abstract bool EquivalentWrapped(T f1, T f2);
 }
 
+/// <summary>
+/// Base-class for 1D-Facts
+/// </summary>
 public abstract class AbstractLineFact: FactWrappedCRTP<AbstractLineFact>
 {
-    //Id's of the 2 Point-Facts that are connected
+    /// @{ <summary>
+    /// One <see cref="Fact.Id">Id</see> of two <see cref="PointFact"/> defining <see cref="Dir"/>.
+    /// </summary>
     public string Pid1, Pid2;
-    // normalized Direction from Pid1 to Pid2
+    /// @}
+
+    /// <summary>
+    /// Normalized Direction from <see cref="Pid1"/> to <see cref="Pid2"/>.
+    /// </summary>
     public Vector3 Dir;
 
-
-    //only for temporary Use of LineFacts.
-    //public AbstractLineFact() { }
-
+    /// <summary>
+    /// \copydoc Fact.Fact()
+    /// </summary>
     protected AbstractLineFact() : base()
     {
         Pid1 = null;
@@ -249,22 +369,46 @@ public abstract class AbstractLineFact: FactWrappedCRTP<AbstractLineFact>
         Dir = Vector3.zero;
     }
 
+    /// <summary>
+    /// Copies <paramref name="fact"/> by initiating new MMT %Fact.
+    /// </summary>
+    /// <param name="fact">Fact to be copied</param>
+    /// <param name="old_to_new"><c>Dictionary</c> mapping <paramref name="fact"/>.<see cref="getDependentFactIds"/> in <paramref name="fact"/>.<see cref="Fact._Facts"/> to corresponding <see cref="Fact.Id"/> in <paramref name="organizer"/> </param>
+    /// <param name="organizer">sets <see cref="_Facts"/></param>
     protected AbstractLineFact(AbstractLineFact fact, Dictionary<string, string> old_to_new, FactOrganizer organizer) : base(fact, organizer)
     {
         set_public_members(old_to_new[fact.Pid1], old_to_new[fact.Pid2]);
     }
 
+    /// <summary>
+    /// Standard Constructor
+    /// </summary>
+    /// <param name="pid1">sets <see cref="AbstractLineFact.Pid1"/></param>
+    /// <param name="pid2">sets <see cref="AbstractLineFact.Pid2"/></param>
+    /// <param name="organizer">sets <see cref="Fact._Facts"/></param>
     protected AbstractLineFact(string pid1, string pid2, FactOrganizer organizer): base(organizer)
     {
         set_public_members(pid1, pid2);
     }
 
+    /// <summary>
+    /// Bypasses initialization of new MMT %Fact by using existend URI, _which is not checked for existence_.
+    /// </summary>
+    /// <param name="pid1">sets <see cref="Pid1"/></param>
+    /// <param name="pid2">sets <see cref="Pid2"/></param>
+    /// <param name="backendURI">MMT URI</param>
+    /// <param name="organizer">sets <see cref="Fact._Facts"/></param>
     protected AbstractLineFact(string pid1, string pid2, string backendURI, FactOrganizer organizer) : base(organizer)
     {
         set_public_members(pid1, pid2);
         this._URI = backendURI;
     }
 
+    /// <summary>
+    /// Initiates <see cref="Pid1"/>, <see cref="Pid2"/>, <see cref="Dir"/>
+    /// </summary>
+    /// <param name="pid1">sets <see cref="Pid1"/></param>
+    /// <param name="pid2">sets <see cref="Pid2"/></param>
     private void set_public_members(string pid1, string pid2)
     {
         this.Pid1 = pid1;
@@ -274,62 +418,98 @@ public abstract class AbstractLineFact: FactWrappedCRTP<AbstractLineFact>
         this.Dir = (pf2.Point - pf1.Point).normalized;
     }
 
+    /// \copydoc Fact.hasDependentFacts
     public override bool hasDependentFacts()
     {
         return true;
     }
 
+    /// \copydoc Fact.getDependentFactIds
     public override string[] getDependentFactIds()
     {
         return new string[] { Pid1, Pid2 };
     }
 
+    /// \copydoc Fact.GetHashCode
     public override int GetHashCode()
     {
         return this.Pid1.GetHashCode() ^ this.Pid2.GetHashCode();
     }
 }
 
+/// <summary>
+/// Implements CRTP for <see cref="AbstractLineFact"/>; Escalates constructors;
+/// </summary>
+/// <typeparam name="T">class, which inherits from AbstractLineFactWrappedCRTP</typeparam>
 public abstract class AbstractLineFactWrappedCRTP<T>: AbstractLineFact where T: AbstractLineFactWrappedCRTP<T>
 {
+    /// <summary>\copydoc Fact.Fact</summary>
     protected AbstractLineFactWrappedCRTP () : base() { }
 
+    /// <summary>\copydoc AbstractLineFact.AbstractLineFact(AbstractLineFact, Dictionary{string, string}, FactOrganizer)</summary>
     protected AbstractLineFactWrappedCRTP (AbstractLineFactWrappedCRTP<T> fact, Dictionary<string, string> old_to_new, FactOrganizer organizer) : base(fact, old_to_new, organizer) { }
 
+    /// <summary>\copydoc AbstractLineFact.AbstractLineFact(string, string, FactOrganizer)</summary>
     protected AbstractLineFactWrappedCRTP (string pid1, string pid2, FactOrganizer organizer) : base(pid1, pid2, organizer) { }
 
+    /// <summary>\copydoc AbstractLineFact.AbstractLineFact(string, string, string, FactOrganizer)</summary>
     protected AbstractLineFactWrappedCRTP (string pid1, string pid2, string backendURI, FactOrganizer organizer) : base(pid1, pid2, backendURI, organizer) { }
 
+    /// \copydoc Fact.Equivalent(Fact, Fact)
     protected override bool EquivalentWrapped(AbstractLineFact f1, AbstractLineFact f2)
     {
         return EquivalentWrapped((T)f1, (T)f2);
     }
 
+    /// <summary>CRTP step of <see cref="EquivalentWrapped(AbstractLineFact, AbstractLineFact)"/></summary>
     protected abstract bool EquivalentWrapped(T f1, T f2);
 }
 
+/// <summary>
+/// Point in 3D Space
+/// </summary>
 public class PointFact : FactWrappedCRTP<PointFact>
 {
+    /// <summary> Position </summary>
     public Vector3 Point;
+    /// <summary> Orientation for <see cref="Fact.Representation"/> </summary>
     public Vector3 Normal;
 
 
+    /// <summary> \copydoc Fact.Fact </summary>
     public PointFact() : base()
     {
         this.Point = Vector3.zero;
         this.Normal = Vector3.zero;
     }
 
+    /// <summary>
+    /// Copies <paramref name="fact"/> by initiating new MMT %Fact.
+    /// </summary>
+    /// <param name="fact">Fact to be copied</param>
+    /// <param name="old_to_new"><c>Dictionary</c> mapping <paramref name="fact"/>.<see cref="getDependentFactIds"/> in <paramref name="fact"/>.<see cref="Fact._Facts"/> to corresponding <see cref="Fact.Id"/> in <paramref name="organizer"/> </param>
+    /// <param name="organizer">sets <see cref="_Facts"/></param>
     public PointFact(PointFact fact, Dictionary<string, string> old_to_new, FactOrganizer organizer) : base(fact, organizer)
     {
         init(fact.Point, fact.Normal);
     }
 
+    /// <summary>
+    /// Standard Constructor
+    /// </summary>
+    /// <param name="P">sets <see cref="Point"/></param>
+    /// <param name="N">sets <see cref="Normal"/></param>
+    /// <param name="organizer">sets <see cref="Fact._Facts"/></param>
     public PointFact(Vector3 P, Vector3 N, FactOrganizer organizer) : base(organizer)
     {
         init(P, N);
     }
 
+    /// <summary>
+    /// Initiates <see cref="Point"/>, <see cref="Normal"/>, <see cref="Fact._URI"/> and creates MMT %Fact Server-Side
+    /// </summary>
+    /// <param name="P">sets <see cref="Point"/></param>
+    /// <param name="N">sets <see cref="Normal"/></param>
     private void init(Vector3 P, Vector3 N)
     {
         this.Point = P;
@@ -350,15 +530,25 @@ public class PointFact : FactWrappedCRTP<PointFact>
         AddFactResponse.sendAdd(mmtDecl, out this._URI);
     }
 
+    /// <summary>
+    /// Bypasses initialization of new MMT %Fact by using existend URI, _which is not checked for existence_.
+    /// <see cref="Normal"/> set to <c>Vector3.up</c>
+    /// </summary>
+    /// <param name="a">sets <c>x</c> coordinate of <see cref="Point"/></param>
+    /// <param name="b">sets <c>y</c> coordinate of <see cref="Point"/></param>
+    /// <param name="c">sets <c>z</c> coordinate of <see cref="Point"/></param>
+    /// <param name="uri">MMT URI</param>
+    /// <param name="organizer">sets <see cref="Fact._Facts"/></param>
     public PointFact(float a, float b, float c, string uri, FactOrganizer organizer) : base(organizer)
     {
         this.Point = new Vector3(a, b, c);
-        this.Normal = new Vector3(0, 1, 0);
+        this.Normal = Vector3.up;
         this._URI = uri;
         _ = this.Label;
     }
 
-    public static PointFact parseFact(Scroll.ScrollFact fact) {
+    /// \copydoc Fact.parseFact(Scroll.ScrollFact)
+    public new static PointFact parseFact(Scroll.ScrollFact fact) {
         String uri = fact.@ref.uri;
         OMA df = (OMA)((Scroll.ScrollSymbolFact)fact).df;
         if (df != null)
@@ -373,14 +563,17 @@ public class PointFact : FactWrappedCRTP<PointFact>
         }
     }
 
+    /// \copydoc Fact.hasDependentFacts
     public override Boolean hasDependentFacts() {
         return false;
     }
 
+    /// \copydoc Fact.getDependentFactIds
     public override string[] getDependentFactIds() {
         return new string[] { };
     }
 
+    /// \copydoc Fact.instantiateDisplay(GameObject, Transform)
     public override GameObject instantiateDisplay(GameObject prefab, Transform transform) {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
         obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = this.Label;
@@ -388,11 +581,13 @@ public class PointFact : FactWrappedCRTP<PointFact>
         return obj;
     }
 
+    /// \copydoc Fact.GetHashCode
     public override int GetHashCode()
     {
         return this.Point.GetHashCode() ^ this.Normal.GetHashCode();
     }
 
+    /// \copydoc Fact.Equivalent(Fact, Fact)
     protected override bool EquivalentWrapped(PointFact f1, PointFact f2)
     {
         return Math3d.IsApproximatelyEqual(f1.Point, f2.Point);
@@ -400,31 +595,44 @@ public class PointFact : FactWrappedCRTP<PointFact>
 
 }
 
+/// <summary>
+/// Line within 3D Space of finite length
+/// </summary>
 public class LineFact : AbstractLineFactWrappedCRTP<LineFact>
 {
+    /// <summary> Distance between <see cref="AbstractLineFact.Pid1"/> and <see cref="AbstractLineFact.Pid2"/></summary>
     public float Distance;
 
+    /// <summary> \copydoc Fact.Fact </summary>
     public LineFact() : base()
     {
         Distance = 0;
     }
 
+    /// <summary> \copydoc AbstractLineFact.AbstractLineFact(AbstractLineFact, Dictionary<string, string>, FactOrganizer) </summary>
     public LineFact(LineFact fact, Dictionary<string, string> old_to_new, FactOrganizer organizer) : base(fact, old_to_new, organizer)
     {
         init(old_to_new[fact.Pid1], old_to_new[fact.Pid2]);
     }
 
+    /// <summary> \copydoc AbstractLineFact.AbstractLineFact(string, string, string, FactOrganizer) </summary>
     public LineFact(string pid1, string pid2, string backendURI, FactOrganizer organizer) : base(pid1, pid2, backendURI, organizer)
     {
         SetDistance();
         _ = this.Label;
     }
 
+    /// <summary> \copydoc AbstractLineFact.AbstractLineFact(string, string, FactOrganizer) </summary>
     public LineFact(string pid1, string pid2, FactOrganizer organizer) : base(pid1, pid2, organizer)
     {
         init(pid1, pid2);
     }
 
+    /// <summary>
+    /// Initiates <see cref="AbstractLineFact.Pid1"/>, <see cref="AbstractLineFact.Pid2"/>, <see cref="Fact._URI"/> and creates MMT %Fact Server-Side
+    /// </summary>
+    /// <param name="pid1">sets <see cref="AbstractLineFact.Pid1"/></param>
+    /// <param name="pid2">sets <see cref="AbstractLineFact.Pid2"/></param>
     private void init(string pid1, string pid2)
     {
         SetDistance();
@@ -453,7 +661,8 @@ public class LineFact : AbstractLineFactWrappedCRTP<LineFact>
         AddFactResponse.sendAdd(mmtDecl, out this._URI);
     }
 
-    public static LineFact parseFact(Scroll.ScrollFact fact)
+    /// \copydoc Fact.parseFact(Scroll.ScrollFact)
+    public new static LineFact parseFact(Scroll.ScrollFact fact)
     {
         string uri = fact.@ref.uri;
         string pointAUri = ((OMS)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[0]).uri;
@@ -468,11 +677,14 @@ public class LineFact : AbstractLineFactWrappedCRTP<LineFact>
             return null;
         }
     }
+
+    /// \copydoc Fact.generateLabel
     protected override string generateLabel()
     {
         return "[" + _Facts[Pid1].Label + _Facts[Pid2].Label + "]";
     }
 
+    /// \copydoc Fact.instantiateDisplay(GameObject, Transform)
     public override GameObject instantiateDisplay(GameObject prefab, Transform transform)
     {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
@@ -482,6 +694,7 @@ public class LineFact : AbstractLineFactWrappedCRTP<LineFact>
         return obj;
     }
 
+    /// \copydoc Fact.Equivalent(Fact, Fact)
     protected override bool EquivalentWrapped(LineFact f1, LineFact f2)
     {
         if ((f1.Pid1 == f2.Pid1 && f1.Pid2 == f2.Pid2))// || 
@@ -497,31 +710,44 @@ public class LineFact : AbstractLineFactWrappedCRTP<LineFact>
             ;//|| (p1f1.Equivalent(p2f2) && p2f1.Equivalent(p1f2));
     }
 
+    /// <summary> Calculates and sets <see cref="Distance"/>; <remarks> <see cref="AbstractLineFact.Pid1"/> and <see cref="AbstractLineFact.Pid2"/> needs to be set first.</remarks></summary>
     private void SetDistance()
     {
         this.Distance = Vector3.Distance(((PointFact)_Facts[Pid1]).Point, ((PointFact)_Facts[Pid2]).Point);
     }
 }
 
+/// <summary>
+/// Ray within 3D Space of infinite length
+/// </summary>
 public class RayFact : AbstractLineFactWrappedCRTP<RayFact>
 {
+    /// <summary> \copydoc Fact.Fact </summary>
     public RayFact() : base() { }
 
+    /// <summary> \copydoc AbstractLineFact.AbstractLineFact(AbstractLineFact, Dictionary<string, string>, FactOrganizer) </summary>
     public RayFact(RayFact fact, Dictionary<string, string> old_to_new, FactOrganizer organizer) : base(fact, old_to_new, organizer)
     {
         init(old_to_new[fact.Pid1], old_to_new[fact.Pid2]);
     }
 
+    /// <summary> \copydoc AbstractLineFact.AbstractLineFact(string, string, string, FactOrganizer) </summary>
     public RayFact(string pid1, string pid2, string backendURI, FactOrganizer organizer) : base(pid1, pid2, backendURI, organizer)
     {
         _ = this.Label;
     }
 
+    /// <summary> \copydoc AbstractLineFact.AbstractLineFact(string, string, FactOrganizer) </summary>
     public RayFact(string pid1, string pid2, FactOrganizer organizer) : base(pid1, pid2, organizer)
     {
         init(pid1, pid2);
     }
 
+    /// <summary>
+    /// Initiates <see cref="AbstractLineFact.Pid1"/>, <see cref="AbstractLineFact.Pid2"/>, <see cref="Fact._URI"/> and creates MMT %Fact Server-Side
+    /// </summary>
+    /// <param name="pid1">sets <see cref="AbstractLineFact.Pid1"/></param>
+    /// <param name="pid2">sets <see cref="AbstractLineFact.Pid2"/></param>
     private void init(string pid1, string pid2)
     {
         PointFact pf1 = _Facts[pid1] as PointFact;
@@ -544,7 +770,8 @@ public class RayFact : AbstractLineFactWrappedCRTP<RayFact>
         AddFactResponse.sendAdd(mmtDecl, out this._URI);
     }
 
-    public static RayFact parseFact(Scroll.ScrollFact fact)
+    /// \copydoc Fact.parseFact(Scroll.ScrollFact)
+    public new static RayFact parseFact(Scroll.ScrollFact fact)
     {
         string uri = fact.@ref.uri;
         if ((OMA)((Scroll.ScrollSymbolFact)fact).df != null)
@@ -561,11 +788,13 @@ public class RayFact : AbstractLineFactWrappedCRTP<RayFact>
         return null;
     }
 
+    /// \copydoc Fact.generateLabel
     protected override string generateLabel()
     {
         return "–" + _Facts[Pid1].Label + _Facts[Pid2].Label + "–";
     }
 
+    /// \copydoc Fact.instantiateDisplay(GameObject, Transform)
     public override GameObject instantiateDisplay(GameObject prefab, Transform transform) {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
         obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = this.Label;
@@ -573,6 +802,7 @@ public class RayFact : AbstractLineFactWrappedCRTP<RayFact>
         return obj;
     }
 
+    /// \copydoc Fact.Equivalent(Fact, Fact)
     protected override bool EquivalentWrapped(RayFact f1, RayFact f2)
     {
         if (!Math3d.IsApproximatelyParallel(f1.Dir, f2.Dir))
@@ -587,27 +817,51 @@ public class RayFact : AbstractLineFactWrappedCRTP<RayFact>
     }
 }
 
+/// <summary>
+/// A <see cref="PointFact"/> on a <see cref="AbstractLineFact"/>
+/// </summary>
 public class OnLineFact : FactWrappedCRTP<OnLineFact>
 {
-    //Id's of the Point and the Line it's on
-    public string Pid, Rid;
+    public string
+        /// <summary> <see cref="PointFact"/>.<see cref="Fact.Id">Id</see> </summary>
+        Pid,
+        /// <summary> <see cref="AbstractLineFact"/>.<see cref="Fact.Id">Id</see> </summary>
+        Rid;
 
+    /// <summary> \copydoc Fact.Fact </summary>
     public OnLineFact() : base()
     {
         this.Pid = null;
         this.Rid = null;
     }
 
+    /// <summary>
+    /// Copies <paramref name="fact"/> by initiating new MMT %Fact.
+    /// </summary>
+    /// <param name="fact">Fact to be copied</param>
+    /// <param name="old_to_new"><c>Dictionary</c> mapping <paramref name="fact"/>.<see cref="getDependentFactIds"/> in <paramref name="fact"/>.<see cref="Fact._Facts"/> to corresponding <see cref="Fact.Id"/> in <paramref name="organizer"/> </param>
+    /// <param name="organizer">sets <see cref="_Facts"/></param>
     public OnLineFact(OnLineFact fact, Dictionary<string, string> old_to_new, FactOrganizer organizer) : base(fact, organizer)
     {
         init(old_to_new[fact.Pid], old_to_new[fact.Rid]);
     }
 
+    /// <summary>
+    /// Standard Constructor
+    /// </summary>
+    /// <param name="pid">sets <see cref="Pid"/></param>
+    /// <param name="rid">sets <see cref="Rid"/></param>
+    /// <param name="organizer">sets <see cref="Fact._Facts"/></param>
     public OnLineFact(string pid, string rid, FactOrganizer organizer) : base(organizer)
     {
         init(pid, rid);
     }
 
+    /// <summary>
+    /// Initiates <see cref="Pid"/>, <see cref="Rid"/>, <see cref="Fact._URI"/> and creates MMT %Fact Server-Side
+    /// </summary>
+    /// <param name="pid">sets <see cref="Pid"/></param>
+    /// <param name="rid">sets <see cref="Rid"/></param>
     private void init(string pid, string rid)
     {
         this.Pid = pid;
@@ -637,6 +891,13 @@ public class OnLineFact : FactWrappedCRTP<OnLineFact>
         AddFactResponse.sendAdd(mmtDecl, out this._URI);
     }
 
+    /// <summary>
+    /// Bypasses initialization of new MMT %Fact by using existend URI, _which is not checked for existence_.
+    /// </summary>
+    /// <param name="pid">sets <see cref="Pid"/></param>
+    /// <param name="rid">sets <see cref="Rid"/></param>
+    /// <param name="uri">MMT URI</param>
+    /// <param name="organizer">sets <see cref="Fact._Facts"/></param>
     public OnLineFact(string pid, string rid, string uri, FactOrganizer organizer) : base(organizer)
     {
         this.Pid = pid;
@@ -645,7 +906,8 @@ public class OnLineFact : FactWrappedCRTP<OnLineFact>
         _ = this.Label;
     }
 
-    public static OnLineFact parseFact(Scroll.ScrollFact fact)
+    /// \copydoc Fact.parseFact(Scroll.ScrollFact)
+    public new static OnLineFact parseFact(Scroll.ScrollFact fact)
     {
         string uri = fact.@ref.uri;
         string lineUri = ((OMS)((OMA)((OMA)((Scroll.ScrollSymbolFact)fact).tp).arguments[0]).arguments[0]).uri;
@@ -659,21 +921,26 @@ public class OnLineFact : FactWrappedCRTP<OnLineFact>
         else
             return null;
     }
+
+    /// \copydoc Fact.generateLabel
     protected override string generateLabel()
     {
         return _Facts[Pid].Label + "∈" + _Facts[Rid].Label;
     }
 
+    /// \copydoc Fact.hasDependentFacts
     public override Boolean hasDependentFacts()
     {
         return true;
     }
 
+    /// \copydoc Fact.getDependentFactIds
     public override string[] getDependentFactIds()
     {
         return new string[] { Pid, Rid };
     }
 
+    /// \copydoc Fact.instantiateDisplay(GameObject, Transform)
     public override GameObject instantiateDisplay(GameObject prefab, Transform transform)
     {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
@@ -683,11 +950,13 @@ public class OnLineFact : FactWrappedCRTP<OnLineFact>
         return obj;
     }
 
+    /// \copydoc Fact.GetHashCode
     public override int GetHashCode()
     {
         return this.Pid.GetHashCode() ^ this.Rid.GetHashCode();
     }
 
+    /// \copydoc Fact.Equivalent(Fact, Fact)
     protected override bool EquivalentWrapped(OnLineFact f1, OnLineFact f2)
     {
         if (f1.Pid == f2.Pid && f1.Rid == f2.Rid)
@@ -702,12 +971,22 @@ public class OnLineFact : FactWrappedCRTP<OnLineFact>
     }
 }
 
+/// <summary>
+/// Angle comprised of three <see cref="PointFact">PointFacts</see> [A,B,C]
+/// </summary>
 public class AngleFact : FactWrappedCRTP<AngleFact>
 {
-    //Id's of the 3 Point-Facts, where Pid2 is the point, where the angle is
+    /// @{ <summary>
+    /// One <see cref="Fact.Id">Id</see> of three <see cref="PointFact">PointFacts</see> defining Angle [<see cref="Pid1"/>, <see cref="Pid2"/>, <see cref="Pid3"/>].
+    /// </summary>
     public string Pid1, Pid2, Pid3;
+    /// @}
+
+    /// <summary> <see langword="true"/>, if AngleFact is approximately 90° or 270°</summary>
     public bool is_right_angle;
 
+
+    /// <summary> \copydoc Fact.Fact </summary>
     public AngleFact() : base()
     {
         this.Pid1 = null;
@@ -716,16 +995,35 @@ public class AngleFact : FactWrappedCRTP<AngleFact>
         this.is_right_angle = false;
     }
 
+    /// <summary>
+    /// Copies <paramref name="fact"/> by initiating new MMT %Fact.
+    /// </summary>
+    /// <param name="fact">Fact to be copied</param>
+    /// <param name="old_to_new"><c>Dictionary</c> mapping <paramref name="fact"/>.<see cref="getDependentFactIds"/> in <paramref name="fact"/>.<see cref="Fact._Facts"/> to corresponding <see cref="Fact.Id"/> in <paramref name="organizer"/> </param>
+    /// <param name="organizer">sets <see cref="_Facts"/></param>
     public AngleFact(AngleFact fact, Dictionary<string, string> old_to_new, FactOrganizer organizer) : base(fact, organizer)
     {
         init(old_to_new[fact.Pid1], old_to_new[fact.Pid2], old_to_new[fact.Pid3]);
     }
 
+    /// <summary>
+    /// Standard Constructor
+    /// </summary>
+    /// <param name="pid1">sets <see cref="Pid1"/></param>
+    /// <param name="pid2">sets <see cref="Pid2"/></param>
+    /// <param name="pid3">sets <see cref="Pid3"/></param>
+    /// <param name="organizer">sets <see cref="Fact._Facts"/></param>
     public AngleFact(string pid1, string pid2, string pid3, FactOrganizer organizer) : base(organizer)
     {
         init(pid1, pid2, pid3);
     }
 
+    /// <summary>
+    /// Initiates <see cref="Pid1"/>, <see cref="Pid2"/>, <see cref="Pid3"/>, <see cref="is_right_angle"/>, <see cref="Fact._URI"/> and creates MMT %Fact Server-Side
+    /// </summary>
+    /// <param name="pid1">sets <see cref="Pid1"/></param>
+    /// <param name="pid2">sets <see cref="Pid2"/></param>
+    /// <param name="pid3">sets <see cref="Pid3"/></param>
     private void init(string pid1, string pid2, string pid3)
     {
         this.Pid1 = pid1;
@@ -750,6 +1048,14 @@ public class AngleFact : FactWrappedCRTP<AngleFact>
         AddFactResponse.sendAdd(mmtDecl, out this._URI);
     }
 
+    /// <summary>
+    /// Bypasses initialization of new MMT %Fact by using existend URI, _which is not checked for existence_.
+    /// </summary>
+    /// <param name="Pid1">sets <see cref="Pid1"/></param>
+    /// <param name="Pid2">sets <see cref="Pid2"/></param>
+    /// <param name="Pid3">sets <see cref="Pid3"/></param>
+    /// <param name="backendURI">MMT URI</param>
+    /// <param name="organizer">sets <see cref="Fact._Facts"/></param>
     public AngleFact(string Pid1, string Pid2, string Pid3, string backendURI, FactOrganizer organizer) : base(organizer)
     {
         this.Pid1 = Pid1;
@@ -762,7 +1068,8 @@ public class AngleFact : FactWrappedCRTP<AngleFact>
         _ = this.Label;
     }
 
-    public static AngleFact parseFact(Scroll.ScrollFact fact)
+    /// \copydoc Fact.parseFact(Scroll.ScrollFact)
+    public new static AngleFact parseFact(Scroll.ScrollFact fact)
     {
         string uri = fact.@ref.uri;
         string
@@ -794,11 +1101,16 @@ public class AngleFact : FactWrappedCRTP<AngleFact>
             return null;
     }
 
+    /// \copydoc Fact.generateLabel
     protected override string generateLabel()
     {
         return (is_right_angle ? "⊾" : "∠") + _Facts[Pid1].Label + _Facts[Pid2].Label + _Facts[Pid3].Label;
     }
 
+    /// <summary>
+    /// Computes smallest angle and sets <see cref="is_right_angle"/>
+    /// </summary>
+    /// <returns>Smallets angle between [<see cref="Pid1"/>, <see cref="Pid2"/>] and [<see cref="Pid2"/>, <see cref="Pid3"/>]</returns>
     private float GetAngle()
     {
         PointFact pf1 = _Facts[Pid1] as PointFact;
@@ -811,6 +1123,14 @@ public class AngleFact : FactWrappedCRTP<AngleFact>
         return is_right_angle ? 90f : v;
     }
 
+    /// <summary>
+    /// Constructs struct for right-angled MMT %Fact <see cref="AddFactResponse"/>
+    /// </summary>
+    /// <param name="val">Angle == 90f, _not checked_</param>
+    /// <param name="p1URI"><see cref="Pid1"/></param>
+    /// <param name="p2URI"><see cref="Pid2"/></param>
+    /// <param name="p3URI"><see cref="Pid3"/></param>
+    /// <returns>struct for <see cref="AddFactResponse"/></returns>
     private MMTDeclaration generate90DegreeAngleDeclaration(float val, string p1URI, string p2URI, string p3URI) {
 
         MMTTerm argument = new OMA(
@@ -835,6 +1155,14 @@ public class AngleFact : FactWrappedCRTP<AngleFact>
         return new MMTSymbolDeclaration(this.Label, tp, df);
     }
 
+    /// <summary>
+    /// Constructs struct for not-right-angled MMT %Fact <see cref="AddFactResponse"/>
+    /// </summary>
+    /// <param name="val">Angle != 90f, _not checked_</param>
+    /// <param name="p1URI"><see cref="Pid1"/></param>
+    /// <param name="p2URI"><see cref="Pid2"/></param>
+    /// <param name="p3URI"><see cref="Pid3"/></param>
+    /// <returns>struct for <see cref="AddFactResponse"/></returns>
     private MMTDeclaration generateNot90DegreeAngleDeclaration(float val, string p1URI, string p2URI, string p3URI)
     {
         MMTTerm lhs =
@@ -853,16 +1181,19 @@ public class AngleFact : FactWrappedCRTP<AngleFact>
         return new MMTValueDeclaration(this.Label, lhs, valueTp, value);
     }
 
+    /// \copydoc Fact.hasDependentFacts
     public override Boolean hasDependentFacts()
     {
         return true;
     }
 
+    /// \copydoc Fact.getDependentFactIds
     public override string[] getDependentFactIds()
     {
         return new string[] { Pid1, Pid2, Pid3 };
     }
 
+    /// \copydoc Fact.instantiateDisplay(GameObject, Transform)
     public override GameObject instantiateDisplay(GameObject prefab, Transform transform) {
         var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
         obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = _Facts[this.Pid1].Label;
@@ -872,11 +1203,13 @@ public class AngleFact : FactWrappedCRTP<AngleFact>
         return obj;
     }
 
+    /// \copydoc Fact.GetHashCode
     public override int GetHashCode()
     {
         return this.Pid1.GetHashCode() ^ this.Pid2.GetHashCode() ^ this.Pid3.GetHashCode();
     }
 
+    /// \copydoc Fact.Equivalent(Fact, Fact)
     protected override bool EquivalentWrapped(AngleFact f1, AngleFact f2)
     {
         if ((f1.Pid1 == f2.Pid1 && f1.Pid2 == f2.Pid2 && f1.Pid3 == f2.Pid3))// || 

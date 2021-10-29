@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// Allows multiple Pages (direct children of this) to switch/ scroll through.
+/// </summary>
 public class MenueLoader : MonoBehaviour
 {
     public MenueLoader pageMenue;
@@ -18,25 +21,20 @@ public class MenueLoader : MonoBehaviour
             scroll.verticalNormalizedPosition = 1f;
     }
 
+    /// <summary>
+    /// Reverts to last opend Page.
+    /// </summary>
     public void RevertMode()
     {
         SetMode(mode_last);
     }
 
+    /// <summary>
+    /// Deactivates all Pages, then activates Page <paramref name="select"/>.
+    /// </summary>
+    /// <param name="select">Page to switch to</param>
     public void SetMode(int select)
     {
-        switch (select)
-        {
-            case 0:
-            case 1:
-            case 2:
-                break;
-
-            case 3:
-                //Pages.transform.GetChild(select).GetComponent<>
-                break;
-        }
-
         Clear();
 
         mode_last = mode;
@@ -45,6 +43,9 @@ public class MenueLoader : MonoBehaviour
         Pages.transform.GetChild(select).gameObject.SetActive(true);
     }
 
+    /// <summary>
+    /// Deactivates all Pages.
+    /// </summary>
     private void Clear()
     {
         for (int i = 0; i < Pages.transform.childCount; i++)
