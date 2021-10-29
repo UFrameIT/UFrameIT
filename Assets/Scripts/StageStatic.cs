@@ -1,4 +1,4 @@
-using System;
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +6,8 @@ using UnityEngine;
 
 
 public static class StageStatic
-{
+{    
+    
     public static Dictionary<string, Stage> StageOfficial;
     public static Dictionary<string, Stage> StageLocal;
     public static Dictionary<string, int> Category = new Dictionary<string, int> {
@@ -73,7 +74,7 @@ public static class StageStatic
         }
 #else
         _Worlds = new List<string> {"TreeWorld", "RiverWorld"};
-        //UnityEditor.Debug.Log("WorldList might be incomplete!");
+        Debug.Log("WorldList might be incomplete!");
 #endif
         return _Worlds;
     }
@@ -119,9 +120,9 @@ public static class StageStatic
         }
     }
 
-    public static void SetMode(Mode mode, UnityEngine.GameObject gameObject = null)
+    public static void SetMode(Mode mode, GameObject gameObject = null)
     {
-        gameObject ??= new UnityEngine.GameObject();
+        gameObject ??= new GameObject();
 
         // handle StageStatic.mode
         switch (StageStatic.mode = mode)
@@ -228,7 +229,7 @@ public static class StageStatic
         (!stage.use_install_folder ? StageLocal : StageOfficial).Remove(stage.name);
     }
 
-    public static bool LoadInitStage(string name, bool local = false, bool restore_session = true, UnityEngine.GameObject gameObject = null)
+    public static bool LoadInitStage(string name, bool local = false, bool restore_session = true, GameObject gameObject = null)
     {
         if (!ContainsKey(name, local))
             return false;
@@ -247,12 +248,12 @@ public static class StageStatic
         return true;
     }
 
-    public static bool LoadInitStage(bool restore_session, UnityEngine.GameObject gameObject = null)
+    public static bool LoadInitStage(bool restore_session, GameObject gameObject = null)
     {
         if (current_name == null || current_name.Length == 0 || !stage.DeepLoad())
             return false;
 
-        gameObject ??= new UnityEngine.GameObject();
+        gameObject ??= new GameObject();
 
         if (restore_session)
         {
