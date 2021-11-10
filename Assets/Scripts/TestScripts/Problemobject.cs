@@ -16,7 +16,8 @@ public class Problemobject : MonoBehaviour
     public TaskCharakterAnimation taskcharakter; // npc
     public GameObject successReaction; // gamereaction at success (e.g. fireworks)
     public GameObject failureReaction; // gamereaction at failure (e.g. rain)
-    public GameObject npcSuccessReaction; // npc reaction at success (e.g. circlerun)
+    public string npcReaction; // npc reaction at success (e.g. circlerun)
+    public RuntimeAnimatorController npcController; //controller which specifies the npc succes reaction
     // public GameObject myPrefab;
 
 

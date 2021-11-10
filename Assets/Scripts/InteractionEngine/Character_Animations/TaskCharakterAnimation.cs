@@ -9,8 +9,8 @@ public class TaskCharakterAnimation : MonoBehaviour
     public float radiusAroundObject;
     public float talkingZoneDistance;
 
-    private Animator anim;
-    private Transform currentTransform;
+    public Animator anim;
+    public Transform currentTransform;
     private float currentDistance;
 
     //When changing walking/standing/happy booleans -> the state-variables in the animationController must also be changed
@@ -30,9 +30,21 @@ public class TaskCharakterAnimation : MonoBehaviour
     private float happyTimer = 0;
     private float happyTime = 7.5f;
 
-    private bool playerInTalkingZone = false;
+    public bool playerInTalkingZone = false;
     private bool taskCharacterAddressed = false;
 
+    //Sebi
+    public int id;
+
+
+    //constructor methode um neue characteranimation zu setzen, damit nicht alle erstellten npcs auf lösungsabfrage undso reagieren
+    /*public TaskCharakterAnimation(GameObject walkAroundObject, GameObject player, float radiusAroundObject, float talkingZoneDistance)
+    {
+        this.walkAroundObject = walkAroundObject;
+        this.player = player;
+        this.radiusAroundObject = radiusAroundObject;
+        this.talkingZoneDistance = talkingZoneDistance;
+    }*/
 
     // Start is called before the first frame update
     void Start()
@@ -59,30 +71,37 @@ public class TaskCharakterAnimation : MonoBehaviour
         RaycastHit hit;
         Ray ray = new Ray(player.transform.position, player.transform.forward);
         int layerMask = LayerMask.GetMask("TalkingZone"); //only hit TalkingZone
+       
 
         //If Player is in TalkingZone: TaskCharacter should look to the Player, stop walking and enable enter-key for talking
         if (Physics.Raycast(ray, out hit, talkingZoneDistance, layerMask))
         {
-            this.walking = false;
-            this.standing = true;
-            this.timer = 0;
-            rotate = false;
-            //Change boolean for switching to Standing-State in AnimationController
-            anim.SetBool("standing", true);
-            //Enable enter-key for talking for Charakter-Dialog
-            setPlayerInTalkingZone(true);
 
-            //Face walkAroundObject to Player (but only on y-Axis, so ignore x-and z-axis)
-            currentTransform.LookAt(new Vector3(player.transform.position.x, currentTransform.position.y, player.transform.position.z));
-
-            if(taskCharacterAddressed && !LelvelVerifiedSolved && checkGameSolved())
+            //Check what talkingzone of which npc was hit so just the one which was actually talked to reacts
+            if(hit.transform.parent.gameObject.GetComponent<TaskCharakterAnimation>().id == id)
             {
-                startHappy();
-                LelvelVerifiedSolved = true;
-            }
-            taskCharacterAddressed = false;
+                Debug.Log("Raycast hit Talkingzone Nr " + id.ToString());
+                this.walking = false;
+                this.standing = true;
+                this.timer = 0;
+                rotate = false;
+                //Change boolean for switching to Standing-State in AnimationController
+                anim.SetBool("standing", true);
+                //Enable enter-key for talking for Charakter-Dialog
+                setPlayerInTalkingZone(true);
 
-            return;
+                //Face walkAroundObject to Player (but only on y-Axis, so ignore x-and z-axis)
+                currentTransform.LookAt(new Vector3(player.transform.position.x, currentTransform.position.y, player.transform.position.z));
+
+                if (taskCharacterAddressed && !LelvelVerifiedSolved && checkGameSolved())
+                {
+                    startHappy();
+                    LelvelVerifiedSolved = true;
+                }
+                taskCharacterAddressed = false;
+
+                return;
+            }
         }
         else {
             //disable enter-key for talking
@@ -188,6 +207,7 @@ public class TaskCharakterAnimation : MonoBehaviour
         happy = false;
         resetToStart();
     }
+
 
     public void resetToStart() {
         //On Reset: Player must go into walking state, because it could be that after the happy/running-animation the player is 

@@ -23,8 +23,8 @@ public class Tape : Gadget
     {
         base.Awake();
         this.UiName = "Distance Mode";
-        if (MaxRange == 0)
-            MaxRange = GlobalBehaviour.GadgetPhysicalDistance;
+        //if (MaxRange == 0)
+           // MaxRange = GlobalBehaviour.GadgetPhysicalDistance;
     }
 
     //Initialize Gadget when enabled AND activated
