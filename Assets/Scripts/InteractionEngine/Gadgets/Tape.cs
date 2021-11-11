@@ -71,19 +71,16 @@ public class Tape : Gadget
         //TODO: check behaviour
         else if (hit.transform.gameObject.CompareTag("SnapZone"))
         {
-            if (this.TapeModeIsFirstPointSelected)
+            if (this.TapeModeIsFirstPointSelected
+                && Physics.Raycast(hit.transform.gameObject.transform.position - Vector3.down * 2, Vector3.down, out RaycastHit downHit))
             {
-                RaycastHit downHit;
-                if (Physics.Raycast(hit.transform.gameObject.transform.position - Vector3.down * 2, Vector3.down, out downHit))
-                {
-                    var idA = downHit.transform.gameObject.GetComponent<FactObject>().URI;
-                    var idB = this.TapeModeFirstPointSelected.Id;
-                    var idC = FactManager.AddPointFact(hit).Id;
-                    //Create LineFact
-                    FactManager.AddAngleFact(idA, idB, idC, true);
+                var idA = downHit.transform.gameObject.GetComponent<FactObject>().URI;
+                var idB = this.TapeModeFirstPointSelected.Id;
+                var idC = FactManager.AddPointFact(hit).Id;
+                //Create LineFact
+                FactManager.AddAngleFact(idA, idB, idC, true);
 
-                    this.ResetGadget();
-                }
+                this.ResetGadget();
             }
         }
         //If no Point was hit

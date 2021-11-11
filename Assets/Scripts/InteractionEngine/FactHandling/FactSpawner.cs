@@ -158,7 +158,7 @@ public class FactSpawner : MonoBehaviour
         //Length of the Angle relative to the Length of the shortest of the two lines (point2->point1) and (point2->point3)
         float lengthFactor = 0.3f;
         
-        float length = 0;
+        float length;
         if ((point1 - point2).magnitude >= (point3 - point2).magnitude)
             length = lengthFactor * (point3 - point2).magnitude;
         else
@@ -178,10 +178,8 @@ public class FactSpawner : MonoBehaviour
         v3T = new Vector3(length, v3T.y, length);
 
         Vector3 up = Vector3.Cross(to, from);
-        angle.transform.rotation = Quaternion.LookRotation(Vector3.Cross((from+to).normalized,up), up);
-
         //Place the Angle at position of point2
-        angle.transform.position = point2;
+        angle.transform.SetPositionAndRotation(point2, Quaternion.LookRotation(Vector3.Cross((from+to).normalized,up), up));
 
         //Set text of angle
         TextMeshPro[] texts = angle.GetComponentsInChildren<TextMeshPro>();

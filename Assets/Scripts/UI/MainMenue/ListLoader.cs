@@ -3,10 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-//TODO: SE: Split for Stage/Local
+/// <summary>
+/// Allowes for Pages of <see cref="MenueLoader"/> to contain Lists.
+/// </summary>
+/// <typeparam name="T">Type to list</typeparam>
 public abstract class ListLoader<T> : MenueLoader
 {
+    /// <summary> <see cref="GameObject"/> to which new <see cref="EntryHeader"/> entries are being added. </summary>
     public GameObject List;
+    /// <summary> Template for new entries to be added to <see cref="List"/> </summary>
     public GameObject EntryHeader;
 
     protected void OnEnable()
@@ -20,13 +25,16 @@ public abstract class ListLoader<T> : MenueLoader
         Clear();
     }
 
+    /// <summary> Creates listing </summary>
     public abstract void Init();
 
+    /// <summary> Removes all list-entries</summary>
     protected virtual void Clear()
     {
         List.DestroyAllChildren();
     }
 
+    /// <summary> Creates a Default listing.</summary>
     protected abstract void Default();
 
     public virtual void ListButtons(List<T> list)

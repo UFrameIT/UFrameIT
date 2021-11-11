@@ -11,17 +11,18 @@ public class Restart : MonoBehaviour
 
     public void LoadMainMenue()
     {
+        //not over SceneManager.LoadScene as MainMenue is too light to need to load over a LoadingScreen
         SceneManager.LoadScene("MainMenue");
     }
 
     public void LoadStartScreen()
     {
-        StartServer.process.Kill();  // null reference exception if Server started manually
+        StartServer.process.Kill(); // null reference exception if Server started manually
         SceneManager.LoadScene(0);
     }
 
     public void OnApplicationQuit()
     {
-        StartServer.process.Kill();
+        StartServer.process.Kill(); // null reference exception if Server started manually
     }
 }

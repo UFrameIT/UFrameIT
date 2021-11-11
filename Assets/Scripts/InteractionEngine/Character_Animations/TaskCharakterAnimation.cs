@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class TaskCharakterAnimation : MonoBehaviour
@@ -12,6 +13,8 @@ public class TaskCharakterAnimation : MonoBehaviour
     public Animator anim;
     public Transform currentTransform;
     private float currentDistance;
+
+    private CapsuleCollider talkingZoneCapsule;
 
     //When changing walking/standing/happy booleans -> the state-variables in the animationController must also be changed
     //For change of the task-character movements, maybe the transitions in the animationController have also to be adjusted
@@ -54,6 +57,7 @@ public class TaskCharakterAnimation : MonoBehaviour
 
         anim = GetComponent<Animator>();
         currentTransform = GetComponent<Transform>();
+        talkingZoneCapsule = gameObject.GetComponentInChildren<CapsuleCollider>();
     }
 
     // Update is called once per frame
@@ -149,11 +153,14 @@ public class TaskCharakterAnimation : MonoBehaviour
                     this.walking = true;
                     this.timer = 0;
 
+                    
+                    bool hitInvWall = Physics.OverlapSphere(talkingZoneCapsule.center, talkingZoneCapsule.radius, LayerMask.GetMask("TransparentFX")).Length > 0;
+                    
                     //Calculate distance from tree, so that the TaskCharacter only walks in a specific radius around the tree
                     //so that the player always knows where he is
                     currentDistance = (currentTransform.position - walkAroundObject.transform.position).magnitude;
                     //Turn on the radius-edges around the radiusAroundObject
-                    if (currentDistance > radiusAroundObject)
+                    if (hitInvWall || currentDistance > radiusAroundObject)
                     {
                         //Rotate Towards tree if radiusAroundObject is out of radius
                         //Rotate randomly between +/-5° towards the radiusAroundObject

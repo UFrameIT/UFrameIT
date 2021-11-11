@@ -404,13 +404,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 7
   UiName: 
+  MaxRange: 0
   Sprite: {fileID: 21300000, guid: ea5873cfd9158664f89459f0c9e1d853, type: 3}
-  FactManager: {fileID: 0}
   ignoreLayerMask:
     serializedVersion: 2
     m_Bits: 96768
   Cursor: {fileID: 7593098362214606413}
-  MaxRange: 0
   LayerPendulumHits:
     serializedVersion: 2
     m_Bits: 32769
@@ -1112,13 +1111,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 5
   UiName: 
+  MaxRange: 0
   Sprite: {fileID: 21300000, guid: 0b5fd1ea5a3b1a74588f605621176b6a, type: 3}
-  FactManager: {fileID: 0}
   ignoreLayerMask:
     serializedVersion: 2
     m_Bits: 86528
   Cursor: {fileID: 7593098362214606413}
-  MaxRange: 0
   lineRenderer: {fileID: 2563576905681239437}
   linePreviewMaterial: {fileID: 2100000, guid: a8a7bf60a30970f469a9c9d3ae2de6ef, type: 2}
 --- !u!1 &1228471852902103839
@@ -2436,7 +2434,6 @@ GameObject:
   - component: {fileID: 2563576905681239437}
   - component: {fileID: 7555363165550791964}
   - component: {fileID: 7000905242735826308}
-  - component: {fileID: 7765587865077286989}
   m_Layer: 0
   m_Name: Cursor
   m_TagString: Untagged
@@ -2659,18 +2656,6 @@ MonoBehaviour:
   Fireworks_Animation: {fileID: 680201779562176910, guid: ffb2848bfea6a7748b3e5bd8e6928920,
     type: 3}
   RainPrefab: {fileID: 160098, guid: 69b40ef7ee16c834c844b3fa26e0fdda, type: 3}
---- !u!114 &7765587865077286989
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2791239035521116974}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c75823b1712c4914b987f0e1ba8a5cba, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2841712355696529410
 GameObject:
   m_ObjectHideFlags: 0
@@ -2717,13 +2702,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 2
   UiName: 
+  MaxRange: 0
   Sprite: {fileID: 21300000, guid: 644edf8b3fa05da418500a0e9dd10820, type: 3}
-  FactManager: {fileID: 0}
   ignoreLayerMask:
     serializedVersion: 2
     m_Bits: 96768
   Cursor: {fileID: 7593098362214606413}
-  MaxRange: 0
   lineRenderer: {fileID: 2563576905681239437}
   anglePreviewMaterial: {fileID: 2100000, guid: 8a28cccde2536794c97ec91954e34e90,
     type: 2}
@@ -4029,13 +4013,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 6
   UiName: 
+  MaxRange: 0
   Sprite: {fileID: 21300026, guid: fd419bef7a36af8459a810bc72573105, type: 3}
-  FactManager: {fileID: 0}
   ignoreLayerMask:
     serializedVersion: 2
     m_Bits: 96768
   Cursor: {fileID: 7593098362214606413}
-  MaxRange: 0
   LayerPendulumHits:
     serializedVersion: 2
     m_Bits: 1
@@ -6116,13 +6099,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0
   UiName: 
+  MaxRange: 0
   Sprite: {fileID: 21300000, guid: 61c389e99e8388e4e93070d2f5e6275f, type: 3}
-  FactManager: {fileID: 0}
   ignoreLayerMask:
     serializedVersion: 2
     m_Bits: 24064
   Cursor: {fileID: 7593098362214606413}
-  MaxRange: 0
 --- !u!1 &6514918780467523717
 GameObject:
   m_ObjectHideFlags: 0
@@ -6169,13 +6151,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 8
   UiName: 
+  MaxRange: 0
   Sprite: {fileID: 21300000, guid: d456617ba2282854d9570dcebcc2b279, type: 3}
-  FactManager: {fileID: 0}
   ignoreLayerMask:
     serializedVersion: 2
     m_Bits: 115217
   Cursor: {fileID: 7593098362214606413}
-  MaxRange: 0
 --- !u!1 &6538023868683449154
 GameObject:
   m_ObjectHideFlags: 0
@@ -8130,13 +8111,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 1
   UiName: 
+  MaxRange: 0
   Sprite: {fileID: 21300000, guid: 23ef0c9f8111e14439483be733da29eb, type: 3}
-  FactManager: {fileID: 0}
   ignoreLayerMask:
     serializedVersion: 2
     m_Bits: 96768
   Cursor: {fileID: 7593098362214606413}
-  MaxRange: 0
   maxHeight: 2.5
   lineRenderer: {fileID: 2563576905681239437}
   linePreviewMaterial: {fileID: 2100000, guid: a8a7bf60a30970f469a9c9d3ae2de6ef, type: 2}
@@ -8980,13 +8960,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 3
   UiName: 
+  MaxRange: 0
   Sprite: {fileID: 21300000, guid: fa8323d8b52054c46b24fc9a0040caa3, type: 3}
-  FactManager: {fileID: 0}
   ignoreLayerMask:
     serializedVersion: 2
     m_Bits: 96768
   Cursor: {fileID: 7593098362214606413}
-  MaxRange: 0
   lineRenderer: {fileID: 2563576905681239437}
   linePreviewMaterial: {fileID: 2100000, guid: a8a7bf60a30970f469a9c9d3ae2de6ef, type: 2}
 --- !u!1 &8961895004939177439
