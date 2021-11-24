@@ -34,7 +34,7 @@ First, you have to set up a development environment:
 
 1. Open the Unity Hub and add the folder where you cloned this repository to. Then open the project in the hub.
 2. Follow the [UFrameIT server installation guide](https://github.com/UniFormal/MMT/blob/devel/src/frameit-mmt/installation.md) to run the server
-3. In Unity, select the scene you want to start (the current demo scene is called TreeWorld_02, you can find it at Assets/Scenes) and run the game (Play Button).
+3. In Unity, select the scene MainMenue.unity (You can find it in Assets\Scenes\Menues) and run the game (Play Button). From there you can try out "TechDemo A" in the "Demo Category"; click on it to expand a list of levels to choose from.
 
 ## Useful Links for new Developers
 * [Publications](https://kwarc.github.io/bibs/frameit/)
