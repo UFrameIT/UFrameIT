@@ -18,7 +18,7 @@ Just download our latest release: <https://github.com/UFrameIT/UFrameIT/releases
 
 First, you have to set up a development environment:
 
-1. Install [Unity](https://unity3d.com/de/get-unity/download) 2019.4.x (LTS) via the Unity Hub.
+1. Install [Unity](https://unity3d.com/de/get-unity/download) 2020.3.x (LTS) via the Unity Hub.
 
    We periodically update to the latest LTS version. Currently, any 2019.4 version should work; you can safely ignore any version warnings popping up.
    
