@@ -1,0 +1,11 @@
+{
+	"lastIP":"", 
+	"newIP":"", 
+	"IPslot1":"10.231.4.95:8085", 
+	"IPslot2":"10.231.4.95:8085",  
+	"IPslot3":"http://10.231.4.95:8085",
+	"selecIP":"",
+	"ControlMode":"2",
+	"TouchMode":"1",
+	"TAvisibility":"1"
+}

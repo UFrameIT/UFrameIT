@@ -50,12 +50,47 @@ public static class CommunicationEvents
     // TODO! move to GlobalStatic/Behaviour
 
 
+    //------------------------------------------------------
+    //Which FrameITUI and HideUI script should be used!
+    //------------------------------------------------------
+    public static int FrameITUIversion = 1; // 1= FrameITUI; 2= FrameITUI_mobil
+
+
     public static bool ServerRunning = true;
+    public static bool ServerRunning_test = true;
     public static string ServerPortDefault = "8085";
-    public static string ServerAdress = "http://localhost:8085"; //need "http://" 
+    //public static string ServerAdress = "http://localhost:8085"; //need "http://" 
+    public static string ServerAdress = "http://10.231.4.95:8085";
     public static string ServerAddress1 = "localhost:8085";
     public static string ServerAddress2 = "10.231.4.95:8085";
-	
+
+
+    public static int refHeight = -1;
+    public static int refWidth = -1;
+
+    public static int screHeight = -1;
+    public static int screWidth = -1;
+
+    public static float scaleMatch = -1;
+
+    public static string lastIP = "";
+    public static string newIP = "";
+    public static string IPslot1 = "";
+    public static string IPslot2 = "http://10.231.4.95:8085";
+    public static string IPslot3 = "10.231.4.95:8085";
+    public static string selecIP = "";
+    public static int[] ServerRunningA         =  new int[7]  { 0, 0, 0, 0, 0, 0, 0 }; //other, lastIP, newIP, IP1, IP2, IP3, selecIP} //0: offline, 1: Checking, 2: online, 3: NoNetworkAddress;
+    public static bool[] ServerRunningA_test    =  new bool[7]  { false, false, false, false, false, false, false }; //other, lastIP, newIP, IP1, IP2, IP3, selecIP}
+    public static double IPcheckGeneration = 0;
+    public static int CheckNetLoop = 1;
+    public static int Andr_Start_menue_counter = 1;
+    public static int controlMode = 1; //1=keyboard 2=mobile
+    public static int touchControlMode=1;
+    public static float TAvisibility = 1;
+
+    
+
+
     // Configs
     public static bool VerboseURI = false;
 
@@ -75,10 +110,12 @@ public static class CommunicationEvents
     }
 
     // TODO! avoid tree traversel with name
-    public static string CreatePathToFile(out bool file_exists,  string name, string format = null, List<Directories> hierarchie = null, bool use_install_folder = false)
+    public static string CreatePathToFile(out bool file_exists, string name, string format = null, List<Directories> hierarchie = null, bool use_install_folder = false)
     {
         string ending = "";
-        if(!string.IsNullOrEmpty(format))
+        string path;
+        int Opsys = 1;
+        if (!string.IsNullOrEmpty(format)){
             switch (format)
             {
                 case "JSON":
@@ -87,17 +124,71 @@ public static class CommunicationEvents
                 default:
                     break;
             }
-
-        string path = use_install_folder ? Application.dataPath : Application.persistentDataPath;
-        if (hierarchie != null)
-        {
-            path = CreateHierarchiePath(hierarchie, path);
-            System.IO.Directory.CreateDirectory(path);
         }
 
-        path = System.IO.Path.Combine(path, name + ending);
-        file_exists = System.IO.File.Exists(path);
+        //PC
+        switch (Opsys) { 
 
-        return path;
+
+            case 0:
+
+                path = use_install_folder ? Application.dataPath : Application.persistentDataPath;
+                //path = use_install_folder ? Application.persistentDataPath : Application.persistentDataPath;
+                if (hierarchie != null)
+                {
+                    path = CreateHierarchiePath(hierarchie, path);
+                    System.IO.Directory.CreateDirectory(path);
+                }
+
+                path = System.IO.Path.Combine(path, name + ending);
+                file_exists = System.IO.File.Exists(path);
+
+                return path;
+
+            case 1:
+                    
+                path = Application.persistentDataPath;
+                if (hierarchie != null)
+                {
+                    path = CreateHierarchiePath(hierarchie, path);
+                    System.IO.Directory.CreateDirectory(path);
+                }
+                path = System.IO.Path.Combine(path, name + ending);
+                file_exists = System.IO.File.Exists(path);
+
+                return path;
+
+            case 2:
+
+                //path = use_install_folder ? Application.dataPath : Application.persistentDataPath;
+                path = use_install_folder ? Application.persistentDataPath : Application.persistentDataPath;
+                if (hierarchie != null)
+                {
+                    path = CreateHierarchiePath(hierarchie, path);
+                    System.IO.Directory.CreateDirectory(path);
+                }
+
+                path = System.IO.Path.Combine(path, name + ending);
+                file_exists = System.IO.File.Exists(path);
+
+                return path;
+
+
+            default:
+
+                path = use_install_folder ? Application.dataPath : Application.persistentDataPath;
+                //path = use_install_folder ? Application.persistentDataPath : Application.persistentDataPath;
+                if (hierarchie != null)
+                {
+                    path = CreateHierarchiePath(hierarchie, path);
+                    System.IO.Directory.CreateDirectory(path);
+                }
+
+                path = System.IO.Path.Combine(path, name + ending);
+                file_exists = System.IO.File.Exists(path);
+
+                return path;
+
+        }
     }
 }

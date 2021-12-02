@@ -31,7 +31,7 @@ public class HideUI : MonoBehaviour
             CamControl.enabled = camActive;
             CursorRenderer.enabled = camActive;
         }
-
+        UICanvas.enabled = false;
     }
 
     // Update is called once per frame
