@@ -94,6 +94,38 @@ public class FactEquivalentsComparer : FactComparer
     protected override void Init() { }
 }
 
+/*class AngleComparer : FactComparer
+{
+    protected override bool Compare(Fact solution, Fact fact)
+    {
+        if(solution is AngleFact solutionangle && fact is AngleFact factangle)
+        {
+            if ((solutionangle.Pid1 == factangle.Pid1 && solutionangle.Pid2 == factangle.Pid2 && solutionangle.Pid3 == factangle.Pid3))
+            {
+                return true;
+            }
+            else
+            {
+                FactOrganizer organizer = solution._Facts;
+                PointFact p1f1 = (PointFact) organizer[solutionangle.Pid1];
+                PointFact p2f1 = (PointFact)_Facts[f1.Pid2];
+                PointFact p3f1 = (PointFact)_Facts[f1.Pid3];
+                PointFact p1f2 = (PointFact)_Facts[f2.Pid1];
+                PointFact p2f2 = (PointFact)_Facts[f2.Pid2];
+                PointFact p3f2 = (PointFact)_Facts[f2.Pid3];
+
+                return (p1f1.Equivalent(p1f2) && p2f1.Equivalent(p2f2) && p3f1.Equivalent(p3f2))
+                    ;
+                solutionangle.equivalentwra
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+}*/
+
 /// <summary>
 /// Checks <see cref="LineFact">LineFacts</see> if <see cref="Compare(Fact, Fact).fact"/> is of same direction and at least of same length as <see cref="Compare(Fact, Fact).solution"/>, while accounting for Unity and floating point precission
 /// <seealso cref="Math3d.vectorPrecission"/>

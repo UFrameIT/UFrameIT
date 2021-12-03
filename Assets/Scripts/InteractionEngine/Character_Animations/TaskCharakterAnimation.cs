@@ -84,7 +84,7 @@ public class TaskCharakterAnimation : MonoBehaviour
             //Check what talkingzone of which npc was hit so just the one which was actually talked to reacts
             if(hit.transform.parent.gameObject.GetComponent<TaskCharakterAnimation>().id == id)
             {
-                Debug.Log("Raycast hit Talkingzone Nr " + id.ToString());
+                //Debug.Log("Raycast hit Talkingzone Nr " + id.ToString());
                 this.walking = false;
                 this.standing = true;
                 this.timer = 0;

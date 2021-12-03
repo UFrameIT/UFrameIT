@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using static TaskCharakterAnimation;
 using static FactOrganizer;
+using static FactComparer;
 
 public class MyCharacterDialog : MonoBehaviour
 {
@@ -20,6 +21,10 @@ public class MyCharacterDialog : MonoBehaviour
 
     //Sebi: NPC ID
     public int npc_id;
+
+    //Sebi: Raininstance
+    public GameObject rainInstance;
+    //public GameObject rainPrefab;
 
     //Sebi: particle systems damit man sie mit invoke stoppen kann
     public GameObject successreaction;
@@ -73,65 +78,86 @@ public class MyCharacterDialog : MonoBehaviour
         {
             //Reset Sentence if Player is out of range of the TaskCharacter and it's not already reseted
             ResetSentence();
-        }else if (CharakterAnimation.getPlayerInTalkingZone() && Input.GetKey(Key2) && npc_id == CharakterAnimation.id) // -> Solution erfragt
+        }else if (CharakterAnimation.getPlayerInTalkingZone() && Input.GetKeyDown(Key2) && npc_id == CharakterAnimation.id) // -> Solution erfragt
         {
-            if (testSolution) // in if: problemsolved(); kann ich hier nicht einfügen sonst gibts compiling probleme
+            //if(StageStatic.stage.factState.ContainsKey(problemObject.GetComponent<Problemobject>().problemFact.Id))
+            int counter = 0;
+            bool solved = false;
+            FactComparer Comparer = new FactEquivalentsComparer();
+            Debug.Log("check " + StageStatic.stage.factState.FactDict.Values.Count.ToString() + "Facts in mode-factlist");
+            foreach (Fact fact in StageStatic.stage.factState.FactDict.Values)
             {
-                // activate success text
-                StartSentenceAt(sentences.Length-2);
-                // TODO activate success animation
-                if(successreaction.name == "Fireworks_Animation")
+                Debug.Log("counter = " + counter.ToString());
+                // problemObject.GetComponent<Problemobject>().problemFact.GetType().Equals(fact.GetType()) &&
+                //Comparer.Equals(fact, problemObject.GetComponent<Problemobject>().problemFact)
+                // problemObject.GetComponent<Problemobject>().problemFact.Equals(fact)
+                // ((fact is PointFact factpoint && solution is PointFact solutionpoint) || (fact is LineFact factline && solution is LineFact solutionline) || (fact is AngleFact factangle && solution is AngleFact solutionangle)) && Comparer.Equals(solution, fact)
+                Fact solution = problemObject.GetComponent<Problemobject>().problemFact;
+                if (FactIsEqual(fact, solution))
                 {
-                    successreaction.transform.position = gameObject.transform.position;
+                    Debug.Log("found right solution fact in factlist; fact nr:" + counter.ToString());
+                    // activate success text
+                    StartSentenceAt(sentences.Length - 2);
+                    // TODO activate success animation
+                    if (successreaction.name == "Fireworks_Animation")
+                    {
+                        successreaction.transform.position = gameObject.transform.position;
+                    }
+                    successreaction.SetActive(true);
+
+                    // start npc success reaction
+                    gameObject.transform.parent.GetComponent<TaskCharakterAnimation>().startHappy();
+
+                    Invoke("StopSuccessReaction", (float)7.5);
+                    solved = true;
+                    break;
                 }
-                successreaction.SetActive(true);
-
-                // start npc success reaction
-                gameObject.transform.parent.GetComponent<TaskCharakterAnimation>().startHappy();
-
-                Invoke("StopSuccessReaction", (float)7.5);
-
-                /*GameObject successInstantiation = Instantiate(problemObject.GetComponent<Problemobject>().successReaction);
-                successreaction = successInstantiation.GetComponent<ParticleSystem>();
-                successreaction.Play();
-                Invoke("StopSuccessReaction", 3);*/
-
-
-                //DestroyImmediate(successInstantiation, true);
-                // TODO activate success npc reaction
+                counter++;
             }
-            else
+            if (!solved)
             {
+                Debug.Log("found no right solution fact for problemobject");
                 // activate failure text
                 StartSentenceAt(sentences.Length - 1);
                 // TODO activate failure animation
-                if(failurereaction.name == "Thunderbolt_Animation")
+                if (failurereaction.name.Equals("Thunderbolt_Animation"))
                 {
+                    Debug.Log("failure reaction was " + failurereaction.name);
                     failurereaction.transform.position = new Vector3(gameObject.transform.position.x, 40, gameObject.transform.position.z);
+                    failurereaction.SetActive(true);
+                    Invoke("StopFailureReaction", 5);
                 }
-                else if(failurereaction.name == "RainPrefab")
+                else if (failurereaction.name.Equals("RainPrefab"))
                 {
+                    Debug.Log("enter rain case");
+                    Debug.Log("failurereaction was " + failurereaction.name);
+                    failurereaction.SetActive(true);
+                    GameObject RainRepresentation = failurereaction;
+                    RainRepresentation.transform.position = new Vector3(gameObject.transform.position.x, 40, gameObject.transform.position.z);
+                    rainInstance = GameObject.Instantiate(RainRepresentation);
+                    Debug.Log("raininstance succesfully set");
+                    rainInstance.name = "raininstance";
                     
-                    /*failurereaction.transform.position = gameObject.transform.position;
-                    //failurereaction.SetActive(true);
-                    for (int i = 0; i<3; i++)
-                    {
-                        failurereaction.transform.GetChild(i).transform.position = new Vector3(gameObject.transform.position.x, 40, gameObject.transform.position.z);
-                        ParticleSystem ps = failurereaction.transform.GetChild(i).gameObject.GetComponent<ParticleSystem>();
-                        var em = ps.emission;
-                        em.enabled = true;
-                    }
-                    failurereaction.transform.GetChild(3).transform.position = new Vector3(gameObject.transform.position.x, 40, gameObject.transform.position.z);*/
+                    
+                    Invoke("StopRain", 5);
+                    failurereaction.SetActive(false);
+               
+                 
                 }
-                failurereaction.SetActive(true);
-                Invoke("StopFailureReaction", 5);
+                else
+                {
+        
+                    Debug.Log("Failurereaction was " + failurereaction.name);
+                    failurereaction.SetActive(true);
+                    Invoke("StopFailureReaction", 5);
+                }
+             
 
                 /*GameObject failureInstantiation = problemObject.GetComponent<Problemobject>().failureReaction;
                 failureInstantiation.name = "failureInstantiation";
                 failurereaction = failureInstantiation.GetComponent<ParticleSystem>();
                 failurereaction.Play();
                 Invoke("StopFailureReaction", 3);*/
-
             }
         }
     }
@@ -168,7 +194,7 @@ public class MyCharacterDialog : MonoBehaviour
         //-3 because the text before the last sentence is only for success text and the last sentence is for failure
         if (sentenceIndex < sentences.Length - 3)
         {
-            CharakterAnimation.setTaskCharacterAddressed(true);
+            //CharakterAnimation.setTaskCharacterAddressed(true);
             sentenceIndex++;
             letterIndex = 0;
             typingActive = true;
@@ -253,5 +279,74 @@ public class MyCharacterDialog : MonoBehaviour
     public void StopFailureReaction()
     {
         failurereaction.SetActive(false);
+    }
+
+    public void StopRain()
+    {
+        GameObject.Destroy(rainInstance);
+        rainInstance = null;
+        Debug.Log("stopRain");
+    }
+
+    public bool FactIsEqual(Fact fact, Fact solution)
+    {
+        FactComparer Comparer = new FactEquivalentsComparer();
+        if(fact is PointFact factpoint && solution is PointFact solutionpoint)
+        {
+            return Comparer.Equals(fact, solution);
+        } else if(fact is AngleFact factangle && solution is AngleFact solutionangle)
+        {
+            if((factangle.Pid1 == solutionangle.Pid1 && factangle.Pid2 == solutionangle.Pid2 && factangle.Pid3 == solutionangle.Pid3) || (factangle.Pid1 == solutionangle.Pid3 && factangle.Pid2 == solutionangle.Pid2 && factangle.Pid3 == solutionangle.Pid1))
+            {
+                return true;
+            } else
+            {
+                PointFact f1 = (PointFact) StageStatic.stage.factState.FactDict[factangle.Pid1];
+                PointFact f2 = (PointFact) StageStatic.stage.factState.FactDict[factangle.Pid2];
+                PointFact f3 = (PointFact) StageStatic.stage.factState.FactDict[factangle.Pid3];
+                StageStatic.stage.SetMode(true);
+                PointFact s1 = (PointFact)StageStatic.stage.factState.FactDict[solutionangle.Pid1];
+                PointFact s2 = (PointFact)StageStatic.stage.factState.FactDict[solutionangle.Pid2];
+                PointFact s3 = (PointFact)StageStatic.stage.factState.FactDict[solutionangle.Pid3];
+                StageStatic.stage.SetMode(false);
+
+                if((f1.Equivalent(s1) && f2.Equivalent(s2) && f3.Equivalent(s3)) || (f1.Equivalent(s3) && f2.Equivalent(s2) && f3.Equivalent(s1)))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        } else if(fact is LineFact factline && solution is LineFact solutionline)
+        {
+            if ((factline.Pid1 == solutionline.Pid1 && factline.Pid2 == solutionline.Pid2) || (factline.Pid1 == solutionline.Pid2 && factline.Pid2 == solutionline.Pid1))
+            {
+                return true;
+            }
+            else
+            {
+                PointFact f1 = (PointFact)StageStatic.stage.factState.FactDict[factline.Pid1];
+                PointFact f2 = (PointFact)StageStatic.stage.factState.FactDict[factline.Pid2];
+                StageStatic.stage.SetMode(true);
+                PointFact s1 = (PointFact)StageStatic.stage.factState.FactDict[solutionline.Pid1];
+                PointFact s2 = (PointFact)StageStatic.stage.factState.FactDict[solutionline.Pid2];
+                StageStatic.stage.SetMode(false);
+
+                if ((f1.Equivalent(s1) && f2.Equivalent(s2)) || (f1.Equivalent(s2) && f2.Equivalent(s1)))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            return false;
+        }
     }
 }
