@@ -36,6 +36,12 @@ First, you have to set up a development environment:
 2. Follow the [UFrameIT server installation guide](https://github.com/UniFormal/MMT/blob/devel/src/frameit-mmt/installation.md) to run the server
 3. In Unity, select the scene MainMenue.unity (You can find it in Assets\Scenes\Menues) and run the game (Play Button). From there you can try out "TechDemo A" in the "Demo Category"; click on it to expand a list of levels to choose from.
 
+### Building and starting the FrameIT Server
+1. Build FrameIT Server to JAR
+2. Download Archives folder
+3. Start Server with Command:
+
+
 ## Useful Links for new Developers
 * [Publications](https://kwarc.github.io/bibs/frameit/)
 
