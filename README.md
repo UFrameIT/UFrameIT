@@ -66,7 +66,7 @@ First, you have to set up a development environment:
 
 ##### Build the JAR
 1. Open in Intellij the project with the UFrameIT Server.
-2. Navigate in Intellij to: Build -> Build Artifacts -> SelectYourArtifact
+2. Navigate in Intellij to: Build -> Build Artifacts -> SelectYourArtifact -> Build
 
 *  [General to_JAR-file Tutorial](https://riptutorial.com/intellij-idea/example/16922/building-a--jar)
 
