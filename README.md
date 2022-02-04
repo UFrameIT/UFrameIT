@@ -39,7 +39,7 @@ First, you have to set up a development environment:
 ### Building and starting the UFrameIT Server for standalone run.
 
 1. Get JAR-file of the UFrameIT Server  
-   * Download a prebuild Version here: Not Uploaded Yet
+   * Download a prebuild Version here: [frameit-mmt.jar](https://faubox.rrze.uni-erlangen.de/getlink/fi2xYsCcSRWv3rBkBCfkFbz8/frameit-mmt.jar)
    * Or build your own JAR as described in the following chapter "Build FrameIT Server to JAR" below.  
 3. Download Archives folder
    * [archives](https://github.com/UFrameIT/archives)
