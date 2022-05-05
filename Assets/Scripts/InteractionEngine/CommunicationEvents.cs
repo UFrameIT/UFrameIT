@@ -51,10 +51,47 @@ public static class CommunicationEvents
 
 
     public static bool ServerRunning = true;
-    public static string ServerAdress = "localhost:8085";
+    public static bool ServerRunning_test = true;
+    public static string ServerPortDefault = "8085";
+    //public static string ServerAdress = "http://localhost:8085"; //need "http://" 
+    public static string ServerAdress = "http://10.231.4.95:8085";
+    public static string ServerAddress1 = "localhost:8085";
+    public static string ServerAddress2 = "10.231.4.95:8085";
+
+    
+    public static bool takeNewToolID = false;
+    public static int ToolID_new;
+    public static int ToolID_selected;//Script
+    
+
+    public static string lastIP = "";
+    public static string newIP = "";
+    public static string IPslot1 = "";
+    public static string IPslot2 = "http://10.231.4.95:8085";
+    public static string IPslot3 = "10.231.4.95:8085";
+    public static string selecIP = "";
+    
+    public static int[] ServerRunningA = new int[7] { 0, 0, 0, 0, 0, 0, 0 }; //other, lastIP, newIP, IP1, IP2, IP3, selecIP} //0: offline, 1: Checking, 2: online, 3: NoNetworkAddress;
+    public static bool[] ServerRunningA_test = new bool[7] { false, false, false, false, false, false, false }; //other, lastIP, newIP, IP1, IP2, IP3, selecIP}
+    public static double IPcheckGeneration = 0;
+    public static int CheckNetLoop = 1;
+    
+    public static bool autoOSrecognition = false;
+    //int Opsys =1 Android.
+    //int Opsys =0 Windows;
+    public static int Opsys_Default = 1;
+
+    public static int Opsys = 1; //Script
+    public static bool CursorVisDefault = true; //Script.
+
+
+
+
+
 
     // Configs
     public static bool VerboseURI = false;
+
 
     public enum Directories
     {
@@ -72,10 +109,11 @@ public static class CommunicationEvents
     }
 
     // TODO! avoid tree traversel with name
-    public static string CreatePathToFile(out bool file_exists,  string name, string format = null, List<Directories> hierarchie = null, bool use_install_folder = false)
+    public static string CreatePathToFile(out bool file_exists, string name, string format = null, List<Directories> hierarchie = null, bool use_install_folder = false)
     {
         string ending = "";
-        if(!string.IsNullOrEmpty(format))
+        string path; 
+        if (!string.IsNullOrEmpty(format))
             switch (format)
             {
                 case "JSON":
@@ -85,16 +123,52 @@ public static class CommunicationEvents
                     break;
             }
 
-        string path = use_install_folder ? Application.dataPath : Application.persistentDataPath;
-        if (hierarchie != null)
+        //int Opsys =1 Android;
+        //int Opsys =0 Windows;
+        //is set above;
+        switch (Opsys)
         {
-            path = CreateHierarchiePath(hierarchie, path);
-            System.IO.Directory.CreateDirectory(path);
+            case 0:
+                path = use_install_folder ? Application.dataPath : Application.persistentDataPath;
+                if (hierarchie != null)
+                {
+                    path = CreateHierarchiePath(hierarchie, path);
+                    System.IO.Directory.CreateDirectory(path);
+                }
+
+                path = System.IO.Path.Combine(path, name + ending);
+                file_exists = System.IO.File.Exists(path);
+
+                return path;
+
+            case 1:
+
+                path = Application.persistentDataPath;
+                if (hierarchie != null)
+                {
+                    path = CreateHierarchiePath(hierarchie, path);
+                    System.IO.Directory.CreateDirectory(path);
+                }
+                path = System.IO.Path.Combine(path, name + ending);
+                file_exists = System.IO.File.Exists(path);
+
+                return path;
+
+            default:
+                path = use_install_folder ? Application.dataPath : Application.persistentDataPath;
+                if (hierarchie != null)
+                {
+                    path = CreateHierarchiePath(hierarchie, path);
+                    System.IO.Directory.CreateDirectory(path);
+                }
+
+                path = System.IO.Path.Combine(path, name + ending);
+                file_exists = System.IO.File.Exists(path);
+
+                return path;
+
+
         }
 
-        path = System.IO.Path.Combine(path, name + ending);
-        file_exists = System.IO.File.Exists(path);
-
-        return path;
     }
 }

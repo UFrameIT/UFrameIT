@@ -5,12 +5,12 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/Menues/StartScreen.unity
     guid: 80736d45fa76e1b488eab0eb8650ff3d
-  - enabled: 0
-    path: Assets/Scenes/Worlds/Release/TreeWorld_Release_02.unity
-    guid: 9b8063e1ae3c04045b13e20d1ccc73d0
+  - enabled: 1
+    path: Assets/Scenes/Menues/LaunchMenue.unity
+    guid: f3d77579acbf6da4b8ab388fa56309ad
   - enabled: 1
     path: Assets/Scenes/Menues/MainMenue.unity
     guid: 4aac33ac7893f094695103325725f1ef
@@ -23,4 +23,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Worlds/TreeWorld.unity
     guid: 8c44c18165442d84d96027a49ff22f5b
+  - enabled: 0
+    path: Assets/Scenes/Worlds/Release/TreeWorld_Release_02.unity
+    guid: 9b8063e1ae3c04045b13e20d1ccc73d0
   m_configObjects: {}
