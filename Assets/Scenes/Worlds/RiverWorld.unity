@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44100717, g: 0.4898312, b: 0.5698877, a: 1}
+  m_IndirectSpecularColor: {r: 0.4410865, g: 0.48984045, b: 0.5699203, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -57523,17 +57523,17 @@ PrefabInstance:
     - target: {fileID: 3020720017683626808, guid: b07552db700124a4680401e6fb94c186,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 56.86267
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3020720017683626808, guid: b07552db700124a4680401e6fb94c186,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -41.79994
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3020720017683626808, guid: b07552db700124a4680401e6fb94c186,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -81.704414
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3020720017683626808, guid: b07552db700124a4680401e6fb94c186,
         type: 3}
