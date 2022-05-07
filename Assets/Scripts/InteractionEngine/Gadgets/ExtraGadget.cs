@@ -14,7 +14,7 @@ public class ExtraGadget : Gadget
         base.OnEnable();
     }
 
-    public override void OnHit(RaycastHit hit)
+    public override void OnHit(RaycastHit[] hit)
     {
 
     }

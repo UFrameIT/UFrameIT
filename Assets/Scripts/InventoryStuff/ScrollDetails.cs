@@ -102,9 +102,12 @@ public class ScrollDetails : MonoBehaviour
         if (currentMmtAnswer == null)
         {
             Debug.Log("DAS HAT NICHT GEKLAPPT");
+            
         }
         else
         {
+            // Todo delte maybe
+            Debug.Log("Current mmt answer:  "+currentMmtAnswer);
             Scroll.ScrollDynamicInfo scrollDynamicInfo = JsonConvert.DeserializeObject<Scroll.ScrollDynamicInfo>(currentMmtAnswer);
             processScrollDynamicInfo(scrollDynamicInfo);
         }
@@ -113,7 +116,7 @@ public class ScrollDetails : MonoBehaviour
     IEnumerator sendView(string endpoint)
     {
         string body = prepareScrollAssignments();
-
+      //  Debug.Log("Start of method");
         UnityWebRequest www = UnityWebRequest.Put(ServerAdress + endpoint, body);
         www.method = UnityWebRequest.kHttpVerbPOST;
         www.SetRequestHeader("Content-Type", "application/json");
@@ -132,7 +135,6 @@ public class ScrollDetails : MonoBehaviour
         else
         {
             string answer = www.downloadHandler.text;
-            Debug.Log(answer);
             currentMmtAnswer = answer;
         }
     }
@@ -166,6 +168,11 @@ public class ScrollDetails : MonoBehaviour
         bool samestep = false;
         for (int i = 0; i < pushoutFacts.Count; i++, samestep = true)
         {
+            //TODO Delete
+            Debug.Log(pushoutFacts.Count);
+            Debug.Log("StartUri " +pushoutFacts[i].getType()+ " over");
+            Debug.Log("Applicant" + pushoutFacts[i].getApplicant() + " over");
+
             Fact newFact = ParsingDictionary.parseFactDictionary[pushoutFacts[i].getType()].Invoke(pushoutFacts[i]);
             if (newFact != null)
             {
@@ -224,6 +231,8 @@ public class ScrollDetails : MonoBehaviour
             //Check Hint Informations
             //If ScrollFact is assigned -> No Hint
             if (obj.transform.GetChild(0).GetComponent<DropHandling>().currentFact == null) {
+
+                Debug.Log(" print out " + rendered.requiredFacts[i].getType());
                 Fact currentFact = ParsingDictionary.parseFactDictionary[rendered.requiredFacts[i].getType()].Invoke(rendered.requiredFacts[i]);
                 //If currentFact could be parsed: this fact maybe not yet exists in the global fact-list but there must be a fact
                 // of the same type and the same dependent facts in the fact-list, otherwise currentFact could not have been parsed

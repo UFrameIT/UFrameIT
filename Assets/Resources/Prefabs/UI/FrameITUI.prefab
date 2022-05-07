@@ -536,6 +536,8 @@ MonoBehaviour:
     type: 3}
   prefab_Line: {fileID: 7510387096843212865, guid: d6ee990520a44954fb494468665d19e9,
     type: 3}
+  prefab_ParallelLineFact: {fileID: 7510387096843212865, guid: 9f086cfbfeb0dfd46af67395aa17aafa,
+    type: 3}
   x_Start: -125
   y_Start: 475
   X_Pacece_Between_Items: 110
@@ -1776,7 +1778,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 1363.3278, y: 0.000030517578}
+  m_AnchoredPosition: {x: 3633.298, y: 0.000030517578}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1063267682090589447

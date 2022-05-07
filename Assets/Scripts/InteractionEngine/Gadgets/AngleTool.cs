@@ -44,12 +44,12 @@ public class AngleTool : Gadget
         this.ResetGadget();
     }
 
-    public override void OnHit(RaycastHit hit)
+    public override void OnHit(RaycastHit[] hit)
     {
         if (!this.isActiveAndEnabled) return;
-        if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
+        if (hit[0].transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
-            PointFact tempFact = (PointFact)StageStatic.stage.factState[hit.transform.GetComponent<FactObject>().URI];
+            PointFact tempFact = (PointFact)StageStatic.stage.factState[hit[0].transform.GetComponent<FactObject>().URI];
 
             //If two points were already selected and now the third point got selected
             if (this.angleModeIsFirstPointSelected && this.angleModeIsSecondPointSelected)

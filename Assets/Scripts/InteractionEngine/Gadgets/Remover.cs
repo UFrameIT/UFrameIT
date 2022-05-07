@@ -13,14 +13,14 @@ public class Remover : Gadget
             MaxRange = GlobalBehaviour.GadgetLaserDistance;
     }
 
-    public override void OnHit(RaycastHit hit)
+    public override void OnHit(RaycastHit[] hit)
     {
 
         if (!this.isActiveAndEnabled)
             return;
 
         // TODO: ask/warn user to cascade
-        var hid = hit.transform.GetComponent<FactObject>().URI;
+        var hid = hit[0].transform.GetComponent<FactObject>().URI;
         StageStatic.stage.factState.Remove(hid);
     }
 }

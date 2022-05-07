@@ -44,5 +44,5 @@ public class Gadget : MonoBehaviour
     /// Called when <see cref="CommunicationEvents.TriggerEvent"/> is invoked, a.k.a. when Player clicks in GameWorld.
     /// </summary>
     /// <param name="hit">the position where it was clicked</param>
-    public virtual void OnHit(RaycastHit hit) { }
+    public virtual void OnHit(RaycastHit[] hit) { }
 }

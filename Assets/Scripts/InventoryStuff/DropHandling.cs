@@ -28,6 +28,8 @@ public class DropHandling : MonoBehaviour, IDropHandler, IPointerClickHandler
         Debug.Log("recieved Fact: " + currentFact.Id);
 
         CommunicationEvents.NewAssignmentEvent.Invoke();
+      
+
     }
 
     public void OnPointerClick(PointerEventData eventData)

@@ -35,12 +35,64 @@ public class LineTool : Gadget
         this.ResetGadget();
     }
 
-    public override void OnHit(RaycastHit hit)
+    //public override void OnHit(RaycastHit hit)
+    //{
+    //    if (!this.isActiveAndEnabled) return;
+    //    if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
+    //    {
+    //        Fact tempFact = StageStatic.stage.factState[hit.transform.GetComponent<FactObject>().URI];
+
+    //        //If first point was already selected AND second point != first point
+    //        if (this.LineModeIsFirstPointSelected && this.LineModeFirstPointSelected.Id != tempFact.Id)
+    //        {
+    //            //Create LineFact
+    //            FactManager.AddRayFact(this.LineModeFirstPointSelected.Id, tempFact.Id);
+
+    //            this.ResetGadget();
+    //        }
+    //        else
+    //        {
+    //            //Activate LineDrawing for preview
+    //            this.LineModeIsFirstPointSelected = true;
+    //            this.LineModeFirstPointSelected = tempFact;
+    //            this.ActivateLineDrawing();
+    //        }
+    //    }
+
+    //    //if we hit the top snap zone
+    //    //TODO: check behaviour
+    //    else if (hit.transform.gameObject.CompareTag("SnapZone"))
+    //    {
+    //        if (this.LineModeIsFirstPointSelected
+    //            && Physics.Raycast(hit.transform.gameObject.transform.position - Vector3.down * 2, Vector3.down, out RaycastHit downHit))
+    //        {
+    //            //Create LineFact
+    //            var idA = downHit.transform.gameObject.GetComponent<FactObject>().URI;
+    //            var idB = this.LineModeFirstPointSelected.Id;
+    //            FactManager.AddAngleFact(idA, idB, FactManager.AddPointFact(hit).Id);
+
+    //            this.ResetGadget();
+    //        }
+    //    }
+
+    //    //If no Point was hit
+    //    else
+    //    {
+    //        if (this.LineModeIsFirstPointSelected)
+    //        {
+    //            //Deactivate LineDrawing and first point selection
+    //            this.ResetGadget();
+    //        }
+
+    //        //TODO: Hint that only a line can be drawn between already existing points
+    //    }
+    //}
+    public override void OnHit(RaycastHit[] hit)
     {
         if (!this.isActiveAndEnabled) return;
-        if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
+        if (hit[0].transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
-            Fact tempFact = StageStatic.stage.factState[hit.transform.GetComponent<FactObject>().URI];
+            Fact tempFact = StageStatic.stage.factState[hit[0].transform.GetComponent<FactObject>().URI];
 
             //If first point was already selected AND second point != first point
             if (this.LineModeIsFirstPointSelected && this.LineModeFirstPointSelected.Id != tempFact.Id)
@@ -61,15 +113,15 @@ public class LineTool : Gadget
 
         //if we hit the top snap zone
         //TODO: check behaviour
-        else if (hit.transform.gameObject.CompareTag("SnapZone"))
+        else if (hit[0].transform.gameObject.CompareTag("SnapZone"))
         {
             if (this.LineModeIsFirstPointSelected
-                && Physics.Raycast(hit.transform.gameObject.transform.position - Vector3.down * 2, Vector3.down, out RaycastHit downHit))
+                && Physics.Raycast(hit[0].transform.gameObject.transform.position - Vector3.down * 2, Vector3.down, out RaycastHit downHit))
             {
                 //Create LineFact
                 var idA = downHit.transform.gameObject.GetComponent<FactObject>().URI;
                 var idB = this.LineModeFirstPointSelected.Id;
-                FactManager.AddAngleFact(idA, idB, FactManager.AddPointFact(hit).Id);
+                FactManager.AddAngleFact(idA, idB, FactManager.AddPointFact(hit[0]).Id);
 
                 this.ResetGadget();
             }
@@ -87,7 +139,6 @@ public class LineTool : Gadget
             //TODO: Hint that only a line can be drawn between already existing points
         }
     }
-
     void Update()
     {
         if (!this.isActiveAndEnabled) return;

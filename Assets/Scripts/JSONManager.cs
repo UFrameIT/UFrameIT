@@ -15,6 +15,7 @@ public class MMTURICollection
     public string Tuple = "http://gl.mathhub.info/MMT/LFX/Sigma?Symbols?Tuple";
     public string LineType = "http://mathhub.info/MitM/core/geometry?Geometry/Common?line_type";
     public string LineOf = "http://mathhub.info/MitM/core/geometry?Geometry/Common?lineOf";
+
     public string OnLine = "http://mathhub.info/MitM/core/geometry?Geometry/Common?onLine";
     public string Ded = "http://mathhub.info/MitM/Foundation?Logic?ded";
     public string Eq = "http://mathhub.info/MitM/Foundation?Logic?eq";
@@ -22,6 +23,34 @@ public class MMTURICollection
     public string Angle = "http://mathhub.info/MitM/core/geometry?Geometry/Common?angle_between";
     public string Sketch = "http://mathhub.info/MitM/Foundation?InformalProofs?proofsketch";
     public string RealLit = "http://mathhub.info/MitM/Foundation?RealLiterals?real_lit";
+    
+    public string ParallelLine = "http://mathhub.info/MitM/core/geometry?Geometry/Common?parallelLine";
+    // public string RectangleFact = "http://mathhub.info/FrameIT/frameworld?FrameITRectangles?rectangle_type";
+    //  public string RectangleFactmk = "http://mathhub.info/FrameIT/frameworld?FrameITRectangles?mk_rectangle";
+
+    public string CircleType3d = "http://mathhub.info/FrameIT/frameworld?FrameITTheories?circle_type_3d";
+    public string MkCircle3d = "http://mathhub.info/FrameIT/frameworld?FrameITTheories?circle_basic_definition_3d";
+    public string TriangleMiddlePoint = "http://mathhub.info/FrameIT/frameworld?FrameITTriangles?triangle_mid_point_wrapper";
+    public string RadiusCircleMetric = "http://mathhub.info/FrameIT/frameworld?FrameITTheories?circle_radius";
+
+    public string AreaCircle = "http://mathhub.info/FrameIT/frameworld?FrameITTheories?area_circle";
+    public string VolumeCone = "http://mathhub.info/FrameIT/frameworld?FrameITTheories?volume_cone";
+    public string ConeOfCircleApex = "http://mathhub.info/FrameIT/frameworld?FrameITTheories?circle_cone_of";
+
+
+    public string ParametrizedPlane = "http://mathhub.info/MitM/core/geometry?Geometry/Planes?ParametrizedPlane";
+    public string pointNormalPlane = "http://mathhub.info/MitM/core/geometry?Geometry/Planes?pointNormalPlane";
+    public string OnCircle = "http://mathhub.info/FrameIT/frameworld?FrameITTheories?point_on_circle";
+    public string AnglePlaneLine = "http://mathhub.info/FrameIT/frameworld?FrameITTheories?angle_circle_line";
+    public string OrthoCircleLine = "http://mathhub.info/FrameIT/frameworld?FrameITTheories?orthogonal_circle_line";
+
+
+    public string TruncatedVolumeCone = "http://mathhub.info/FrameIT/frameworld?FrameITTheories?truncated_cone_volume";
+    public string ParallelCircles = "http://mathhub.info/FrameIT/frameworld?FrameITTheories?parallelCircles";
+    public string RightAngle = "http://mathhub.info/FrameIT/frameworld?FrameITBasics?right_angle";
+
+
+
 }
 
 public static class JSONManager 

@@ -5,7 +5,7 @@ using System;
 
 public static class CommunicationEvents
 {
-    public class HitEvent : UnityEvent<RaycastHit> { }
+    public class HitEvent : UnityEvent<RaycastHit[]> { }
 
     public class FactEvent : UnityEvent<Fact> { }
 

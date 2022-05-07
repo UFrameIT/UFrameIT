@@ -37,7 +37,7 @@ public class PoleTool : Gadget
         this.ResetGadget();
     }
 
-    public override void OnHit(RaycastHit hit)
+    public override void OnHit(RaycastHit[] hit)
     {
 
         if (!this.isActiveAndEnabled ||
@@ -47,14 +47,29 @@ public class PoleTool : Gadget
 
         UpdateLineDrawing();
 
-        if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
+
+
+        if (hit[0].transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
+            Debug.Log("EY stop it here");
+            Debug.Log("Hit length"+hit.Length);
+           
+            for (int i = 0; i < hit.Length; i++)
+            {
+                    Debug.Log(hit[i].point.ToString("F8"));
+            }
+            Debug.Log("dont forget transform coords" + this.Cursor.transform.position.ToString("F8"));
+            Debug.Log("starting point for pole "+this.linePositions[0].ToString("F8"));
+            Debug.Log("END POINTS for this pol" + this.linePositions[1].ToString("F8"));
+
+
+
             var pid2 = FactManager.AddPointFact(linePositions[1], Vector3.up).Id;
-            FactManager.AddLineFact(hit.transform.gameObject.GetComponent<FactObject>().URI, pid2, true);
+            FactManager.AddLineFact(hit[0].transform.gameObject.GetComponent<FactObject>().URI, pid2, true);
         }
         else
         {
-            FactManager.AddPointFact(hit);
+            FactManager.AddPointFact(hit[0]);
         }
     }
 
@@ -92,7 +107,6 @@ public class PoleTool : Gadget
     private void UpdateLineDrawing()
     {
         this.linePositions[0] = this.Cursor.transform.position;
-
         //Raycast upwoard
         if (Physics.Raycast(this.linePositions[0], Vector3.up, out RaycastHit ceiling, poleHeight, this.LayerPendulumHits.value))
             this.linePositions[1] = ceiling.point;

@@ -51,6 +51,8 @@ public class Scroll
         public string label;
 
         public abstract String getType();
+
+        public abstract String getApplicant();
     }
 
     public class UriReference
@@ -80,6 +82,18 @@ public class Scroll
             else
                 return null;
         }
+
+        public override String getApplicant()
+        {
+            //Debug.Log(" Check " + this.tp is OMS + " and " + this.tp is OMA + " and " + this.tp is OMSTR + " or " + this.tp is OMF);
+            // return ((OMS)((OMA)((OMA)this.tp).arguments[0]).arguments[0]).uri;
+            if (this.df is OMA && ((OMA)this.df).applicant is OMS)
+                return ((OMS)((OMA)this.df).applicant).uri;
+            
+
+            return null ;// ((OMS)((OMA)((OMA)this.df).arguments[0]).applicant).uri;
+
+        }
     }
 
     /**
@@ -99,6 +113,14 @@ public class Scroll
             else
                 return null;
         }
+        public override String getApplicant()
+        {
+            // TODO Test this 
+            if (this.lhs is OMA & (((OMA)this.lhs).applicant is OMS))
+                return ((OMS)((OMA)this.lhs).applicant).uri;
+            return null; 
+        }
+
     }
 
     public class ScrollAssignment

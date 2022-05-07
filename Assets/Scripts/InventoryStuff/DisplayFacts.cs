@@ -16,6 +16,20 @@ public class DisplayFacts : MonoBehaviour
     public GameObject prefab_Default;
     public GameObject prefab_OnLine;
     public GameObject prefab_Line;
+    public GameObject prefab_ParallelLineFact;
+    public GameObject prefab_RectangleFact;
+    public GameObject prefab_RadiusFact;
+    public GameObject prefab_AreaCircle;
+    public GameObject prefab_ConeVolume;
+    public GameObject prefab_OrthogonalCircleLine;
+    public GameObject prefab_TruncatedConeVolume;
+    public GameObject prefab_RightAngle;
+
+
+
+    public GameObject prefab_CircleFact;
+    public GameObject prefab_OnCircleFact;
+    public GameObject prefab_AngleCircleLineFact;
 
     public int x_Start;
     public int y_Start;
@@ -31,7 +45,22 @@ public class DisplayFacts : MonoBehaviour
             {typeof(LineFact), prefab_Distance},
             {typeof(RayFact), prefab_Line},
             {typeof(AngleFact), prefab_Angle},
-            {typeof(OnLineFact), prefab_OnLine}
+            {typeof(OnLineFact), prefab_OnLine},
+            {typeof(ParallelLineFact), prefab_ParallelLineFact},
+
+            {typeof(CircleFact), prefab_CircleFact},
+            {typeof(OnCircleFact), prefab_OnCircleFact},
+            {typeof(AngleCircleLineFact), prefab_AngleCircleLineFact},
+            {typeof(RadiusFact), prefab_RadiusFact},
+            {typeof(AreaCircleFact), prefab_AreaCircle},
+            {typeof(ConeVolumeFact), prefab_ConeVolume},
+            {typeof(OrthogonalCircleLineFact), prefab_OrthogonalCircleLine },
+            {typeof(TruncatedConeVolumeFact), prefab_TruncatedConeVolume },
+            {typeof(RightAngleFact), prefab_RightAngle },
+            
+
+
+
         };
 
         var rect = GetComponent<RectTransform>();

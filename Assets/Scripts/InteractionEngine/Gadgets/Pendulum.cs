@@ -33,14 +33,14 @@ public class Pendulum : Gadget
         this.ResetGadget();
     }
 
-    public override void OnHit(RaycastHit hit)
+    public override void OnHit(RaycastHit[] hit)
     {
 
         if (!this.isActiveAndEnabled) return;
 
-        if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
+        if (hit[0].transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
-            PointFact tempFact = StageStatic.stage.factState[hit.transform.GetComponent<FactObject>().URI] as PointFact;
+            PointFact tempFact = StageStatic.stage.factState[hit[0].transform.GetComponent<FactObject>().URI] as PointFact;
 
             //Raycast downwoard
             RaycastHit ground;

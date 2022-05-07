@@ -13,15 +13,21 @@ public class Pointer : Gadget
             MaxRange = GlobalBehaviour.GadgetLaserDistance;
     }
 
-    public override void OnHit(RaycastHit hit)
+    public override void OnHit(RaycastHit[] hit)
     {
 
         if (!this.isActiveAndEnabled) return;
-        var pid = FactManager.AddPointFact(hit).Id;
-
-        if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Ray"))
+        var pid = FactManager.AddPointFact(hit[0]).Id;
+        for (int i= 0; i < hit.Length; i++)
         {
-            FactManager.AddOnLineFact(pid, hit.transform.GetComponent<FactObject>().URI, true);
+            // sort out hits that where too far away from the initial hit
+            if (Mathf.Abs(hit[i].distance - hit[0].distance) > 0.03)
+                break;
+
+            if (hit[i].transform.gameObject.layer == LayerMask.NameToLayer("Ray"))
+            {
+                FactManager.AddOnLineFact(pid, hit[i].transform.GetComponent<FactObject>().URI, true);
+            }
         }
     }
   

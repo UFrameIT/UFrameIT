@@ -40,7 +40,7 @@ public class LotTool : Gadget
         this.ResetGadget();
     }
 
-    public override void OnHit(RaycastHit hit)
+    public override void OnHit(RaycastHit[] hit)
     {
         void CreateRayAndAngles(string pidIntersectionPoint, string pidLotPoint, bool samestep)
         {
@@ -55,19 +55,19 @@ public class LotTool : Gadget
         if (!this.isActiveAndEnabled) return;
 
         //If LotPoint is on baseLine
-        if (this.LotModeIsPointSelected && (hit.transform.gameObject.layer == LayerMask.NameToLayer("Default") || hit.transform.gameObject.layer == LayerMask.NameToLayer("Tree")))
+        if (this.LotModeIsPointSelected && (hit[0].transform.gameObject.layer == LayerMask.NameToLayer("Default") || hit[0].transform.gameObject.layer == LayerMask.NameToLayer("Tree")))
         {
-            Vector3 LotPoint = Math3d.ProjectPointOnLine(hit.point, this.LotModeLineSelected.Dir, this.LotModeIntersectionPoint.Point);
+            Vector3 LotPoint = Math3d.ProjectPointOnLine(hit[0].point, this.LotModeLineSelected.Dir, this.LotModeIntersectionPoint.Point);
 
             //TODO: which normal?
-            CreateRayAndAngles(this.LotModeIntersectionPoint.Id, FactManager.AddPointFact(LotPoint, hit.normal).Id, true);
+            CreateRayAndAngles(this.LotModeIntersectionPoint.Id, FactManager.AddPointFact(LotPoint, hit[0].normal).Id, true);
             this.ResetGadget();
         }
 
         //If baseline already selected and point selected
-        else if (this.LotModeIsLineSelected && !this.LotModeIsPointSelected && hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
+        else if (this.LotModeIsLineSelected && !this.LotModeIsPointSelected && hit[0].transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
-            PointFact tempFact = StageStatic.stage.factState[hit.transform.GetComponent<FactObject>().URI] as PointFact;
+            PointFact tempFact = StageStatic.stage.factState[hit[0].transform.GetComponent<FactObject>().URI] as PointFact;
 
             Vector3 intersectionPoint = Math3d.ProjectPointOnLine(this.LotModeLinePointA.Point, this.LotModeLineSelected.Dir, tempFact.Point);
 
@@ -91,16 +91,16 @@ public class LotTool : Gadget
 
         //If nothing yet selected
         else if (!this.LotModeIsLineSelected
-            && (hit.transform.gameObject.layer == LayerMask.NameToLayer("Ray")
-            || hit.transform.gameObject.layer == LayerMask.NameToLayer("Line")))
+            && (hit[0].transform.gameObject.layer == LayerMask.NameToLayer("Ray")
+            || hit[0].transform.gameObject.layer == LayerMask.NameToLayer("Line")))
         {
-            Fact tempFact = StageStatic.stage.factState[hit.transform.GetComponent<FactObject>().URI];
+            Fact tempFact = StageStatic.stage.factState[hit[0].transform.GetComponent<FactObject>().URI];
 
             //Activate LineDrawing for preview
             this.LotModeIsLineSelected = true;
             this.LotModeLineSelected = tempFact as AbstractLineFact;
             this.LotModeLinePointA = (PointFact) StageStatic.stage.factState[this.LotModeLineSelected.Pid1];
-            this.LotModeLineHit = hit;
+            this.LotModeLineHit = hit[0];
             this.ActivateLineDrawing();
         }
 

@@ -36,12 +36,12 @@ public class Tape : Gadget
         this.ResetGadget();
     }
 
-    public override void OnHit(RaycastHit hit)
+    public override void OnHit(RaycastHit[] hit)
     {
         if (!this.isActiveAndEnabled) return;
-        if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
+        if (hit[0].transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
-            Fact tempFact = StageStatic.stage.factState[hit.transform.GetComponent<FactObject>().URI];
+            Fact tempFact = StageStatic.stage.factState[hit[0].transform.GetComponent<FactObject>().URI];
 
             //we can only reach points that are lower than that with the measuring tape
             if (/*ActiveToolMode == ToolMode.CreateLineMode && */tempFact.Representation.transform.position.y > maxHeight)
@@ -66,14 +66,14 @@ public class Tape : Gadget
 
         //if we hit the top snap zone
         //TODO: check behaviour
-        else if (hit.transform.gameObject.CompareTag("SnapZone"))
+        else if (hit[0].transform.gameObject.CompareTag("SnapZone"))
         {
             if (this.TapeModeIsFirstPointSelected
-                && Physics.Raycast(hit.transform.gameObject.transform.position - Vector3.down * 2, Vector3.down, out RaycastHit downHit))
+                && Physics.Raycast(hit[0].transform.gameObject.transform.position - Vector3.down * 2, Vector3.down, out RaycastHit downHit))
             {
                 var idA = downHit.transform.gameObject.GetComponent<FactObject>().URI;
                 var idB = this.TapeModeFirstPointSelected.Id;
-                var idC = FactManager.AddPointFact(hit).Id;
+                var idC = FactManager.AddPointFact(hit[0]).Id;
                 //Create LineFact
                 FactManager.AddAngleFact(idA, idB, idC, true);
 
