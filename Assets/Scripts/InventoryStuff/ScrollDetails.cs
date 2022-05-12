@@ -84,6 +84,8 @@ public class ScrollDetails : MonoBehaviour
         }
         else
         {
+            Debug.Log("currentMMTAnswer");
+            Debug.Log(currentMmtAnswer);
             Scroll.ScrollApplicationInfo pushout = JsonConvert.DeserializeObject<Scroll.ScrollApplicationInfo>(currentMmtAnswer);
             readPushout(pushout.acquiredFacts);
         }
