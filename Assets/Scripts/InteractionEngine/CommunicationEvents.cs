@@ -38,6 +38,7 @@ public static class CommunicationEvents
     public static SignalEvent gameNotSucceededEvent = new SignalEvent();
     public static SignalEvent LevelReset = new SignalEvent();
     public static SignalEvent NewAssignmentEvent = new SignalEvent();
+    //public static SignalEvent ReloadConfigToUI = new SignalEvent();
 
     public static AnimationEvent ScrollFactHintEvent = new AnimationEvent();
     public static FactEvent AnimateExistingFactEvent = new FactEvent();
@@ -59,7 +60,7 @@ public static class CommunicationEvents
     public static string ServerAddress2 = "10.231.4.95:8085";
 
     
-    public static bool takeNewToolID = false;
+    public static bool takeNewToolID = false; //0=no, 1=instead, 2=both
     public static int ToolID_new;
     public static int ToolID_selected;//Script
     
@@ -76,10 +77,10 @@ public static class CommunicationEvents
     public static double IPcheckGeneration = 0;
     public static int CheckNetLoop = 1;
     
-    public static bool autoOSrecognition = false;
+    public static bool autoOSrecognition = true;
     //int Opsys =1 Android.
     //int Opsys =0 Windows;
-    public static int Opsys_Default = 1;
+    //public static int Opsys_Default = 0;
 
     public static int Opsys = 1; //Script
     public static bool CursorVisDefault = true; //Script.
@@ -130,6 +131,8 @@ public static class CommunicationEvents
         {
             case 0:
                 path = use_install_folder ? Application.dataPath : Application.persistentDataPath;
+                
+                
                 if (hierarchie != null)
                 {
                     path = CreateHierarchiePath(hierarchie, path);

@@ -81,6 +81,15 @@ public static class StreamingAssetLoader
         myObject.ControlMode = UIconfig.controlMode;
         myObject.TouchMode = UIconfig.touchControlMode;
         myObject.TAvisibility = UIconfig.TAvisibility;
+        myObject.autoOSrecognition = CommunicationEvents.autoOSrecognition;
+        myObject.Opsys = CommunicationEvents.Opsys;
+        myObject.FrameITUIversion = UIconfig.FrameITUIversion;
+        myObject.InputManagerVersion = UIconfig.InputManagerVersion;
+        myObject.colliderScale_all = UIconfig.colliderScale_all;
+        myObject.cursorSize = UIconfig.cursorSize;
+
+
+
 
         //Data storage
         SafeCreateDirectory(Application.persistentDataPath + "/Config");
@@ -107,49 +116,41 @@ public static class StreamingAssetLoader
 
     public static void ResetPlayerConfig()
     {
-
-        RereadFiles_PlayerConfig();
+        RereadFiles_PersistentDataPath();
         NetworkJSON_Load();
-
-        //CSform.CheckIPAdr();
     }
 
-    public static void ResetPlayerSaveGame()
+    public static void ResetDataPath()
     {
-
-        RereadFiles_PlayerSaveGame();
-        
-        //CSform.CheckIPAdr();
+        RereadFiles_DataPath();
     }
+
     public static void ResetStreamingAsset()
     {
 
-        RereadFiles_PlayerConfig(); 
-        RereadFiles_PlayerSaveGame();
-       
+        RereadFiles_PersistentDataPath();
+        RereadFiles_DataPath();
         NetworkJSON_Load();
-
         //CSform.CheckIPAdr();
     }
 
 
 
-    public static void RereadFiles_PlayerConfig()
+    public static void RereadFiles_PersistentDataPath()
     {
-        RereadFileUWR(StreamingAssetLoader.file_8_path, StreamingAssetLoader.file_8);
+        RereadFileUWR(StreamingAssetLoader.file_8_path, StreamingAssetLoader.file_8, 1);
+        RereadFileUWR(StreamingAssetLoader.file_1_path, StreamingAssetLoader.file_1, 1);
     }
-    public static void RereadFiles_PlayerSaveGame()
+    public static void RereadFiles_DataPath()
     {
-        RereadFileUWR(StreamingAssetLoader.file_1_path, StreamingAssetLoader.file_1);
-        RereadFileUWR(StreamingAssetLoader.file_2_path, StreamingAssetLoader.file_2);
-        RereadFileUWR(StreamingAssetLoader.file_3_path, StreamingAssetLoader.file_3);
-        RereadFileUWR(StreamingAssetLoader.file_4_path, StreamingAssetLoader.file_4);
-        RereadFileUWR(StreamingAssetLoader.file_5_path, StreamingAssetLoader.file_5);
-        RereadFileUWR(StreamingAssetLoader.file_6_path, StreamingAssetLoader.file_6);
-        RereadFileUWR(StreamingAssetLoader.file_7_path, StreamingAssetLoader.file_7);
-      
-        RereadFileUWR(StreamingAssetLoader.file_9_path, StreamingAssetLoader.file_9);
-        RereadFileUWR(StreamingAssetLoader.file_10_path, StreamingAssetLoader.file_10);
+        RereadFileUWR(StreamingAssetLoader.file_2_path, StreamingAssetLoader.file_2, 0);
+        RereadFileUWR(StreamingAssetLoader.file_3_path, StreamingAssetLoader.file_3, 0);
+        RereadFileUWR(StreamingAssetLoader.file_4_path, StreamingAssetLoader.file_4, 0);
+        RereadFileUWR(StreamingAssetLoader.file_5_path, StreamingAssetLoader.file_5, 0);
+        RereadFileUWR(StreamingAssetLoader.file_6_path, StreamingAssetLoader.file_6, 0);
+        RereadFileUWR(StreamingAssetLoader.file_7_path, StreamingAssetLoader.file_7, 0);
+        RereadFileUWR(StreamingAssetLoader.file_9_path, StreamingAssetLoader.file_9, 0);
+        RereadFileUWR(StreamingAssetLoader.file_10_path, StreamingAssetLoader.file_10, 0);
     }
 
 
@@ -232,12 +233,59 @@ public static class StreamingAssetLoader
         {
             UIconfig.TAvisibility = myObjs.TAvisibility;
         }
+        if (false)
+        {
+
+        }
+        else
+        {
+            CommunicationEvents.autoOSrecognition = myObjs.autoOSrecognition;
+        }
+        if (false)
+        {
+
+        }
+        else
+        {
+            CommunicationEvents.Opsys = myObjs.Opsys;
+        }
+        if (false)
+        {
+
+        }
+        else
+        {
+            UIconfig.FrameITUIversion = myObjs.FrameITUIversion;
+        }
+        if (false)
+        {
+
+        }
+        else
+        {
+            UIconfig.InputManagerVersion = myObjs.InputManagerVersion;
+        }
+        if (false)
+        {
+
+        }
+        else
+        {
+            UIconfig.colliderScale_all = myObjs.colliderScale_all;
+        }
+        if (false)
+        {
+
+        }
+        else
+        {
+            UIconfig.cursorSize = myObjs.cursorSize;
+        }
 
     }
 
-    public static void RereadFileUWR(string pathfolders, string fileName)
+    public static void RereadFileUWR(string pathfolders, string fileName, int toMainpath)
     {
-
         if (fileName == "")
         {
             return;
@@ -264,142 +312,149 @@ public static class StreamingAssetLoader
         else
         {
             //copies and unpacks file from apk to persistentDataPath where it can be accessed
-            string destinationPath = Path.Combine(Application.persistentDataPath, destpathf);
+            string destinationPath = "";
+            if (toMainpath == 0 && CommunicationEvents.Opsys != 1) { destinationPath = Path.Combine(Application.dataPath, destpathf); }
+            else
+            {
+                destinationPath = Path.Combine(Application.persistentDataPath, destpathf);
+            }
 
             if (Directory.Exists(destinationPath) == false)
             {
-                Directory.CreateDirectory(destinationPath);
+               Directory.CreateDirectory(destinationPath);
             }
             File.WriteAllBytes(Path.Combine(destinationPath, destname), loadingRequest.downloadHandler.data);
+            
+
+
+
         }
-
-
-
     }
 
 
     public static string RereadFileNA(string pathfolders, string fileName, string destpathf, string destname)
     {
-        if (fileName == "")
-        {
-            return "noName";
-        }
-
-
-
-
-        // copies and unpacks file from apk to persistentDataPath where it can be accessed
-        string destinationPath = Path.Combine(Application.persistentDataPath, destpathf);
-
-        if (Directory.Exists(destinationPath) == false)
-        {
-            Directory.CreateDirectory(destinationPath);
-        }
-
-
-        destinationPath = Path.Combine(destinationPath, destname);
-
-
-
-
-        //#if UNITY_EDITOR
-        string sourcePath = Path.Combine(Application.streamingAssetsPath, pathfolders);
-        sourcePath = Path.Combine(sourcePath, fileName);
-        /*
-        #else
-                    string sourcePath = "jar:file://" + Application.dataPath + "!/assets/" + fileName;
-
-        #endif
-
-        //UnityEngine.Debug.Log(string.Format("{0}-{1}-{2}-{3}", sourcePath,  File.GetLastWriteTimeUtc(sourcePath), File.GetLastWriteTimeUtc(destinationPath)));
-
-        */
-
-        
-        //copy whatsoever
-
-        //if DB does not exist in persistent data folder (folder "Documents" on iOS) or source DB is newer then copy it
-        //if (!File.Exists(destinationPath) || (File.GetLastWriteTimeUtc(sourcePath) > File.GetLastWriteTimeUtc(destinationPath)))
-        if(true)
-        {
-            if (sourcePath.Contains("://"))
+            if (fileName == "")
             {
-                // Android  
-                WWW www = new WWW(sourcePath);
-                while (!www.isDone) {; }                // Wait for download to complete - not pretty at all but easy hack for now 
-                if (string.IsNullOrEmpty(www.error))
-                {
-                    File.WriteAllBytes(destinationPath, www.bytes);
-                }
-                else
-                {
-                    Debug.Log("ERROR: the file DB named " + fileName + " doesn't exist in the StreamingAssets Folder, please copy it there.");
-                }
+                return "noName";
             }
-            else
-            {
-                // Mac, Windows, Iphone                
-                //validate the existens of the DB in the original folder (folder "streamingAssets")
-                if (File.Exists(sourcePath))
-                {
-                    //copy file - alle systems except Android
-                    File.Copy(sourcePath, destinationPath, true);
-                }
-                else
-                {
-                    Debug.Log("ERROR: the file DB named " + fileName + " doesn't exist in the StreamingAssets Folder, please copy it there.");
-                }
-            }
-        }
-
-        StreamReader reader = new StreamReader(destinationPath);
-        var jsonString = reader.ReadToEnd();
-        reader.Close();
 
 
-        return jsonString;
-    }
 
 
-    public static void RereadFileUW4(string pathfolders, string fileName, string destpathf, string destname)
-    {
-        if (fileName == "")
-        {
-            return;
-        }
-
-
-        string sourcePath = Path.Combine(Application.streamingAssetsPath, pathfolders);
-        sourcePath = Path.Combine(sourcePath, fileName);
-        var loadingRequest = UnityWebRequest.Get(sourcePath);
-        loadingRequest.SendWebRequest();
-        while (!loadingRequest.isDone)
-        {
-            if (loadingRequest.isNetworkError || loadingRequest.isHttpError)
-            {
-                break;
-            }
-        }
-        if (loadingRequest.isNetworkError || loadingRequest.isHttpError)
-        {
-
-        }
-        else
-        {
-            //copies and unpacks file from apk to persistentDataPath where it can be accessed
+            // copies and unpacks file from apk to persistentDataPath where it can be accessed
             string destinationPath = Path.Combine(Application.persistentDataPath, destpathf);
 
             if (Directory.Exists(destinationPath) == false)
             {
                 Directory.CreateDirectory(destinationPath);
             }
-            File.WriteAllBytes(Path.Combine(destinationPath, destname), loadingRequest.downloadHandler.data);
-        }
+
+
+            destinationPath = Path.Combine(destinationPath, destname);
+
+
+
+
+            //#if UNITY_EDITOR
+            string sourcePath = Path.Combine(Application.streamingAssetsPath, pathfolders);
+            sourcePath = Path.Combine(sourcePath, fileName);
+            /*
+            #else
+                        string sourcePath = "jar:file://" + Application.dataPath + "!/assets/" + fileName;
+
+            #endif
+
+            //UnityEngine.Debug.Log(string.Format("{0}-{1}-{2}-{3}", sourcePath,  File.GetLastWriteTimeUtc(sourcePath), File.GetLastWriteTimeUtc(destinationPath)));
+
+            */
+
+
+            //copy whatsoever
+
+            //if DB does not exist in persistent data folder (folder "Documents" on iOS) or source DB is newer then copy it
+            //if (!File.Exists(destinationPath) || (File.GetLastWriteTimeUtc(sourcePath) > File.GetLastWriteTimeUtc(destinationPath)))
+            if (true)
+            {
+                if (sourcePath.Contains("://"))
+                {
+                    // Android  
+                    WWW www = new WWW(sourcePath);
+                    while (!www.isDone) {; }                // Wait for download to complete - not pretty at all but easy hack for now 
+                    if (string.IsNullOrEmpty(www.error))
+                    {
+                        File.WriteAllBytes(destinationPath, www.bytes);
+                    }
+                    else
+                    {
+                        Debug.Log("ERROR: the file DB named " + fileName + " doesn't exist in the StreamingAssets Folder, please copy it there.");
+                    }
+                }
+                else
+                {
+                    // Mac, Windows, Iphone                
+                    //validate the existens of the DB in the original folder (folder "streamingAssets")
+                    if (File.Exists(sourcePath))
+                    {
+                        //copy file - alle systems except Android
+                        File.Copy(sourcePath, destinationPath, true);
+                    }
+                    else
+                    {
+                        Debug.Log("ERROR: the file DB named " + fileName + " doesn't exist in the StreamingAssets Folder, please copy it there.");
+                    }
+                }
+            }
+
+            StreamReader reader = new StreamReader(destinationPath);
+            var jsonString = reader.ReadToEnd();
+            reader.Close();
+
+
+            return jsonString;
+    }
+
+
+    public static void RereadFileUW4(string pathfolders, string fileName, string destpathf, string destname)
+    {
+            if (fileName == "")
+            {
+                return;
+            }
+
+
+            string sourcePath = Path.Combine(Application.streamingAssetsPath, pathfolders);
+            sourcePath = Path.Combine(sourcePath, fileName);
+            var loadingRequest = UnityWebRequest.Get(sourcePath);
+            loadingRequest.SendWebRequest();
+            while (!loadingRequest.isDone)
+            {
+                if (loadingRequest.isNetworkError || loadingRequest.isHttpError)
+                {
+                    break;
+                }
+            }
+            if (loadingRequest.isNetworkError || loadingRequest.isHttpError)
+            {
+
+            }
+            else
+            {
+                //copies and unpacks file from apk to persistentDataPath where it can be accessed
+                string destinationPath = Path.Combine(Application.persistentDataPath, destpathf);
+
+                if (Directory.Exists(destinationPath) == false)
+                {
+                    Directory.CreateDirectory(destinationPath);
+                }
+                File.WriteAllBytes(Path.Combine(destinationPath, destname), loadingRequest.downloadHandler.data);
+            }
 
 
 
 
     }
+    
 
 
     public class MyClass

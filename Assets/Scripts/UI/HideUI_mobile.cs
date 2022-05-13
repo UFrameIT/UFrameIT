@@ -7,8 +7,8 @@ using static Restart;
 public class HideUI_mobile : MonoBehaviour
 {
 
-    public KeyCode Key = KeyCode.F1;
-    public KeyCode visMouse = KeyCode.LeftControl;
+    //public KeyCode Key = KeyCode.F1;
+    //public KeyCode visMouse = KeyCode.LeftControl;
     //public KeyCode ScreenshotKey = KeyCode.F12;
 
     public string
@@ -23,8 +23,9 @@ public class HideUI_mobile : MonoBehaviour
     public string MathMode_keyBind;
     public string cancel_keyBind;
 
-    //public UnityStandardAssets.Characters.FirstPerson.FirstPersonController CamControl;
-    public Characters.FirstPerson.FirstPersonController1 CamControl;
+    public UnityStandardAssets.Characters.FirstPerson.FirstPersonController CamControl_StdAsset;
+    public Characters.FirstPerson.FirstPersonController1 CamControl_ScriptChar;
+    
     public bool LockOnly = true;
     public MeshRenderer CursorRenderer;
     internal Canvas UICanvas;
@@ -62,8 +63,10 @@ public class HideUI_mobile : MonoBehaviour
             bool camActive;
             camActive = false;
             UICanvas.enabled = camActive;
-            CamControl.enabled = false;
-            CursorRenderer.enabled = true;
+            //CamControl.enabled = false;
+            //CursorRenderer.enabled = true;
+            SetCamControl123(false);
+            SetCursorRenderer123(true);
 
         }
         //}
@@ -86,8 +89,7 @@ public class HideUI_mobile : MonoBehaviour
         UIconfig.CanvasOnOff_Array[10] = 1;
         
         UIconfig.CanvasOnOff_Array[3] = 1;
-        CamControl.enabled = true;
-        CamControl.enabled = false;
+        SetCamControl123(false);
 
         Update();
         print("Start4");
@@ -102,7 +104,7 @@ public class HideUI_mobile : MonoBehaviour
         {
             Update3();
         }
-        print("dada" + UIconfig.CanvasOnOff_Array[4]);
+        //print("dada" + UIconfig.CanvasOnOff_Array[4]);
     }
 
 
@@ -256,14 +258,15 @@ public class HideUI_mobile : MonoBehaviour
         {
             if (LockOnly)
             {
-                CamControl.enabled = !CamControl.enabled;
-                CursorRenderer.enabled = CamControl.enabled;
+                CamControl_StdAsset.enabled = !CamControl_StdAsset.enabled;
+                SetCursorRenderer123(CamControl_StdAsset.enabled);
+                SetCamControl123(CamControl_StdAsset.enabled);
             }
             else
             {
                 Cursor.visible = true;
-                CamControl.enabled = false;
-                CursorRenderer.enabled = true;
+                SetCursorRenderer123(true);
+                SetCamControl123(false); ;
 
                 UICanvas.enabled = false;
             }
@@ -276,14 +279,15 @@ public class HideUI_mobile : MonoBehaviour
         {
             if (LockOnly)
             {
-                CamControl.enabled = !CamControl.enabled;
-                CursorRenderer.enabled = CamControl.enabled;
+                CamControl_StdAsset.enabled = !CamControl_StdAsset.enabled;
+                SetCursorRenderer123(CamControl_StdAsset.enabled);
+                SetCamControl123(CamControl_StdAsset.enabled);
             }
             else
             {
                 Cursor.visible = false;
-                CamControl.enabled = true;
-                CursorRenderer.enabled = false;
+                SetCursorRenderer123(false);
+                SetCamControl123(true);
 
                 UICanvas.enabled = false;
             }
@@ -295,15 +299,16 @@ public class HideUI_mobile : MonoBehaviour
         {
             if (LockOnly)
             {
-                CamControl.enabled = !CamControl.enabled;
-                CursorRenderer.enabled = CamControl.enabled;
+                CamControl_StdAsset.enabled = !CamControl_StdAsset.enabled;
+                SetCursorRenderer123(CamControl_StdAsset.enabled);
+                SetCamControl123(CamControl_StdAsset.enabled);
             }
             else
             {
                   
                 Cursor.visible = true;
-                CamControl.enabled = false;
-                CursorRenderer.enabled = false;
+                SetCursorRenderer123(false);
+                SetCamControl123(false);
                 UICanvas.enabled = true;
 
 
@@ -315,15 +320,16 @@ public class HideUI_mobile : MonoBehaviour
         {
             if (LockOnly)
             {
-                CamControl.enabled = !CamControl.enabled;
-                CursorRenderer.enabled = CamControl.enabled;
+                CamControl_StdAsset.enabled = !CamControl_StdAsset.enabled;
+                SetCursorRenderer123(CamControl_StdAsset.enabled);
+                SetCamControl123(CamControl_StdAsset.enabled);
             }
             else
             {
                 
                 Cursor.visible = true;
-                CamControl.enabled = false;
-                CursorRenderer.enabled = false;
+                SetCursorRenderer123(false);
+                SetCamControl123(false);
                 UICanvas.enabled = false;
             }
             return;
@@ -334,17 +340,18 @@ public class HideUI_mobile : MonoBehaviour
         {
             if (LockOnly)
             {
-                CamControl.enabled = !CamControl.enabled;
-                CursorRenderer.enabled = CamControl.enabled;
+                CamControl_StdAsset.enabled = !CamControl_StdAsset.enabled;
+                SetCursorRenderer123(CamControl_StdAsset.enabled);
+                SetCamControl123(CamControl_StdAsset.enabled);
             }
             else
             {
                 UICanvas.enabled = false;
                 Cursor.visible = true;
-                CamControl.enabled = false;
-                CursorRenderer.enabled = false;
-                
-                
+                SetCursorRenderer123(false);
+                SetCamControl123(false);
+
+
             }
             return;
 
@@ -355,17 +362,22 @@ public class HideUI_mobile : MonoBehaviour
             
             if (LockOnly)
             {
-                CamControl.enabled = !CamControl.enabled;
-                CursorRenderer.enabled = CamControl.enabled;
+                CamControl_StdAsset.enabled = !CamControl_StdAsset.enabled;
+                SetCursorRenderer123(CamControl_StdAsset.enabled);
+                SetCamControl123(CamControl_StdAsset.enabled);
             }
             else
             {
                 UICanvas.enabled = false;
-                Cursor.visible = true;
-                CamControl.enabled = false;
+                
+                
                 CursorRenderer.enabled = false;
+                Cursor.visible = true;
+                SetCamControl123(false);
+                SetCursorRenderer123(false);
+                UICanvas.enabled = !UICanvas.enabled;
 
-               
+
             }
             return;
         }
@@ -406,8 +418,18 @@ public class HideUI_mobile : MonoBehaviour
         */
     }
 
+    private void SetCursorRenderer123(bool opt)
+    {
+        CursorRenderer.enabled = opt;
+    }
+    private void SetCamControl123(bool opt)
+    {
+        CamControl_StdAsset.enabled = opt;
+        CamControl_ScriptChar.enabled = opt;
+    }
 
 
-    
+
+
 
 }

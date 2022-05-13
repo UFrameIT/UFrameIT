@@ -39,6 +39,7 @@ public class SceneStartMenue_101 : MonoBehaviour//, IPointerDownHandler, IPointe
     string missionbriefing333 = "as a Third Person Game with high Camera";
     string missionbriefing334 = "as a Third Person Game";
     string missionbriefing335 = "as a First Person Game";
+    string missionbriefing336 = "as a First Person Game with old mainplayer version";
 
 
 
@@ -69,42 +70,49 @@ public class SceneStartMenue_101 : MonoBehaviour//, IPointerDownHandler, IPointe
                 myself_GObj_Txt.text = StageStatic.stage.description + "\n" +
                     //"\n"+
                     missionbriefing330;
-                UIconfig.GameplayMode = 0;
+             
                 break;
             case 331:
                 missionbriefing = missionbriefing1;
                 myself_GObj_Txt.text = StageStatic.stage.description + "\n" +
                     //"\n"+
                     missionbriefing331;
-                UIconfig.GameplayMode = 1;
+               
                 break;
             case 332:
                 missionbriefing = missionbriefing1;
                 myself_GObj_Txt.text = StageStatic.stage.description + "\n" +
                     //"\n"+
                     missionbriefing332;
-                UIconfig.GameplayMode = 2;
+               
                 break;
             case 333:
                 missionbriefing = missionbriefing1;
                 myself_GObj_Txt.text = StageStatic.stage.description + "\n" +
                     //"\n"+
                     missionbriefing333;
-                UIconfig.GameplayMode = 3;
+                  
                 break;
             case 334:
                 missionbriefing = missionbriefing1;
                 myself_GObj_Txt.text = StageStatic.stage.description + "\n" +
                     //"\n"+
                     missionbriefing334;
-                UIconfig.GameplayMode = 4;
+                   
                 break;
             case 335:
                 missionbriefing = missionbriefing1;
                 myself_GObj_Txt.text = StageStatic.stage.description + "\n" +
                     //"\n"+
                     missionbriefing335;
-                UIconfig.GameplayMode = 5;
+                  
+                break;
+            case 336:
+                missionbriefing = missionbriefing1;
+                myself_GObj_Txt.text = StageStatic.stage.description + "\n" +
+                    //"\n"+
+                    missionbriefing336;
+
                 break;
 
         }

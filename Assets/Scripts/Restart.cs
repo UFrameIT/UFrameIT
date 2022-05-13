@@ -12,6 +12,7 @@ public class Restart : MonoBehaviour
         //UIconfig.GamePaused = false;
         //Time.timeScale = 1; // UIconfig.Game_TimeScale;
         Loader.LoadStage(StageStatic.stage.name, !StageStatic.stage.use_install_folder, false);
+        //StageStatic.stage.factState.softreset();
 
     }
 

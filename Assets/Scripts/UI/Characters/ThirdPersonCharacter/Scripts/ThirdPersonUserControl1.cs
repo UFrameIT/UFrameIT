@@ -7,8 +7,8 @@ namespace PlayerCtrl.ThirdPerson
     public class ThirdPersonUserControl1 : MonoBehaviour
     {
         private ThirdPersonCharacter1 m_Character; // A reference to the ThirdPersonCharacter on the object
-        //private Transform m_Cam;                  // A reference to the main camera in the scenes transform
-        public Transform m_Cam;                  // A reference to the main camera in the scenes transform
+        private Transform m_Cam;                  // A reference to the main camera in the scenes transform
+        public Camera m_Camera;                  // A reference to the main camera in the scenes transform
         private Vector3 m_CamForward;             // The current forward direction of the camera
         private Vector3 m_Move;
         private bool m_Jump;                      // the world-relative desired move direction, calculated from the camForward and user input.
@@ -30,7 +30,12 @@ namespace PlayerCtrl.ThirdPerson
 
             // get the third person character ( this should never be null due to require component )
             m_Character = GetComponent<ThirdPersonCharacter1>();
+            if (m_Camera != null)
+            {
+                m_Cam = m_Camera.transform;
+            }
         }
+
 
 
         private void Update()

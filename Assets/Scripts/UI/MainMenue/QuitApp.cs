@@ -42,8 +42,9 @@ public class QuitApp : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
 
         //Input.backButtonLeavesApp = true;
-        
-        #if UNITY_EDITOR
+        NetworkJSON_Save();
+
+#if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
         #endif
         Application.Quit();

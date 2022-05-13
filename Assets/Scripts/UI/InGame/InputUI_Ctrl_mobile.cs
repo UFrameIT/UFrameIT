@@ -33,6 +33,7 @@ public class InputUI_Ctrl_mobile : MonoBehaviour
 
     private void Update()
     {
+        /*
         switch (UIconfig.FrameITUIversion)
         {
             case 1:
@@ -42,6 +43,21 @@ public class InputUI_Ctrl_mobile : MonoBehaviour
                 toMobileUI();
                 break;
         }
+        */
+    }
+    void Awake()
+    {
+        
+        switch (UIconfig.FrameITUIversion)
+        {
+            case 1:
+                toMouseUI();
+                break;
+            case 2:
+                toMobileUI();
+                break;
+        }
+        
     }
 
     public void toMouseUI()
@@ -65,7 +81,7 @@ public class InputUI_Ctrl_mobile : MonoBehaviour
     {
         ClearUIC();
         //UIconfig.Andr_Start_menue_counter = 1;
-        FrameITUI_GObj.SetActive(true); ;
+        FrameITUI_GObj.SetActive(true); 
 
 
     }
@@ -74,7 +90,7 @@ public class InputUI_Ctrl_mobile : MonoBehaviour
     {
         ClearUIC();
         //UIconfig.Andr_Start_menue_counter = 1;
-        FrameITUI_mobile_GObj.SetActive(true); ;
+        FrameITUI_mobile_GObj.SetActive(true); 
 
 
     }

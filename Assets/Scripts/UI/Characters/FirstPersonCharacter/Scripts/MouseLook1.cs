@@ -15,26 +15,49 @@ namespace Characters.FirstPerson
         public bool clampVerticalRotation = true;
         public float MinimumX = -90F;
         public float MaximumX = 90F;
-        public bool smooth;
+        public bool smoothCamMotion;
         public float smoothTime = 5f;
-        public bool lockCursor = true;
+        public bool lockCursor = false;
 
-
+        private ControlMapping input_ControlMapping;
         private Quaternion m_CharacterTargetRot;
         private Quaternion m_CameraTargetRot;
-        private bool m_cursorIsLocked = true;
+        private bool m_cursorIsLocked = false;
 
         public void Init(Transform character, Transform camera)
         {
             m_CharacterTargetRot = character.localRotation;
             m_CameraTargetRot = camera.localRotation;
+            input_ControlMapping = new ControlMapping();
+            input_ControlMapping.Actionmap1.LookCamera.Enable();
         }
+
+
+
 
 
         public void LookRotation(Transform character, Transform camera)
         {
-            float yRot = CrossPlatformInputManager.GetAxis("Mouse X") * XSensitivity;
-            float xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * YSensitivity;
+            float yRot=0;
+            float xRot=0;
+
+            if (UIconfig.InputManagerVersion == 1)
+            {
+                // Read input
+                yRot = CrossPlatformInputManager.GetAxis("Mouse X") * XSensitivity;
+                xRot = CrossPlatformInputManager.GetAxis("Mouse Y") * YSensitivity;
+
+               
+
+            }
+            if (UIconfig.InputManagerVersion == 2)
+            {
+                Vector2 a = input_ControlMapping.Actionmap1.LookCamera.ReadValue<Vector2>();
+                xRot = a.x * XSensitivity;
+                yRot = a.y * XSensitivity;
+            }
+            //xRot = 1;
+
 
             m_CharacterTargetRot *= Quaternion.Euler(0f, yRot, 0f);
             m_CameraTargetRot *= Quaternion.Euler(-xRot, 0f, 0f);
@@ -42,7 +65,7 @@ namespace Characters.FirstPerson
             if (clampVerticalRotation)
                 m_CameraTargetRot = ClampRotationAroundXAxis(m_CameraTargetRot);
 
-            if (smooth)
+            if (smoothCamMotion)
             {
                 character.localRotation = Quaternion.Slerp(character.localRotation, m_CharacterTargetRot,
                     smoothTime * Time.deltaTime);
@@ -52,9 +75,11 @@ namespace Characters.FirstPerson
             else
             {
                 character.localRotation = m_CharacterTargetRot;
-                camera.localRotation = m_CameraTargetRot;
+                camera.localRotation = m_CameraTargetRot;//Wieso magst du nicht nach Build!
+                
             }
-
+            //if (yRot != 0) { Debug.Log("my" + yRot); Debug.Log("mc" + camera.localRotation); }
+            //if (xRot != 0) { Debug.Log("mx" + xRot); Debug.Log("mc" + camera.localRotation); } //Hoch runter
             UpdateCursorLock();
         }
 

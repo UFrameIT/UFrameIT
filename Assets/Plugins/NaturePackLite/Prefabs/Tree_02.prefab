@@ -57,6 +57,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -81,6 +82,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!64 &1232560684170311422
 MeshCollider:
   m_ObjectHideFlags: 0
@@ -107,6 +109,7 @@ GameObject:
   - component: {fileID: 2264167205531249358}
   - component: {fileID: 4646352123586789184}
   - component: {fileID: 6011793418505273338}
+  - component: {fileID: 5015158088123139087}
   m_Layer: 16
   m_Name: TopSnapZone
   m_TagString: SnapZone
@@ -164,6 +167,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -188,3 +192,20 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &5015158088123139087
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5974816098015535063}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 03387d215a8db5c47985ef548da953d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ColliderRadius: 0
+  Collidersize_ID: 1
+  use_ColliderRadius: 0
+  myCollider: {fileID: 2264167205531249358}

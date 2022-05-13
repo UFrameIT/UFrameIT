@@ -34,7 +34,15 @@ public class ResetSaveDataButton_mobile : MonoBehaviour
 
     public void resetPlayerSaveGame_Bttn()
     {
-        ResetPlayerSaveGame();
+        //ResetPlayerSaveGame();
+        ResetDataPath();
+        print("resetPlayerSaveGame_Bttn, Todo");
+    }
+
+    public void resetDataPath_Bttn()
+    {
+        //ResetPlayerSaveGame();
+        ResetDataPath();
     }
 
     public void ResetAllSaveData_Bttn()

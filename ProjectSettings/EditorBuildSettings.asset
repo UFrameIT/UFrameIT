@@ -26,4 +26,6 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/Worlds/Release/TreeWorld_Release_02.unity
     guid: 9b8063e1ae3c04045b13e20d1ccc73d0
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.input.settings: {fileID: 11400000, guid: bcf7d2bb517084349af680725636ea92,
+      type: 2}

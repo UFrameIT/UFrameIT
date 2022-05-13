@@ -39,21 +39,67 @@ public class StartMenue_mobile : MonoBehaviour
     {
 
 
-        checkOS();
+        
         ScreenOptimization();
+        
+
 
         toChild1();
-        if (!checkPDP())
+        switch (CommunicationEvents.Opsys)
         {
-            ResetStreamingAsset();
+            case 0:
 
-            UIconfig.controlMode = CommunicationEvents.Opsys + 1;
-            NetworkJSON_Save();
+                
+
+
+                if (!checkPDP())
+                {
+
+                    ResetStreamingAsset();
+
+                    UIconfig.controlMode = CommunicationEvents.Opsys + 1;
+                    NetworkJSON_Save();
+                }
+                
+                NetworkJSON_Load();
+                checkOS();
+                ResetDataPath();
+                setMouse();
+                break;
+            case 1:
+                
+                if (!checkPDP())
+                 {
+                      ResetStreamingAsset();
+
+                      UIconfig.controlMode = CommunicationEvents.Opsys + 1;
+                      NetworkJSON_Save();
+                }
+                NetworkJSON_Load();
+                checkOS();
+                ResetDataPath();
+                setMouse();
+                
+                break;
+            default:
+                setMouse();
+
+                if (!checkPDP())
+                {
+
+                    ResetStreamingAsset();
+
+                    UIconfig.controlMode = CommunicationEvents.Opsys + 1;
+                    NetworkJSON_Save();
+                }
+
+                NetworkJSON_Load();
+                checkOS();
+                setMouse();
+                break;
         }
-        NetworkJSON_Load();
-        //updateUI();
 
-        setMouse();
+
 
 
         GObj_text.text = CommunicationEvents.Opsys + "";
@@ -71,7 +117,7 @@ public class StartMenue_mobile : MonoBehaviour
         }
         else
         {
-            CommunicationEvents.Opsys = CommunicationEvents.Opsys_Default;
+            //CommunicationEvents.Opsys = CommunicationEvents.Opsys_Default;
         }
     }
 
@@ -94,14 +140,15 @@ public class StartMenue_mobile : MonoBehaviour
 
 
         //Default:
-        CommunicationEvents.Opsys = CommunicationEvents.Opsys_Default;
+        //CommunicationEvents.Opsys = CommunicationEvents.Opsys_Default;
         return;
     }
 
 
-    void setMouse()
+    public void setMouse()
     {
-       
+
+        print("OPSYS: " + CommunicationEvents.Opsys);
         if (CommunicationEvents.Opsys == 1)
         {
             CommunicationEvents.CursorVisDefault = false;
@@ -266,6 +313,8 @@ public class StartMenue_mobile : MonoBehaviour
             myself_GObj.transform.GetChild(i).gameObject.SetActive(false);
         }
     }
+
+
 
 
 }

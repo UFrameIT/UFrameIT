@@ -16,6 +16,7 @@ public class WorldCursor : MonoBehaviour
     public LayerMask snapLayerMask;
     public float MaxRange = 10f;
     public bool useCamCurser = false;
+    private int whichCheckMouseButton = 1;
 
     private void Awake()
     {
@@ -39,6 +40,7 @@ public class WorldCursor : MonoBehaviour
 
     void Update()
     {
+        Cam = Camera.main; //WARN: Should not called every Update;
         Ray ray = useCamCurser ? new Ray(Cam.transform.position, Cam.transform.forward) : Cam.ScreenPointToRay(Input.mousePosition);
 
         this.Hit = new RaycastHit();
@@ -52,18 +54,18 @@ public class WorldCursor : MonoBehaviour
             rayCastMask = this.layerMask;
 
         if (Physics.Raycast(ray, out Hit, MaxRange, rayCastMask)
-            || (MaxRange <= GlobalBehaviour.GadgetPhysicalDistance 
+            || (MaxRange <= GlobalBehaviour.GadgetPhysicalDistance
             && Physics.Raycast(transform.position, Vector3.down, out Hit, GlobalBehaviour.GadgetPhysicalDistance, rayCastMask)))
         {
-            if ((Hit.collider.transform.CompareTag("SnapZone") || Hit.collider.transform.CompareTag("Selectable")) 
+            if ((Hit.collider.transform.CompareTag("SnapZone") || Hit.collider.transform.CompareTag("Selectable"))
                 && !Input.GetButton(this.deactivateSnapKey))
             {
-                if(Hit.collider.gameObject.layer == LayerMask.NameToLayer("Ray")
+                if (Hit.collider.gameObject.layer == LayerMask.NameToLayer("Ray")
                     || Hit.collider.gameObject.layer == LayerMask.NameToLayer("Line"))
                 {
                     var id = Hit.collider.gameObject.GetComponent<FactObject>().URI;
                     AbstractLineFact lineFact = StageStatic.stage.factState[id] as AbstractLineFact;
-                    PointFact p1 =  StageStatic.stage.factState[lineFact.Pid1] as PointFact;
+                    PointFact p1 = StageStatic.stage.factState[lineFact.Pid1] as PointFact;
 
                     Hit.point = Math3d.ProjectPointOnLine(p1.Point, lineFact.Dir, Hit.point);
                 }
@@ -84,9 +86,16 @@ public class WorldCursor : MonoBehaviour
                 transform.position += .01f * Hit.normal;
             }
 
-            CheckMouseButtons();
+            //Link to CheckMouseButtonHandler
+            if(whichCheckMouseButton==0){ CheckMouseButtons(); }
+            if(whichCheckMouseButton==1){CheckMouseButtons1(); }
 
         }
+
+        //for Debugging:
+        //print("Maus: ");
+        //print(Cursor.lockState);
+
     }
 
     //Check if left Mouse-Button was pressed and handle it
@@ -100,6 +109,51 @@ public class WorldCursor : MonoBehaviour
 
             CommunicationEvents.TriggerEvent.Invoke(Hit);
         }
+    }
+
+
+    //Check if left Mouse-Button was pressed and handle it
+    //Alternative Version
+    void CheckMouseButtons1(bool OnSnap = false, bool onLine = false)
+    {
+        if (Input.GetMouseButtonDown(0) && checkClickPermission())
+        {
+            //if (EventSystem.current.IsPointerOverGameObject()) return; //this prevents rays from shooting through ui
+
+            if (IsPointerOverUIObject()) return; //Needed for Android
+            if (Hit.transform.gameObject.layer == LayerMask.NameToLayer("Water")) return; // not allowed to meassure on water
+            if (Hit.transform.gameObject.layer == LayerMask.NameToLayer("TransparentFX")) return; // not allowed to meassure on TransparentFX
+            if (!OnSnap)
+            {
+                CommunicationEvents.TriggerEvent.Invoke(Hit);
+            }
+            else if (GadgetManager.activeGadget.GetType() == typeof(Pointer))
+            {
+                if (!onLine) Hit.collider.enabled = false;
+                CommunicationEvents.TriggerEvent.Invoke(Hit);
+                //    CommunicationEvents.SnapEvent.Invoke(Hit);
+            }
+        }
+    }
+
+
+    private bool IsPointerOverUIObject()
+    {
+        PointerEventData eventDataCurrentPosition = new PointerEventData(EventSystem.current);
+        eventDataCurrentPosition.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventDataCurrentPosition, results);
+        return results.Count > 0;
+    }
+    public bool checkClickPermission()
+    {
+        if (UIconfig.CanvasOnOff_Array[14] > 0)
+        {
+            return true;
+        }
+
+        //return false; //todo
+        return true;
     }
 
 }

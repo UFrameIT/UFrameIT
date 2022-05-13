@@ -31,7 +31,8 @@ namespace Characters.FirstPerson
         [SerializeField] private AudioClip m_JumpSound;           // the sound played when character leaves the ground.
         [SerializeField] private AudioClip m_LandSound;           // the sound played when character touches back on ground.
 
-        private Camera m_Camera;
+        public Camera m_Camera;
+        //public Camera m_Camera;
         private bool m_Jump;
         private float m_YRotation;
         private Vector2 m_Input;
@@ -45,13 +46,15 @@ namespace Characters.FirstPerson
         private bool m_Jumping;
         private AudioSource m_AudioSource;
         private ControlMapping input_ControlMapping;
-       
+        public string Running_keyBind;
+
+
 
         // Use this for initialization
         private void Start()
         {
             m_CharacterController = GetComponent<CharacterController>();
-            m_Camera = Camera.main;
+            //m_Camera = Camera.main;
             m_OriginalCameraPosition = m_Camera.transform.localPosition;
             m_FovKick.Setup(m_Camera);
             m_HeadBob.Setup(m_Camera, m_StepInterval);
@@ -61,7 +64,7 @@ namespace Characters.FirstPerson
             m_AudioSource = GetComponent<AudioSource>();
             m_MouseLook.Init(transform, m_Camera.transform);
 
-            //New Input
+            //New InputSystem
             input_ControlMapping = new ControlMapping();
             input_ControlMapping.Actionmap1.Movement.Enable();
             //input_ControlMapping.Actionmap1.Movement.
@@ -222,13 +225,22 @@ namespace Characters.FirstPerson
                 // Read input
                 float horizontal = CrossPlatformInputManager.GetAxis("Horizontal");
                 float vertical = CrossPlatformInputManager.GetAxis("Vertical");
+                //print("Input" + horizontal);
+                //print("Input0" + Input.GetAxis("Vertical"));
+
 #if !MOBILE_INPUT
-            // On standalone builds, walk/run speed is modified by a key press.
-            // keep track of whether or not the character is walking or running
-            m_IsWalking = !Input.GetKey(KeyCode.LeftShift);
-
-
+                // On standalone builds, walk/run speed is modified by a key press.
+                // keep track of whether or not the character is walking or running
+                //m_IsWalking = !Input.GetKey(KeyCode.LeftShift);
+                //m_IsWalking = !Input.GetButtonDown(Running_keyBind);
+                //m_IsWalking = !Input.GetKey(Running_keyBind);
 #endif
+                m_IsWalking = !Input.GetKey(KeyCode.LeftShift);
+                if (UIconfig.controlMode!=2)
+                {
+                    //m_IsWalking = !Input.GetKey(Running_keyBind);
+                }
+
 
                 m_Input = new Vector2(horizontal, vertical);
             }

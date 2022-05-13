@@ -2362,14 +2362,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5dcea29b6606df49b7b08146b7e5b16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Key: 9
   modifier: modifier
   modundo: mod+undo
   modredo: mod+redo
   modreset: mod+reset
   modsave: mod+save
   modload: mod+load
-  CamControl: {fileID: 0}
+  cancel_keyBind: Cancel
+  MathM_keyBind: MathMenue
+  CamControl_StdAsset: {fileID: 0}
+  CamControl_ScriptChar: {fileID: 0}
   LockOnly: 0
   CursorRenderer: {fileID: 0}
 --- !u!1 &1063267682366994544
