@@ -11,7 +11,8 @@ public class FactSpawner : MonoBehaviour
         Sphere,
         Line,
         Ray,
-        Angle;
+        Angle,
+        Ring;
 
     private GameObject FactRepresentation;
     //private Camera camera;
@@ -37,19 +38,15 @@ public class FactSpawner : MonoBehaviour
 
     public Func<Fact, Fact> getAction(Fact fact)
     {
-        switch  (fact)
+        return fact switch
         {
-            case PointFact pointFact:
-                return SpawnPoint;
-            case LineFact lineFact:
-                return SpawnLine;
-            case AngleFact angleFact:
-                return SpawnAngle;
-            case RayFact rayFact:
-                return SpawnRay;
-            default:
-                return null;
-        }
+            PointFact pointFact => SpawnPoint,
+            LineFact lineFact => SpawnLine,
+            AngleFact angleFact => SpawnAngle,
+            RayFact rayFact => SpawnRay,
+            CircleFact circleFact => SpawnRing,
+            _ => null,
+        };
     }
   
 
@@ -198,6 +195,50 @@ public class FactSpawner : MonoBehaviour
         angleFact.Representation = angle;
         return angleFact;
     }
+
+    public Fact SpawnRing(Fact fact)
+    {
+        CircleFact circleFact = (CircleFact)fact;
+
+        PointFact middlePointFact = StageStatic.stage.factState[circleFact.Pid1] as PointFact;
+        PointFact basePointFact = StageStatic.stage.factState[circleFact.Pid2] as PointFact;
+
+        Vector3 middlePoint = middlePointFact.Point;
+        Vector3 normal = circleFact.normal;
+        float radius = circleFact.radius;
+
+        //Change FactRepresentation to Ring
+        this.FactRepresentation = Ring;
+        GameObject ring = Instantiate(FactRepresentation);
+
+        var torus = ring.GetComponent<TorusGenerator>();
+        var tmpText = ring.GetComponentInChildren<TextMeshPro>();
+        var FactObj = ring.GetComponentInChildren<FactObject>();
+
+        //Move Ring to middlePoint
+        ring.transform.position = middlePoint;
+
+        //Rotate Ring according to normal
+        ring.transform.rotation = Quaternion.LookRotation(Vector3.forward, normal); // TODO TSc works?
+
+        //Set radii
+        torus.torusRadius = radius;
+
+        //string letter = ((Char)(64 + lineFact.Id + 1)).ToString();
+        //line.GetComponentInChildren<TextMeshPro>().text = letter;
+        string text = 
+            $"\u25EF {middlePointFact.Label}{basePointFact.Label}" +
+            $"r = {radius}, C = {2 * radius * Math.PI}";
+        tmpText.text = text;
+        //move TMP Text so it is on the edge of the circle
+        tmpText.rectTransform.position = tmpText.rectTransform.position - new Vector3(0, 0, -radius);
+
+        FactObj.URI = circleFact.Id;
+        circleFact.Representation = ring;
+
+        return circleFact;
+    }
+
 
     public void DeleteObject(Fact fact)
     {
