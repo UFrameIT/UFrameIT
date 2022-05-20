@@ -219,7 +219,7 @@ public class FactSpawner : MonoBehaviour
         ring.transform.position = middlePoint;
 
         //Rotate Ring according to normal
-        ring.transform.rotation = Quaternion.LookRotation(Vector3.forward, normal); // TODO TSc works?
+        ring.transform.rotation = Quaternion.FromToRotation(Vector3.forward, normal);
 
         //Set radii
         torus.torusRadius = radius;
