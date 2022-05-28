@@ -211,7 +211,7 @@ public class FactSpawner : MonoBehaviour
         this.FactRepresentation = Ring;
         GameObject ring = Instantiate(FactRepresentation);
 
-        var torus = ring.GetComponent<TorusGenerator>();
+        var tori = ring.GetComponentsInChildren<TorusGenerator>();
         var tmpText = ring.GetComponentInChildren<TextMeshPro>();
         var FactObj = ring.GetComponentInChildren<FactObject>();
 
@@ -222,13 +222,10 @@ public class FactSpawner : MonoBehaviour
         ring.transform.up = normal;
 
         //Set radii
-        torus.torusRadius = radius;
+        foreach (var torus in tori)
+            torus.torusRadius = radius;
 
-        //string letter = ((Char)(64 + lineFact.Id + 1)).ToString();
-        //line.GetComponentInChildren<TextMeshPro>().text = letter;
-        string text = 
-            $"\u25EF {middlePointFact.Label}{basePointFact.Label}" +
-            $"r = {radius}, C = {2 * radius * Math.PI}";
+        string text = $"○{middlePointFact.Label}";
         tmpText.text = text;
         //move TMP Text so it is on the edge of the circle
         tmpText.rectTransform.position = tmpText.rectTransform.position - new Vector3(0, 0, -radius);
@@ -238,7 +235,7 @@ public class FactSpawner : MonoBehaviour
 
         //update MeshCollider to fit torus
         MeshCollider meshCol = ring.GetComponentInChildren<MeshCollider>();
-        meshCol.sharedMesh = meshCol.gameObject.GetComponent<MeshFilter>().mesh;
+        meshCol.sharedMesh = meshCol.gameObject.GetComponent<MeshFilter>().sharedMesh;
 
         return circleFact;
     }
