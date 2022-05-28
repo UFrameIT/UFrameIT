@@ -219,7 +219,7 @@ public class FactSpawner : MonoBehaviour
         ring.transform.position = middlePoint;
 
         //Rotate Ring according to normal
-        ring.transform.rotation = Quaternion.FromToRotation(Vector3.forward, normal);
+        ring.transform.up = normal;
 
         //Set radii
         torus.torusRadius = radius;
@@ -235,6 +235,10 @@ public class FactSpawner : MonoBehaviour
 
         FactObj.URI = circleFact.Id;
         circleFact.Representation = ring;
+
+        //update MeshCollider to fit torus
+        MeshCollider meshCol = ring.GetComponentInChildren<MeshCollider>();
+        meshCol.sharedMesh = meshCol.gameObject.GetComponent<MeshFilter>().mesh;
 
         return circleFact;
     }

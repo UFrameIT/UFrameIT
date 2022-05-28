@@ -6104,7 +6104,7 @@ MonoBehaviour:
   Sprite: {fileID: 21300000, guid: 61c389e99e8388e4e93070d2f5e6275f, type: 3}
   ignoreLayerMask:
     serializedVersion: 2
-    m_Bits: 24064
+    m_Bits: 7680
   Cursor: {fileID: 7593098362214606413}
 --- !u!1 &6514918780467523717
 GameObject:
@@ -6156,7 +6156,7 @@ MonoBehaviour:
   Sprite: {fileID: 21300000, guid: d456617ba2282854d9570dcebcc2b279, type: 3}
   ignoreLayerMask:
     serializedVersion: 2
-    m_Bits: 115217
+    m_Bits: 529
   Cursor: {fileID: 7593098362214606413}
 --- !u!1 &6538023868683449154
 GameObject:

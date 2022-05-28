@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using System.Linq;
 using static GadgetManager;
 
 public class WorldCursor : MonoBehaviour
@@ -144,7 +145,7 @@ public class WorldCursor : MonoBehaviour
             multipleHits[i] = buffer;
 
         }
-
+            
 
         for (int i = 0; i < multipleHits.Length; i++)
         {
@@ -161,6 +162,32 @@ public class WorldCursor : MonoBehaviour
                 PointFact p1 = StageStatic.stage.factState[lineFact.Pid1] as PointFact;
 
                 multipleHits[i].point = Math3d.ProjectPointOnLine(p1.Point, lineFact.Dir, multipleHits[i].point);
+            }
+            else if (multipleHits[i].collider.gameObject.layer == LayerMask.NameToLayer("Ring"))
+            {
+                #region Ring
+                var id = multipleHits[i].transform.GetComponent<FactObject>().URI;
+                CircleFact circleFact = StageStatic.stage.factState[id] as CircleFact;
+                PointFact middlePoint = StageStatic.stage.factState[circleFact.Pid1] as PointFact;
+                var normal = circleFact.normal;
+
+                // generate circle
+                int pointCount = multipleHits[i].transform.GetComponentInParent<TorusGenerator>().ringSegmentCount;
+                Vector3[] circle = new Vector3[pointCount];
+                float slice = (2f * Mathf.PI) / pointCount;
+                for (int j = 0; j < pointCount; j++)
+                {
+                    // generate possible snappoints one the "corners" of the torus mesh
+                    float angle = j * slice;
+                    circle[j] = new Vector3(circleFact.radius * Mathf.Sin(angle), 0, circleFact.radius * Mathf.Cos(angle)) + middlePoint.Point;
+
+                    // rotate snappoint according to circle normal
+                    circle[j] = Quaternion.LookRotation(new Vector3(-normal.z, 0, normal.x), normal) * circle[j];
+                }
+
+                // get closest cornerPoint
+                multipleHits[i].point = circle.OrderBy(p => Vector3.Distance(p, multipleHits[i].point)).First();
+                #endregion Ring
             }
             else
             {
