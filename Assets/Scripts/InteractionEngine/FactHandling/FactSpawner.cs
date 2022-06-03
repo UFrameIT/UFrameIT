@@ -219,7 +219,10 @@ public class FactSpawner : MonoBehaviour
         ring.transform.position = middlePoint;
 
         //Rotate Ring according to normal
-        ring.transform.up = normal;
+        if (normal.y < 0) // if normal faces downwards use inverted normal instead
+            ring.transform.up = -normal;
+        else
+            ring.transform.up = normal;
 
         //Set radii
         foreach (var torus in tori)
