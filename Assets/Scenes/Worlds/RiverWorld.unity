@@ -58151,6 +58151,11 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1406371023619087983, guid: b07552db700124a4680401e6fb94c186,
+        type: 3}
+      propertyPath: m_Name
+      value: HidingCanvas_2
+      objectReference: {fileID: 0}
     - target: {fileID: 1436607583761198716, guid: b07552db700124a4680401e6fb94c186,
         type: 3}
       propertyPath: m_AnchoredPosition.y
