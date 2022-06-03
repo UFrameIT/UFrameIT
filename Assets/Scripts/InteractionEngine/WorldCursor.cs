@@ -168,25 +168,34 @@ public class WorldCursor : MonoBehaviour
                 #region Ring
                 var id = multipleHits[i].transform.GetComponent<FactObject>().URI;
                 CircleFact circleFact = StageStatic.stage.factState[id] as CircleFact;
-                PointFact middlePoint = StageStatic.stage.factState[circleFact.Pid1] as PointFact;
+                Vector3 middlePoint = ((PointFact)StageStatic.stage.factState[circleFact.Pid1]).Point;
+                Vector3 edgePoint = ((PointFact)StageStatic.stage.factState[circleFact.Pid2]).Point;
                 var normal = circleFact.normal;
+                var radius = circleFact.radius;
 
-                // generate circle
-                int pointCount = multipleHits[i].transform.GetComponentInParent<TorusGenerator>().ringSegmentCount;
-                Vector3[] circle = new Vector3[pointCount];
-                float slice = (2f * Mathf.PI) / pointCount;
-                for (int j = 0; j < pointCount; j++)
+                // project p on circlePlane
+                var q = multipleHits[i].point - middlePoint;
+                var dist = Vector3.Dot(q, normal);
+                var pPlane = multipleHits[i].point - (normal * dist); // p on circlePlane
+
+                // check if projectedPoint and circleCenter are identical
+                // should never happen in practice due to floating point precision
+                if (pPlane == middlePoint)
                 {
-                    // generate possible snappoints one the "corners" of the torus mesh
-                    float angle = j * slice;
-                    circle[j] = new Vector3(circleFact.radius * Mathf.Sin(angle), 0, circleFact.radius * Mathf.Cos(angle)) + middlePoint.Point;
-
-                    // rotate snappoint according to circle normal
-                    circle[j] = Quaternion.LookRotation(new Vector3(-normal.z, 0, normal.x), normal) * circle[j];
+                    // can be set to any point on the ring -> set to edgePoint
+                    multipleHits[i].point = edgePoint;
+                    return;
                 }
-
-                // get closest cornerPoint
-                multipleHits[i].point = circle.OrderBy(p => Vector3.Distance(p, multipleHits[i].point)).First();
+                else
+                {
+                    var direction = (pPlane - middlePoint).normalized;
+                    multipleHits[i].point = middlePoint + direction * radius;
+                }
+                // cursor orientation should match circle orientation; dont face downwards
+                if (normal.y < 0) // if normal faces downwards use inverted normal instead
+                    multipleHits[i].normal = -normal;
+                else
+                    multipleHits[i].normal = normal;
                 #endregion Ring
             }
             else
