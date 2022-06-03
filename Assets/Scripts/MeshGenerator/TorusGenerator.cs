@@ -25,6 +25,9 @@ public class TorusGenerator : ShapeGenerator
         if (torusMesh.sharedMesh != null)
             torusMesh.sharedMesh.Clear();
         torusMesh.mesh = CreateMesh(CreateTorus(torusRadius, ringRadius, ringSegmentCount, segmentSideCount));
+
+        if (torusMesh.transform.TryGetComponent(out MeshCollider meshCol))
+            meshCol.sharedMesh = torusMesh.sharedMesh;
     }
 
     private static (Vector3[] vertices, int[] triangles) CreateTorus(float torusRadius, float ringRadius, int ringSegmentCount, int segmentSideCount)

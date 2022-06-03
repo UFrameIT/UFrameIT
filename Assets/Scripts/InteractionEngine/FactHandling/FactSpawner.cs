@@ -227,15 +227,11 @@ public class FactSpawner : MonoBehaviour
 
         string text = $"○{middlePointFact.Label}";
         tmpText.text = text;
-        //move TMP Text so it is on the edge of the circle
-        tmpText.rectTransform.position = tmpText.rectTransform.position - new Vector3(0, 0, -radius);
+        ////move TMP Text so it is on the edge of the circle
+        //tmpText.rectTransform.position = tmpText.rectTransform.position - new Vector3(0, 0, -radius);
 
         FactObj.URI = circleFact.Id;
         circleFact.Representation = ring;
-
-        //update MeshCollider to fit torus
-        MeshCollider meshCol = ring.GetComponentInChildren<MeshCollider>();
-        meshCol.sharedMesh = meshCol.gameObject.GetComponent<MeshFilter>().sharedMesh;
 
         return circleFact;
     }
