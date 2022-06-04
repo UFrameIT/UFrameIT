@@ -166,10 +166,13 @@ public class WorldCursor : MonoBehaviour
             else if (multipleHits[i].collider.gameObject.layer == LayerMask.NameToLayer("Ring"))
             {
                 #region Ring
+                Debug.Log("PRINT");
                 var id = multipleHits[i].transform.GetComponent<FactObject>().URI;
                 CircleFact circleFact = StageStatic.stage.factState[id] as CircleFact;
                 PointFact middlePoint = StageStatic.stage.factState[circleFact.Pid1] as PointFact;
                 var normal = circleFact.normal;
+                        
+
 
                 // generate circle
                 int pointCount = multipleHits[i].transform.GetComponentInParent<TorusGenerator>().ringSegmentCount;
@@ -182,7 +185,7 @@ public class WorldCursor : MonoBehaviour
                     circle[j] = new Vector3(circleFact.radius * Mathf.Sin(angle), 0, circleFact.radius * Mathf.Cos(angle)) + middlePoint.Point;
 
                     // rotate snappoint according to circle normal
-                    circle[j] = Quaternion.LookRotation(new Vector3(-normal.z, 0, normal.x), normal) * circle[j];
+                    circle[j] = Quaternion.LookRotation(new Vector3(-normal.z, 0, normal.x), normal) * circle[j];   
                 }
 
                 // get closest cornerPoint

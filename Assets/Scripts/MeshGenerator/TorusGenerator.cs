@@ -30,7 +30,7 @@ public class TorusGenerator : ShapeGenerator
         try
         {
             MeshCollider meshCol = GetComponentInChildren<MeshCollider>();
-            meshCol.sharedMesh = torusMesh.mesh;
+            meshCol.sharedMesh = torusMesh.sharedMesh;
         }
         catch (Exception e) { }
     }
