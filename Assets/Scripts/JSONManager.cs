@@ -40,12 +40,14 @@ public class MMTURICollection
 
     public string ParametrizedPlane = "http://mathhub.info/MitM/core/geometry?Geometry/Planes?ParametrizedPlane";
     public string pointNormalPlane = "http://mathhub.info/MitM/core/geometry?Geometry/Planes?pointNormalPlane";
-    public string OnCircle = "http://mathhub.info/FrameIT/frameworld?FrameITCircle?pointOnCircle";
+    public string OnCircle =       "http://mathhub.info/FrameIT/frameworld?FrameITCircle?pointOnCircle";
     public string AnglePlaneLine = "http://mathhub.info/FrameIT/frameworld?FrameITCircle?angleCircleLine";
-    public string OrthoCircleLine = "http://mathhub.info/FrameIT/frameworld?FrameITCircle?orthogonalCircleLine";
+    public string OrthoCircleLine ="http://mathhub.info/FrameIT/frameworld?FrameITCircle?orthogonalCircleLine";
 
 
     public string TruncatedVolumeCone = "http://mathhub.info/FrameIT/frameworld?FrameITCone?truncatedConeVolume";
+    public string CylinderVolume = "http://mathhub.info/FrameIT/frameworld?FrameITCylinder?cylinderVolume";
+
     public string ParallelCircles = "http://mathhub.info/FrameIT/frameworld?FrameITCone?parallelCircles";
     public string RightAngle = "http://mathhub.info/FrameIT/frameworld?FrameITBasics?rightAngle";
 
