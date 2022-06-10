@@ -166,7 +166,6 @@ public class WorldCursor : MonoBehaviour
             else if (multipleHits[i].collider.gameObject.layer == LayerMask.NameToLayer("Ring"))
             {
                 #region Ring
-                Debug.Log("PRINT");
                 var id = multipleHits[i].transform.GetComponent<FactObject>().URI;
                 CircleFact circleFact = StageStatic.stage.factState[id] as CircleFact;
                 Vector3 middlePoint = ((PointFact)StageStatic.stage.factState[circleFact.Pid1]).Point;
@@ -192,12 +191,36 @@ public class WorldCursor : MonoBehaviour
                     var direction = (pPlane - middlePoint).normalized;
                     multipleHits[i].point = middlePoint + direction * radius;
                 }
+
                 // cursor orientation should match circle orientation; dont face downwards
                 if (normal.y < 0) // if normal faces downwards use inverted normal instead
                     multipleHits[i].normal = -normal;
                 else
                     multipleHits[i].normal = normal;
                 #endregion Ring
+            }
+            else if (multipleHits[i].collider.gameObject.layer == LayerMask.NameToLayer("Circle"))
+            {
+                #region Circle
+                var id = multipleHits[i].transform.GetComponent<FactObject>().URI;
+                CircleFact circleFact = StageStatic.stage.factState[id] as CircleFact;
+                Vector3 middlePoint = ((PointFact)StageStatic.stage.factState[circleFact.Pid1]).Point;
+                Vector3 edgePoint = ((PointFact)StageStatic.stage.factState[circleFact.Pid2]).Point;
+                var normal = circleFact.normal;
+                var radius = circleFact.radius;
+
+                // project p on circlePlane
+                var q = multipleHits[i].point - middlePoint;
+                var dist = Vector3.Dot(q, normal);
+                var pPlane = multipleHits[i].point - (normal * dist); // p on circlePlane
+                multipleHits[i].point = pPlane;
+
+                // cursor orientation should match circle orientation; dont face downwards
+                if (normal.y < 0) // if normal faces downwards use inverted normal instead
+                    multipleHits[i].normal = -normal;
+                else
+                    multipleHits[i].normal = normal;
+                #endregion Circle
             }
             else
             {
