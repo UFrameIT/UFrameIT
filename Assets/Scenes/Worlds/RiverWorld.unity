@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4410865, g: 0.48984045, b: 0.5699203, a: 1}
+  m_IndirectSpecularColor: {r: 0.4410664, g: 0.4898227, b: 0.5699191, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -57706,6 +57706,12 @@ PrefabInstance:
       propertyPath: prefab_RectangleFact
       value: 
       objectReference: {fileID: 8156936215466465834, guid: b6f35afcaff5d8a40bf8f792eb3299e6,
+        type: 3}
+    - target: {fileID: 3020720019460506146, guid: b07552db700124a4680401e6fb94c186,
+        type: 3}
+      propertyPath: prefab_CylinderVolume
+      value: 
+      objectReference: {fileID: 4509982228914264782, guid: 09974a8b56c29434a9c32f1adc92d705,
         type: 3}
     - target: {fileID: 3020720019460506146, guid: b07552db700124a4680401e6fb94c186,
         type: 3}

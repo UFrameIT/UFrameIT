@@ -32,7 +32,8 @@ public class ParsingDictionary {
         {MMTURIs.OrthoCircleLine, OrthogonalCircleLineFact.parseFact },
         {MMTURIs.VolumeCone ,ConeVolumeFact.parseFact  },
         {MMTURIs.TruncatedVolumeCone ,TruncatedConeVolumeFact.parseFact  },
-        {MMTURIs.RightAngle, RightAngleFact.parseFact }
+        {MMTURIs.RightAngle, RightAngleFact.parseFact },
+        {MMTURIs.CylinderVolume, CylinderVolumeFact.parseFact }
 
 
 
@@ -3329,5 +3330,204 @@ public class RightAngleFact : FactWrappedCRTP<RightAngleFact>
 
     }
 }
+
+
+
+
+/// <summary>
+/// The volume of a cylinder defined by a base area  <see cref="CircleFact">CircleFact</see>, a top area <see cref="CircleFact">CircleFact</see> and the volume as float
+/// </summary>
+public class CylinderVolumeFact : FactWrappedCRTP<CylinderVolumeFact>
+{
+    ///  <summary> a <see cref="CircleFact">CircleFact</see> describing the base area </summary>
+    public string Cid1;
+    ///  <summary> a <see cref="CircleFact">CircleFact</see> describing the top area  </summary>
+    public string Cid2;
+    ///  <summary> the volume of the cylinder as a float </summary>
+    public float vol;
+    ///  <summary> OMA proof that the two circles are parallel  </summary>
+    public OMA proof;
+
+    /// <summary> \copydoc Fact.Fact </summary>
+    public CylinderVolumeFact() : base()
+    {
+        this.Cid1 = null;
+        this.Cid2 = null;
+        this.vol = 0.0f;
+        this.proof = null;
+
+    }
+
+    /// <summary>
+    /// Copies <paramref name="fact"/> by initiating new MMT %Fact.
+    /// </summary>
+    /// <param name="fact">Fact to be copied</param>
+    /// <param name="old_to_new"><c>Dictionary</c> mapping <paramref name="fact"/>.<see cref="getDependentFactIds"/> in <paramref name="fact"/>.<see cref="Fact._Facts"/> to corresponding <see cref="Fact.Id"/> in <paramref name="organizer"/> </param>
+    /// <param name="organizer">sets <see cref="_Facts"/></param>
+    public CylinderVolumeFact(CylinderVolumeFact fact, Dictionary<string, string> old_to_new, FactOrganizer organizer) : base(fact, organizer)
+    {
+        init(old_to_new[fact.Cid1], old_to_new[fact.Cid2], fact.vol, fact.proof);
+    }
+
+    /// <summary>
+    /// Standard Constructor
+    /// </summary>
+    /// <param name="cid1">sets <see cref="Cid1"/></param>
+    /// <param name="cid2">sets <see cref="Cid2"/></param>
+    /// <param name="vol">sets <see cref="vol"/></param>
+    /// <param name="proof">sets <see cref="proof"/></param>
+    /// <param name="organizer">sets <see cref="Fact._Facts"/></param>
+    public CylinderVolumeFact(string cid1, string cid2, float vol, OMA proof, FactOrganizer organizer) : base(organizer)
+    {
+        init(cid1, cid2, vol, proof);
+    }
+
+    /// <summary>
+    /// sets variables and generates MMT Declaration
+    /// </summary>
+    /// <param name="cid1">sets <see cref="Cid1"/></param>
+    /// <param name="cid2">sets <see cref="Cid2"/></param>
+    /// <param name="vol">sets <see cref="vol"/></param>
+    /// <param name="proof">sets <see cref="proof"/></param>
+    private void init(string cid1, string cid2, float vol, OMA proof)
+    {
+        this.Cid1 = cid1;
+        this.Cid2 = cid2;
+        this.proof = proof;
+
+        CircleFact cf1 = _Facts[cid1] as CircleFact;
+        CircleFact cf2 = _Facts[cid2] as CircleFact;
+        this.vol = vol;
+
+
+        MMTDeclaration mmtDecl;
+        string c1URI = cf1.Id;
+        string c2URI = cf2.Id;
+
+
+        mmtDecl = generateMMTDeclaration(c1URI, c2URI, vol, proof);
+
+        AddFactResponse.sendAdd(mmtDecl, out this._URI);
+    }
+
+    /// <summary>
+    /// Bypasses initialization of new MMT %Fact by using existend URI, _which is not checked for existence_.
+    /// </summary>
+    /// <param name="Cid1">sets <see cref="Cid1"/></param>
+    /// <param name="Cid2">sets <see cref="Cid2"/></param>
+    /// <param name="volume">sets <see cref="vol"/></param>
+    /// <param name="proof">sets <see cref="proof"/></param>
+    /// <param name="backendURI">MMT URI</param>
+    /// <param name="organizer">sets <see cref="Fact._Facts"/></param>
+    public CylinderVolumeFact(string Cid1, string Cid2, float volume, OMA proof, string backendURI, FactOrganizer organizer) : base(organizer)
+    {
+        this.Cid1 = Cid1;
+        this.Cid2 = Cid2;
+        this.vol = volume;
+        this.proof = proof;
+
+        this._URI = backendURI;
+        _ = this.Label;
+    }
+
+    /// \copydoc Fact.parseFact(Scroll.ScrollFact)
+    public new static CylinderVolumeFact parseFact(Scroll.ScrollFact fact)
+    {
+        string uri = fact.@ref.uri;
+
+        string Circle1Uri = ((OMS)((OMA)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[0]).arguments[0]).uri;
+        string Circle2Uri = ((OMS)((OMA)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[0]).arguments[1]).uri;
+        float volume = ((OMF)((Scroll.ScrollValueFact)fact).value).f;
+
+        OMA proof = (OMA)(((OMA)((OMA)((Scroll.ScrollValueFact)fact).lhs).arguments[0]).arguments[2]);
+
+        if (StageStatic.stage.factState.ContainsKey(Circle1Uri) && StageStatic.stage.factState.ContainsKey(Circle2Uri))
+
+            return new CylinderVolumeFact(Circle1Uri, Circle2Uri, volume, proof, uri, StageStatic.stage.factState);
+
+        else    //If dependent facts do not exist return null
+            return null;
+    }
+
+    /// \copydoc Fact.generateLabel
+    protected override string generateLabel()
+    {
+        return "V(" + _Facts[Cid1].Label + "," + _Facts[Cid2].Label + ")";
+    }
+
+
+
+    /// <summary>
+    /// Constructs struct for not-right-angled MMT %Fact <see cref="AddFactResponse"/>
+    /// </summary>
+    /// <param name="c1URI"> Uri for <see cref="Cid1"/></param>
+    /// <param name="c2URI"> Uri for <see cref="Cid2"/></param>
+    /// <param name="val"> <see cref="vol"/></param>
+    /// <returns>struct for <see cref="AddFactResponse"/></returns>
+    private MMTDeclaration generateMMTDeclaration(string c1URI, string c2URI, float val, OMA proof)
+    {
+        MMTTerm lhs =
+            new OMA(
+                new OMS(MMTURIs.CylinderVolume),
+
+                new List<MMTTerm> {
+                    new OMS(c1URI),
+                    new OMS(c2URI),
+                    proof,
+                }
+            );
+
+        MMTTerm valueTp = new OMS(MMTURIs.RealLit);
+        MMTTerm value = new OMF(val);
+
+        return new MMTValueDeclaration(this.Label, lhs, valueTp, value);
+    }
+
+    /// \copydoc Fact.hasDependentFacts
+    public override Boolean hasDependentFacts()
+    {
+        return true;
+    }
+
+    /// \copydoc Fact.getDependentFactIds
+    public override string[] getDependentFactIds()
+    {
+        return new string[] { Cid1, Cid2 };
+    }
+
+    /// \copydoc Fact.instantiateDisplay(GameObject, Transform)
+    public override GameObject instantiateDisplay(GameObject prefab, Transform transform)
+    {
+        var obj = GameObject.Instantiate(prefab, Vector3.zero, Quaternion.identity, transform);
+        obj.transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>().text = _Facts[this.Cid1].Label + _Facts[this.Cid2].Label;
+        obj.GetComponent<FactWrapper>().fact = this;
+
+        return obj;
+    }
+
+    /// \copydoc Fact.GetHashCode
+    /// uhhh is this a problem?
+    public override int GetHashCode()
+    {
+        return this.Cid1.GetHashCode() ^ this.Cid2.GetHashCode();
+    }
+
+    /// \copydoc Fact.Equivalent(Fact, Fact)
+    protected override bool EquivalentWrapped(CylinderVolumeFact f1, CylinderVolumeFact f2)
+    {
+        if (f1.Cid1 == f2.Cid1 && f1.Cid2 == f2.Cid2)
+            return true;
+
+        CircleFact c1f1 = (CircleFact)_Facts[f1.Cid1];
+        CircleFact c1f2 = (CircleFact)_Facts[f2.Cid1];
+
+        CircleFact c2f1 = (CircleFact)_Facts[f1.Cid2];
+        CircleFact c2f2 = (CircleFact)_Facts[f2.Cid2];
+
+        return (c1f1.Equivalent(c1f2) && c2f1.Equivalent(c2f2) && f1.vol == f2.vol);
+
+    }
+}
+
 
 

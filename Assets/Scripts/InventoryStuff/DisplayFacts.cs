@@ -24,6 +24,7 @@ public class DisplayFacts : MonoBehaviour
     public GameObject prefab_OrthogonalCircleLine;
     public GameObject prefab_TruncatedConeVolume;
     public GameObject prefab_RightAngle;
+    public GameObject prefab_CylinderVolume;
 
 
 
@@ -57,6 +58,7 @@ public class DisplayFacts : MonoBehaviour
             {typeof(OrthogonalCircleLineFact), prefab_OrthogonalCircleLine },
             {typeof(TruncatedConeVolumeFact), prefab_TruncatedConeVolume },
             {typeof(RightAngleFact), prefab_RightAngle },
+            {typeof(CylinderVolumeFact), prefab_CylinderVolume},
             
 
 

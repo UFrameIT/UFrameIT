@@ -166,6 +166,7 @@ public class WorldCursor : MonoBehaviour
             else if (multipleHits[i].collider.gameObject.layer == LayerMask.NameToLayer("Ring"))
             {
                 #region Ring
+                Debug.Log("PRINT");
                 var id = multipleHits[i].transform.GetComponent<FactObject>().URI;
                 CircleFact circleFact = StageStatic.stage.factState[id] as CircleFact;
                 Vector3 middlePoint = ((PointFact)StageStatic.stage.factState[circleFact.Pid1]).Point;
