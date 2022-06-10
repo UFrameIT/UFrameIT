@@ -33,6 +33,12 @@ public abstract class ShapeGenerator : MonoBehaviour
         return circle;
     }
 
+    /// <summary>
+    /// Creates triangles for a set of vertecies of a flat, convex shape
+    /// </summary>
+    /// <param name="points"></param>
+    /// <param name="invert"></param>
+    /// <returns></returns>
     protected static (Vector3[], int[]) CreatePlane(Vector3[] points, bool invert = false)
     {
         Vector3[] vertices = points;
