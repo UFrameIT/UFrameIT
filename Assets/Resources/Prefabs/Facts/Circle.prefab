@@ -195,7 +195,6 @@ GameObject:
   - component: {fileID: 8353389332891901056}
   - component: {fileID: 3893924995767960437}
   - component: {fileID: 3098454182384136765}
-  - component: {fileID: 296400992955732999}
   m_Layer: 15
   m_Name: CircleInner
   m_TagString: Untagged
@@ -212,7 +211,7 @@ Transform:
   m_GameObject: {fileID: 4925002984753179688}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.95, y: 1, z: 0.95}
+  m_LocalScale: {x: 0.95, y: 0.5, z: 0.95}
   m_Children: []
   m_Father: {fileID: 142224692930156368}
   m_RootOrder: 0
@@ -224,7 +223,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4925002984753179688}
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &3098454182384136765
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -266,22 +265,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &296400992955732999
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4925002984753179688}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 405087c38b8537e43bcc99727c5325ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  midPoint: {x: 0, y: 0, z: 0}
-  radius: 1
-  sideCount: 500
-  circleMesh: {fileID: 3893924995767960437}
 --- !u!1 &5866155945383417828
 GameObject:
   m_ObjectHideFlags: 0
@@ -294,7 +277,6 @@ GameObject:
   - component: {fileID: 3164742056485930267}
   - component: {fileID: 1460740696286669547}
   - component: {fileID: 6716233798214228857}
-  - component: {fileID: 4535587273489758181}
   m_Layer: 15
   m_Name: CircleHighlight
   m_TagString: Untagged
@@ -311,7 +293,7 @@ Transform:
   m_GameObject: {fileID: 5866155945383417828}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.96, y: 1, z: 0.96}
+  m_LocalScale: {x: 0.96, y: 0.51, z: 0.96}
   m_Children: []
   m_Father: {fileID: 142224692930156368}
   m_RootOrder: 1
@@ -323,7 +305,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5866155945383417828}
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &1460740696286669547
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -377,22 +359,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6b9fc46f5bfe6b4eb4adf01e6b65bac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &4535587273489758181
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5866155945383417828}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 405087c38b8537e43bcc99727c5325ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  midPoint: {x: 0, y: 0, z: 0}
-  radius: 1
-  sideCount: 500
-  circleMesh: {fileID: 3164742056485930267}
 --- !u!1 &6262947649539239553
 GameObject:
   m_ObjectHideFlags: 0
@@ -406,8 +372,7 @@ GameObject:
   - component: {fileID: 1078883255209641429}
   - component: {fileID: 5602986836502461330}
   - component: {fileID: 8419554499757686208}
-  - component: {fileID: 1062343493432916357}
-  - component: {fileID: 8178627133788367566}
+  - component: {fileID: 8526453253978894086}
   m_Layer: 15
   m_Name: Mesh
   m_TagString: SnapZone
@@ -424,7 +389,7 @@ Transform:
   m_GameObject: {fileID: 6262947649539239553}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 0.01, z: 1}
   m_Children:
   - {fileID: 8353389332891901056}
   - {fileID: 8554957501859850914}
@@ -438,7 +403,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6262947649539239553}
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!23 &1078883255209641429
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -512,23 +477,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &1062343493432916357
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6262947649539239553}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 405087c38b8537e43bcc99727c5325ec, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  midPoint: {x: 0, y: 0, z: 0}
-  radius: 1
-  sideCount: 500
-  circleMesh: {fileID: 7167210412035754299}
---- !u!64 &8178627133788367566
+--- !u!64 &8526453253978894086
 MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -541,7 +490,7 @@ MeshCollider:
   serializedVersion: 4
   m_Convex: 0
   m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &6839596689016440457
 GameObject:
   m_ObjectHideFlags: 0

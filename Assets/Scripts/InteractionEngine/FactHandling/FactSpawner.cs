@@ -12,7 +12,8 @@ public class FactSpawner : MonoBehaviour
         Line,
         Ray,
         Angle,
-        Ring;
+        Ring,
+        Circle;
 
     private GameObject FactRepresentation;
     //private Camera camera;
@@ -44,7 +45,7 @@ public class FactSpawner : MonoBehaviour
             LineFact lineFact => SpawnLine,
             AngleFact angleFact => SpawnAngle,
             RayFact rayFact => SpawnRay,
-            CircleFact circleFact => SpawnRing,
+            CircleFact circleFact => SpawnRingAndCircle,
             _ => null,
         };
     }
@@ -196,6 +197,12 @@ public class FactSpawner : MonoBehaviour
         return angleFact;
     }
 
+    public Fact SpawnRingAndCircle(Fact fact)
+    {
+        _ = SpawnRing(fact);
+        return SpawnCircle(fact);
+    }
+
     public Fact SpawnRing(Fact fact)
     {
         CircleFact circleFact = (CircleFact)fact;
@@ -235,6 +242,45 @@ public class FactSpawner : MonoBehaviour
 
         FactObj.URI = circleFact.Id;
         circleFact.Representation = ring;
+
+        return circleFact;
+    }
+
+    public Fact SpawnCircle(Fact fact)
+    {
+        CircleFact circleFact = (CircleFact)fact;
+
+        PointFact middlePointFact = StageStatic.stage.factState[circleFact.Pid1] as PointFact;
+        PointFact basePointFact = StageStatic.stage.factState[circleFact.Pid2] as PointFact;
+
+        Vector3 middlePoint = middlePointFact.Point;
+        Vector3 normal = circleFact.normal;
+        float radius = circleFact.radius;
+
+        //Change FactRepresentation to Ring
+        this.FactRepresentation = Circle;
+        GameObject circle = Instantiate(FactRepresentation);
+
+        var tmpText = circle.GetComponentInChildren<TextMeshPro>();
+        var FactObj = circle.GetComponentInChildren<FactObject>();
+
+        //Move Circle to middlePoint
+        circle.transform.position = middlePoint;
+
+        //Rotate Circle according to normal
+        if (normal.y < 0) // if normal faces downwards use inverted normal instead
+            circle.transform.up = -normal;
+        else
+            circle.transform.up = normal;
+
+        //Set radii
+        circle.transform.localScale = new Vector3(radius * 2, circle.transform.localScale.y, radius * 2);
+
+        string text = $"○{middlePointFact.Label}";
+        tmpText.text = text;
+
+        FactObj.URI = circleFact.Id;
+        circleFact.Representation = circle;
 
         return circleFact;
     }

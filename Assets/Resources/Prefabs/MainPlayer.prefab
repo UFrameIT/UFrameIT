@@ -2637,6 +2637,7 @@ MonoBehaviour:
   Ray: {fileID: 2317807655120713368, guid: b4b800ce09755eb47b31018b5d9d8d3a, type: 3}
   Angle: {fileID: 7144232170300037021, guid: 303a593e7b3272a40a7d1a71b1f0639c, type: 3}
   Ring: {fileID: 7644263571880024739, guid: 0ed2a320a46601c4bab6c097b0b09add, type: 3}
+  Circle: {fileID: 6839596689016440457, guid: b26ea07a37e18df4ab12f8e4a9859820, type: 3}
 --- !u!114 &7000905242735826308
 MonoBehaviour:
   m_ObjectHideFlags: 0
