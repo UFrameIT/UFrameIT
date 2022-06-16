@@ -199,11 +199,17 @@ public class FactSpawner : MonoBehaviour
 
     public Fact SpawnRingAndCircle(Fact fact)
     {
-        _ = SpawnRing(fact);
-        return SpawnCircle(fact);
+        var ringAndCircleGO = new GameObject("RingAndCircle");
+        _ = SpawnRing(fact, ringAndCircleGO.transform);
+        var circleFact = SpawnCircle(fact, ringAndCircleGO.transform);
+
+        this.FactRepresentation = ringAndCircleGO;
+        circleFact.Representation = ringAndCircleGO;
+
+        return circleFact;
     }
 
-    public Fact SpawnRing(Fact fact)
+    public Fact SpawnRing(Fact fact, Transform parent = null)
     {
         CircleFact circleFact = (CircleFact)fact;
 
@@ -216,7 +222,7 @@ public class FactSpawner : MonoBehaviour
 
         //Change FactRepresentation to Ring
         this.FactRepresentation = Ring;
-        GameObject ring = Instantiate(FactRepresentation);
+        GameObject ring = Instantiate(FactRepresentation, parent);
 
         var tori = ring.GetComponentsInChildren<TorusGenerator>();
         var tmpText = ring.GetComponentInChildren<TextMeshPro>();
@@ -246,7 +252,7 @@ public class FactSpawner : MonoBehaviour
         return circleFact;
     }
 
-    public Fact SpawnCircle(Fact fact)
+    public Fact SpawnCircle(Fact fact, Transform parent = null)
     {
         CircleFact circleFact = (CircleFact)fact;
 
@@ -259,9 +265,8 @@ public class FactSpawner : MonoBehaviour
 
         //Change FactRepresentation to Ring
         this.FactRepresentation = Circle;
-        GameObject circle = Instantiate(FactRepresentation);
+        GameObject circle = Instantiate(FactRepresentation, parent);
 
-        var tmpText = circle.GetComponentInChildren<TextMeshPro>();
         var FactObj = circle.GetComponentInChildren<FactObject>();
 
         //Move Circle to middlePoint
@@ -273,11 +278,8 @@ public class FactSpawner : MonoBehaviour
         else
             circle.transform.up = normal;
 
-        //Set radii
+        //Set radius
         circle.transform.localScale = new Vector3(radius * 2, circle.transform.localScale.y, radius * 2);
-
-        string text = $"○{middlePointFact.Label}";
-        tmpText.text = text;
 
         FactObj.URI = circleFact.Id;
         circleFact.Representation = circle;
@@ -289,6 +291,7 @@ public class FactSpawner : MonoBehaviour
     public void DeleteObject(Fact fact)
     {
         GameObject factRepresentation = fact.Representation;
+        print("Deleting: " + fact.Representation?.name);
         GameObject.Destroy(factRepresentation);
     }
 
