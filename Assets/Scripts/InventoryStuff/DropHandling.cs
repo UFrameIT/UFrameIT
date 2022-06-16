@@ -24,6 +24,10 @@ public class DropHandling : MonoBehaviour, IDropHandler, IPointerClickHandler
 
         current.transform.SetParent(gameObject.transform, false);
 
+        var rect = current.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0.5f, 0.5f);
+        rect.anchorMax = new Vector2(0.5f, 0.5f);
+
         currentFact = eventData.pointerDrag.GetComponent<FactWrapper>().fact;
         Debug.Log("recieved Fact: " + currentFact.Id);
 

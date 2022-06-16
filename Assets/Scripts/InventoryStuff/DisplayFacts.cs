@@ -10,6 +10,9 @@ public class DisplayFacts : MonoBehaviour
 
     public Dictionary<string, GameObject> displayedFacts = new Dictionary<string, GameObject>();
 
+    public Transform factscreenContent;
+
+    [Header("FactPrefabs")]
     public GameObject prefab_Point;
     public GameObject prefab_Distance;
     public GameObject prefab_Angle;
@@ -32,6 +35,7 @@ public class DisplayFacts : MonoBehaviour
     public GameObject prefab_OnCircleFact;
     public GameObject prefab_AngleCircleLineFact;
 
+    [Header("Visualisation")]
     public int x_Start;
     public int y_Start;
     public int X_Pacece_Between_Items;
@@ -67,7 +71,7 @@ public class DisplayFacts : MonoBehaviour
 
         var rect = GetComponent<RectTransform>();
         x_Start = (int)(rect.rect.x + X_Pacece_Between_Items * .5f);
-        y_Start = (int)(-rect.rect.y - y_Pacece_Between_Items * .5f);//);
+        y_Start = (int)(-y_Pacece_Between_Items * .5f);
         number_of_Column = Mathf.Max(1, (int)(rect.rect.width / prefab_Point.GetComponent<RectTransform>().rect.width) - 1);
 
         AddFactEvent.AddListener(AddFact);
@@ -78,8 +82,12 @@ public class DisplayFacts : MonoBehaviour
     public void AddFact(Fact fact) {
         var fid = fact.Id;
         var obj = CreateDisplay(transform, fact);
-        obj.GetComponent<RectTransform>().localPosition = GetPosition(displayedFacts.Count);
+        var rect = obj.GetComponent<RectTransform>();
+        rect.anchorMin = new Vector2(0.5f, 1);
+        rect.anchorMax = new Vector2(0.5f, 1);
+        rect.localPosition = GetPosition(displayedFacts.Count);
         displayedFacts.Add(fact.Id, obj);
+        AdjustFactscreenContentHeight();
     }
 
     public void RemoveFact(Fact fact)
@@ -87,6 +95,7 @@ public class DisplayFacts : MonoBehaviour
         GameObject.Destroy(displayedFacts[fact.Id]);
         displayedFacts.Remove(fact.Id);
         UpdatePositions();
+        AdjustFactscreenContentHeight();
     }
 
     public void UpdatePositions()
@@ -103,7 +112,7 @@ public class DisplayFacts : MonoBehaviour
 
     private GameObject CreateDisplay(Transform transform, Fact fact)
     {
-        return fact.instantiateDisplay(prefabDictionary[fact.GetType()], transform);
+        return fact.instantiateDisplay(prefabDictionary[fact.GetType()], factscreenContent);
     }
 
     public Vector3 GetPosition(int i)
@@ -111,4 +120,10 @@ public class DisplayFacts : MonoBehaviour
         return new Vector3(x_Start + (X_Pacece_Between_Items * (i % number_of_Column)), y_Start + (-y_Pacece_Between_Items * (i / number_of_Column)), 0f);
     }
 
+    private void AdjustFactscreenContentHeight()
+    {
+        var rect = factscreenContent.GetComponent<RectTransform>();
+        var height = (float)(y_Pacece_Between_Items * Math.Ceiling(((float)displayedFacts.Count / number_of_Column)));
+        rect.sizeDelta = new Vector2(rect.sizeDelta.x, height);
+    }
 }

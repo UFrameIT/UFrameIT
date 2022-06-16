@@ -324,6 +324,16 @@ PrefabInstance:
       propertyPath: FieldActions.Array.data[1].m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
+    - target: {fileID: 1063267680909148023, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 630
+      objectReference: {fileID: 0}
+    - target: {fileID: 1063267680909148023, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 315
+      objectReference: {fileID: 0}
     - target: {fileID: 1063267681001813619, guid: b996060e27da25c498842defc1996d84,
         type: 3}
       propertyPath: m_AnchorMax.y
@@ -342,16 +352,21 @@ PrefabInstance:
     - target: {fileID: 1063267681950920702, guid: b996060e27da25c498842defc1996d84,
         type: 3}
       propertyPath: m_AnchorMax.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1063267681950920702, guid: b996060e27da25c498842defc1996d84,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1063267681950920702, guid: b996060e27da25c498842defc1996d84,
         type: 3}
       propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1063267681976544645, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1063267681976544647, guid: b996060e27da25c498842defc1996d84,
@@ -557,6 +572,26 @@ PrefabInstance:
     - target: {fileID: 1063267682684044666, guid: b996060e27da25c498842defc1996d84,
         type: 3}
       propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2283035808027014546, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2283035808027014546, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: m_VerticalFit
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2283035808027014546, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: m_HorizontalFit
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5427039714963774146, guid: b996060e27da25c498842defc1996d84,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
