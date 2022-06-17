@@ -15,6 +15,7 @@ public class DisplayScrolls : MonoBehaviour
     public GameObject ScrollPrefab;
     public GameObject DetailScreen;
 
+    public Transform scrollscreenContent;
 
 
     public int x_Start;
@@ -24,16 +25,10 @@ public class DisplayScrolls : MonoBehaviour
     public int number_of_Column;
 
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
-
     public Vector3 GetPosition(int i)
     {
-        return new Vector3(x_Start + (X_Pacece_Between_Items * (i % number_of_Column)), y_Start + (-y_Pacece_Between_Items * (i / number_of_Column)), 0f);
+        //return new Vector3(x_Start + (X_Pacece_Between_Items * (i % number_of_Column)), y_Start + (-y_Pacece_Between_Items * (i / number_of_Column)), 0f);
+        return Vector3.zero;
     }
 
     /*  [System.Serializable]
@@ -113,7 +108,7 @@ public class DisplayScrolls : MonoBehaviour
         for (int i = 0; i < this.scrolls.Count; i++)
         {
 
-            var obj = Instantiate(ScrollPrefab, Vector3.zero, Quaternion.identity, transform);
+            var obj = Instantiate(ScrollPrefab, Vector3.zero, Quaternion.identity, scrollscreenContent);
             obj.GetComponent<RectTransform>().localPosition = GetPosition(i);
             obj.GetComponent<ScrollClickedScript>().scroll = this.scrolls[i];
             obj.GetComponent<ScrollClickedScript>().DetailScreen = this.DetailScreen;
