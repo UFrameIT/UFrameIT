@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4410664, g: 0.4898227, b: 0.5699191, a: 1}
+  m_IndirectSpecularColor: {r: 0.4410865, g: 0.48984045, b: 0.5699203, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -57503,17 +57503,17 @@ PrefabInstance:
     - target: {fileID: 1674269358079891809, guid: b07552db700124a4680401e6fb94c186,
         type: 3}
       propertyPath: ignoreLayerMask.m_Bits
-      value: 96770
+      value: 64002
       objectReference: {fileID: 0}
     - target: {fileID: 1818403897284392891, guid: b07552db700124a4680401e6fb94c186,
         type: 3}
       propertyPath: ignoreLayerMask.m_Bits
-      value: 96770
+      value: 64002
       objectReference: {fileID: 0}
     - target: {fileID: 1823625680044443765, guid: b07552db700124a4680401e6fb94c186,
         type: 3}
       propertyPath: ignoreLayerMask.m_Bits
-      value: 96770
+      value: 64002
       objectReference: {fileID: 0}
     - target: {fileID: 3020720017683626808, guid: b07552db700124a4680401e6fb94c186,
         type: 3}
@@ -57619,6 +57619,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchorMin.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3020720018505806861, guid: b07552db700124a4680401e6fb94c186,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3020720018505806863, guid: b07552db700124a4680401e6fb94c186,
         type: 3}
@@ -57864,22 +57869,27 @@ PrefabInstance:
     - target: {fileID: 6257878582612889409, guid: b07552db700124a4680401e6fb94c186,
         type: 3}
       propertyPath: ignoreLayerMask.m_Bits
-      value: 86530
+      value: 53762
       objectReference: {fileID: 0}
     - target: {fileID: 6273128013715165205, guid: b07552db700124a4680401e6fb94c186,
         type: 3}
       propertyPath: ignoreLayerMask.m_Bits
-      value: 96770
+      value: 64002
       objectReference: {fileID: 0}
     - target: {fileID: 6498947068189087390, guid: b07552db700124a4680401e6fb94c186,
         type: 3}
       propertyPath: ignoreLayerMask.m_Bits
-      value: 96770
+      value: 64002
       objectReference: {fileID: 0}
     - target: {fileID: 8180161551596881868, guid: b07552db700124a4680401e6fb94c186,
         type: 3}
       propertyPath: ignoreLayerMask.m_Bits
       value: 531
+      objectReference: {fileID: 0}
+    - target: {fileID: 8190019496087713876, guid: b07552db700124a4680401e6fb94c186,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8969233071563121268, guid: b07552db700124a4680401e6fb94c186,
         type: 3}
