@@ -18,13 +18,13 @@ public class DragHandling : MonoBehaviour, IDragHandler, IEndDragHandler
         transform.position = Input.mousePosition;
 
         // display dragged object in front of all other ui
-        transform.parent = GetComponentInParent<Canvas>().transform;
+        transform.SetParent(GetComponentInParent<Canvas>().transform, false);
         transform.SetAsLastSibling();
     }
 
     public void OnEndDrag(PointerEventData eventData)
     {
-        transform.parent = StartingParent;
+        transform.SetParent(StartingParent, false);
         transform.localPosition = StartingPosition;
         GetComponent<CanvasGroup>().blocksRaycasts = true;
         dragged = false;
