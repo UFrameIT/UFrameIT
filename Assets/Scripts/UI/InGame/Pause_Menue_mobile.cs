@@ -12,7 +12,8 @@ using UnityEngine.Networking;
 using static UIconfig;
 using UnityEngine.EventSystems;
 using static Restart;
-using static SceneSwitcher;
+using static Restart_script;
+//using static SceneSwitcher;
 
 
 
@@ -121,21 +122,38 @@ public class Pause_Menue_mobile : MonoBehaviour, IPointerDownHandler, IPointerUp
 
     private void PauseGame()
     {
-        //Time.timeScale = 0;
-        Time.timeScale = UIconfig.Game_TimeScale;
+        Time.timeScale = 0;
+        //Time.timeScale = UIconfig.Game_TimeScale;
     }
     private void ResumeGame()
     {
         Time.timeScale = UIconfig.Game_TimeScale;
         if (ResetLevel)
         {
-            Restart resClass = new Restart();
+            //Restart resClass = new Restart();
+            Restart_script resClass = new Restart_script();
             resClass.LevelReset();
         }
         if (switchToScene_ID_ > 0)
         {
-            SceneSwitcher ScSw = new SceneSwitcher();
-            ScSw.NowsSwitchToScene(switchToScene_ID_);
+            
+            //SceneSwitcher ScSw = new SceneSwitcher();
+            //ScSw.NowsSwitchToScene(switchToScene_ID_);
+            //SceneManager.LoadScene("MainMenue");
+
+            switch (switchToScene_ID_)
+            {
+                case 3:
+                    SceneManager.LoadScene("LaunchMenue");
+                    break;
+                case 4:
+                    SceneManager.LoadScene("MainMenue");
+                    break;
+                default:
+                    SceneManager.LoadScene("LaunchMenue");
+                    break;
+
+            }
 
         }
 

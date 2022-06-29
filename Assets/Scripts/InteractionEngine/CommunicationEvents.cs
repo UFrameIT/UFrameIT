@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
+using UnityEngine.Networking;
 using UnityEngine;
 using UnityEngine.Events;
 using System;
@@ -61,7 +63,8 @@ public static class CommunicationEvents
     public static string ServerAddressLocal = "http://localhost:8085"; // "http://localhost:8085"
     public static string ServerAdress = "http://localhost:8085"; //need "http://" //used by dispalyScrolls.cs //http://10.231.4.95:8085"; 
 
-    
+    public static Process process_mmt_frameIT_server;
+
     public static bool takeNewToolID = false; //0=no, 1=instead, 2=both
     public static int ToolID_new;
     public static int ToolID_selected;//Script

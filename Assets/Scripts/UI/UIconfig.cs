@@ -6,8 +6,8 @@ using System;
 public static class UIconfig
 {
 
-    public static int FrameITUIversion = 3; // 1= FrameITUI; 2= FrameITUI_mobil
-    public static int InputManagerVersion = 2; // 1= InputManager, 2=InputSystemPackage ; 3=overConfigfile
+    public static int FrameITUIversion = 2; // 1= FrameITUI; 2= FrameITUI_mobil
+    public static int InputManagerVersion = 1; // 1= InputManager, 2=InputSystemPackage ; 3=overConfigfile
     public static int GameplayMode = 5; //5=First Person, 4=third, 3=third+, 2=Escaperoom, 1=Sidescroller, 0=Sidescroller+
 
     public static int MainCameraID = 0; //0=Camera.main; 1=Cam1, 2=Cam2

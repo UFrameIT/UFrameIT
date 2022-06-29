@@ -1,51 +1,53 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using static UIconfig;
+using static Restart_script;
 
 public class Restart : MonoBehaviour
 {
     public void LevelReset()
     {
 
-        StageStatic.stage.ResetPlay();
-        //UIconfig.CanvasOnOff_Array[2] = 0;
-        //UIconfig.GamePaused = false;
-        //Time.timeScale = 1; // UIconfig.Game_TimeScale;
-        Loader.LoadStage(StageStatic.stage.name, !StageStatic.stage.use_install_folder, false);
-        //StageStatic.stage.factState.softreset();
+        Restart_script resClass = new Restart_script();
+        resClass.LevelReset();
+        
 
     }
 
     public void LoadMainMenue()
     {
-        //not over SceneManager.LoadingScreen as MainMenue is too light to need to load over a LoadingScreen
-        SceneManager.LoadScene("MainMenue");
+        Restart_script resClass = new Restart_script();
+        resClass.LoadMainMenue(); 
     }
 
 
     public void StageFactState_modundo()
     {
-        StageStatic.stage.factState.undo();
+        Restart_script resClass = new Restart_script();
+        resClass.LoadMainMenue();
     }
     public void StageFactState_modredo()
     {
-        StageStatic.stage.factState.redo();
+        Restart_script resClass = new Restart_script();
+        resClass.StageFactState_modredo();
     }
 
     public void StageFactState_modreset()
     {
-        StageStatic.stage.factState.softreset();
+        Restart_script resClass = new Restart_script();
+        resClass.StageFactState_modreset();
     }
 
     public void Stage_modsave()
     {
-        StageStatic.stage.push_record();
+        Restart_script resClass = new Restart_script();
+        resClass.Stage_modsave();
     }
 
     public void StageFactState_modload()
     {
-        StageStatic.stage.factState.hardreset();
-        StageStatic.LoadInitStage(StageStatic.stage.name, !StageStatic.stage.use_install_folder);
+        Restart_script resClass = new Restart_script();
+        resClass.StageFactState_modload();
     }
            
    
@@ -53,12 +55,13 @@ public class Restart : MonoBehaviour
 
     public void LoadStartScreen()
     {
-        StartServer.process.Kill(); // null reference exception if Server started manually
-        SceneManager.LoadScene(0);
+        Restart_script resClass = new Restart_script();
+        resClass.LoadStartScreen();
     }
 
     public void OnApplicationQuit()
     {
-        StartServer.process.Kill(); // null reference exception if Server started manually
+        Restart_script resClass = new Restart_script();
+        resClass.OnApplicationQuit();
     }
 }

@@ -10,6 +10,7 @@ using UnityEngine.Networking;
 ///using static CommunicationEvents;
 using static StreamingAssetLoader;
 using static UIconfig;
+using static CommunicationEvents;
 using UnityEngine.EventSystems;
 
 
@@ -43,10 +44,11 @@ public class QuitApp : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
         //Input.backButtonLeavesApp = true;
         NetworkJSON_Save();
+        process_mmt_frameIT_server.Kill();
 
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
-        #endif
+#endif
         Application.Quit();
         
     }

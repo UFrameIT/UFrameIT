@@ -138,7 +138,8 @@ public class StartServer : MonoBehaviour
             print("Serverinit: " +  processInfo.Arguments);
 
             process = Process.Start(processInfo);
-           
+            process_mmt_frameIT_server = process;
+            
             //#endif
             yield return null;
 #endif
