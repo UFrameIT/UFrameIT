@@ -121,7 +121,8 @@ public class Pause_Menue_mobile : MonoBehaviour, IPointerDownHandler, IPointerUp
 
     private void PauseGame()
     {
-        Time.timeScale = 0;
+        //Time.timeScale = 0;
+        Time.timeScale = UIconfig.Game_TimeScale;
     }
     private void ResumeGame()
     {

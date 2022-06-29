@@ -10,16 +10,28 @@ using UnityEngine.Networking;
 ///using static CommunicationEvents;
 using static StreamingAssetLoader;
 using static UIconfig;
+//new InputSystem
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.Layouts;
 
 
-
-public class LaunchMenue_mobile : MonoBehaviour
+public class LaunchMenue_mobile : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
 
 
 
     public GameObject parentM_GObj;
     public GameObject optionsNetwM_GObj;
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        StartWithLastServerButton();
+    }
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        
+    }
+
 
 
 

@@ -175,7 +175,6 @@ public class SystemOptionsMenue_mobile : MonoBehaviour
                 FrameITUI_ButtonT.GetComponent<Text>().text = "FrameITUI_mobile: Touchscreen";
                 FrameITUI_ButtonUT.GetComponent<Text>().text = "Press for changing UI";
                 break;
-
             case 2:
                 UIconfig.FrameITUIversion = 1;
                 FrameITUI_ButtonT.GetComponent<Text>().text = "FrameITUI";

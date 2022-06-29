@@ -3,6 +3,8 @@ using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
+using static UIconfig;
+using static CommunicationEvents;
 
 public class StartServer : MonoBehaviour
 {
@@ -11,21 +13,52 @@ public class StartServer : MonoBehaviour
 
     public static Process process;
     public static ProcessStartInfo processInfo;
-
+    public int autostart = 0; //when 1 in Start() will be ServerRoutine() launched. 
+    public int autoend = 0; //Update() also affected
 
     // Start is called before the first frame update
     void Start()
     {
         CommunicationEvents.ServerRunning = false;
-        StartCoroutine(ServerRoutine());
+        
+        if (ServerAutoStart==true && autostart == 1)
+        {
+            StartCoroutine(ServerRoutine());
+        }
+        if (ServerAutoStart == true && autostart == 2)
+        {
+            StartCoroutine(ServerRoutine1());
+        }
     }
+    // Update is called once per frame
+    void Update()
+    {
+        if (autoend == 1)
+        {
+            if (CommunicationEvents.ServerRunning && Input.anyKey)
+            {
+                SceneManager.LoadScene(1);
+            }
+
+            //if(!ServerRunning) UnityEngine.Debug.Log("waiting " + ServerRunning);
+        }
+    }
+
+
+
+
     void PrepareGame()
     {
         WaitingText.text = "Press any key to start the game";
         CommunicationEvents.ServerRunning = true;
         UnityEngine.Debug.Log("server fin");
 
+
     }
+
+
+
+
 
     IEnumerator ServerRoutine1()
     {
@@ -79,7 +112,9 @@ public class StartServer : MonoBehaviour
 
     IEnumerator ServerRoutine()
     {
-        UnityWebRequest request = UnityWebRequest.Get(CommunicationEvents.ServerAdress + "/scroll/list");
+        CommunicationEvents.ServerAddressLocal = ServerAddressLocalhost + ":" + ServerPortDefault;
+        //print(ServerAdress);
+        UnityWebRequest request = UnityWebRequest.Get(CommunicationEvents.ServerAddressLocal + "/scroll/list");
         yield return request.SendWebRequest();
 
         if (request.result == UnityWebRequest.Result.ConnectionError
@@ -95,18 +130,27 @@ public class StartServer : MonoBehaviour
             //#else
             processInfo = new ProcessStartInfo();
             processInfo.FileName = "java";
-            processInfo.Arguments = @"-jar " + Application.streamingAssetsPath + "/frameit.jar" + " -bind :8085 -archive-root " + Application.streamingAssetsPath + "/archives";
+            //processInfo.Arguments = @"-jar " + Application.streamingAssetsPath + "/frameit.jar" + " -bind :8085 -archive-root " + Application.streamingAssetsPath + "/archives";
+            processInfo.Arguments = @"-jar " + Application.streamingAssetsPath + "/frameit-mmt.jar" + " -bind :" + ServerPortDefault + " -archive-root " + Application.streamingAssetsPath + "/archives";
             //set "UseShellExecute = true" AND "CreateNoWindow = false" to see the mmt-server output
             processInfo.UseShellExecute = false;
-            processInfo.CreateNoWindow = true;
+            processInfo.CreateNoWindow = !localServerWithAdditionalWindow; // true;
+            print("Serverinit: " +  processInfo.Arguments);
 
             process = Process.Start(processInfo);
+           
             //#endif
             yield return null;
 #endif
+
+            
             while (true)
             {
-                request = UnityWebRequest.Get(CommunicationEvents.ServerAdress + "/scroll/list");
+                //Wait for 1 seconds
+                yield return new WaitForSecondsRealtime(1f);
+                print("waiting");
+                
+                request = UnityWebRequest.Get(CommunicationEvents.ServerAddressLocal + "/scroll/list");
                 yield return request.SendWebRequest();
                 if (request.result == UnityWebRequest.Result.ConnectionError
                  || request.result == UnityWebRequest.Result.ProtocolError)
@@ -140,14 +184,5 @@ public class StartServer : MonoBehaviour
         yield return null;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        if (CommunicationEvents.ServerRunning && Input.anyKey)
-        {
-            SceneManager.LoadScene(1);
-        }
 
-        //if(!ServerRunning) UnityEngine.Debug.Log("waiting " + ServerRunning);
-    }
 }

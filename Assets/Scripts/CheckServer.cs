@@ -51,77 +51,82 @@ public class CheckServer : MonoBehaviour
 
     IEnumerator waiter(String NetwAddress, int NA_id, double ics)
     {
-
-
+        
 
 
         //while(CommunicationEvents.IPcheckGeneration== ics)
-        while (CommunicationEvents.CheckNetLoop == 1)
+        while (CheckNetLoop == 1)
         {
+            //Wait for 1 seconds
+            yield return new WaitForSecondsRealtime(1f);
 
-            switch(NA_id){
-                case 1:
-                    NetwAddress = CommunicationEvents.lastIP;
-                    break;
-                case 2:
-                    NetwAddress = CommunicationEvents.newIP;
-                    break;
-                case 3:
-                    NetwAddress = CommunicationEvents.IPslot1;
-                    break;
-                case 4:
-                    NetwAddress = CommunicationEvents.IPslot2;
-                    break;
-                case 5:
-                    NetwAddress = CommunicationEvents.IPslot3;
-                    break;
-                case 6:
-                    NetwAddress = CommunicationEvents.selecIP;
-                    break;
-                    //default:
-
-
-            }
-
-            if (string.IsNullOrEmpty(NetwAddress))
+            if(CommunicationEvents.CheckServerA[NA_id] == 1)
             {
-                //Wait for 1 seconds
-                CommunicationEvents.ServerRunningA[NA_id] = 3;
-                yield return new WaitForSecondsRealtime(1f);
-            }
-            else
-            {
-                StartCheck(NetwAddress, NA_id, ics);
-                //Wait for 0,5 seconds
-                yield return new WaitForSecondsRealtime(0.5f);
-                if (CommunicationEvents.IPcheckGeneration <= ics || (NA_id != 6))// && NA_id != 2))
+                CommunicationEvents.CheckServerA[NA_id] = 0;
+
+                    switch (NA_id){
+                        case 1:
+                            NetwAddress = CommunicationEvents.lastIP;
+                            break;
+                        case 2:
+                            NetwAddress = CommunicationEvents.newIP;
+                            break;
+                        case 3:
+                            NetwAddress = CommunicationEvents.IPslot1;
+                            break;
+                        case 4:
+                            NetwAddress = CommunicationEvents.IPslot2;
+                            break;
+                        case 5:
+                            NetwAddress = CommunicationEvents.IPslot3;
+                            break;
+                        case 6:
+                            NetwAddress = CommunicationEvents.selecIP;
+                            break;
+                            //default:
+
+
+                    }
+
+                if (string.IsNullOrEmpty(NetwAddress))
                 {
-                    //if (CommunicationEvents.IPcheckGeneration < ics) { break; }
-                    if (CommunicationEvents.ServerRunningA_test[NA_id] == true)
-                    {
-                        CommunicationEvents.ServerRunningA[NA_id] = 2;
-                    }
-                    else
-                    {
-                        CommunicationEvents.ServerRunningA[NA_id] = 0;
-                    }
-                    //Wait for 0,5 seconds
-                    yield return new WaitForSecondsRealtime(0.5f);
+                    //Wait for 1 seconds
+                    CommunicationEvents.ServerRunningA[NA_id] = 3;
+                    yield return new WaitForSecondsRealtime(1f);
                 }
                 else
                 {
-
-                    CommunicationEvents.IPcheckGeneration--;
-
-                    if (NA_id == 2)
+                    StartCheck(NetwAddress, NA_id, ics);
+                    //Wait for 0,5 seconds
+                    yield return new WaitForSecondsRealtime(0.5f);
+                    if (CommunicationEvents.IPcheckGeneration <= ics || (NA_id != 6))// && NA_id != 2))
                     {
-                        CommunicationEvents.ServerRunningA[NA_id] = 1;
+                        //if (CommunicationEvents.IPcheckGeneration < ics) { break; }
+                        if (CommunicationEvents.ServerRunningA_test[NA_id] == true)
+                        {
+                            CommunicationEvents.ServerRunningA[NA_id] = 2;
+                        }
+                        else
+                        {
+                            CommunicationEvents.ServerRunningA[NA_id] = 0;
+                        }
                         //Wait for 0,5 seconds
                         yield return new WaitForSecondsRealtime(0.5f);
                     }
+                    else
+                    {
 
+                        CommunicationEvents.IPcheckGeneration--;
+
+                        if (NA_id == 2)
+                        {
+                            CommunicationEvents.ServerRunningA[NA_id] = 1;
+                            //Wait for 0,5 seconds
+                            yield return new WaitForSecondsRealtime(0.5f);
+                        }
+
+                    }
                 }
-
             }
 
 

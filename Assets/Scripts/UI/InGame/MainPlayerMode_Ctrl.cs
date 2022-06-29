@@ -24,8 +24,12 @@ public class MainPlayerMode_Ctrl : MonoBehaviour
     //public int failedUI_ID;
     public GameObject FirstPerson_GObj;
     public GameObject FirstPersonOldInpOrig_GObj;
-    public GameObject ThirdPerson_GObj;
-    
+    public GameObject ThirdPerson_Shoulder_GObj;
+    public GameObject ThirdPerson_dampedCam_GObj;
+    public GameObject ThirdPerson_manualCam_GObj;
+    public GameObject Escaperoom_GObj;
+    public GameObject Sidescroller_GObj;
+
     private int GpMode_before=-99;
 
     void Start()
@@ -41,7 +45,7 @@ public class MainPlayerMode_Ctrl : MonoBehaviour
         if (GpMode_before!= UIconfig.GameplayMode)
         {
             Update2();
-            print(UIconfig.GameplayMode);
+            //print(UIconfig.GameplayMode);
         }
 
     }
@@ -51,23 +55,23 @@ public class MainPlayerMode_Ctrl : MonoBehaviour
         
         //Todo Eventbased
         ClearUIC();
-        print("hey"+ UIconfig.GameplayMode);
+        print("Active_Gameplaymode: "+ UIconfig.GameplayMode);
         switch (UIconfig.GameplayMode)
         {
             case 0:
-                
+                //otherSidescrolle
                 break;
             case 1:
-                
+                Sidescroller_GObj.gameObject.SetActive(true);
                 break;
             case 2:
-                
+                Escaperoom_GObj.gameObject.SetActive(true);
                 break;
             case 3:
-                
+                ThirdPerson_manualCam_GObj.gameObject.SetActive(true);
                 break;
             case 4:
-                ThirdPerson_GObj.gameObject.SetActive(true);
+                ThirdPerson_dampedCam_GObj.gameObject.SetActive(true);
                 break;
             case 5:
                 FirstPerson_GObj.gameObject.SetActive(true);
@@ -75,6 +79,10 @@ public class MainPlayerMode_Ctrl : MonoBehaviour
             case 6:
                 FirstPersonOldInpOrig_GObj.gameObject.SetActive(true);
                 break;
+            case 7:
+                ThirdPerson_Shoulder_GObj.gameObject.SetActive(true);
+                break;
+
             default:
                 
                 break;

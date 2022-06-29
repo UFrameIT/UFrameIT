@@ -104,7 +104,7 @@ public class SelectedNewNetwServer_mobile : MonoBehaviour
 
 
                     NewNAddrTI.GetComponent<Text>().text = CommunicationEvents.selecIP;
-                    NewNAddrTS.GetComponent<Text>().text = "Status: checking";
+                    NewNAddrTS.GetComponent<Text>().text = "Status: unknown";//"Status: checking";
                 }
 
 

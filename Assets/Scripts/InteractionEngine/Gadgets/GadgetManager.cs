@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+
 public class GadgetManager : MonoBehaviour
 {
     public int FrameITUIversion_ID;

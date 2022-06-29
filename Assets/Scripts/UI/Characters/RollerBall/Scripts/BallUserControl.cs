@@ -5,7 +5,7 @@ namespace UnityStandardAssets.Vehicles.Ball
 {
     public class BallUserControl : MonoBehaviour
     {
-        private Ball ball; // Reference to the ball controller.
+        //private Ball ball; // Reference to the ball controller.
 
         private Vector3 move;
         // the world-relative desired move direction, calculated from the camForward and user input.
@@ -18,7 +18,8 @@ namespace UnityStandardAssets.Vehicles.Ball
         private void Awake()
         {
             // Set up the reference.
-            ball = GetComponent<Ball>();
+            //reference Problem
+            //ball = GetComponent<Ball>();
 
 
             // get the transform of the main camera
@@ -61,7 +62,7 @@ namespace UnityStandardAssets.Vehicles.Ball
         private void FixedUpdate()
         {
             // Call the Move function of the ball controller
-            ball.Move(move, jump);
+            //ball.Move(move, jump);
             jump = false;
         }
     }

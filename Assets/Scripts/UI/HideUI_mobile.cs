@@ -118,7 +118,11 @@ public class HideUI_mobile : MonoBehaviour
     {
         CheckUI_Vis_walk();
         CheckIf();
-        Update2();
+
+        if (UIconfig.InputManagerVersion == 1)
+        {
+            Update2();
+        }
         CheckUI_Vis();
         
     }
@@ -150,64 +154,76 @@ public class HideUI_mobile : MonoBehaviour
     void CheckIf()
     {
 
-        
+
 
         //walking
         if (UIconfig.CanvasOnOff_Array[10] == 1 && UIconfig.CanvasOnOff_Array[20] == 1 && UIconfig.CanvasOnOff_Array[14] == 0)
         {
-            
+            if (UIconfig.InputManagerVersion == 1)
+            {
                 if (Input.GetButtonDown(toolMode_keyBind))
                 {
-                    //print("w2");
-
                     UIconfig.CanvasOnOff_Array[14] = 1;
                     UIconfig.CanvasOnOff_Array[20] = 0;
-
-                return;
+                    return;
                 }
-
-
                 if (Input.GetButtonDown(MathMode_keyBind))
                 {
 
                     UIconfig.CanvasOnOff_Array[16] = 1;
                     UIconfig.CanvasOnOff_Array[20] = 0;
-
-                return;
+                    return;
                 }
 
                 if (Input.GetButtonDown(cancel_keyBind))
                 {
-
                     UIconfig.CanvasOnOff_Array[02] = 1;
                     UIconfig.CanvasOnOff_Array[10] = 0;
-
-
                     return;
                 }
                 return;
-            
+            }
+
+
         }
 
-        
+
         //Toolmode
         if (UIconfig.CanvasOnOff_Array[10] == 1 && UIconfig.CanvasOnOff_Array[20] == 0 && UIconfig.CanvasOnOff_Array[14] == 1)
         {
-            //print("t1");
-            if (Input.GetButtonDown(toolMode_keyBind))
+            if (UIconfig.InputManagerVersion == 1)
             {
-                //print("t2");
-
-                UIconfig.CanvasOnOff_Array[14] = 0;
-                UIconfig.CanvasOnOff_Array[20] = 1;
+                if (Input.GetButtonDown(toolMode_keyBind))
+                {
+                    UIconfig.CanvasOnOff_Array[14] = 0;
+                    UIconfig.CanvasOnOff_Array[20] = 1;
+                    return;
+                }
+                if (Input.GetButtonDown(MathMode_keyBind))
+                {
+                    UIconfig.CanvasOnOff_Array[14] = 0;
+                    UIconfig.CanvasOnOff_Array[16] = 1;
+                    return;
+                }
+                if (Input.GetButtonDown(cancel_keyBind))
+                {
+                    UIconfig.CanvasOnOff_Array[02] = 1;
+                    UIconfig.CanvasOnOff_Array[10] = 0;
+                    return;
+                }
                 return;
-
             }
+        }
+        //PauseMenue
+
+        //MathMenue
+        if (UIconfig.InputManagerVersion == 1)
+        {
             if (Input.GetButtonDown(MathMode_keyBind))
             {
-   
-                UIconfig.CanvasOnOff_Array[14] = 0;
-                UIconfig.CanvasOnOff_Array[16] = 1;
+
+                UIconfig.CanvasOnOff_Array[16] = 0;
+                UIconfig.CanvasOnOff_Array[20] = 1;
                 return;
             }
             if (Input.GetButtonDown(cancel_keyBind))
@@ -215,32 +231,10 @@ public class HideUI_mobile : MonoBehaviour
 
                 UIconfig.CanvasOnOff_Array[02] = 1;
                 UIconfig.CanvasOnOff_Array[10] = 0;
-
-
                 return;
             }
             return;
         }
-        //PauseMenue
-
-        //MathMenue
-        if (Input.GetButtonDown(MathMode_keyBind))
-        {
-
-            UIconfig.CanvasOnOff_Array[16] = 0;
-            UIconfig.CanvasOnOff_Array[20] = 1;
-            return;
-        }
-        if (Input.GetButtonDown(cancel_keyBind))
-        {
-
-            UIconfig.CanvasOnOff_Array[02] = 1;
-            UIconfig.CanvasOnOff_Array[10] = 0;
-
-
-            return;
-        }
-        return;
     }
 
 

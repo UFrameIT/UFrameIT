@@ -1298,6 +1298,9 @@ MonoBehaviour:
   SaveSlot1_B_GObj: {fileID: 8876157336430133843}
   SaveSlot2_B_GObj: {fileID: 8876157336314270248}
   SaveSlot3_B_GObj: {fileID: 8876157335669558007}
+  Ip1_sup: 
+  Ip2_sup: 
+  Ip3_sup: 
 --- !u!1 &8876157335693329196
 GameObject:
   m_ObjectHideFlags: 0
@@ -2100,7 +2103,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &8876157335935867882
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3113,6 +3116,9 @@ MonoBehaviour:
   SaveSlot1_B_GObj: {fileID: 8876157336430133843}
   SaveSlot2_B_GObj: {fileID: 8876157336314270248}
   SaveSlot3_B_GObj: {fileID: 8876157335669558007}
+  Ip1_sup: 
+  Ip2_sup: 
+  Ip3_sup: 
 --- !u!1 &8876157336337429858
 GameObject:
   m_ObjectHideFlags: 0
@@ -3462,6 +3468,9 @@ MonoBehaviour:
   SaveSlot1_B_GObj: {fileID: 8876157336430133843}
   SaveSlot2_B_GObj: {fileID: 8876157336314270248}
   SaveSlot3_B_GObj: {fileID: 8876157335669558007}
+  Ip1_sup: 
+  Ip2_sup: 
+  Ip3_sup: 
 --- !u!1 &8876157336439178729
 GameObject:
   m_ObjectHideFlags: 0

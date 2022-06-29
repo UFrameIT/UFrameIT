@@ -3,7 +3,7 @@ using UnityEngine;
 using PlayerCtrl;
 using UnityStandardAssets.Utility;
 using Random = UnityEngine.Random;
-//using UIconfig;
+using static UIconfig;
 //using ControlMapping;
 
 //namespace UnityStandardAssets.Characters.FirstPerson
@@ -80,7 +80,8 @@ namespace Characters.FirstPerson
             // the jump state needs to read here to make sure it is not missed
             if (!m_Jump)
             {
-                m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
+                //TEST deactivated;
+                //m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
             }
 
             if (!m_PreviouslyGrounded && m_CharacterController.isGrounded)
@@ -218,15 +219,17 @@ namespace Characters.FirstPerson
 
         private void GetInput(out float speed)
         {
-
+            float horizontal = 0; ;
+            float vertical=0;
 
             if (UIconfig.InputManagerVersion == 1)
             {
                 // Read input
-                float horizontal = CrossPlatformInputManager.GetAxis("Horizontal");
-                float vertical = CrossPlatformInputManager.GetAxis("Vertical");
-                //print("Input" + horizontal);
-                //print("Input0" + Input.GetAxis("Vertical"));
+                horizontal = CrossPlatformInputManager.GetAxis("Horizontal");
+                vertical = CrossPlatformInputManager.GetAxis("Vertical");
+                print("CrossInputH" + horizontal);
+                print("CrossInputH" + horizontal);
+                print("InputV" + Input.GetAxis("Vertical"));
 
 #if !MOBILE_INPUT
                 // On standalone builds, walk/run speed is modified by a key press.
@@ -253,11 +256,35 @@ namespace Characters.FirstPerson
                 //print("mvp");                
             }
 
+            if (UIconfig.InputManagerVersion == 3)
+            {
+
+                if (DPAD[0, 1] != 0) { vertical = DPAD[0, 1]; }
+                if (DPAD[0, 0] != 0) { vertical = DPAD[0, 0]; }
+
+                if (DPAD[0,0]!=0 && DPAD[0,1]!=0)
+                {
+                    vertical = 0;
+                }
+                if (DPAD[0, 3] != 0) { horizontal = DPAD[0, 3]; }
+                if (DPAD[0, 2] != 0) { horizontal = DPAD[0, 2]; }
+
+                if (DPAD[0, 2] != 0 && DPAD[0, 3] != 0)
+                {
+                    horizontal = 0;
+                }
+
+
+
+                m_Input = new Vector2(horizontal, vertical);
+
+            }
 
 
 
 
-            bool waswalking = m_IsWalking;
+
+                bool waswalking = m_IsWalking;
 
 
             // set the desired speed to be walking or running

@@ -1048,6 +1048,8 @@ MonoBehaviour:
   axisValue: 1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 0
+  DPAD_subID: 0
 --- !u!1 &869470752977909503
 GameObject:
   m_ObjectHideFlags: 0
@@ -1187,6 +1189,8 @@ MonoBehaviour:
   axisValue: -1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 1
+  DPAD_subID: 1
 --- !u!1 &981731503631153796
 GameObject:
   m_ObjectHideFlags: 0
@@ -1326,6 +1330,8 @@ MonoBehaviour:
   axisValue: -1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 0
+  DPAD_subID: 0
 --- !u!1 &1154389453406316508
 GameObject:
   m_ObjectHideFlags: 0
@@ -1701,6 +1707,8 @@ MonoBehaviour:
   axisValue: -1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 0
+  DPAD_subID: 0
 --- !u!1 &1354732005852977897
 GameObject:
   m_ObjectHideFlags: 0
@@ -1919,6 +1927,8 @@ MonoBehaviour:
   axisValue: 1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 0
+  DPAD_subID: 0
 --- !u!1 &1549735685964206944
 GameObject:
   m_ObjectHideFlags: 0
@@ -2720,6 +2730,8 @@ MonoBehaviour:
   axisValue: -1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 0
+  DPAD_subID: 0
 --- !u!1 &2107372507520166964
 GameObject:
   m_ObjectHideFlags: 0
@@ -2859,6 +2871,8 @@ MonoBehaviour:
   axisValue: 1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 0
+  DPAD_subID: 0
 --- !u!1 &2337799605575466059
 GameObject:
   m_ObjectHideFlags: 0
@@ -3112,6 +3126,8 @@ MonoBehaviour:
   axisValue: -1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 0
+  DPAD_subID: 0
 --- !u!1 &2489595803783144524
 GameObject:
   m_ObjectHideFlags: 0
@@ -3251,6 +3267,8 @@ MonoBehaviour:
   axisValue: -1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 0
+  DPAD_subID: 0
 --- !u!1 &2494535869172452194
 GameObject:
   m_ObjectHideFlags: 0
@@ -3645,6 +3663,8 @@ MonoBehaviour:
   axisValue: 1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 0
+  DPAD_subID: 0
 --- !u!1 &2697309923625888088
 GameObject:
   m_ObjectHideFlags: 0
@@ -4387,6 +4407,8 @@ MonoBehaviour:
   axisValue: 1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 0
+  DPAD_subID: 0
 --- !u!1 &3523818811843504520
 GameObject:
   m_ObjectHideFlags: 0
@@ -4779,6 +4801,8 @@ MonoBehaviour:
   axisValue: 1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 0
+  DPAD_subID: 0
 --- !u!1 &3979710515188475884
 GameObject:
   m_ObjectHideFlags: 0
@@ -6305,6 +6329,8 @@ MonoBehaviour:
   axisValue: -1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 0
+  DPAD_subID: 0
 --- !u!1 &5169543494579483684
 GameObject:
   m_ObjectHideFlags: 0
@@ -6579,6 +6605,7 @@ GameObject:
   - component: {fileID: 7646912776538926453}
   - component: {fileID: 652573966081395641}
   - component: {fileID: 6707328937288427970}
+  - component: {fileID: 1126192016123753276}
   m_Layer: 5
   m_Name: slideLeft_Bttn
   m_TagString: Untagged
@@ -6705,6 +6732,21 @@ MonoBehaviour:
   axisValue: -1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 0
+  DPAD_subID: 2
+--- !u!114 &1126192016123753276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5635106855046183271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d54531977ecb194c95e2d3aa7a5d72a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ControlPath: <AndroidGamepad>/leftStick/left
 --- !u!1 &5758162535022508935
 GameObject:
   m_ObjectHideFlags: 0
@@ -6923,6 +6965,8 @@ MonoBehaviour:
   axisValue: 1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 1
+  DPAD_subID: 3
 --- !u!1 &5864357338153736736
 GameObject:
   m_ObjectHideFlags: 0
@@ -7220,6 +7264,8 @@ MonoBehaviour:
   axisValue: 1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 0
+  DPAD_subID: 0
 --- !u!1 &5923465014609963718
 GameObject:
   m_ObjectHideFlags: 0
@@ -7821,6 +7867,8 @@ MonoBehaviour:
   axisValue: -1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 0
+  DPAD_subID: 0
 --- !u!1 &6655720301175590838
 GameObject:
   m_ObjectHideFlags: 0
@@ -8349,6 +8397,8 @@ MonoBehaviour:
   axisValue: 1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 0
+  DPAD_subID: 0
 --- !u!1 &7169271820842066853
 GameObject:
   m_ObjectHideFlags: 0
@@ -9178,6 +9228,8 @@ MonoBehaviour:
   axisValue: -1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 0
+  DPAD_subID: 0
 --- !u!1 &7497209850787013712
 GameObject:
   m_ObjectHideFlags: 0
@@ -9457,6 +9509,8 @@ MonoBehaviour:
   axisValue: 1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 1
+  DPAD_subID: 0
 --- !u!1 &7696601924612351785
 GameObject:
   m_ObjectHideFlags: 0
@@ -9675,6 +9729,8 @@ MonoBehaviour:
   axisValue: 1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 0
+  DPAD_subID: 0
 --- !u!1 &7797851337965827567
 GameObject:
   m_ObjectHideFlags: 0
@@ -9972,6 +10028,8 @@ MonoBehaviour:
   axisValue: -1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 0
+  DPAD_subID: 0
 --- !u!1 &7952303800204011292
 GameObject:
   m_ObjectHideFlags: 0
@@ -10258,6 +10316,8 @@ MonoBehaviour:
   axisValue: -1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 1
+  DPAD_subID: 2
 --- !u!1 &8080377498543777938
 GameObject:
   m_ObjectHideFlags: 0
@@ -10807,7 +10867,7 @@ GameObject:
   - component: {fileID: 5438399539121467516}
   - component: {fileID: 4019919998800722634}
   - component: {fileID: 97678909199279429}
-  - component: {fileID: 4523166514053019954}
+  - component: {fileID: 5428170822147889189}
   m_Layer: 5
   m_Name: moveBackward_Bttn
   m_TagString: Untagged
@@ -10934,7 +10994,9 @@ MonoBehaviour:
   axisValue: -1
   responseSpeed: 999
   returnToCentreSpeed: 3
---- !u!114 &4523166514053019954
+  DPAD_ID: 0
+  DPAD_subID: 1
+--- !u!114 &5428170822147889189
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -10946,7 +11008,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6d54531977ecb194c95e2d3aa7a5d72a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ControlPath: 
+  m_ControlPath: <AndroidGamepad>/leftStick/down
 --- !u!1 &8646849091251002183
 GameObject:
   m_ObjectHideFlags: 0
@@ -11156,6 +11218,7 @@ GameObject:
   - component: {fileID: 2845243844379511659}
   - component: {fileID: 7276106941511825339}
   - component: {fileID: 8765378333280577178}
+  - component: {fileID: 7358076316950314076}
   m_Layer: 5
   m_Name: moveForward_Bttn
   m_TagString: Untagged
@@ -11282,6 +11345,21 @@ MonoBehaviour:
   axisValue: 1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 0
+  DPAD_subID: 0
+--- !u!114 &7358076316950314076
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8666814766775480094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d54531977ecb194c95e2d3aa7a5d72a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ControlPath: <AndroidGamepad>/leftStick/up
 --- !u!1 &8680886438502677496
 GameObject:
   m_ObjectHideFlags: 0
@@ -11794,6 +11872,7 @@ GameObject:
   - component: {fileID: 5388875747774012856}
   - component: {fileID: 8435034971901770237}
   - component: {fileID: 273273004640534260}
+  - component: {fileID: 8113570465842942721}
   m_Layer: 5
   m_Name: slideRight_Bttn
   m_TagString: Untagged
@@ -11920,6 +11999,21 @@ MonoBehaviour:
   axisValue: 1
   responseSpeed: 999
   returnToCentreSpeed: 3
+  DPAD_ID: 0
+  DPAD_subID: 3
+--- !u!114 &8113570465842942721
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9096337912894657190}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d54531977ecb194c95e2d3aa7a5d72a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ControlPath: <Gamepad>/leftStick/right
 --- !u!1 &9160427781974945230
 GameObject:
   m_ObjectHideFlags: 0

@@ -133,7 +133,7 @@ public class FindIP : MonoBehaviour
                 {
 
                     NewServerSt_GObj.GetComponent<Text>().color = Color.black;
-                    NewServerSt_GObj.GetComponent<Text>().text = "Status: checking network address";
+                    NewServerSt_GObj.GetComponent<Text>().text = "Status: unknown";// checking network address";
                 }
             }
         }

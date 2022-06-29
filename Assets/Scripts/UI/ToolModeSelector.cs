@@ -2,6 +2,7 @@
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using static UIconfig;
 
 public class ToolModeSelector : MonoBehaviour
 {
@@ -108,8 +109,21 @@ public class ToolModeSelector : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Used for reactivating of the Hitboxes for the pointer Gadget        
+        if(GadgetFirstUse == 0)
+        {
+            int id1 = 1;
+            Select(id1);
+            GadgetFirstUse++;
+        }
+        if (GadgetFirstUse == 1)
+        {
+            int id0 = 0;
+            Select(id0);
+            GadgetFirstUse++;
 
-        
+        }
+
         if (initUpdate == true) {
             Update2();
         }

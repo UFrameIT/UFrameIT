@@ -11,6 +11,7 @@ using UnityEngine.Networking;
 //using static CommunicationEvents;
 using static UIconfig;
 using static StreamingAssetLoader;
+using static CommunicationEvents;
 
 public class StartMenue_mobile : MonoBehaviour
 {
@@ -39,17 +40,29 @@ public class StartMenue_mobile : MonoBehaviour
     {
 
 
-        
-        ScreenOptimization();
-        
 
+        ScreenOptimization();
 
         toChild1();
+        
+        if (checkOperationSystemAlreadyDone==false) { 
+            
+            start2_CheckOS_CheckConfig();
+            checkOperationSystemAlreadyDone = true;
+        }
+        GObj_text.text = CommunicationEvents.Opsys + "";
+        CheckServerA[1]=1;
+        CheckServerA[2]=1;
+        CheckServerA[3]=1;
+    }
+
+    void start2_CheckOS_CheckConfig()
+    {
         switch (CommunicationEvents.Opsys)
         {
             case 0:
 
-                
+
 
 
                 if (!checkPDP())
@@ -60,26 +73,26 @@ public class StartMenue_mobile : MonoBehaviour
                     UIconfig.controlMode = CommunicationEvents.Opsys + 1;
                     NetworkJSON_Save();
                 }
-                
+
                 NetworkJSON_Load();
                 checkOS();
                 ResetDataPath();
                 setMouse();
                 break;
             case 1:
-                
-                if (!checkPDP())
-                 {
-                      ResetStreamingAsset();
 
-                      UIconfig.controlMode = CommunicationEvents.Opsys + 1;
-                      NetworkJSON_Save();
+                if (!checkPDP())
+                {
+                    ResetStreamingAsset();
+
+                    UIconfig.controlMode = CommunicationEvents.Opsys + 1;
+                    NetworkJSON_Save();
                 }
                 NetworkJSON_Load();
                 checkOS();
                 ResetDataPath();
                 setMouse();
-                
+
                 break;
             default:
                 setMouse();
@@ -98,11 +111,6 @@ public class StartMenue_mobile : MonoBehaviour
                 setMouse();
                 break;
         }
-
-
-
-
-        GObj_text.text = CommunicationEvents.Opsys + "";
     }
 
     private void Update()

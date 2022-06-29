@@ -142,6 +142,11 @@ public class ControlOptionsMenue_mobile : MonoBehaviour
                 InputSystemModeButtonT.GetComponent<Text>().text = "use Input_System_Package";
                 InputSystemModeButtonUT.GetComponent<Text>().text = "Press for changing mode";
                 break;
+            case 3:
+
+                InputSystemModeButtonT.GetComponent<Text>().text = "Input exchange through file";
+                InputSystemModeButtonUT.GetComponent<Text>().text = "Press for changing mode";
+                break;
             default:
 
                 InputSystemModeButtonT.GetComponent<Text>().text = "Not Defined!";
@@ -242,9 +247,14 @@ public class ControlOptionsMenue_mobile : MonoBehaviour
                 break;
 
             case 2:
-                UIconfig.InputManagerVersion = 1;
+                UIconfig.InputManagerVersion = 3;
                 //GameObject.Find("TextSlotTOO").GetComponent<Text>().text = "Touch controls OFF";
  
+                break;
+            case 3:
+                UIconfig.InputManagerVersion = 1;
+                //GameObject.Find("TextSlotTOO").GetComponent<Text>().text = "Touch controls OFF";
+
                 break;
             default:
                 UIconfig.InputManagerVersion = 1;

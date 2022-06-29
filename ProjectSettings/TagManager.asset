@@ -9,6 +9,7 @@ TagManager:
   - SnapZone
   - CreatorMode
   - DevelopingMode
+  - PlayerCharacterShoulder
   layers:
   - Default
   - TransparentFX

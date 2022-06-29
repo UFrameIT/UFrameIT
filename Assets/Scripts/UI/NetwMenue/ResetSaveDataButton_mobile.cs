@@ -30,6 +30,7 @@ public class ResetSaveDataButton_mobile : MonoBehaviour
     public void resetPlayerConfig_Bttn()
     {
         ResetPlayerConfig();
+        //leads to RereadFiles_PersistentDataPath();
     }
 
     public void resetPlayerSaveGame_Bttn()

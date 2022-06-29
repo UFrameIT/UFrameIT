@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using static TaskCharakterAnimation;
+using static UIconfig;
 
 public class CharacterDialog : MonoBehaviour
 {
@@ -36,10 +37,22 @@ public class CharacterDialog : MonoBehaviour
     {
         TypeFkt();
 
-        if(!gameSucceeded && Input.GetKeyDown(KeyCode.C) && CharakterAnimation.getPlayerInTalkingZone())
+        if(!gameSucceeded && CharakterAnimation.getPlayerInTalkingZone())
         {
-            //Type Next sentence if player is in the talkinZone around the TaskCharacter AND the player typed the return-Key
-            NextSentence();
+            if(UIconfig.InputManagerVersion==1){
+                if (Input.GetKeyDown(KeyCode.C)){
+                    //Type Next sentence if player is in the talkinZone around the TaskCharacter AND the player typed the return-Key
+                    NextSentence();
+                }
+            }
+            if (UIconfig.InputManagerVersion == 2)
+            {
+                if (false)
+                {
+                    //Type Next sentence if player is in the talkinZone around the TaskCharacter AND the player typed the return-Key
+                    NextSentence();
+                }
+            }
         }
         else if (!gameSucceeded && !CharakterAnimation.getPlayerInTalkingZone() && !textReseted)
         {

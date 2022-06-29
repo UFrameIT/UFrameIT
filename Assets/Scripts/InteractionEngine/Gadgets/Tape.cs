@@ -22,6 +22,8 @@ public class Tape : Gadget
         this.UiName = "Distance Mode";
         if (MaxRange == 0)
             MaxRange = GlobalBehaviour.GadgetPhysicalDistance;
+        //test
+        //MaxRange = 100;
     }
 
     //Initialize Gadget when enabled AND activated
@@ -42,11 +44,11 @@ public class Tape : Gadget
         if (hit.transform.gameObject.layer == LayerMask.NameToLayer("Point"))
         {
             Fact tempFact = StageStatic.stage.factState[hit.transform.GetComponent<FactObject>().URI];
-
+            
             //we can only reach points that are lower than that with the measuring tape
             if (/*ActiveToolMode == ToolMode.CreateLineMode && */tempFact.Representation.transform.position.y > maxHeight)
                 return;
-
+            
             //If first point was already selected AND second point != first point
             if (this.TapeModeIsFirstPointSelected && this.TapeModeFirstPointSelected.Id != tempFact.Id)
             {

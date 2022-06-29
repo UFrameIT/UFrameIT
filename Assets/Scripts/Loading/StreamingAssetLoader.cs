@@ -300,12 +300,12 @@ public static class StreamingAssetLoader
         loadingRequest.SendWebRequest();
         while (!loadingRequest.isDone)
         {
-            if (loadingRequest.isNetworkError || loadingRequest.isHttpError)
+            if (loadingRequest.result == UnityWebRequest.Result.ConnectionError || loadingRequest.result == UnityWebRequest.Result.ProtocolError)
             {
                 break;
             }
         }
-        if (loadingRequest.isNetworkError || loadingRequest.isHttpError)
+        if (loadingRequest.result == UnityWebRequest.Result.ConnectionError || loadingRequest.result == UnityWebRequest.Result.ProtocolError)
         {
 
         }
@@ -332,88 +332,90 @@ public static class StreamingAssetLoader
     }
 
 
-    public static string RereadFileNA(string pathfolders, string fileName, string destpathf, string destname)
-    {
-            if (fileName == "")
-            {
-                return "noName";
-            }
+    //WWW has been replaced with UnityWebRequest.
+    /*
+     public static string RereadFileNA(string pathfolders, string fileName, string destpathf, string destname)
+     {
+             if (fileName == "")
+             {
+                 return "noName";
+             }
 
 
 
 
-            // copies and unpacks file from apk to persistentDataPath where it can be accessed
-            string destinationPath = Path.Combine(Application.persistentDataPath, destpathf);
+             // copies and unpacks file from apk to persistentDataPath where it can be accessed
+             string destinationPath = Path.Combine(Application.persistentDataPath, destpathf);
 
-            if (Directory.Exists(destinationPath) == false)
-            {
-                Directory.CreateDirectory(destinationPath);
-            }
-
-
-            destinationPath = Path.Combine(destinationPath, destname);
+             if (Directory.Exists(destinationPath) == false)
+             {
+                 Directory.CreateDirectory(destinationPath);
+             }
 
 
+             destinationPath = Path.Combine(destinationPath, destname);
 
 
-            //#if UNITY_EDITOR
-            string sourcePath = Path.Combine(Application.streamingAssetsPath, pathfolders);
-            sourcePath = Path.Combine(sourcePath, fileName);
-            /*
-            #else
-                        string sourcePath = "jar:file://" + Application.dataPath + "!/assets/" + fileName;
+             string sourcePath = Path.Combine(Application.streamingAssetsPath, pathfolders);
+             sourcePath = Path.Combine(sourcePath, fileName);
 
-            #endif
+  #if UNITY_EDITOR
+         //string sourcePath = Path.Combine(Application.streamingAssetsPath, pathfolders);
+         //sourcePath = Path.Combine(sourcePath, fileName);
+  #else
+         //string sourcePath = "jar:file://" + Application.dataPath + "!/assets/" + fileName;
 
-            //UnityEngine.Debug.Log(string.Format("{0}-{1}-{2}-{3}", sourcePath,  File.GetLastWriteTimeUtc(sourcePath), File.GetLastWriteTimeUtc(destinationPath)));
+  #endif
 
-            */
-
-
-            //copy whatsoever
-
-            //if DB does not exist in persistent data folder (folder "Documents" on iOS) or source DB is newer then copy it
-            //if (!File.Exists(destinationPath) || (File.GetLastWriteTimeUtc(sourcePath) > File.GetLastWriteTimeUtc(destinationPath)))
-            if (true)
-            {
-                if (sourcePath.Contains("://"))
-                {
-                    // Android  
-                    WWW www = new WWW(sourcePath);
-                    while (!www.isDone) {; }                // Wait for download to complete - not pretty at all but easy hack for now 
-                    if (string.IsNullOrEmpty(www.error))
-                    {
-                        File.WriteAllBytes(destinationPath, www.bytes);
-                    }
-                    else
-                    {
-                        Debug.Log("ERROR: the file DB named " + fileName + " doesn't exist in the StreamingAssets Folder, please copy it there.");
-                    }
-                }
-                else
-                {
-                    // Mac, Windows, Iphone                
-                    //validate the existens of the DB in the original folder (folder "streamingAssets")
-                    if (File.Exists(sourcePath))
-                    {
-                        //copy file - alle systems except Android
-                        File.Copy(sourcePath, destinationPath, true);
-                    }
-                    else
-                    {
-                        Debug.Log("ERROR: the file DB named " + fileName + " doesn't exist in the StreamingAssets Folder, please copy it there.");
-                    }
-                }
-            }
-
-            StreamReader reader = new StreamReader(destinationPath);
-            var jsonString = reader.ReadToEnd();
-            reader.Close();
+         //UnityEngine.Debug.Log(string.Format("{0}-{1}-{2}-{3}", sourcePath,  File.GetLastWriteTimeUtc(sourcePath), File.GetLastWriteTimeUtc(destinationPath)));
 
 
-            return jsonString;
-    }
 
+
+         //copy whatsoever
+
+         //if DB does not exist in persistent data folder (folder "Documents" on iOS) or source DB is newer then copy it
+         //if (!File.Exists(destinationPath) || (File.GetLastWriteTimeUtc(sourcePath) > File.GetLastWriteTimeUtc(destinationPath)))
+         if (true)
+             {
+                 if (sourcePath.Contains("://"))
+                 {
+                     // Android  
+                     WWW www = new WWW(sourcePath);
+                     while (!www.isDone) {; }                // Wait for download to complete - not pretty at all but easy hack for now 
+                     if (string.IsNullOrEmpty(www.error))
+                     {
+                         File.WriteAllBytes(destinationPath, www.bytes);
+                     }
+                     else
+                     {
+                         Debug.Log("ERROR: the file DB named " + fileName + " doesn't exist in the StreamingAssets Folder, please copy it there.");
+                     }
+                 }
+                 else
+                 {
+                     // Mac, Windows, Iphone                
+                     //validate the existens of the DB in the original folder (folder "streamingAssets")
+                     if (File.Exists(sourcePath))
+                     {
+                         //copy file - alle systems except Android
+                         File.Copy(sourcePath, destinationPath, true);
+                     }
+                     else
+                     {
+                         Debug.Log("ERROR: the file DB named " + fileName + " doesn't exist in the StreamingAssets Folder, please copy it there.");
+                     }
+                 }
+             }
+
+             StreamReader reader = new StreamReader(destinationPath);
+             var jsonString = reader.ReadToEnd();
+             reader.Close();
+
+
+             return jsonString;
+     }
+    */
 
     public static void RereadFileUW4(string pathfolders, string fileName, string destpathf, string destname)
     {
@@ -429,12 +431,12 @@ public static class StreamingAssetLoader
             loadingRequest.SendWebRequest();
             while (!loadingRequest.isDone)
             {
-                if (loadingRequest.isNetworkError || loadingRequest.isHttpError)
+                if (loadingRequest.result == UnityWebRequest.Result.ConnectionError || loadingRequest.result == UnityWebRequest.Result.ProtocolError)
                 {
                     break;
                 }
             }
-            if (loadingRequest.isNetworkError || loadingRequest.isHttpError)
+            if (loadingRequest.result==UnityWebRequest.Result.ConnectionError || loadingRequest.result==UnityWebRequest.Result.ProtocolError)
             {
 
             }

@@ -22,10 +22,18 @@ public class SaveNetwAddr_mobile : MonoBehaviour
     private float transCol;
     private ColorBlock tempColB;
 
+    public string Ip1_sup;
+    public string Ip2_sup;
+    public string Ip3_sup;
+
 
     void Start()
     {
-        Update();
+        Ip1_sup = CommunicationEvents.IPslot1;
+        Ip2_sup = CommunicationEvents.IPslot2;
+        Ip3_sup = CommunicationEvents.IPslot3;
+
+
     }
 
     private void Update()
@@ -38,6 +46,15 @@ public class SaveNetwAddr_mobile : MonoBehaviour
         UpdateUI_5_f();
     }
 
+    public void Refresh_pressed()
+    {
+        Ip1_sup = CommunicationEvents.IPslot1;
+        Ip2_sup = CommunicationEvents.IPslot2; 
+        Ip3_sup = CommunicationEvents.IPslot3;
+        print("se"+Ip1_sup);
+       
+    }
+
 
 
 
@@ -48,33 +65,57 @@ public class SaveNetwAddr_mobile : MonoBehaviour
         tempColB = SaveSlot1_B_GObj.GetComponent<Button>().colors;
         tempColB.pressedColor = colPressed;
         tempColB.selectedColor = colSelect;
-        if (CommunicationEvents.ServerRunningA[3] == 0)
-        {
-            tempColB.normalColor = colOffline;
-            if (string.IsNullOrEmpty(CommunicationEvents.IPslot1))// || CommunicationEvents.IPslot1.Length < 1)
-            {
-                SaveSlot1_B_GObj.GetComponentInChildren<Text>().text = "OVERWRITE: \n< empty >";
-            }
-            else
-            {
-
-                SaveSlot1_B_GObj.GetComponentInChildren<Text>().text = "OVERWRITE: \nServer " + CommunicationEvents.IPslot1 + " (Offline)";
-            }
-        }
-        else
-        {
-            if (CommunicationEvents.ServerRunningA[3] == 2)
-            {
-                tempColB.normalColor = colOnline;
-                SaveSlot1_B_GObj.GetComponentInChildren<Text>().text = "OVERWRITE: \nServer " + CommunicationEvents.IPslot1 + " (Online)";
-            }
-            else
+        
+            if (CommunicationEvents.ServerRunningA[3] == 0)
             {
                 tempColB.normalColor = colOffline;
-                SaveSlot1_B_GObj.GetComponentInChildren<Text>().text = "OVERWRITE: \n< empty >";
+                if (string.IsNullOrEmpty(CommunicationEvents.IPslot1))// || CommunicationEvents.IPslot1.Length < 1)
+                {
+                    SaveSlot1_B_GObj.GetComponentInChildren<Text>().text = "OVERWRITE: \n< empty >";
+                }
+                else
+                {
+
+                    
+                    if (Ip1_sup.Equals(CommunicationEvents.IPslot1))
+                    {
+                        SaveSlot1_B_GObj.GetComponentInChildren<Text>().text = "OVERWRITE: \nServer " + CommunicationEvents.IPslot1 + " (Offline)";
+                    }
+                    else
+                    {
+                        print("sss" + Ip1_sup.Equals(CommunicationEvents.IPslot1)); 
+                        SaveSlot1_B_GObj.GetComponentInChildren<Text>().text = "OVERWRITE: \nServer " + CommunicationEvents.IPslot1;
+                    }
+                }
             }
-        }
-        SaveSlot1_B_GObj.GetComponent<Button>().colors = tempColB;
+            else
+            {
+                if (CommunicationEvents.ServerRunningA[3] == 2)
+                {
+                    print("test" + Ip1_sup);
+                    if (Ip1_sup.Equals(CommunicationEvents.IPslot1))
+                    {
+                        tempColB.normalColor = colOnline;
+                        SaveSlot1_B_GObj.GetComponentInChildren<Text>().text = "OVERWRITE: \nServer " + CommunicationEvents.IPslot1 + " (Online)";
+                    }
+                    else
+                    {
+                    print("s3ss" + Ip1_sup.Equals(CommunicationEvents.IPslot1));
+                    SaveSlot1_B_GObj.GetComponentInChildren<Text>().text = "OVERWRITE: \nServer " + CommunicationEvents.IPslot1;
+                    print("ww"+ Ip1_sup);
+                    print("we"+ CommunicationEvents.IPslot1);
+
+                    }    
+                }
+                else
+                {
+                    tempColB.normalColor = colOffline;
+                    SaveSlot1_B_GObj.GetComponentInChildren<Text>().text = "OVERWRITE: \n< empty >";
+                }
+            }
+            SaveSlot1_B_GObj.GetComponent<Button>().colors = tempColB;
+        
+
 
 
     }
@@ -97,15 +138,30 @@ public class SaveNetwAddr_mobile : MonoBehaviour
             }
             else
             {
-                SaveSlot2_B_GObj.GetComponentInChildren<Text>().text = "OVERWRITE: \nServer " + CommunicationEvents.IPslot2 + " (Offline)";
+                if (Ip2_sup.Equals(CommunicationEvents.IPslot2))
+                {
+                    SaveSlot2_B_GObj.GetComponentInChildren<Text>().text = "OVERWRITE: \nServer " + CommunicationEvents.IPslot2 + " (Offline)";
+                }
+                else
+                {
+                    SaveSlot2_B_GObj.GetComponentInChildren<Text>().text = "OVERWRITE: \nServer " + CommunicationEvents.IPslot2;
+                }
             }
         }
         else
         {
             if (CommunicationEvents.ServerRunningA[4] == 2)
             {
-                tempColB.normalColor = colOnline;
-                SaveSlot2_B_GObj.GetComponentInChildren<Text>().text = "OVERWRITE: \nServer " + CommunicationEvents.IPslot2 + " (Online)";
+                if (Ip2_sup.Equals(CommunicationEvents.IPslot2))
+                {
+                    tempColB.normalColor = colOnline;
+                    SaveSlot2_B_GObj.GetComponentInChildren<Text>().text = "OVERWRITE: \nServer " + CommunicationEvents.IPslot2 + " (Online)";
+                }
+                else
+                {
+                    SaveSlot2_B_GObj.GetComponentInChildren<Text>().text = "OVERWRITE: \nServer " + CommunicationEvents.IPslot2;
+
+                }
             }
             else
             {
@@ -132,15 +188,30 @@ public class SaveNetwAddr_mobile : MonoBehaviour
             }
             else
             {
-                SaveSlot3_B_GObj.GetComponentInChildren<Text>().text = "OVERWRITE: \nServer " + CommunicationEvents.IPslot3 + " (Offline)";
+                if (Ip3_sup.Equals(CommunicationEvents.IPslot3))
+                {
+                    SaveSlot3_B_GObj.GetComponentInChildren<Text>().text = "OVERWRITE: \nServer " + CommunicationEvents.IPslot3 + " (Offline)";
+                }
+                else
+                {
+                    SaveSlot3_B_GObj.GetComponentInChildren<Text>().text = "OVERWRITE: \nServer " + CommunicationEvents.IPslot3;
+                }
             }
         }
         else
         {
             if (CommunicationEvents.ServerRunningA[5] == 2)
             {
-                tempColB.normalColor = colOnline;
-                SaveSlot3_B_GObj.GetComponentInChildren<Text>().text = "OVERWRITE: \nServer " + CommunicationEvents.IPslot3 + " (Online)";
+                if (Ip3_sup.Equals(CommunicationEvents.IPslot3))
+                {
+                    tempColB.normalColor = colOnline;
+                    SaveSlot3_B_GObj.GetComponentInChildren<Text>().text = "OVERWRITE: \nServer " + CommunicationEvents.IPslot3 + " (Online)";
+                }
+                else
+                {
+                    SaveSlot3_B_GObj.GetComponentInChildren<Text>().text = "OVERWRITE: \nServer " + CommunicationEvents.IPslot3;
+
+                }
             }
             else
             {
@@ -149,6 +220,7 @@ public class SaveNetwAddr_mobile : MonoBehaviour
             }
         }
         SaveSlot3_B_GObj.GetComponent<Button>().colors = tempColB;
+        
     }
 
 
@@ -157,8 +229,9 @@ public class SaveNetwAddr_mobile : MonoBehaviour
         CommunicationEvents.IPslot1 = CommunicationEvents.newIP;
         //CommunicationEvents.ServerAdress = "http://" +  CommunicationEvents.ServerAddress1;
         Update();
-
+        CheckServerA[3] = 1;
         NetworkJSON_Save();
+        Refresh_pressed();
 
         //CSform.CheckIPAdr();
 
@@ -170,8 +243,11 @@ public class SaveNetwAddr_mobile : MonoBehaviour
         //CommunicationEvents.ServerAdress = "http://" +  CommunicationEvents.ServerAddress2;
         CommunicationEvents.IPslot2 = CommunicationEvents.newIP;
         Update();
+        
+        CheckServerA[4] = 1;
 
         NetworkJSON_Save();
+        Refresh_pressed();
         //CSform.CheckIPAdr();
 
 
@@ -183,6 +259,9 @@ public class SaveNetwAddr_mobile : MonoBehaviour
         // ani.StartCheck();
         CommunicationEvents.IPslot3 = CommunicationEvents.newIP;
         Update();
+        CheckServerA[5] = 1;
+
+        Refresh_pressed();
 
         NetworkJSON_Save();
         //CSform.CheckIPAdr();

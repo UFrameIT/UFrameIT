@@ -8988,6 +8988,41 @@ PrefabInstance:
       propertyPath: ThirdPerson_GObj
       value: 
       objectReference: {fileID: 6501516846063548396}
+    - target: {fileID: 7486327252467103558, guid: 1a0e8fc4bd33d48489e21d111c3a57e4,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 17.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7486327252467103558, guid: 1a0e8fc4bd33d48489e21d111c3a57e4,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.43044394
+      objectReference: {fileID: 0}
+    - target: {fileID: 7486327252467103558, guid: 1a0e8fc4bd33d48489e21d111c3a57e4,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.10030208
+      objectReference: {fileID: 0}
+    - target: {fileID: 7486327252467103558, guid: 1a0e8fc4bd33d48489e21d111c3a57e4,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.8736225
+      objectReference: {fileID: 0}
+    - target: {fileID: 7486327252467103558, guid: 1a0e8fc4bd33d48489e21d111c3a57e4,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.20357157
+      objectReference: {fileID: 0}
+    - target: {fileID: 7486327252467103558, guid: 1a0e8fc4bd33d48489e21d111c3a57e4,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 26.234
+      objectReference: {fileID: 0}
+    - target: {fileID: 7486327252467103558, guid: 1a0e8fc4bd33d48489e21d111c3a57e4,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -127.54
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a0e8fc4bd33d48489e21d111c3a57e4, type: 3}
 --- !u!4 &1768374258906171685 stripped
@@ -9627,6 +9662,11 @@ PrefabInstance:
       propertyPath: cursor
       value: 
       objectReference: {fileID: 9064903938289346084}
+    - target: {fileID: 8113570465842942721, guid: f6ee936e2ace8e84ba70ad7e1ae58bdc,
+        type: 3}
+      propertyPath: m_ControlPath
+      value: <AndroidGamepad>/leftStick/right
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f6ee936e2ace8e84ba70ad7e1ae58bdc, type: 3}
 --- !u!1 &251852623843673086 stripped

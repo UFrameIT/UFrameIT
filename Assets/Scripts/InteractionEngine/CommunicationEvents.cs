@@ -50,33 +50,39 @@ public static class CommunicationEvents
     //-------------------------------Global Variables-------------------------------------
     // TODO! move to GlobalStatic/Behaviour
 
-
+    public static bool ServerAutoStart = true;
     public static bool ServerRunning = true;
     public static bool ServerRunning_test = true;
-    public static string ServerPortDefault = "8085";
-    //public static string ServerAdress = "http://localhost:8085"; //need "http://" 
-    public static string ServerAdress = "http://10.231.4.95:8085";
-    public static string ServerAddress1 = "localhost:8085";
-    public static string ServerAddress2 = "10.231.4.95:8085";
+    
+    //CHANGE HERE PORT OF SERVER
+    public static string ServerPortDefault = "8085"; //used for Local
+
+    public static string ServerAddressLocalhost = "http://localhost"; //Without Port
+    public static string ServerAddressLocal = "http://localhost:8085"; // "http://localhost:8085"
+    public static string ServerAdress = "http://localhost:8085"; //need "http://" //used by dispalyScrolls.cs //http://10.231.4.95:8085"; 
 
     
     public static bool takeNewToolID = false; //0=no, 1=instead, 2=both
     public static int ToolID_new;
     public static int ToolID_selected;//Script
     
+    /*
+     * will be loaded from other config file
+     */
+        public static string lastIP = "";
+        public static string newIP = "";
+        public static string IPslot1 = "";
+        public static string IPslot2 = "http://10.231.4.95:8085";
+        public static string IPslot3 = "10.231.4.95:8085";
+        public static string selecIP = "";
+    //------
 
-    public static string lastIP = "";
-    public static string newIP = "";
-    public static string IPslot1 = "";
-    public static string IPslot2 = "http://10.231.4.95:8085";
-    public static string IPslot3 = "10.231.4.95:8085";
-    public static string selecIP = "";
-    
     public static int[] ServerRunningA = new int[7] { 0, 0, 0, 0, 0, 0, 0 }; //other, lastIP, newIP, IP1, IP2, IP3, selecIP} //0: offline, 1: Checking, 2: online, 3: NoNetworkAddress;
     public static bool[] ServerRunningA_test = new bool[7] { false, false, false, false, false, false, false }; //other, lastIP, newIP, IP1, IP2, IP3, selecIP}
     public static double IPcheckGeneration = 0;
     public static int CheckNetLoop = 1;
-    
+    public static int[] CheckServerA = new int[7] { 0, 0, 0, 0, 0, 0, 0 };
+
     public static bool autoOSrecognition = true;
     //int Opsys =1 Android.
     //int Opsys =0 Windows;

@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 //using UnityStandardAssets.CrossPlatformInput;
 using PlayerCtrl;
+using static UIconfig;
 
 //namespace UnityStandardAssets.Characters.FirstPerson
 namespace Characters.FirstPerson
@@ -55,6 +56,32 @@ namespace Characters.FirstPerson
                 Vector2 a = input_ControlMapping.Actionmap1.LookCamera.ReadValue<Vector2>();
                 xRot = a.x * XSensitivity;
                 yRot = a.y * XSensitivity;
+            }
+            if (UIconfig.InputManagerVersion == 3)
+            {
+               
+                
+                // Read input
+                yRot = yRot * XSensitivity;
+                xRot = xRot * YSensitivity;
+                
+                if (DPAD[1, 1] != 0) { xRot = DPAD[1, 1]; }
+                if (DPAD[1, 0] != 0) { xRot = DPAD[1, 0]; }
+
+                if (DPAD[1, 0] != 0 && DPAD[1, 1] != 0)
+                {
+                    xRot = 0;
+                }
+                if (DPAD[1, 3] != 0) { yRot = DPAD[1, 3]; }
+                if (DPAD[1, 2] != 0) { yRot = DPAD[1, 2]; }
+
+                if (DPAD[1, 2] != 0 && DPAD[1, 3] != 0)
+                {
+                    yRot = 0;
+                }
+                yRot = yRot * XSensitivity;
+                xRot = xRot * YSensitivity;
+
             }
             //xRot = 1;
 

@@ -6,19 +6,26 @@ using System;
 public static class UIconfig
 {
 
-    public static int FrameITUIversion = 2; // 1= FrameITUI; 2= FrameITUI_mobil
-    public static int InputManagerVersion = 1; // 1= InputManager, 2=InputSystemPackage 
+    public static int FrameITUIversion = 3; // 1= FrameITUI; 2= FrameITUI_mobil
+    public static int InputManagerVersion = 2; // 1= InputManager, 2=InputSystemPackage ; 3=overConfigfile
     public static int GameplayMode = 5; //5=First Person, 4=third, 3=third+, 2=Escaperoom, 1=Sidescroller, 0=Sidescroller+
 
     public static int MainCameraID = 0; //0=Camera.main; 1=Cam1, 2=Cam2
 
+    public static float[,] DPAD = new float[2, 4] { { 0, 0,0,0 }, { 0, 0, 0, 0 } } ; //Movement, Camera   //Up, Down, Left, Right//
+
+    public static bool localServerWithAdditionalWindow = true;
+
+
     //How to handle the waitTime to start ToolModeSelector
     public static int ToolModeSelector_HandlerMode = 1  ; //set 1. At moment no other options available
 
+    public static int GadgetFirstUse = 0;
 
     public static double cursorSize = 0.03125; //=60/1920;
     public static double cursorSize_SliderMax = 1; //Faktor
     public static double cursorsize_default = 0.03125;
+    public static bool checkOperationSystemAlreadyDone = false;
 
     public static int refHeight = -1;
     public static int refWidth = -1;
@@ -69,6 +76,7 @@ public static class UIconfig
         public int InputManagerVersion;
         public double colliderScale_all;
         public double cursorSize;
+        
     }
 
     //INPUTMANAGER KEY BINDINGS LIST for display Purpose

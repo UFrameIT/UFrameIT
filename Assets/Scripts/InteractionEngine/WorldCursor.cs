@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
 using static GadgetManager;
+using UnityEngine.InputSystem;
 
 public class WorldCursor : MonoBehaviour
 {
@@ -41,24 +42,71 @@ public class WorldCursor : MonoBehaviour
     void Update()
     {
         Cam = Camera.main; //WARN: Should not called every Update;
-        Ray ray = useCamCurser ? new Ray(Cam.transform.position, Cam.transform.forward) : Cam.ScreenPointToRay(Input.mousePosition);
+        Vector3 mousePos = new Vector3(0, 0, 0);
+        //************************************************
+        if (UIconfig.InputManagerVersion == 1)
+        {
+            mousePos = Input.mousePosition;
+        }
+        if (UIconfig.InputManagerVersion == 2)
+        {
+            //mousePos = Mouse.current.position.ReadValue();
+            mousePos = Input.mousePosition;
+        }
+        if (UIconfig.InputManagerVersion == 3)
+        {
+            //mousePos = Mouse.current.position.ReadValue();
+            mousePos = Input.mousePosition;
+        }
+        //****************************************************
+
+        //Ray ray = useCamCurser ? new Ray(Cam.transform.position, Cam.transform.forward) : Cam.ScreenPointToRay(Input.mousePosition);
+        Ray ray = useCamCurser ? new Ray(Cam.transform.position, Cam.transform.forward) : Cam.ScreenPointToRay(mousePos);
+
+
 
         this.Hit = new RaycastHit();
         transform.up = Cam.transform.forward;
         transform.position = ray.GetPoint(GlobalBehaviour.GadgetPhysicalDistance);
 
-        int rayCastMask;
-        if (Input.GetButton(this.deactivateSnapKey))
+        int rayCastMask = 0;
+        //************************************************
+        bool a = false;
+        if (UIconfig.InputManagerVersion == 1)
+        {
+            //print("123 "+ this.deactivateSnapKey); ToggleCurserSnap leftCtrl
+            if (Input.GetButton(this.deactivateSnapKey))
+            {
+                a = true;
+            }
+        }
+        if (UIconfig.InputManagerVersion == 2 || UIconfig.InputManagerVersion == 3)
+        {
+            if (Input.GetButton(this.deactivateSnapKey))
+            {
+                a = true;
+            }
+        }
+        
+        if (a)
+
             rayCastMask = this.layerMask & ~this.snapLayerMask.value;
         else
             rayCastMask = this.layerMask;
+        //************************************************
 
         if (Physics.Raycast(ray, out Hit, MaxRange, rayCastMask)
             || (MaxRange <= GlobalBehaviour.GadgetPhysicalDistance
             && Physics.Raycast(transform.position, Vector3.down, out Hit, GlobalBehaviour.GadgetPhysicalDistance, rayCastMask)))
         {
+            Boolean deactSnapKey=false;
+            if (UIconfig.InputManagerVersion == 1)
+            {
+                Input.GetButton(this.deactivateSnapKey);
+            }
+
             if ((Hit.collider.transform.CompareTag("SnapZone") || Hit.collider.transform.CompareTag("Selectable"))
-                && !Input.GetButton(this.deactivateSnapKey))
+                && !deactSnapKey)
             {
                 if (Hit.collider.gameObject.layer == LayerMask.NameToLayer("Ray")
                     || Hit.collider.gameObject.layer == LayerMask.NameToLayer("Line"))
@@ -88,7 +136,7 @@ public class WorldCursor : MonoBehaviour
 
             //Link to CheckMouseButtonHandler
             if(whichCheckMouseButton==0){ CheckMouseButtons(); }
-            if(whichCheckMouseButton==1){CheckMouseButtons1(); }
+            if(whichCheckMouseButton==1){ CheckMouseButtons1(); }
 
         }
 
@@ -122,7 +170,7 @@ public class WorldCursor : MonoBehaviour
 
             if (IsPointerOverUIObject()) return; //Needed for Android
             if (Hit.transform.gameObject.layer == LayerMask.NameToLayer("Water")) return; // not allowed to meassure on water
-            if (Hit.transform.gameObject.layer == LayerMask.NameToLayer("TransparentFX")) return; // not allowed to meassure on TransparentFX
+            //if (Hit.transform.gameObject.layer == LayerMask.NameToLayer("TransparentFX")) return; // not allowed to meassure on TransparentFX
             if (!OnSnap)
             {
                 CommunicationEvents.TriggerEvent.Invoke(Hit);

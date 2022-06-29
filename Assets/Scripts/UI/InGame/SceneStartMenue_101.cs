@@ -114,6 +114,13 @@ public class SceneStartMenue_101 : MonoBehaviour//, IPointerDownHandler, IPointe
                     missionbriefing336;
 
                 break;
+            case 337:
+                missionbriefing = missionbriefing1;
+                myself_GObj_Txt.text = StageStatic.stage.description + "\n" +
+                    //"\n"+
+                    missionbriefing336;
+
+                break;
 
         }
 
