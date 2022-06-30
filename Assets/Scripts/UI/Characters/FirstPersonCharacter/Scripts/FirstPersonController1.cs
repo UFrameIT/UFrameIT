@@ -49,6 +49,25 @@ namespace Characters.FirstPerson
         public string Running_keyBind;
 
 
+        private void Awake()
+        {
+            //New InputSystem
+            input_ControlMapping = new ControlMapping();
+            input_ControlMapping.Actionmap1.Movement.Enable();
+            input_ControlMapping.Actionmap1.LookCamera.Enable();
+            //input_ControlMapping.Actionmap1.Movement.
+        }
+        private void OnEnable()
+        {
+            input_ControlMapping.Actionmap1.Movement.Enable();
+            input_ControlMapping.Actionmap1.LookCamera.Enable();
+        }
+
+        private void OnDisable()
+        {
+            input_ControlMapping.Actionmap1.Movement.Disable();
+            input_ControlMapping.Actionmap1.LookCamera.Disable();
+        }
 
         // Use this for initialization
         private void Start()
@@ -64,10 +83,7 @@ namespace Characters.FirstPerson
             m_AudioSource = GetComponent<AudioSource>();
             m_MouseLook.Init(transform, m_Camera.transform);
 
-            //New InputSystem
-            input_ControlMapping = new ControlMapping();
-            input_ControlMapping.Actionmap1.Movement.Enable();
-            //input_ControlMapping.Actionmap1.Movement.
+  
         }
 
 
@@ -250,6 +266,7 @@ namespace Characters.FirstPerson
             if (UIconfig.InputManagerVersion == 2)
             {
                 Vector2 a = input_ControlMapping.Actionmap1.Movement.ReadValue<Vector2>();
+                //Vector2 a = input_ControlMapping.Actionmap1.LookCamera.ReadValue<Vector2>();
                 //input_ControlMapping.Actionmap1.Movement.
 
                 m_Input = a;

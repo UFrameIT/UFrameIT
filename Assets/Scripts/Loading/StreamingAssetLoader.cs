@@ -87,6 +87,7 @@ public static class StreamingAssetLoader
         myObject.InputManagerVersion = UIconfig.InputManagerVersion;
         myObject.colliderScale_all = UIconfig.colliderScale_all;
         myObject.cursorSize = UIconfig.cursorSize;
+        myObject.camRotatingSensitivity = UIconfig.camRotatingSensitivity;
 
 
 
@@ -280,6 +281,14 @@ public static class StreamingAssetLoader
         else
         {
             UIconfig.cursorSize = myObjs.cursorSize;
+        }
+        if (false)
+        {
+
+        }
+        else
+        {
+            UIconfig.camRotatingSensitivity = myObjs.camRotatingSensitivity;
         }
 
     }

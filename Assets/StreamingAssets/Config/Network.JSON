@@ -13,5 +13,6 @@
 	"FrameITUIversion":"2",
         "InputManagerVersion":"1",
 	"colliderScale_all":"1.2",
-	"cursorSize":"0.03125"
+	"cursorSize":"0.03125",
+	"camRotatingSensitivity":"2f"
 }

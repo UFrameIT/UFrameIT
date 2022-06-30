@@ -15,6 +15,7 @@ public static class UIconfig
     public static float[,] DPAD = new float[2, 4] { { 0, 0,0,0 }, { 0, 0, 0, 0 } } ; //Movement, Camera   //Up, Down, Left, Right//
 
     public static bool localServerWithAdditionalWindow = true;
+    
 
 
     //How to handle the waitTime to start ToolModeSelector
@@ -59,6 +60,10 @@ public static class UIconfig
     public static double colliderScale_Mobile_default = 4;
     public static double[] colliderScale_Obj_array = new double[10] { 0, 0.5, 0, 0, 0, 0, 0, 0, 0, 0 }; //id 1=tree,
 
+    public static float camRotatingSensitivity = 2f;//Sensitivity to inputs.
+    public static float camRotatingSensitivity_default = 1f; //slider 100% which value?
+    public static float camRotatingSensitivity_sliderMax = 4f; //max value for slider 
+
     public class NetworkJSON
     {
         public string lastIP;
@@ -76,7 +81,8 @@ public static class UIconfig
         public int InputManagerVersion;
         public double colliderScale_all;
         public double cursorSize;
-        
+        public float camRotatingSensitivity; //Sensitivity to inputs.
+
     }
 
     //INPUTMANAGER KEY BINDINGS LIST for display Purpose

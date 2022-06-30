@@ -18,6 +18,8 @@ public class GameplayOptionsMenue_mobile : MonoBehaviour
     public GameObject cllscaleAll_SliderT;
     public GameObject cursorScaler_Slider;
     public GameObject cursorScaler_SliderT;
+    public GameObject CamSens_Slider;
+    public GameObject CamSens_SliderT;
 
     public Texture2D cursorArrow_35;
     public Texture2D cursorArrow_50;
@@ -37,16 +39,7 @@ public class GameplayOptionsMenue_mobile : MonoBehaviour
 
     void Start()
     {
-        cllscaleAll_Slider.GetComponent<Slider>().value = (float)(UIconfig.colliderScale_all / (UIconfig.colliderScale_all_default * UIconfig.colliderScale_all_SliderMax));
-        ScaleColliderAllBttn();
         
-        cursorScaler_Slider.GetComponent<Slider>().value = (float)((UIconfig.cursorSize) / (UIconfig.cursorsize_default * UIconfig.cursorSize_SliderMax));
-        mousePointerScaleBttn();
-        
-
-
-
-
     }
 
     private void Update()
@@ -57,6 +50,8 @@ public class GameplayOptionsMenue_mobile : MonoBehaviour
         cursorScaler_Slider.GetComponent<Slider>().value = (float)((UIconfig.cursorSize) / (UIconfig.cursorsize_default * UIconfig.cursorSize_SliderMax));
         mousePointerScaleBttn();
 
+        CamSens_Slider.GetComponent<Slider>().value = (float)((UIconfig.camRotatingSensitivity) / (UIconfig.camRotatingSensitivity_default * UIconfig.camRotatingSensitivity_sliderMax));
+        CamSensitivityBttn();
 
     }
 
@@ -79,11 +74,15 @@ public class GameplayOptionsMenue_mobile : MonoBehaviour
     {
         UIconfig.cursorSize = cursorScaler_Slider.GetComponent<Slider>().value * UIconfig.cursorSize_SliderMax *UIconfig.cursorsize_default;
         double zwischenRechn = 100 * (UIconfig.cursorSize)/ (UIconfig.cursorsize_default);
-        cursorScaler_SliderT.GetComponent<Text>().text = "Size of MouseCursor " + (int)(zwischenRechn) + "%";
+        cursorScaler_SliderT.GetComponent<Text>().text = "Size of MouseCursor is " + (int)(zwischenRechn) + "%";
         setMouse();
-
-
-
+    }
+    public void CamSensitivityBttn()
+    {
+        UIconfig.camRotatingSensitivity = CamSens_Slider.GetComponent<Slider>().value * UIconfig.camRotatingSensitivity_sliderMax * UIconfig.camRotatingSensitivity_default;
+        double zwischenRechn = 100 * (UIconfig.camRotatingSensitivity); // /(UIconfig.camRotatingSensitivity_default);
+        CamSens_SliderT.GetComponent<Text>().text = "Sensitivity of Camera is " + (int)(zwischenRechn) + "%";
+        
     }
 
     public void setMouse()

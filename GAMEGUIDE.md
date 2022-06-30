@@ -1,15 +1,16 @@
-# UFrameIT
+# UFrameIT  
 
 
 
-## What Quests are there 
-1. Tree Stage
-1.1. On map Tree Stage, measure the Height of the Tree near the villager.
-2. River Stage
+## A1 What Quests are there  
+
+1. Tree Stage  
+1.1. On map Tree Stage, measure the Height of the Tree near the villager.  
+2. River Stage  
 2.1. On map River Stage, measure the Height of the Tree near the villager.
 
 
-## what Gameplay modes are there
+## A2 what Gameplay modes are there
 1. First Person Gameplay
 2. Third Person Gameplay
 3. Escaperoom Gameplay
@@ -17,43 +18,43 @@
 
 
 ### 1.1 First person gameplay
-- first person perspective 
-- compatible with (old) Input Manager
-- compatible with (new) Input System Package
-- supports FrameITUI
-- supports FrameITUI_mobile
+      - first person perspective 
+      - compatible with (old) Input Manager
+      - compatible with (new) Input System Package
+      - supports FrameITUI
+      - supports FrameITUI_mobile
 
  
 ### 1.2 First person gameplay (old mainplayer version)
-- first person perspective  
-- compatible with (old) Input Manager
-- uses FrameITUI --> no Touchinput supported
+      - first person perspective  
+      - compatible with (old) Input Manager
+      - uses FrameITUI --> no Touchinput supported
 
  
 ### 2.1 Gameplay with Camera right behind shoulder
-- third person perspective 
-- player controls camera, which controls direct the playermodel
+      - third person perspective 
+      - player controls camera, which controls direct the playermodel
 
 ### 2.2 Third Person Gameplay with dampened Camera
-- third person perspective 
-- player controls Playermodel and the camera follows and rotates in a smoothed behavior.
+      - third person perspective 
+      - player controls Playermodel and the camera follows and rotates in a smoothed behavior.
 
 ### 2.3 Third Person Gameplay with manual Camera (For example Birdview)
-- third person perspective 
-- player controls Playermodel and the camera follows without rotating behavior. 
+      - third person perspective 
+      - player controls Playermodel and the camera follows without rotating behavior. 
 
 ### 3.1 Escaperoom Gameplay
-- Fixed Camera
+      - Fixed Camera
 
 
 ### 4.1 Sidescroller Gameplay
-- Only 2D Walking.
+      - Only 2D Walking.
 
 
 ### How to set Options for Missions
 
 
-## what options do:
+## A3 what options do:
 
 ### Control Options:
 
@@ -70,6 +71,26 @@
 
 #### Keyboard Mouse Options
 	- Look up or change Bindings
+	- New Input System uses: "ControlMapping" --> "Actionmap1":
+    	- Movement Forward: 	up, w
+    	- Movement Backward: 	down, s
+    	- Movement Left: 		left, a
+    	- Movement Right: 		right, d
+    	- Movement Running: 	left_shift
+    	- Movement Jump: 		space
+    	- Action 1: 			LeftMouseBttn
+    	- Action 2: 			RightMouseBttn
+    	- Change Tool: 			MouseScrollWheel
+      	- Menue Tools: 			e
+    	- Menue Mathematics: 	tab
+    	- Menue Cancel: 		escape
+    	- Command Load: 		m+l
+     	- Command Save:			m+s
+    	- Command Reset: 		m+backspace
+    	- Command Undo: 		m+u
+    	- Command Redo: 		m+r 
+  
+
 
 #### Touch-control Options
 	- choose the Touch-Control mode you want to use
@@ -100,7 +121,7 @@
 		- Supports Touch-Controls
 
 ### Reset Options:
-	- Following Reset Operations are handled by the Streaming AssetLoader.cs
+- Following Reset Operations are handled by the Streaming AssetLoader.cs
 
 #### Reset Configurations
 	- Reloads files from Assets/StreamingsAssets to Application.persistentDataPath/Config/Network.JSON 
@@ -115,6 +136,10 @@
 
 ### Gameplay Options:
 
+#### Set Sensitivity of Camera
+    - saved in Application.persistentDataPath/Config/Network.JSON 
+	- (relevant for using FirstPerson Camera)
+  
 
 #### Resize Cursor 
     - saved in Application.persistentDataPath/Config/Network.JSON 

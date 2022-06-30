@@ -147,8 +147,8 @@ public class StartServer : MonoBehaviour
             
             while (true)
             {
-                //Wait for 1 seconds
-                yield return new WaitForSecondsRealtime(1f);
+                //Wait for 2 seconds
+                yield return new WaitForSecondsRealtime(2f);
                 print("waiting");
                 
                 request = UnityWebRequest.Get(CommunicationEvents.ServerAddressLocal + "/scroll/list");

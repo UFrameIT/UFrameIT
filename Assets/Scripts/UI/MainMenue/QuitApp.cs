@@ -44,7 +44,13 @@ public class QuitApp : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
         //Input.backButtonLeavesApp = true;
         NetworkJSON_Save();
-        process_mmt_frameIT_server.Kill();
+        if (process_mmt_frameIT_server != null)
+        {
+            if (!process_mmt_frameIT_server.HasExited) {
+                process_mmt_frameIT_server.Kill();
+            }
+        }
+        
 
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;

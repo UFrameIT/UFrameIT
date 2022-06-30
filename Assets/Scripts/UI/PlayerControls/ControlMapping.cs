@@ -29,16 +29,16 @@ public partial class @ControlMapping : IInputActionCollection2, IDisposable
             ""actions"": [
                 {
                     ""name"": ""Movement"",
-                    ""type"": ""Value"",
+                    ""type"": ""PassThrough"",
                     ""id"": ""f1c2c6f3-2542-45df-8f4e-7660f5fe7215"",
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": true
+                    ""initialStateCheck"": false
                 },
                 {
                     ""name"": ""LookCamera"",
-                    ""type"": ""Value"",
+                    ""type"": ""PassThrough"",
                     ""id"": ""c189c0be-0f75-45a9-94b3-d0dd52a2af19"",
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
@@ -58,6 +58,33 @@ public partial class @ControlMapping : IInputActionCollection2, IDisposable
                     ""name"": ""Camerazoom"",
                     ""type"": ""Button"",
                     ""id"": ""d6845352-d792-4cfe-9c8d-ab09637d4ab1"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Cancel"",
+                    ""type"": ""Button"",
+                    ""id"": ""d5aafbfd-31bc-402e-89dc-c21c91212bbc"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ToolMode"",
+                    ""type"": ""Button"",
+                    ""id"": ""55269451-4704-48a9-8528-ca0d3b495ab2"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""MathMode"",
+                    ""type"": ""Button"",
+                    ""id"": ""f79249da-97b2-4a72-b594-aa21e58472a9"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -231,59 +258,15 @@ public partial class @ControlMapping : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""2D Vector"",
-                    ""id"": ""d4170212-8606-46f7-94be-9a9ff4a741a8"",
-                    ""path"": ""2DVector"",
+                    ""name"": """",
+                    ""id"": ""74b23070-b002-405d-880f-612ed4af5d02"",
+                    ""path"": ""<Mouse>/delta"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""KeyboardMouse"",
                     ""action"": ""LookCamera"",
-                    ""isComposite"": true,
+                    ""isComposite"": false,
                     ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""5d6c453d-e001-480e-a604-953e77642d6c"",
-                    ""path"": ""<Keyboard>/numpad3"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""LookCamera"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""97c3ed7d-c04a-4f94-b639-0fc28808557d"",
-                    ""path"": ""<Keyboard>/numpad1"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""LookCamera"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""678190c9-2651-42f0-9645-57e650c66c1e"",
-                    ""path"": ""<Keyboard>/numpad7"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""LookCamera"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""d22fd6f5-e74c-4d44-8b78-c2b37fc1fb20"",
-                    ""path"": ""<Keyboard>/numpad9"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""Keyboard"",
-                    ""action"": ""LookCamera"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": """",
@@ -370,6 +353,94 @@ public partial class @ControlMapping : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse;KeyboardMouse;test;Gamepad;Keyboard"",
                     ""action"": ""Camerazoom"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""decbe076-f3ef-4110-8971-21b6ee602241"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""LookCamera"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""7d56a2a0-5950-4aa1-898e-32855d5f7256"",
+                    ""path"": ""<Keyboard>/numpad3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""LookCamera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""a24afabd-506f-4388-87eb-33cfbaaaa35d"",
+                    ""path"": ""<Keyboard>/numpad1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""LookCamera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""69383c90-a869-4729-a411-59df74ef0f39"",
+                    ""path"": ""<Keyboard>/numpad7"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""LookCamera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""37505022-8b8d-4d6a-80b1-55712e986989"",
+                    ""path"": ""<Keyboard>/numpad9"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""LookCamera"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""737cc53a-9e90-4fc4-b809-b0a203eaffd6"",
+                    ""path"": ""*/{Cancel}"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard;Gamepad;Android;test;KeyboardMouse"",
+                    ""action"": ""Cancel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9b7bf0e3-7480-4381-bee8-9c3bcc373bf6"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard;Gamepad;Android;test;KeyboardMouse"",
+                    ""action"": ""ToolMode"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d4c7df8f-769c-4d15-a143-815f5c86b485"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard;Gamepad;Android;test;KeyboardMouse"",
+                    ""action"": ""MathMode"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1157,6 +1228,9 @@ public partial class @ControlMapping : IInputActionCollection2, IDisposable
         m_Actionmap1_LookCamera = m_Actionmap1.FindAction("LookCamera", throwIfNotFound: true);
         m_Actionmap1_Fire1orMouseleft = m_Actionmap1.FindAction("Fire1 or Mouse left", throwIfNotFound: true);
         m_Actionmap1_Camerazoom = m_Actionmap1.FindAction("Camerazoom", throwIfNotFound: true);
+        m_Actionmap1_Cancel = m_Actionmap1.FindAction("Cancel", throwIfNotFound: true);
+        m_Actionmap1_ToolMode = m_Actionmap1.FindAction("ToolMode", throwIfNotFound: true);
+        m_Actionmap1_MathMode = m_Actionmap1.FindAction("MathMode", throwIfNotFound: true);
         // Actnmp_HC_Bttn
         m_Actnmp_HC_Bttn = asset.FindActionMap("Actnmp_HC_Bttn", throwIfNotFound: true);
         m_Actnmp_HC_Bttn_Movement = m_Actnmp_HC_Bttn.FindAction("Movement", throwIfNotFound: true);
@@ -1236,6 +1310,9 @@ public partial class @ControlMapping : IInputActionCollection2, IDisposable
     private readonly InputAction m_Actionmap1_LookCamera;
     private readonly InputAction m_Actionmap1_Fire1orMouseleft;
     private readonly InputAction m_Actionmap1_Camerazoom;
+    private readonly InputAction m_Actionmap1_Cancel;
+    private readonly InputAction m_Actionmap1_ToolMode;
+    private readonly InputAction m_Actionmap1_MathMode;
     public struct Actionmap1Actions
     {
         private @ControlMapping m_Wrapper;
@@ -1244,6 +1321,9 @@ public partial class @ControlMapping : IInputActionCollection2, IDisposable
         public InputAction @LookCamera => m_Wrapper.m_Actionmap1_LookCamera;
         public InputAction @Fire1orMouseleft => m_Wrapper.m_Actionmap1_Fire1orMouseleft;
         public InputAction @Camerazoom => m_Wrapper.m_Actionmap1_Camerazoom;
+        public InputAction @Cancel => m_Wrapper.m_Actionmap1_Cancel;
+        public InputAction @ToolMode => m_Wrapper.m_Actionmap1_ToolMode;
+        public InputAction @MathMode => m_Wrapper.m_Actionmap1_MathMode;
         public InputActionMap Get() { return m_Wrapper.m_Actionmap1; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1265,6 +1345,15 @@ public partial class @ControlMapping : IInputActionCollection2, IDisposable
                 @Camerazoom.started -= m_Wrapper.m_Actionmap1ActionsCallbackInterface.OnCamerazoom;
                 @Camerazoom.performed -= m_Wrapper.m_Actionmap1ActionsCallbackInterface.OnCamerazoom;
                 @Camerazoom.canceled -= m_Wrapper.m_Actionmap1ActionsCallbackInterface.OnCamerazoom;
+                @Cancel.started -= m_Wrapper.m_Actionmap1ActionsCallbackInterface.OnCancel;
+                @Cancel.performed -= m_Wrapper.m_Actionmap1ActionsCallbackInterface.OnCancel;
+                @Cancel.canceled -= m_Wrapper.m_Actionmap1ActionsCallbackInterface.OnCancel;
+                @ToolMode.started -= m_Wrapper.m_Actionmap1ActionsCallbackInterface.OnToolMode;
+                @ToolMode.performed -= m_Wrapper.m_Actionmap1ActionsCallbackInterface.OnToolMode;
+                @ToolMode.canceled -= m_Wrapper.m_Actionmap1ActionsCallbackInterface.OnToolMode;
+                @MathMode.started -= m_Wrapper.m_Actionmap1ActionsCallbackInterface.OnMathMode;
+                @MathMode.performed -= m_Wrapper.m_Actionmap1ActionsCallbackInterface.OnMathMode;
+                @MathMode.canceled -= m_Wrapper.m_Actionmap1ActionsCallbackInterface.OnMathMode;
             }
             m_Wrapper.m_Actionmap1ActionsCallbackInterface = instance;
             if (instance != null)
@@ -1281,6 +1370,15 @@ public partial class @ControlMapping : IInputActionCollection2, IDisposable
                 @Camerazoom.started += instance.OnCamerazoom;
                 @Camerazoom.performed += instance.OnCamerazoom;
                 @Camerazoom.canceled += instance.OnCamerazoom;
+                @Cancel.started += instance.OnCancel;
+                @Cancel.performed += instance.OnCancel;
+                @Cancel.canceled += instance.OnCancel;
+                @ToolMode.started += instance.OnToolMode;
+                @ToolMode.performed += instance.OnToolMode;
+                @ToolMode.canceled += instance.OnToolMode;
+                @MathMode.started += instance.OnMathMode;
+                @MathMode.performed += instance.OnMathMode;
+                @MathMode.canceled += instance.OnMathMode;
             }
         }
     }
@@ -1482,6 +1580,9 @@ public partial class @ControlMapping : IInputActionCollection2, IDisposable
         void OnLookCamera(InputAction.CallbackContext context);
         void OnFire1orMouseleft(InputAction.CallbackContext context);
         void OnCamerazoom(InputAction.CallbackContext context);
+        void OnCancel(InputAction.CallbackContext context);
+        void OnToolMode(InputAction.CallbackContext context);
+        void OnMathMode(InputAction.CallbackContext context);
     }
     public interface IActnmp_HC_BttnActions
     {

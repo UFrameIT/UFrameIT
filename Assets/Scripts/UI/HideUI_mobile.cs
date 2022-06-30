@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 using static CommunicationEvents;
 using static UIconfig;
 using static Restart;
+using System.Collections;
 
 public class HideUI_mobile : MonoBehaviour
 {
@@ -22,13 +23,41 @@ public class HideUI_mobile : MonoBehaviour
     public string toolMode_keyBind;
     public string MathMode_keyBind;
     public string cancel_keyBind;
+    public float waitingBetweenInputs = 0.2f;
 
     public UnityStandardAssets.Characters.FirstPerson.FirstPersonController CamControl_StdAsset;
     public Characters.FirstPerson.FirstPersonController1 CamControl_ScriptChar;
     
     public bool LockOnly = true;
     public MeshRenderer CursorRenderer;
+    private double numinputtrigger=0;
     internal Canvas UICanvas;
+
+    private ControlMapping input_ControlMapping;
+
+
+    private void Awake()
+    {
+        //New InputSystem
+        input_ControlMapping = new ControlMapping();
+        input_ControlMapping.Actionmap1.Cancel.Enable();
+        input_ControlMapping.Actionmap1.ToolMode.Enable();
+        input_ControlMapping.Actionmap1.MathMode.Enable();
+
+    }
+    private void OnEnable()
+    {
+        input_ControlMapping.Actionmap1.Cancel.Enable();
+        input_ControlMapping.Actionmap1.ToolMode.Enable();
+        input_ControlMapping.Actionmap1.MathMode.Enable();
+    }
+
+    private void OnDisable()
+    {
+        input_ControlMapping.Actionmap1.Cancel.Disable();
+        input_ControlMapping.Actionmap1.ToolMode.Disable();
+        input_ControlMapping.Actionmap1.MathMode.Disable();
+    }
 
 
 
@@ -73,6 +102,8 @@ public class HideUI_mobile : MonoBehaviour
         //Start3();
         //CamControl.enabled = true;
 
+        StartCoroutine(slowInput());
+
     }
 
     void Start3()
@@ -100,10 +131,12 @@ public class HideUI_mobile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        
         if (UIconfig.FrameITUIversion == 2)
         {
             Update3();
         }
+        
         //print("dada" + UIconfig.CanvasOnOff_Array[4]);
     }
 
@@ -151,6 +184,18 @@ public class HideUI_mobile : MonoBehaviour
 
 
 
+
+    IEnumerator slowInput()
+    {
+
+        yield return new WaitForSecondsRealtime(waitingBetweenInputs);
+
+        numinputtrigger = 0;
+         
+        
+        yield return null;
+
+    }
     void CheckIf()
     {
 
@@ -179,6 +224,36 @@ public class HideUI_mobile : MonoBehaviour
                 {
                     UIconfig.CanvasOnOff_Array[02] = 1;
                     UIconfig.CanvasOnOff_Array[10] = 0;
+                    return;
+                }
+                return;
+            }
+            if (UIconfig.InputManagerVersion == 2 && numinputtrigger==0)
+            {
+                if (input_ControlMapping.Actionmap1.ToolMode.ReadValue<float>() != 0)
+                {
+                    UIconfig.CanvasOnOff_Array[14] = 1;
+                    UIconfig.CanvasOnOff_Array[20] = 0;
+                    numinputtrigger++;
+                    StartCoroutine(slowInput());
+                    return;
+                }
+                if (input_ControlMapping.Actionmap1.MathMode.ReadValue<float>() != 0)
+                {
+
+                    UIconfig.CanvasOnOff_Array[16] = 1;
+                    UIconfig.CanvasOnOff_Array[20] = 0;
+                    numinputtrigger++;
+                    StartCoroutine(slowInput());
+                    return;
+                }
+
+                if (input_ControlMapping.Actionmap1.Cancel.ReadValue<float>() != 0)
+                {
+                    UIconfig.CanvasOnOff_Array[02] = 1;
+                    UIconfig.CanvasOnOff_Array[10] = 0;
+                    numinputtrigger++;
+                    StartCoroutine(slowInput());
                     return;
                 }
                 return;
@@ -213,31 +288,83 @@ public class HideUI_mobile : MonoBehaviour
                 }
                 return;
             }
+            if (UIconfig.InputManagerVersion == 2 && numinputtrigger == 0)
+            {
+                if (input_ControlMapping.Actionmap1.ToolMode.ReadValue<float>() != 0)
+                {
+                    UIconfig.CanvasOnOff_Array[14] = 0;
+                    UIconfig.CanvasOnOff_Array[20] = 1;
+                    numinputtrigger++;
+                    StartCoroutine(slowInput());
+                    return;
+                }
+                if (input_ControlMapping.Actionmap1.MathMode.ReadValue<float>() != 0)
+                {
+
+                    UIconfig.CanvasOnOff_Array[14] = 0;
+                    UIconfig.CanvasOnOff_Array[16] = 1;
+                    numinputtrigger++;
+                    StartCoroutine(slowInput());
+                    return;
+                }
+
+                if (input_ControlMapping.Actionmap1.Cancel.ReadValue<float>() != 0)
+                {
+                    UIconfig.CanvasOnOff_Array[02] = 1;
+                    UIconfig.CanvasOnOff_Array[10] = 0;
+                    numinputtrigger++;
+                    StartCoroutine(slowInput());
+                    return;
+                }
+                return;
+            }
         }
         //PauseMenue
 
         //MathMenue
         if (UIconfig.InputManagerVersion == 1)
         {
-            if (Input.GetButtonDown(MathMode_keyBind))
-            {
+                if (Input.GetButtonDown(MathMode_keyBind))
+                {
 
-                UIconfig.CanvasOnOff_Array[16] = 0;
-                UIconfig.CanvasOnOff_Array[20] = 1;
-                return;
-            }
-            if (Input.GetButtonDown(cancel_keyBind))
-            {
+                    UIconfig.CanvasOnOff_Array[16] = 0;
+                    UIconfig.CanvasOnOff_Array[20] = 1;
+                    return;
+                }
+                if (Input.GetButtonDown(cancel_keyBind))
+                {
 
-                UIconfig.CanvasOnOff_Array[02] = 1;
-                UIconfig.CanvasOnOff_Array[10] = 0;
+                    UIconfig.CanvasOnOff_Array[02] = 1;
+                    UIconfig.CanvasOnOff_Array[10] = 0;
+                    return;
+                }
                 return;
-            }
-            return;
+        }
+        if (UIconfig.InputManagerVersion == 2 && numinputtrigger == 0)
+        {
+                if (input_ControlMapping.Actionmap1.MathMode.ReadValue<float>() != 0)
+                {
+
+                    UIconfig.CanvasOnOff_Array[16] = 0;
+                    UIconfig.CanvasOnOff_Array[20] = 1;
+                    numinputtrigger++;
+                    StartCoroutine(slowInput()); 
+                    return;
+                }
+
+                if (input_ControlMapping.Actionmap1.Cancel.ReadValue<float>() != 0)
+                {
+                    UIconfig.CanvasOnOff_Array[02] = 1;
+                    UIconfig.CanvasOnOff_Array[10] = 0;
+                    numinputtrigger++;
+                    StartCoroutine(slowInput()); 
+                    return;
+                }
+                return;
+            
+
         }
     }
-
-
 
 
 
@@ -382,9 +509,6 @@ public class HideUI_mobile : MonoBehaviour
     void Update2()
     {
         
-        
- 
-
         if (Input.GetButton(modifier))
         {
             if (Input.GetButtonDown(modundo))
@@ -400,9 +524,7 @@ public class HideUI_mobile : MonoBehaviour
                 StageStatic.stage.factState.hardreset();
                 StageStatic.LoadInitStage(StageStatic.stage.name, !StageStatic.stage.use_install_folder);
             }
-        }
- 
-            
+        }          
 
         /*
         //Todo before capturing: Make directories "UFrameIT-Screenshots/Unity_ScreenCapture" in project folder

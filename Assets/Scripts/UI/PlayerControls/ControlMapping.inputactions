@@ -7,19 +7,21 @@
             "actions": [
                 {
                     "name": "Movement",
-                    "type": "Value",
+                    "type": "PassThrough",
                     "id": "f1c2c6f3-2542-45df-8f4e-7660f5fe7215",
                     "expectedControlType": "Vector2",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "LookCamera",
-                    "type": "Value",
+                    "type": "PassThrough",
                     "id": "c189c0be-0f75-45a9-94b3-d0dd52a2af19",
                     "expectedControlType": "Vector2",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Fire1 or Mouse left",
@@ -27,7 +29,8 @@
                     "id": "25f93509-8bb3-4fe7-9ce3-a1b44d6a0c6c",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Camerazoom",
@@ -35,7 +38,35 @@
                     "id": "d6845352-d792-4cfe-9c8d-ab09637d4ab1",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Cancel",
+                    "type": "Button",
+                    "id": "d5aafbfd-31bc-402e-89dc-c21c91212bbc",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ToolMode",
+                    "type": "Button",
+                    "id": "55269451-4704-48a9-8528-ca0d3b495ab2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "MathMode",
+                    "type": "Button",
+                    "id": "f79249da-97b2-4a72-b594-aa21e58472a9",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -205,59 +236,15 @@
                     "isPartOfComposite": true
                 },
                 {
-                    "name": "2D Vector",
-                    "id": "d4170212-8606-46f7-94be-9a9ff4a741a8",
-                    "path": "2DVector",
+                    "name": "",
+                    "id": "74b23070-b002-405d-880f-612ed4af5d02",
+                    "path": "<Mouse>/delta",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": "KeyboardMouse",
                     "action": "LookCamera",
-                    "isComposite": true,
+                    "isComposite": false,
                     "isPartOfComposite": false
-                },
-                {
-                    "name": "up",
-                    "id": "5d6c453d-e001-480e-a604-953e77642d6c",
-                    "path": "<Keyboard>/numpad3",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard",
-                    "action": "LookCamera",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "down",
-                    "id": "97c3ed7d-c04a-4f94-b639-0fc28808557d",
-                    "path": "<Keyboard>/numpad1",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard",
-                    "action": "LookCamera",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "left",
-                    "id": "678190c9-2651-42f0-9645-57e650c66c1e",
-                    "path": "<Keyboard>/numpad7",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard",
-                    "action": "LookCamera",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "right",
-                    "id": "d22fd6f5-e74c-4d44-8b78-c2b37fc1fb20",
-                    "path": "<Keyboard>/numpad9",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard",
-                    "action": "LookCamera",
-                    "isComposite": false,
-                    "isPartOfComposite": true
                 },
                 {
                     "name": "",
@@ -346,6 +333,94 @@
                     "action": "Camerazoom",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "2D Vector",
+                    "id": "decbe076-f3ef-4110-8971-21b6ee602241",
+                    "path": "2DVector",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "LookCamera",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "up",
+                    "id": "7d56a2a0-5950-4aa1-898e-32855d5f7256",
+                    "path": "<Keyboard>/numpad3",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "LookCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "down",
+                    "id": "a24afabd-506f-4388-87eb-33cfbaaaa35d",
+                    "path": "<Keyboard>/numpad1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "LookCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "left",
+                    "id": "69383c90-a869-4729-a411-59df74ef0f39",
+                    "path": "<Keyboard>/numpad7",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "LookCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "right",
+                    "id": "37505022-8b8d-4d6a-80b1-55712e986989",
+                    "path": "<Keyboard>/numpad9",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "LookCamera",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "737cc53a-9e90-4fc4-b809-b0a203eaffd6",
+                    "path": "*/{Cancel}",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard;Gamepad;Android;test;KeyboardMouse",
+                    "action": "Cancel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9b7bf0e3-7480-4381-bee8-9c3bcc373bf6",
+                    "path": "<Keyboard>/e",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard;Gamepad;Android;test;KeyboardMouse",
+                    "action": "ToolMode",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d4c7df8f-769c-4d15-a143-815f5c86b485",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard;Gamepad;Android;test;KeyboardMouse",
+                    "action": "MathMode",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -359,7 +434,8 @@
                     "id": "96b5cec0-5b2c-40af-9187-aa9025e85924",
                     "expectedControlType": "Vector2",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": true
                 },
                 {
                     "name": "LookCamera",
@@ -367,7 +443,8 @@
                     "id": "ba69a09b-82ef-41b4-ada5-68abbd4497eb",
                     "expectedControlType": "Vector2",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -548,7 +625,8 @@
                     "id": "4b630cad-55a6-4f6c-bd0d-15057bbc7647",
                     "expectedControlType": "Vector2",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": true
                 },
                 {
                     "name": "Submit",
@@ -556,7 +634,8 @@
                     "id": "5976835c-e3ae-44f3-9715-546e6263f671",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Cancel",
@@ -564,7 +643,8 @@
                     "id": "e5255dc5-07f6-47b3-ba9f-2e2efb607780",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Point",
@@ -572,7 +652,8 @@
                     "id": "d71f7f6e-532d-49cf-bf0f-5f04773eeeee",
                     "expectedControlType": "Vector2",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "Click",
@@ -580,7 +661,8 @@
                     "id": "cab8ec17-6f02-42fe-9109-be000f8d6e43",
                     "expectedControlType": "Button",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "ScrollWheel",
@@ -588,7 +670,8 @@
                     "id": "6176d09c-a247-4fba-b3bc-b4dd47a50cdc",
                     "expectedControlType": "Vector2",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "MiddleClick",
@@ -596,7 +679,8 @@
                     "id": "13fcdbc5-4169-4a8d-bcf1-3f0fa7d8d9a4",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "RightClick",
@@ -604,7 +688,8 @@
                     "id": "212e4290-34e2-4af5-8592-019975ac57a3",
                     "expectedControlType": "",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "TrackedDevicePosition",
@@ -612,7 +697,8 @@
                     "id": "a92a45a8-19dc-4e44-9675-ae257f384fb4",
                     "expectedControlType": "Vector3",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 },
                 {
                     "name": "TrackedDeviceOrientation",
@@ -620,7 +706,8 @@
                     "id": "9fd2707b-e83e-4315-8730-e43d10900229",
                     "expectedControlType": "Quaternion",
                     "processors": "",
-                    "interactions": ""
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [

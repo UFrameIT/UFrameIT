@@ -31,6 +31,8 @@ namespace Characters.FirstPerson
             m_CameraTargetRot = camera.localRotation;
             input_ControlMapping = new ControlMapping();
             input_ControlMapping.Actionmap1.LookCamera.Enable();
+            //input_ControlMapping.Actionmap1.MouseX.Enable();
+            //input_ControlMapping.Actionmap1.MouseY.Enable();
         }
 
 
@@ -39,6 +41,10 @@ namespace Characters.FirstPerson
 
         public void LookRotation(Transform character, Transform camera)
         {
+            XSensitivity = UIconfig.camRotatingSensitivity;
+            YSensitivity = XSensitivity;
+            
+            
             float yRot=0;
             float xRot=0;
 
@@ -54,8 +60,13 @@ namespace Characters.FirstPerson
             if (UIconfig.InputManagerVersion == 2)
             {
                 Vector2 a = input_ControlMapping.Actionmap1.LookCamera.ReadValue<Vector2>();
-                xRot = a.x * XSensitivity;
-                yRot = a.y * XSensitivity;
+                yRot = a.x * XSensitivity * 0.1f ;
+                xRot = a.y * YSensitivity * 0.1f;
+
+
+
+                //xRot =  XSensitivity * input_ControlMapping.Actionmap1.MouseX.ReadValue<float>();
+                //yRot = 100* YSensitivity * input_ControlMapping.Actionmap1.MouseY.ReadValue<float>();
             }
             if (UIconfig.InputManagerVersion == 3)
             {
@@ -105,8 +116,8 @@ namespace Characters.FirstPerson
                 camera.localRotation = m_CameraTargetRot;//Wieso magst du nicht nach Build!
                 
             }
-            //if (yRot != 0) { Debug.Log("my" + yRot); Debug.Log("mc" + camera.localRotation); }
-            //if (xRot != 0) { Debug.Log("mx" + xRot); Debug.Log("mc" + camera.localRotation); } //Hoch runter
+            if (yRot != 0) { Debug.Log("my" + yRot); Debug.Log("mc" + camera.localRotation); }
+            if (xRot != 0) { Debug.Log("mx" + xRot); Debug.Log("mc" + camera.localRotation); } //Hoch runter
             UpdateCursorLock();
         }
 
