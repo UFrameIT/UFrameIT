@@ -36,24 +36,30 @@ public class StartMenue_mobile : MonoBehaviour
 
 
 
+    private void Awake()
+    {
+        ScreenOptimization();
+
+        toChild1();
+
+        if (checkOperationSystemAlreadyDone == false)
+        {
+
+            start2_CheckOS_CheckConfig();
+            checkOperationSystemAlreadyDone = true;
+        }
+        GObj_text.text = CommunicationEvents.Opsys + "";
+        CheckServerA[1] = 1;
+        CheckServerA[2] = 1;
+        CheckServerA[3] = 1;
+    }
+
     void Start()
     {
 
 
 
-        ScreenOptimization();
-
-        toChild1();
-        
-        if (checkOperationSystemAlreadyDone==false) { 
-            
-            start2_CheckOS_CheckConfig();
-            checkOperationSystemAlreadyDone = true;
-        }
-        GObj_text.text = CommunicationEvents.Opsys + "";
-        CheckServerA[1]=1;
-        CheckServerA[2]=1;
-        CheckServerA[3]=1;
+       
     }
 
     void start2_CheckOS_CheckConfig()
@@ -127,6 +133,10 @@ public class StartMenue_mobile : MonoBehaviour
         {
             //CommunicationEvents.Opsys = CommunicationEvents.Opsys_Default;
         }
+        if(Opsys == 1)
+        {
+            ServerAutoStart = false;
+        }
     }
 
     void checkOS2()
@@ -137,12 +147,14 @@ public class StartMenue_mobile : MonoBehaviour
             
             Debug.Log("Windows OS detected");
             CommunicationEvents.Opsys = 0;
+            
             return;
         }
         if (Application.platform == RuntimePlatform.Android)
         {
             Debug.Log("Android OS detected");
             CommunicationEvents.Opsys = 1;
+            
             return;
         }
 

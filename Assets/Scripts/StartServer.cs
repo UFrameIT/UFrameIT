@@ -15,17 +15,20 @@ public class StartServer : MonoBehaviour
     public static ProcessStartInfo processInfo;
     public int autostart = 0; //when 1 in Start() will be ServerRoutine() launched. 
     public int autoend = 0; //Update() also affected
+    public int autoprepareGame = 0;
+    public int autocheckIfServerIsRunning = 0;
+
 
     // Start is called before the first frame update
     void Start()
     {
         CommunicationEvents.ServerRunning = false;
         
-        if (ServerAutoStart==true && autostart == 1)
+        if (ServerAutoStart==true && autostart == 1 )
         {
             StartCoroutine(ServerRoutine());
         }
-        if (ServerAutoStart == true && autostart == 2)
+        if (ServerAutoStart == true && autostart == 2 )
         {
             StartCoroutine(ServerRoutine1());
         }
@@ -49,12 +52,17 @@ public class StartServer : MonoBehaviour
 
     void PrepareGame()
     {
-        WaitingText.text = "Press any key to start the game";
-        CommunicationEvents.ServerRunning = true;
-        UnityEngine.Debug.Log("server fin");
+        if (autoprepareGame !=0)
+        {
+            WaitingText.text = "Press any key to start the game";
+            CommunicationEvents.ServerRunning = true;
+            UnityEngine.Debug.Log("server fin");
+        }
 
 
     }
+
+
 
 
 
@@ -144,8 +152,8 @@ public class StartServer : MonoBehaviour
             yield return null;
 #endif
 
-            
-            while (true)
+
+            while (true && autocheckIfServerIsRunning != 0)
             {
                 //Wait for 2 seconds
                 yield return new WaitForSecondsRealtime(2f);

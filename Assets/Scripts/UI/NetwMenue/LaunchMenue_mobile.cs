@@ -92,7 +92,9 @@ public class LaunchMenue_mobile : MonoBehaviour, IPointerDownHandler, IPointerUp
     {
         NetworkJSON_Save();
         CommunicationEvents.ServerAdress = "http://" + CommunicationEvents.selecIP;
+        CommunicationEvents.ServerRunning = true;
         UnityEngine.Debug.Log("StartMainMenue");
+        UnityEngine.Debug.Log("CommunicationEvents.ServerAdress = " + CommunicationEvents.ServerAdress);
         SceneManager.LoadScene("MainMenue");
     }
 

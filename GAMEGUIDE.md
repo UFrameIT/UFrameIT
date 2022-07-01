@@ -21,6 +21,7 @@
       - first person perspective 
       - compatible with (old) Input Manager
       - compatible with (new) Input System Package
+      - compatbile with "Input exchange through file" (for reliable mobile Input)
       - supports FrameITUI
       - supports FrameITUI_mobile
 
@@ -68,6 +69,8 @@
 		- old input system
 	- Input_System_Package
 		- new input system
+  	- Input exchange through file
+    	- for reliable Input by mobile devices
 
 #### Keyboard Mouse Options
 	- Look up or change Bindings

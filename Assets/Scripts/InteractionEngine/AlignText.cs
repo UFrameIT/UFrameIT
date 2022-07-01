@@ -11,10 +11,11 @@ public class AlignText : MonoBehaviour
     private Camera Cam;
     public Camera Cam1;
     public Camera Cam2;
+    public Camera BackUPCam;
 
     void Start()
     {
-        Cam = Camera.main;
+        Cam = toCamMain();
         
         StartCoroutine(CheckForNewMainCamRoutine());
     }
@@ -28,6 +29,17 @@ public class AlignText : MonoBehaviour
         //transform.rotation = Quaternion.Lerp(transform.parent.transform.rotation, Cam.transform.rotation, 0);
     }
 
+    Camera toCamMain()
+    {
+        if (Camera.main != null)
+        {
+            return Camera.main;
+        }
+
+
+        return BackUPCam;
+    }
+
 
 
     IEnumerator CheckForNewMainCamRoutine()
@@ -36,8 +48,10 @@ public class AlignText : MonoBehaviour
         yield return new WaitForSeconds(2);
         switch (UIconfig.MainCameraID)
         {
+                        
+            
             case 0:
-                Cam = Camera.main;
+                Cam = toCamMain();
                 break;
             case 1:
                 Cam = Cam1;
@@ -46,7 +60,7 @@ public class AlignText : MonoBehaviour
                 Cam = Cam2;
                 break;
             default:
-                Cam = Camera.main;
+                Cam = toCamMain();
                 break;
 
         }

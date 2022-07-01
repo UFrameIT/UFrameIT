@@ -40,7 +40,7 @@ public class MenueControl_mobile : MonoBehaviour
     {
         ClearUIC();
         //UIconfig.Andr_Start_menue_counter = 1;
-        child1_GObj.SetActive(true); ;
+        child1_GObj.SetActive(true); 
 
 
     }
