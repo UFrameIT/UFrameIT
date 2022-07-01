@@ -1714,7 +1714,10 @@ public class CircleFact : FactWrappedCRTP<CircleFact>
     public new static CircleFact parseFact(Scroll.ScrollFact fact)
     {
         string uri = fact.@ref.uri;
-
+        string M_uri = "";
+        string A_uri = "";
+        float radius = 0.0f;
+        Vector3 normal = Vector3.zero;
         OMA df = (OMA)((Scroll.ScrollSymbolFact)fact).df;
 
         if (df == null)
@@ -1723,22 +1726,66 @@ public class CircleFact : FactWrappedCRTP<CircleFact>
         Scroll.ScrollSymbolFact casted_fact = (Scroll.ScrollSymbolFact)fact;
 
 
-        OMA planeOMA = (OMA) ((OMA)casted_fact.df).arguments[0];
-        OMA pointAOMA = (OMA) planeOMA.arguments[0];
-
-        OMA n = (OMA) planeOMA.arguments[1];
-        Vector3 normal = new Vector3(((OMF)n.arguments[0]).f, ((OMF)n.arguments[1]).f, ((OMF)n.arguments[2]).f);
-
-
+       
         // get the mid point uri
         string parse_id_M = ParsingDictionary.MMTermToString(((OMA)casted_fact.df).arguments[1]);
-        string M_uri = ParsingDictionary.parseTermsToId[parse_id_M];
 
-        string parse_id_A = ParsingDictionary.MMTermToString(planeOMA.arguments[0]);
-        string A_uri = ParsingDictionary.parseTermsToId[parse_id_A];
+        Debug.Log("parse_id_M " + parse_id_M);
+        M_uri = ParsingDictionary.parseTermsToId[parse_id_M];
+        Debug.Log("M URI " + M_uri);
 
         // get the radius
-        float radius = ((OMF)((OMA)casted_fact.df).arguments[2]).f;
+        radius = ((OMF)((OMA)casted_fact.df).arguments[2]).f;
+
+        OMA planeOMA = (OMA)((OMA)casted_fact.df).arguments[0];
+        string planeApplicant = ((OMS)planeOMA.applicant).uri;
+
+
+        // Getting the plane
+        // IN case of a normale plane
+        if (planeApplicant.Equals(MMTURIs.pointNormalPlane))
+        {
+            Debug.Log("planeApplicant" + planeApplicant);
+
+            OMA pointAOMA = (OMA)planeOMA.arguments[0];
+
+            string parse_id_A = ParsingDictionary.MMTermToString(planeOMA.arguments[0]);
+            A_uri = ParsingDictionary.parseTermsToId[parse_id_A];
+
+            OMA n = (OMA)planeOMA.arguments[1];
+            normal = new Vector3(((OMF)n.arguments[0]).f, ((OMF)n.arguments[1]).f, ((OMF)n.arguments[2]).f);
+            Debug.Log("Norm " + normal.ToString());
+
+
+        }
+        // In case of parametrized plane
+        else if(planeApplicant.Equals(MMTURIs.ParametrizedPlane))
+        {
+            Debug.Log("planeApplicant" + planeApplicant);
+
+            OMA pointAOMA = (OMA)planeOMA.arguments[0];
+            string parse_id_A = ParsingDictionary.MMTermToString(planeOMA.arguments[0]);
+            A_uri = ParsingDictionary.parseTermsToId[parse_id_A];
+
+
+            OMA vOMA = (OMA)planeOMA.arguments[1];
+            OMA wOMA = (OMA)planeOMA.arguments[2];
+
+            Vector3 v = new Vector3(((OMF)vOMA.arguments[0]).f, ((OMF)vOMA.arguments[1]).f, ((OMF)vOMA.arguments[2]).f);
+            Vector3 w = new Vector3(((OMF)wOMA.arguments[0]).f, ((OMF)wOMA.arguments[1]).f, ((OMF)wOMA.arguments[2]).f);
+
+            normal = Vector3.Cross(v, w).normalized;
+
+            Debug.Log("Para "+normal.ToString());
+
+        }
+        else {
+            Debug.Log("planeApplicant" + planeApplicant);
+            Debug.Log("?? " + MMTURIs.pointNormalPlane);
+
+            return null;
+        }
+
 
 
         if (StageStatic.stage.factState.ContainsKey(M_uri)
@@ -1769,6 +1816,7 @@ public class CircleFact : FactWrappedCRTP<CircleFact>
     {
         PointFact p1 = _Facts[p1URI] as PointFact;
         PointFact p2 = _Facts[p2URI] as PointFact;
+
 
         List<MMTTerm> normalArgs = new List<MMTTerm>
         {

@@ -38,8 +38,8 @@ public class MMTURICollection
     public string ConeOfCircleApex = "http://mathhub.info/FrameIT/frameworld?FrameITCone?circleConeOf";
 
 
-    public string ParametrizedPlane = "http://mathhub.info/MitM/core/geometry?Geometry/Planes?ParametrizedPlane";
-    public string pointNormalPlane = "http://mathhub.info/MitM/core/geometry?Geometry/Planes?pointNormalPlane";
+    public string ParametrizedPlane = "http://mathhub.info/MitM/core/geometry?Planes?ParametrizedPlane";
+    public string pointNormalPlane = "http://mathhub.info/MitM/core/geometry?Planes?pointNormalPlane";
     public string OnCircle =       "http://mathhub.info/FrameIT/frameworld?FrameITCircle?pointOnCircle";
     public string AnglePlaneLine = "http://mathhub.info/FrameIT/frameworld?FrameITCircle?angleCircleLine";
     public string OrthoCircleLine ="http://mathhub.info/FrameIT/frameworld?FrameITCircle?orthogonalCircleLine";
