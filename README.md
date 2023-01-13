@@ -14,6 +14,10 @@ For more information about the project, please visit <https://uframeit.org>
 
 Just download our latest release: <https://github.com/UFrameIT/UFrameIT/releases/latest>
 
+## Installation (for students at KWARC)
+Active Development happens at https://gl.kwarc.info/FrameIT/UFrameIT
+Stable Versions will be released on GitHub.
+
 ## Installation (for developers)
 
 First, you have to set up a development environment:
